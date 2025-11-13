@@ -1,0 +1,67 @@
+name: PR Merge Cleanup
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  cleanup-after-merge:
+    if: >
+      github.event.pull_request.merged == true &&
+      (
+        github.event.pull_request.base.ref == 'dev' ||
+        github.event.pull_request.base.ref == 'main'
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Close linked issues via gh CLI
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        shell: bash
+        run: |
+          echo "🔍 PR 내용에서 이슈 닫는 키워드를 찾는 중..."
+          issue_count=0
+          failed_count=0
+
+          # 이슈 번호 추출 및 중복 제거
+          issue_numbers=$(printf '%s' "$PR_BODY" | tr -d '\r' | grep -Eoi '(close[sd]?|fix(e[sd])?|resolve[sd]?) #[0-9]+' | grep -oE '#[0-9]+' | tr -d '#' | sort -u)
+
+          if [ -z "$issue_numbers" ]; then
+            echo "ℹ️  PR 본문에서 닫을 이슈를 찾지 못했습니다."
+            exit 0
+          fi
+
+          # 각 이슈 처리
+          while IFS= read -r issue_number; do
+            if [ -n "$issue_number" ]; then
+              echo "➡️  닫는 중: #$issue_number"
+              if gh issue close "$issue_number" --reason completed --repo "$GITHUB_REPOSITORY"; then
+                echo "✅ 이슈 #$issue_number 닫기 완료"
+                issue_count=$((issue_count + 1))
+              else
+                echo "⚠️  이슈 #$issue_number 닫기 실패 (이슈가 존재하지 않거나 권한이 없을 수 있습니다)"
+                failed_count=$((failed_count + 1))
+              fi
+            fi
+          done <<< "$issue_numbers"
+
+          echo "📊 처리 결과: 성공 $issue_count개, 실패 $failed_count개"
+
+      - name: Delete source branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
+        shell: bash
+        run: |
+          echo "🗑️  소스 브랜치 삭제 중: $BRANCH_NAME"
+          gh api repos/${{ github.repository }}/git/refs/heads/$BRANCH_NAME -X DELETE || echo "⚠️  브랜치 삭제 실패 또는 이미 삭제됨: $BRANCH_NAME"
