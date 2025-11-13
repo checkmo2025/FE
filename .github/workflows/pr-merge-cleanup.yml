@@ -1,4 +1,4 @@
-name: Auto-close linked issues on PR merge
+name: PR Merge Cleanup
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - closed
 
 jobs:
-  close-linked-issues:
+  cleanup-after-merge:
     if: >
       github.event.pull_request.merged == true &&
       (
@@ -16,7 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: write
-      pull-requests: read
+      pull-requests: write
+      contents: write
 
     steps:
       - name: Checkout
@@ -34,4 +35,13 @@ jobs:
             echo "➡️  닫는 중: #$issue_number"
             gh issue close "$issue_number" --reason completed --repo "$GITHUB_REPOSITORY"
           done
+
+      - name: Delete source branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
+        shell: bash
+        run: |
+          echo "🗑️  소스 브랜치 삭제 중: $BRANCH_NAME"
+          gh api repos/${{ github.repository }}/git/refs/heads/$BRANCH_NAME -X DELETE || echo "⚠️  브랜치 삭제 실패 또는 이미 삭제됨: $BRANCH_NAME"
 
