@@ -55,7 +55,7 @@ export default function Header() {
             <Link href="/search" aria-label="검색" className="relative h-6 w-6">
               <Image
                 src="/search.svg"
-                alt=""
+                alt="검색 아이콘"
                 fill
                 className="object-contain"
                 priority
@@ -69,7 +69,7 @@ export default function Header() {
             >
               <Image
                 src="/notification.svg"
-                alt=""
+                alt="알림 아이콘"
                 fill
                 className="object-contain"
                 priority
@@ -83,7 +83,7 @@ export default function Header() {
             >
               <Image
                 src="/profile.svg"
-                alt=""
+                alt="프로필 아이콘"
                 fill
                 className="object-contain"
                 priority
