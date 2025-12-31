@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 :root {
+  --White: #FFF;
+  --Black: #000000;
+
   --background: #ffffff;
   --foreground: #171717;
 
@@ -58,6 +61,7 @@ body {
   /* Subhead */
   .Subhead_1 { @apply text-[24px] font-semibold leading-[135%] tracking-[-0.1%]; }
   .Subhead_2 { @apply text-[20px] font-semibold leading-[135%] tracking-[-0.1%]; }
+  .Subhead_3 { @apply text-[20px] font-semibold leading-[135%] tracking-[-0.02px];}
   .Subhead_3_1 { @apply text-[18px] font-semibold leading-[135%] tracking-[-0.1%]; }
   .Subhead_3_2 { @apply text-[18px] font-medium leading-[135%] tracking-[-0.1%]; }
   .Subhead_4_1 { @apply text-[18px] font-medium leading-[135%] tracking-[-0.018px]; }
