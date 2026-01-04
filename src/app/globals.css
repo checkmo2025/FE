@@ -37,6 +37,31 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Colors */
+  --color-White: var(--White);
+  --color-Black: var(--Black);
+
+  --color-Gray-1: var(--Gray_1);
+  --color-Gray-2: var(--Gray_2);
+  --color-Gray-3: var(--Gray_3);
+  --color-Gray-4: var(--Gray_4);
+  --color-Gray-5: var(--Gray_5);
+  --color-Gray-6: var(--Gray_6);
+  --color-Gray-7: var(--Gray_7);
+
+  --color-Secondary-1: var(--Secondary_1);
+  --color-Secondary-2: var(--Secondary_2);
+  --color-Secondary-3: var(--Secondary_3);
+
+  --color-Subbrown-1: var(--Subbrown_1);
+  --color-Subbrown-2: var(--Subbrown_2);
+  --color-Subbrown-3: var(--Subbrown_3);
+  --color-Subbrown-4: var(--Subbrown_4);
+
+  --color-primary-1: var(--primary_1);
+  --color-primary-2: var(--primary_2);
+  --color-primary-3: var(--primary_3);
 }
 
 @media (prefers-color-scheme: dark) {

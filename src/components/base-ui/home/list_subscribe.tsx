@@ -11,8 +11,8 @@ export default function ListSubscribe() {
   ];
 
   return (
-    <section className="w-[336px] h-[380px] rounded-lg border-2 border-[color:var(--Subbrown_4)] bg-white p-5">
-      <h3 className="text-[20px] font-semibold leading-7 text-[color:var(--Gray_7)]">
+    <section className="w-[336px] h-[380px] rounded-lg border-2 border-Subbrown-4 bg-stone-50 p-5">
+      <h3 className="Subhead_2 text-Gray-7">
         사용자 추천
       </h3>
 

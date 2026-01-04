@@ -43,7 +43,7 @@ export default function BookStoryCard({
   buttonText = "구독",
 }: Props) {
   return (
-    <div className="flex h-[380px] w-[336px] flex-col overflow-hidden rounded-lg border-2 border-[color:var(--Subbrown_4)] bg-white">
+    <div className="flex h-[380px] w-[336px] flex-col overflow-hidden rounded-lg border-2 border-Subbrown-4 bg-White">
       {/* 상단 프로필 */}
       <div className="flex items-center gap-2 px-4 py-3">
         {/* 프로필 */}
@@ -59,8 +59,8 @@ export default function BookStoryCard({
 
         {/* 이름 + 시간 + 조회수 */}
         <div className="min-w-0 flex-1">
-          <p className="Body_1 text-[color:var(--Gray_7)] truncate">{name}</p>
-          <p className="Body_2_3 text-[color:var(--Gray_3)] truncate">
+          <p className="Body_1 text-Gray-7 truncate">{name}</p>
+          <p className="Body_2_3 text-Gray-3 truncate">
             {timeAgo(createdAt)} 조회수 {viewCount}
           </p>
         </div>
@@ -69,14 +69,14 @@ export default function BookStoryCard({
         <button
           type="button"
           onClick={onSubscribeClick}
-          className="h-8 rounded-lg bg-[color:var(--primary_2)] px-[17px] text-[12px] font-semibold leading-none text-white whitespace-nowrap"
+          className="h-8 rounded-lg bg-primary-2 px-[17px] Body_2_1 text-White whitespace-nowrap"
         >
           {buttonText}
         </button>
       </div>
 
       {/* 책 이미지 */}
-      <div className="relative h-36 w-full shrink-0 bg-[color:var(--Subbrown_4)] ">
+      <div className="relative h-36 w-full shrink-0 bg-Subbrown-4">
         {CoverSrc && (
           <Image
             src={CoverSrc}
@@ -89,10 +89,10 @@ export default function BookStoryCard({
 
       {/* 제목 + 내용 */}
       <div className="px-4 pt-4 ">
-        <p className="text-xl font-semibold pb-1 leading-7 text-[color:var(--Gray_7)] ">
+        <p className="Subhead_2 pb-1 text-Gray-7">
           {title}
         </p>
-        <p className="self-stretch h-[76px] pt-1 justify-center text-[color:var(--Gray_5)] text-sm font-normal font-['Pretendard_Variable'] leading-5">
+        <p className="Body_1_3 h-[76px] pt-1 text-Gray-5">
           {content}
         </p>
       </div>
@@ -107,18 +107,18 @@ export default function BookStoryCard({
             width={24}
             height={24}
           />
-          <span className="text-[color:var(--Gray_4)] text-sm font-medium leading-5">
+          <span className="Body_1_2 text-Gray-4">
             좋아요 {likeCount}
           </span>
         </div>
 
         {/* 구분선 */}
-        <div className="h-10 w-[1.8px] -mt-1 rounded-full bg-[color:var(--Gray_2)] " />
+        <div className="h-10 w-[1.8px] -mt-1 rounded-full bg-Gray-2" />
 
         {/* 댓글 */}
         <div className="flex items-center justify-center gap-2 pb-2">
           <Image src="/comment.svg" alt="댓글 아이콘" width={24} height={24} />
-          <span className="text-[color:var(--Gray_4)] text-sm font-medium leading-5">
+          <span className="Body_1_2 text-Gray-4">
             댓글 {commentCount}
           </span>
         </div>

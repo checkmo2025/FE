@@ -21,7 +21,7 @@ export default function HomeBookclub({ groups }: Props) {
   return (
     <aside
       className={[
-        "flex flex-col w-[332px] p-5 rounded-[8px] bg-[color:var(--Subbrown_4)]",
+        "flex flex-col w-[332px] p-5 rounded-[8px] bg-Subbrown-4",
         "overflow-hidden transition-[height] duration-200",
         open ? "h-[814px]" : "h-[424px]",
       ].join(" ")}
@@ -46,7 +46,7 @@ export default function HomeBookclub({ groups }: Props) {
               key={group.id}
               className="flex w-[288px] h-[52px] py-3 px-4 items-center rounded-lg bg-white"
             >
-              <span className="text-[color:var(--Gray--7)] h-6 Subhead_4_1 ">
+              <span className="text-Gray-7 h-6 Subhead_4_1">
                 {group.name}
               </span>
             </div>
@@ -60,18 +60,18 @@ export default function HomeBookclub({ groups }: Props) {
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="w-full h-[38px] rounded-[6px] bg-transparent text-[13px] flex items-center justify-center gap-[6px] text-[color:var(--Gray--3)]"
+            className="w-full h-[38px] rounded-[6px] bg-transparent text-[13px] flex items-center justify-center gap-[6px] text-Gray-3"
           >
             {open ? (
               <div className="flex items-center justify-center gap-1">
-                <span className="text-[color:var(--Gray_7)] Body_1_2 font-weight: 500">
+                <span className="text-Gray-7 Body_1_2">
                   접기
                 </span>
                 <Image src="/ArrowTop.svg" alt="" width={24} height={24} />
               </div>
             ) : (
               <div className="flex items-center justify-center gap-1">
-                <span className="text-[color:var(--Gray_7)] Body_1_2 Body_1_2">
+                <span className="text-Gray-7 Body_1_2">
                   전체보기
                 </span>
                 <Image src="/ArrowDown.svg" alt="" width={24} height={24} />
@@ -91,7 +91,7 @@ export default function HomeBookclub({ groups }: Props) {
                 width={24}
                 height={24}
               />
-              <span className="text-[color:var(--primary_3)] Subhead_4_1">
+              <span className="text-primary-3 Subhead_4_1">
                 모임 검색하기
               </span>
             </button>

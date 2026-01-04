@@ -19,7 +19,7 @@ export default function BookstoryChoosebook({
   className = "",
 }: BookstoryChoosebookProps) {
   return (
-    <div className={`w-full max-w-[1040px] flex items-center p-[20px] ${className} bg-white border border-[color:var(--Subbrown_4)] rounded-[8px]`}>
+    <div className={`w-full max-w-[1040px] flex items-center p-[20px] ${className} bg-White border border-Subbrown-4 rounded-[8px]`}>
       {/* 왼쪽: 책 + 텍스트 */}
       <div className="flex items-start gap-[24px] min-w-0 flex-1">
         {/* Book Image */}
@@ -42,7 +42,7 @@ export default function BookstoryChoosebook({
           </div>
 
           {/* detail (넘치면 ... ) */}
-          <p className="mt-[12px] text-[color:var(--Gray_4,#8D8D8D)] Body_1_2 line-clamp-4 overflow-hidden">
+          <p className="mt-[12px] text-Gray-4 Body_1_2 line-clamp-4 overflow-hidden">
             {bookDetail}
           </p>
         </div>
@@ -58,9 +58,9 @@ export default function BookstoryChoosebook({
               px-[16px] py-[12px]
               justify-center items-center gap-[10px]
               rounded-[8px]
-              border border-[color:var(--premary_2,#9A7A6B)]
-              bg-[color:var(--background,#F9F7F6)]
-              text-[color:var(--premary_2,#9A7A6B)]
+              border border-primary-2
+              bg-background
+              text-primary-2
               Body_1_2
               whitespace-nowrap
             "

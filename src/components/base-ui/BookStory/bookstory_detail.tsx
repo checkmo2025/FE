@@ -65,10 +65,10 @@ export default function BookstoryDetail({
             </div>
 
             <div className="flex flex-col min-w-0">
-              <p className="text-[color:var(--Gray_7,#2C2C2C)] Subhead_4_1 truncate">
+              <p className="text-Gray-7 Subhead_4_1 truncate">
                 {authorName}
               </p>
-              <p className="text-[color:var(--Gray_4,#8D8D8D)] Body_1_2 truncate">
+              <p className="text-Gray-4 Body_1_2 truncate">
                 {authorNickname}
               </p>
             </div>
@@ -79,9 +79,8 @@ export default function BookstoryDetail({
             onClick={onSubscribeClick}
             className="
               flex px-[17px] py-[8px] justify-center items-center gap-[10px]
-              rounded-[8px] bg-[color:var(--primary_2)]
-              text-[color:var(--White,#FFF)] text-[12px] font-semibold leading-[100%] tracking-[-0.012px]
-              shrink-0
+              rounded-[8px] bg-primary-2
+              text-White Body_2_1 shrink-0
             "
           >
             {subscribeText}
@@ -91,13 +90,13 @@ export default function BookstoryDetail({
         <div className="h-[16px]" />
 
         <div className="flex flex-col gap-[8px] min-w-0">
-          <p className="text-[color:var(--Gray_7,#2C2C2C)] Subhead_1 truncate">
+          <p className="text-Gray-7 Subhead_1 truncate">
             {bookTitle}
           </p>
-          <p className="text-[color:var(--Gray_4,#8D8D8D)] Subhead_4_1 truncate">
+          <p className="text-Gray-4 Subhead_4_1 truncate">
             {bookAuthor}
           </p>
-          <p className="text-[color:var(--Gray_4,#8D8D8D)] Body_1_2 line-clamp-2">
+          <p className="text-Gray-4 Body_1_2 line-clamp-2">
             {bookDetail}
           </p>
         </div>

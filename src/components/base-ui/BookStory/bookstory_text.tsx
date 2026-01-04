@@ -53,20 +53,20 @@ export default function BookstoryText({
     <div
       className="
         flex w-full max-w-[1040px] min-h-[476px] p-[16px] flex-col
-        rounded-[8px] border-2 border-[color:var(--Subbrown_4,#EAE5E2)]
-        bg-[color:var(--White,#FFF)]
+        rounded-[8px] border-2 border-Subbrown-4
+        bg-White
       "
     >
       {/* Title box */}
-      <div className="flex p-[10px] items-center gap-[10px] border-b border-b-[color:var(--Subbrown_4,#EAE5E2)]">
+      <div className="flex p-[10px] items-center gap-[10px] border-b border-b-Subbrown-4">
         <input
           value={title}
           onChange={(e) => onChangeTitle(e.target.value)}
           placeholder="제목을 입력해주세요"
           className="
             w-full bg-transparent outline-none
-            text-[color:var(--Gray_7,#2C2C2C)] Subhead_2
-            placeholder:text-[color:var(--Gray_3,#BBB)]
+            text-Gray-7 Subhead_2
+            placeholder:text-Gray-3
           "
         />
       </div>
@@ -82,8 +82,8 @@ export default function BookstoryText({
           rows={6}
           className="
             w-full resize-none bg-transparent outline-none
-            text-[color:var(--Gray_7,#2C2C2C)] Subhead_4_1
-            placeholder:text-[color:var(--Gray_3,#BBB)]
+            text-Gray-7 Subhead_4_1
+            placeholder:text-Gray-3
             whitespace-pre-wrap
           "
         />
