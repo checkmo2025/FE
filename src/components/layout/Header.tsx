@@ -54,7 +54,7 @@ export default function Header() {
           <div className="flex items-center gap-4">
             <Link href="/search" aria-label="검색" className="relative h-6 w-6">
               <Image
-                src="/search.svg"
+                src="/search_light.svg"
                 alt="검색"
                 fill
                 className="object-contain"
