@@ -3,17 +3,17 @@
 import Image from "next/image";
 
 type Props = {
-  name: string;
-  ProfileSrc?: string;
+  authorName: string;
+  profileImgSrc?: string;
   createdAt: string;
   viewCount: number;
-  CoverSrc?: string;
+  coverImgSrc?: string;
   title: string;
   content: string;
   likeCount?: number;
   commentCount?: number;
   onSubscribeClick?: () => void;
-  buttonText?: string;
+  subscribeText?: string;
 };
 function timeAgo(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -30,17 +30,17 @@ function timeAgo(iso: string) {
 }
 
 export default function BookStoryCard({
-  name,
-  ProfileSrc = "/profile2.svg",
+  authorName,
+  profileImgSrc = "/profile2.svg",
   createdAt,
   viewCount,
-  CoverSrc = "/bookstorycard.svg",
+  coverImgSrc = "/bookstorycard.svg",
   title,
   content,
   likeCount = 1,
   commentCount = 1,
   onSubscribeClick,
-  buttonText = "구독",
+  subscribeText = "구독",
 }: Props) {
   return (
     <div className="flex h-[380px] w-[336px] flex-col overflow-hidden rounded-lg border-2 border-Subbrown-4 bg-White">
@@ -49,8 +49,8 @@ export default function BookStoryCard({
         {/* 프로필 */}
         <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full">
           <Image
-            src={ProfileSrc}
-            alt={`${name} profile`}
+            src={profileImgSrc}
+            alt={`${authorName} profile`}
             fill
             className="object-cover"
             sizes="32px"
@@ -59,7 +59,7 @@ export default function BookStoryCard({
 
         {/* 이름 + 시간 + 조회수 */}
         <div className="min-w-0 flex-1">
-          <p className="Body_1 text-Gray-7 truncate">{name}</p>
+          <p className="Body_1 text-Gray-7 truncate">{authorName}</p>
           <p className="Body_2_3 text-Gray-3 truncate">
             {timeAgo(createdAt)} 조회수 {viewCount}
           </p>
@@ -71,15 +71,15 @@ export default function BookStoryCard({
           onClick={onSubscribeClick}
           className="h-8 rounded-lg bg-primary-2 px-[17px] Body_2_1 text-White whitespace-nowrap"
         >
-          {buttonText}
+          {subscribeText}
         </button>
       </div>
 
       {/* 책 이미지 */}
       <div className="relative h-36 w-full shrink-0 bg-Subbrown-4">
-        {CoverSrc && (
+        {coverImgSrc && (
           <Image
-            src={CoverSrc}
+            src={coverImgSrc}
             alt="bookstory cover"
             fill
             className="object-cover"
