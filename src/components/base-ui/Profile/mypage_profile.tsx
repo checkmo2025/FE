@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import React from "react";
-import Image from "next/image";
+import React from 'react';
+import Image from 'next/image';
 
 type MypageProfileProps = {
   profileImgSrc?: string; // default: /profile.svg
   name: string;
 
   followingCount: number; // 구독중
-  followerCount: number;  // 구독자
+  followerCount: number; // 구독자
 
   intro: string;
 
@@ -22,7 +22,7 @@ type MypageProfileProps = {
 };
 
 export default function MypageProfile({
-  profileImgSrc = "/profile3.svg",
+  profileImgSrc = '/profile3.svg',
   name,
   followingCount,
   followerCount,
@@ -31,40 +31,44 @@ export default function MypageProfile({
   onSettings,
   onLeftButtonClick,
   onRightButtonClick,
-  className = "",
+  className = '',
 }: MypageProfileProps) {
   return (
     <div
-      className={[
-        "w-[734px] h-[244px]",
-        "flex flex-col",
-        className,
-      ].join(" ")}
+      className={['w-[734px] h-[244px]', 'flex flex-col', className].join(' ')}
     >
       <div className="flex items-start">
         <div className="py-[9px] pr-[36px] shrink-0">
           <div className="relative w-[138px] h-[138px] overflow-hidden rounded-full">
-            <Image src={profileImgSrc} alt={name} fill className="object-cover" sizes="138px" />
+            <Image
+              src={profileImgSrc}
+              alt={name}
+              fill
+              className="object-cover"
+              sizes="138px"
+            />
           </div>
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
             <div className="min-w-0">
-              <p className="text-[color:var(--Gray_7,#2C2C2C)] Subhead_1 truncate">{name}</p>
+              <p className="text-[color:var(--Gray_7,#2C2C2C)] subhead_1 truncate">
+                {name}
+              </p>
 
               <div className="h-[8px]" />
 
               <div className="flex items-center gap-[12px]">
-                <p className="text-[color:var(--Gray_4,#8D8D8D)] Subhead_4_1">
-                  구독중{" "}
-                  <span className="text-[color:var(--Primary_1,#7B6154)] Subhead_4_1">
+                <p className="text-[color:var(--Gray_4,#8D8D8D)] subhead_4_1">
+                  구독중{' '}
+                  <span className="text-[color:var(--Primary_1,#7B6154)] subhead_4_1">
                     {followingCount}
                   </span>
                 </p>
-                <p className="text-[color:var(--Gray_4,#8D8D8D)] Subhead_4_1">
-                  구독자{" "}
-                  <span className="text-[color:var(--Primary_1,#7B6154)] Subhead_4_1">
+                <p className="text-[color:var(--Gray_4,#8D8D8D)] subhead_4_1">
+                  구독자{' '}
+                  <span className="text-[color:var(--Primary_1,#7B6154)] subhead_4_1">
                     {followerCount}
                   </span>
                 </p>
@@ -72,7 +76,7 @@ export default function MypageProfile({
 
               <div className="h-[12px]" />
 
-              <p className="text-[color:var(--Gray_4,#8D8D8D)] Body_1_2 line-clamp-4">
+              <p className="text-[color:var(--Gray_4,#8D8D8D)] body_1_2 line-clamp-4">
                 {intro}
               </p>
             </div>
@@ -90,15 +94,25 @@ export default function MypageProfile({
                 "
               >
                 <Image src="/Edit_icon.svg" alt="" width={24} height={24} />
-                <span className="text-[color:var(--Gray_5,#5C5C5C)] Subhead_4 whitespace-nowrap">
+                <span className="text-[color:var(--Gray_5,#5C5C5C)] subhead_4 whitespace-nowrap">
                   프로필 편집
                 </span>
               </button>
 
               <div className="w-[8px]" />
 
-              <button type="button" onClick={onSettings} className="w-[24px] h-[24px] ">
-                <Image src="/setting_icon.svg" alt="" width={24} height={24} className="" />
+              <button
+                type="button"
+                onClick={onSettings}
+                className="w-[24px] h-[24px] "
+              >
+                <Image
+                  src="/setting_icon.svg"
+                  alt=""
+                  width={24}
+                  height={24}
+                  className=""
+                />
               </button>
             </div>
           </div>
@@ -116,7 +130,7 @@ export default function MypageProfile({
             justify-center items-center gap-[10px]
             rounded-[8px]
             bg-[color:var(--Primary_1,#7B6154)]
-            text-[color:var(--White,#FFF)] Subhead_4_1
+            text-[color:var(--White,#FFF)] subhead_4_1
             whitespace-nowrap
           "
         >
@@ -131,7 +145,7 @@ export default function MypageProfile({
             justify-center items-center gap-[10px]
             rounded-[8px]
             bg-[color:var(--Primary_1,#7B6154)]
-            text-[color:var(--White,#FFF)] Subhead_4_1
+            text-[color:var(--White,#FFF)] subhead_4_1
             whitespace-nowrap
           "
         >

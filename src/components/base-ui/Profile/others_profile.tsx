@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import React from "react";
-import Image from "next/image";
+import React from 'react';
+import Image from 'next/image';
 
 type OthersProfileProps = {
   profileImgSrc?: string; // default: /profile.svg
   name: string;
 
   followingCount: number; // 구독중
-  followerCount: number;  // 구독자
+  followerCount: number; // 구독자
   isSubscribed: boolean;
   onToggleSubscribe: (newState: boolean) => void;
 
@@ -21,7 +21,7 @@ type OthersProfileProps = {
 };
 
 export default function OthersProfile({
-  profileImgSrc = "/profile3.svg",
+  profileImgSrc = '/profile3.svg',
   name,
   followingCount,
   followerCount,
@@ -29,40 +29,44 @@ export default function OthersProfile({
   onToggleSubscribe,
   onReportClick,
   intro,
-  className = "",
+  className = '',
 }: OthersProfileProps) {
   return (
     <div
-      className={[
-        "w-[734px] h-[244px]",
-        "flex flex-col",
-        className,
-      ].join(" ")}
+      className={['w-[734px] h-[244px]', 'flex flex-col', className].join(' ')}
     >
       <div className="flex items-start">
         <div className="py-[9px] pr-[36px] shrink-0">
           <div className="relative w-[138px] h-[138px] overflow-hidden rounded-full">
-            <Image src={profileImgSrc} alt={name} fill className="object-cover" sizes="138px" />
+            <Image
+              src={profileImgSrc}
+              alt={name}
+              fill
+              className="object-cover"
+              sizes="138px"
+            />
           </div>
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
             <div className="min-w-0">
-              <p className="text-[color:var(--Gray_7,#2C2C2C)] Subhead_1 truncate">{name}</p>
+              <p className="text-[color:var(--Gray_7,#2C2C2C)] subhead_1 truncate">
+                {name}
+              </p>
 
               <div className="h-[8px]" />
 
               <div className="flex items-center gap-[12px]">
-                <p className="text-[color:var(--Gray_4,#8D8D8D)] Subhead_4_1">
-                  구독중{" "}
-                  <span className="text-[color:var(--Primary_1,#7B6154)] Subhead_4_1">
+                <p className="text-[color:var(--Gray_4,#8D8D8D)] subhead_4_1">
+                  구독중{' '}
+                  <span className="text-[color:var(--Primary_1,#7B6154)] subhead_4_1">
                     {followingCount}
                   </span>
                 </p>
-                <p className="text-[color:var(--Gray_4,#8D8D8D)] Subhead_4_1">
-                  구독자{" "}
-                  <span className="text-[color:var(--Primary_1,#7B6154)] Subhead_4_1">
+                <p className="text-[color:var(--Gray_4,#8D8D8D)] subhead_4_1">
+                  구독자{' '}
+                  <span className="text-[color:var(--Primary_1,#7B6154)] subhead_4_1">
                     {followerCount}
                   </span>
                 </p>
@@ -70,12 +74,10 @@ export default function OthersProfile({
 
               <div className="h-[12px]" />
 
-              <p className="text-[color:var(--Gray_4,#8D8D8D)] Body_1_2 line-clamp-4">
+              <p className="text-[color:var(--Gray_4,#8D8D8D)] body_1_2 line-clamp-4">
                 {intro}
               </p>
             </div>
-
-            
           </div>
         </div>
       </div>
@@ -87,14 +89,14 @@ export default function OthersProfile({
           type="button"
           onClick={() => onToggleSubscribe(!isSubscribed)}
           className={[
-            "flex w-[532px] h-[48px] px-[16px] py-[12px] justify-center items-center gap-[10px] rounded-[8px]",
-            "Subhead_4_1 whitespace-nowrap",
+            'flex w-[532px] h-[48px] px-[16px] py-[12px] justify-center items-center gap-[10px] rounded-[8px]',
+            'subhead_4_1 whitespace-nowrap',
             isSubscribed
-              ? "bg-[color:var(--Subbrown_4,#EAE5E2)] text-[color:var(--primary_3,#5E4A40)]"
-              : "bg-[color:var(--Primary_1,#7B6154)] text-[color:var(--White,#FFF)]",
-          ].join(" ")}
+              ? 'bg-[color:var(--Subbrown_4,#EAE5E2)] text-[color:var(--primary_3,#5E4A40)]'
+              : 'bg-[color:var(--Primary_1,#7B6154)] text-[color:var(--White,#FFF)]',
+          ].join(' ')}
         >
-          {isSubscribed ? "구독중" : "구독하기"}
+          {isSubscribed ? '구독중' : '구독하기'}
         </button>
 
         <button
@@ -106,7 +108,7 @@ export default function OthersProfile({
             rounded-[8px]
             border border-[color:var(--Subbrown_3,#D2C5B6)]
             bg-[color:var(--White,#FFF)]
-            text-[color:var(--Gray_4,#8D8D8D)] Subhead_4_1
+            text-[color:var(--Gray_4,#8D8D8D)] subhead_4_1
             whitespace-nowrap
           "
         >

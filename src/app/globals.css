@@ -1,35 +1,32 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --White: #FFF;
+  --White: #fff;
   --Black: #000000;
 
-  --background: #F9F7F6;
+  --background: #f9f7f6;
   --foreground: #171717;
 
-
-  --Gray_1: #EEEEEE;
-  --Gray_2: #DADADA;
-  --Gray_3: #BBBBBB;
-  --Gray_4: #8D8D8D;
-  --Gray_5: #5C5C5C;
+  --Gray_1: #eeeeee;
+  --Gray_2: #dadada;
+  --Gray_3: #bbbbbb;
+  --Gray_4: #8d8d8d;
+  --Gray_5: #5c5c5c;
   --Gray_6: #434343;
-  --Gray_7: #2C2C2C;
+  --Gray_7: #2c2c2c;
 
-  --Secondary_3: #FFF5B1;
-  --Secondary_2: #FFD86D;
-  --Secondary_1: #FCE2A9;
+  --Secondary_3: #fff5b1;
+  --Secondary_2: #ffd86d;
+  --Secondary_1: #fce2a9;
 
+  --Subbrown_4: #eae5e2;
+  --Subbrown_3: #d2c5b6;
+  --Subbrown_2: #bbaa9b;
+  --Subbrown_1: #a19182;
 
-  --Subbrown_4: #EAE5E2;
-  --Subbrown_3: #D2C5B6;
-  --Subbrown_2: #BBAA9B;
-  --Subbrown_1: #A19182;
-
-  
-  --primary_3: #5E4A40;
-  --primary_2: #9A7A6B;
-  --primary_1: #7B6154;
+  --primary_3: #5e4a40;
+  --primary_2: #9a7a6b;
+  --primary_1: #7b6154;
 }
 
 @theme inline {
@@ -74,33 +71,67 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "Pretendard Variable", Pretendard, system-ui, sans-serif;
+  font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif;
 }
 
-@layer utilities {
-  /* Headline */
-  .Headline_1 { @apply text-[48px] font-bold leading-[135%] tracking-[-0.1%]; }
-  .Headline_2 { @apply text-[36px] font-bold leading-[135%] tracking-[-0.1%]; }
-  .Headline_3 { @apply text-[32px] font-bold leading-[135%] tracking-[-0.1%]; }
+/* Headline */
+@utility headline_1 {
+  @apply text-[48px] font-bold leading-[135%] tracking-[-0.02px];
+}
+@utility headline_2 {
+  @apply text-[36px] font-bold leading-[135%] tracking-[-0.02px];
+}
+@utility headline_3 {
+  @apply text-[32px] font-bold leading-[135%] tracking-[-0.02px];
+}
 
-  /* Subhead */
-  .Subhead_1 { @apply text-[24px] font-semibold leading-[135%] tracking-[-0.1%]; }
-  .Subhead_2 { @apply text-[20px] font-semibold leading-[135%] tracking-[-0.1%]; }
-  .Subhead_3 { @apply text-[20px] font-semibold leading-[135%] tracking-[-0.02px];}
-  .Subhead_3_1 { @apply text-[18px] font-semibold leading-[135%] tracking-[-0.1%]; }
-  .Subhead_3_2 { @apply text-[18px] font-medium leading-[135%] tracking-[-0.1%]; }
-  .Subhead_4_1 { @apply text-[18px] font-medium leading-[135%] tracking-[-0.018px]; }
+/* subhead */
+@utility subhead_1 {
+  @apply text-[24px] font-semibold leading-[135%] tracking-[-0.02px];
+}
+@utility subhead_2 {
+  @apply text-[22px] font-semibold leading-[135%] tracking-[-0.02px];
+}
+@utility subhead_3 {
+  @apply text-[20px] font-semibold leading-[135%] tracking-[-0.02px];
+}
+@utility subhead_3_1 {
+  @apply text-[18px] font-semibold leading-[135%] tracking-[-0.02px];
+}
+@utility subhead_3_2 {
+  @apply text-[18px] font-medium leading-[135%] tracking-[-0.02px];
+}
+@utility subhead_4_1 {
+  @apply text-[18px] font-medium leading-[135%] tracking-[-0.018px];
+}
 
-  /* Body */
-  .Body_1 { @apply text-[14px] font-semibold leading-[145%] tracking-[-0.014px] truncate; }
-  .Body_1_1 { @apply text-[14px] font-semibold leading-[145%] tracking-[-0.014px]; }
-  .Body_1_2 { @apply text-[14px] font-medium leading-[145%] tracking-[-0.014px] ; }
-  .Body_1_3 { @apply text-[14px] font-normal leading-[145%] tracking-[-0.014px]; }
-  .Body_2_1 { @apply text-[12px] font-semibold leading-[145%] tracking-[-0.012px]; }
-  .Body_2_2 { @apply text-[12px] font-medium leading-[145%] tracking-[-0.012px]; }
-  .Body_2_3 { @apply text-[12px] font-normal leading-[145%] tracking-[-0.012px]; }
+/* Body */
+@utility body_1 {
+  @apply text-[14px] font-semibold leading-[145%] tracking-[-0.014px] truncate;
+}
+@utility body_1_1 {
+  @apply text-[14px] font-semibold leading-[145%] tracking-[-0.014px];
+}
+@utility body_1_2 {
+  @apply text-[14px] font-medium leading-[145%] tracking-[-0.014px];
+}
+@utility body_1_3 {
+  @apply text-[14px] font-normal leading-[145%] tracking-[-0.014px];
+}
+@utility body_2_1 {
+  @apply text-[12px] font-semibold leading-[145%] tracking-[-0.012px];
+}
+@utility body_2_2 {
+  @apply text-[12px] font-medium leading-[145%] tracking-[-0.012px];
+}
+@utility body_2_3 {
+  @apply text-[12px] font-normal leading-[145%] tracking-[-0.012px];
+}
 
-  /* Caption */
-  .Caption_1_1 { @apply text-[12px] font-semibold leading-[145%] tracking-[-0.012px]; }
-  .Caption_1_2 { @apply text-[12px] font-medium leading-[145%] tracking-[-0.012px]; }
+/* Caption */
+@utility caption_1_1 {
+  @apply text-[12px] font-semibold leading-[145%] tracking-[-0.012px];
+}
+@utility caption_1_2 {
+  @apply text-[12px] font-medium leading-[145%] tracking-[-0.012px];
 }

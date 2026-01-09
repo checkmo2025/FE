@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import Image from "next/image";
+import Image from 'next/image';
 
 type BookCoverCardProps = {
   imgUrl?: string;
@@ -21,18 +21,24 @@ export default function Search_BookCoverCard({
   liked,
   onLikeChange,
   onCardClick,
-  className = "",
+  className = '',
 }: BookCoverCardProps) {
-  const coverSrc = imgUrl && imgUrl.length > 0 ? imgUrl : "/booksample.svg";
+  const coverSrc = imgUrl && imgUrl.length > 0 ? imgUrl : '/booksample.svg';
 
   return (
     <div
       onClick={onCardClick}
       className={`relative flex w-[332px] h-[436px] p-[16px] flex-col justify-end items-start gap-[12px] overflow-hidden ${
-        onCardClick ? "cursor-pointer" : ""
+        onCardClick ? 'cursor-pointer' : ''
       } ${className}`}
     >
-      <Image src={coverSrc} alt={title} fill sizes="244px" className="object-cover" />
+      <Image
+        src={coverSrc}
+        alt={title}
+        fill
+        sizes="244px"
+        className="object-cover"
+      />
 
       <div className="relative z-[1] flex flex-col items-start gap-[10px]">
         <button
@@ -43,12 +49,21 @@ export default function Search_BookCoverCard({
           }}
           className="w-[24px] h-[24px] shrink-0"
         >
-          <Image src={liked ? "/red_heart.svg" : "/gray_heart.svg"} alt="" width={24} height={24} />
+          <Image
+            src={liked ? '/red_heart.svg' : '/gray_heart.svg'}
+            alt=""
+            width={24}
+            height={24}
+          />
         </button>
 
         <div className="flex flex-col items-start gap-[6px] min-w-0">
-          <p className="text-[color:var(--White,#FFF)] Subhead_1 truncate">{title}</p>
-          <p className="text-[color:var(--White,#FFF)] Subhead_4 truncate">{author}</p>
+          <p className="text-[color:var(--White,#FFF)] subhead_1 truncate">
+            {title}
+          </p>
+          <p className="text-[color:var(--White,#FFF)] subhead_4 truncate">
+            {author}
+          </p>
         </div>
       </div>
     </div>

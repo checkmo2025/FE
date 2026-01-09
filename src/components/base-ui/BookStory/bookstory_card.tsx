@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import Image from "next/image";
+import Image from 'next/image';
 
 type Props = {
   authorName: string;
@@ -19,7 +19,7 @@ function timeAgo(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
   const minutes = Math.floor(diff / 60000);
 
-  if (minutes < 1) return "방금";
+  if (minutes < 1) return '방금';
   if (minutes < 60) return `${minutes}분 전`;
 
   const hours = Math.floor(minutes / 60);
@@ -31,16 +31,16 @@ function timeAgo(iso: string) {
 
 export default function BookStoryCard({
   authorName,
-  profileImgSrc = "/profile2.svg",
+  profileImgSrc = '/profile2.svg',
   createdAt,
   viewCount,
-  coverImgSrc = "/bookstorycard.svg",
+  coverImgSrc = '/bookstorycard.svg',
   title,
   content,
   likeCount = 1,
   commentCount = 1,
   onSubscribeClick,
-  subscribeText = "구독",
+  subscribeText = '구독',
 }: Props) {
   return (
     <div className="flex h-[380px] w-[336px] flex-col overflow-hidden rounded-lg border-2 border-Subbrown-4 bg-White">
@@ -59,8 +59,8 @@ export default function BookStoryCard({
 
         {/* 이름 + 시간 + 조회수 */}
         <div className="min-w-0 flex-1">
-          <p className="Body_1 text-Gray-7 truncate">{authorName}</p>
-          <p className="Body_2_3 text-Gray-3 truncate">
+          <p className="body_1 text-Gray-7 truncate">{authorName}</p>
+          <p className="body_2_3 text-Gray-3 truncate">
             {timeAgo(createdAt)} 조회수 {viewCount}
           </p>
         </div>
@@ -69,7 +69,7 @@ export default function BookStoryCard({
         <button
           type="button"
           onClick={onSubscribeClick}
-          className="h-8 rounded-lg bg-primary-2 px-[17px] Body_2_1 text-White whitespace-nowrap"
+          className="h-8 rounded-lg bg-primary-2 px-[17px] body_2_1 text-White whitespace-nowrap"
         >
           {subscribeText}
         </button>
@@ -89,12 +89,8 @@ export default function BookStoryCard({
 
       {/* 제목 + 내용 */}
       <div className="px-4 pt-4 ">
-        <p className="Subhead_2 pb-1 text-Gray-7">
-          {title}
-        </p>
-        <p className="Body_1_3 h-[76px] pt-1 text-Gray-5">
-          {content}
-        </p>
+        <p className="subhead_2 pb-1 text-Gray-7">{title}</p>
+        <p className="body_1_3 h-[76px] pt-1 text-Gray-5">{content}</p>
       </div>
 
       {/* 좋아요 + 댓글 */}
@@ -107,9 +103,7 @@ export default function BookStoryCard({
             width={24}
             height={24}
           />
-          <span className="Body_1_2 text-Gray-4">
-            좋아요 {likeCount}
-          </span>
+          <span className="body_1_2 text-Gray-4">좋아요 {likeCount}</span>
         </div>
 
         {/* 구분선 */}
@@ -118,9 +112,7 @@ export default function BookStoryCard({
         {/* 댓글 */}
         <div className="flex items-center justify-center gap-2 pb-2">
           <Image src="/comment.svg" alt="댓글 아이콘" width={24} height={24} />
-          <span className="Body_1_2 text-Gray-4">
-            댓글 {commentCount}
-          </span>
+          <span className="body_1_2 text-Gray-4">댓글 {commentCount}</span>
         </div>
       </div>
     </div>

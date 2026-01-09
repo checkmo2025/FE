@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 type BookstoryDetailProps = {
   imageUrl?: string;
@@ -24,23 +24,25 @@ type BookstoryDetailProps = {
 };
 
 export default function BookstoryDetail({
-  imageUrl = "/bookstory_example.svg",
+  imageUrl = '/bookstory_example.svg',
   authorName,
   authorNickname,
   authorId,
-  profileImgSrc = "/profile2.svg",
-  subscribeText = "구독",
+  profileImgSrc = '/profile2.svg',
+  subscribeText = '구독',
   onSubscribeClick,
   bookTitle,
   bookAuthor,
   bookDetail,
   authorHref,
-  className = "",
+  className = '',
 }: BookstoryDetailProps) {
   const href = authorHref ?? `/profile/${authorId}`;
 
   return (
-    <div className={`flex w-full max-w-[1040px] p-[20px] items-start gap-[28px] bg-white ${className} `}>
+    <div
+      className={`flex w-full max-w-[1040px] p-[20px] items-start gap-[28px] bg-white ${className} `}
+    >
       <div className="relative w-[282px] h-[344px] shrink-0">
         <Image
           src={imageUrl}
@@ -65,12 +67,8 @@ export default function BookstoryDetail({
             </div>
 
             <div className="flex flex-col min-w-0">
-              <p className="text-Gray-7 Subhead_4_1 truncate">
-                {authorName}
-              </p>
-              <p className="text-Gray-4 Body_1_2 truncate">
-                {authorNickname}
-              </p>
+              <p className="text-Gray-7 subhead_4_1 truncate">{authorName}</p>
+              <p className="text-Gray-4 body_1_2 truncate">{authorNickname}</p>
             </div>
           </Link>
 
@@ -80,7 +78,7 @@ export default function BookstoryDetail({
             className="
               flex px-[17px] py-[8px] justify-center items-center gap-[10px]
               rounded-[8px] bg-primary-2
-              text-White Body_2_1 shrink-0
+              text-White body_2_1 shrink-0
             "
           >
             {subscribeText}
@@ -90,15 +88,9 @@ export default function BookstoryDetail({
         <div className="h-[16px]" />
 
         <div className="flex flex-col gap-[8px] min-w-0">
-          <p className="text-Gray-7 Subhead_1 truncate">
-            {bookTitle}
-          </p>
-          <p className="text-Gray-4 Subhead_4_1 truncate">
-            {bookAuthor}
-          </p>
-          <p className="text-Gray-4 Body_1_2 line-clamp-2">
-            {bookDetail}
-          </p>
+          <p className="text-Gray-7 subhead_1 truncate">{bookTitle}</p>
+          <p className="text-Gray-4 subhead_4_1 truncate">{bookAuthor}</p>
+          <p className="text-Gray-4 body_1_2 line-clamp-2">{bookDetail}</p>
         </div>
       </div>
     </div>

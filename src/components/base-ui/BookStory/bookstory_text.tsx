@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useCallback, useLayoutEffect, useRef } from "react";
+import React, { useCallback, useLayoutEffect, useRef } from 'react';
 
 type BookstoryTextProps = {
   title: string;
@@ -22,14 +22,14 @@ export default function BookstoryText({
     const el = textareaRef.current;
     if (!el) return;
 
-    el.style.height = "0px"; // 먼저 줄여서 scrollHeight 정확히 계산
+    el.style.height = '0px'; // 먼저 줄여서 scrollHeight 정확히 계산
     el.style.height = `${el.scrollHeight}px`;
   }, [detail]);
 
   // textarea에서 Tab을 "들여쓰기"로 처리
   const handleDetailKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key !== "Tab") return;
+      if (e.key !== 'Tab') return;
 
       e.preventDefault();
 
@@ -37,7 +37,7 @@ export default function BookstoryText({
       const start = el.selectionStart ?? 0;
       const end = el.selectionEnd ?? 0;
 
-      const insert = "  ";
+      const insert = '  ';
       const next = detail.slice(0, start) + insert + detail.slice(end);
 
       onChangeDetail(next);
@@ -46,7 +46,7 @@ export default function BookstoryText({
         el.selectionStart = el.selectionEnd = start + insert.length;
       });
     },
-    [detail, onChangeDetail]
+    [detail, onChangeDetail],
   );
 
   return (
@@ -65,7 +65,7 @@ export default function BookstoryText({
           placeholder="제목을 입력해주세요"
           className="
             w-full bg-transparent outline-none
-            text-Gray-7 Subhead_2
+            text-Gray-7 subhead_2
             placeholder:text-Gray-3
           "
         />
@@ -82,7 +82,7 @@ export default function BookstoryText({
           rows={6}
           className="
             w-full resize-none bg-transparent outline-none
-            text-Gray-7 Subhead_4_1
+            text-Gray-7 subhead_4_1
             placeholder:text-Gray-3
             whitespace-pre-wrap
           "

@@ -1,5 +1,5 @@
-"use client";
-import Image from "next/image";
+'use client';
+import Image from 'next/image';
 
 type NewsListProps = {
   imageUrl: string;
@@ -14,15 +14,15 @@ export default function NewsList({
   title,
   content,
   date,
-  className = "",
+  className = '',
 }: NewsListProps) {
   return (
     <div
       className={[
-        "inline-flex w-full max-w-[1040px] p-[20px] items-start",
-        "rounded-[8px] border border-[color:var(--Subbrown_4,#EAE5E2)] bg-white gap-6",
+        'inline-flex w-full max-w-[1040px] p-[20px] items-start',
+        'rounded-[8px] border border-[color:var(--Subbrown_4,#EAE5E2)] bg-white gap-6',
         className,
-      ].join(" ")}
+      ].join(' ')}
     >
       {/* left image */}
       <div className="relative w-[100px] h-[145px] shrink-0 ">
@@ -39,15 +39,15 @@ export default function NewsList({
       <div className="flex flex-1 min-w-0 items-start">
         {/* middle text */}
         <div className="flex flex-col gap-[8px] min-w-0 flex-1">
-          <p className="text-[#000] Subhead_3 truncate">{title}</p>
-          <p className="text-[color:var(--Gray_4,#8D8D8D)] Body_1_2 line-clamp-6">
+          <p className="text-[#000] subhead_3 truncate">{title}</p>
+          <p className="text-[color:var(--Gray_4,#8D8D8D)] body_1_2 line-clamp-6">
             {content}
           </p>
         </div>
 
         {/* 최소 120px 확보 + 날짜 오른쪽 고정 */}
         <div className="shrink-0 min-w-[180px] text-right">
-          <p className="text-[color:var(--Gray_3,#BBB)] Body_1_2">{date}</p>
+          <p className="text-[color:var(--Gray_3,#BBB)] body_1_2">{date}</p>
         </div>
       </div>
     </div>
