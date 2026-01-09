@@ -78,8 +78,6 @@ export default function ButtonWithoutImg({
       className={[
         'flex px-[16px] py-[12px] justify-center items-center gap-[10px]',
         'rounded-[8px] border',
-        'body_1_2 whitespace-nowrap',
-        'transition-colors',
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
         className,
       ].join(' ')}
