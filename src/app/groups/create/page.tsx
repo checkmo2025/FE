@@ -391,12 +391,12 @@ export default function CreateClubWizardPreview() {
           {/* STEP 3 */}
           {step === 3 && (
                   <section>
-                    <h2 className="text-[18px] font-semibold text-[#2C2C2C]">
+                    <h2 className="subhead_4_1 t:subhead_1">
                       선호하는 독서 카테고리를 선택해주세요!{" "}
-                      <span className="text-[12px] text-[#8D8D8D]">(최대 6개)</span>
+                      <span className="hidden t:box Gray_4 caption_1_1">(최대 6개)</span>
                     </h2>
 
-                    <div className="mt-4 flex flex-wrap gap-3">
+                    <div className="mt-4 flex flex-wrap gap-2.5">
                       {BOOK_CATEGORIES.map((c) => (
                         <Chip
                           key={c}
@@ -419,7 +419,7 @@ export default function CreateClubWizardPreview() {
                       모임의 대상을 선택해주세요! <span className="text-[12px] text-[#8D8D8D]">(최대 6개)</span>
                     </h2>
 
-                    <div className="mt-4 flex flex-wrap gap-3">
+                    <div className="mt-4 flex flex-wrap gap-2.5">
                       {PARTICIPANTS.map((p) => (
                         <Chip
                           key={p}
