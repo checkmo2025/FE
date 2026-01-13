@@ -19,7 +19,7 @@ export default function Chip({ label, selected, onClick, disabled }: ChipProps) 
       disabled={disabled}
       className={cx(
         "flex justify-center items-center",
-        "w-[100px] h-[32px] t:w-[150px] t:h-[48px]",
+        "w-[90px] h-[32px] t:w-[150px] t:h-[48px]",
         "rounded-full",
         "body_1_3 t:subhead_4_1",
         "bg-White border border-primary-2 t:border-2",

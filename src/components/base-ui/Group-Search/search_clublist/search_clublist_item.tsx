@@ -31,14 +31,27 @@ type Props = {
   club: ClubSummary;
   onClickVisit?: (clubId: number) => void;
   onClickApply?: (clubId: number) => void;
+
+  onSubmitApply: (clubId: number, reason: string) => void;
+  onCloseApply: () => void;
+  applyOpenId: number | null;
 };
 
 export default function SearchClubListItem({
   club,
   onClickVisit,
   onClickApply,
+  applyOpenId,
+  onCloseApply,
+  onSubmitApply,
 }: Props) {
   const imgSrc = club.profileImageUrl ?? DEFAULT_CLUB_IMG;
+  const isOpen = applyOpenId === club.clubId;
+
+  const [reason, setReason] = React.useState('');
+  React.useEffect(() => {
+    if (!isOpen) setReason('');
+  }, [isOpen]);
 
   const participantText = club.participantTypes
     .map((t) => PARTICIPANT_KO[t] ?? t)
@@ -49,59 +62,56 @@ export default function SearchClubListItem({
   return (
     <div
       className={[
-        'flex w-full max-w-[1040px] h-[180px] p-4',
-        'justify-between items-center',
+        'w-full max-w-[1440px] p-4',
         'rounded-[8px] border-2 border-Subbrown-4 bg-White',
+        'flex flex-col gap-4',
+        't:h-[180px]',
       ].join(' ')}
-    > 
-      {/* Left */}
-
-      {/* 테블릿 이상 */}
-      <div className="hidden sm:flex items-center gap-6 min-w-0">
-        <Image
-          src={imgSrc}
-          alt="모임 이미지"
-          width={148}
-          height={148}
-          className="shrink-0 rounded-[8px] object-cover"
-        />
-        <div>
-            {/*이름, 태그*/}
+    >
+      {/* 상단(기존 카드 내용)만 가로 배치 */}
+      <div className="flex justify-between">
+        {/* Left - Tablet */}
+        <div className="hidden t:flex flex-1 items-start gap-6 min-w-0">
+          <Image
+            src={imgSrc}
+            alt="모임 이미지"
+            width={148}
+            height={148}
+            className="shrink-0 rounded-[8px] object-cover"
+          />
           <div className="min-w-0">
-            
-            <p className="subhead_2 text-Gray-7 truncate">{club.name}</p>
-            {/* category tags */}
-            <div className="mt-2">
-              <ClubCategoryTags category={club.category} />
+            {/* 이름, 태그 */}
+            <div className="min-w-0">
+              <p className="subhead_2 text-Gray-7 truncate">{club.name}</p>
+              <div className="mt-1">
+                <ClubCategoryTags category={club.category} />
+              </div>
             </div>
-          </div>
-          {/*모임 대상 , 지역*/}
-          <div className="mt-3 flex flex-col gap-1">
-              <p className="Body_1_2 text-Gray-4">
-                모임 대상 :{' '}
-                <span className="text-Gray-7">{participantText || '-'}</span>
+
+            {/* 모임 대상, 지역 */}
+            <div className="mt-3 flex flex-col gap-1">
+              <p className="body_1_2 text-Gray-4">
+                모임 대상 : <span className="text-Gray-7">{participantText || '-'}</span>
               </p>
-              <p className="Body_1_2 text-Gray-4">
+              <p className="body_1_2 text-Gray-4">
                 활동 지역 : <span className="text-Gray-7">{club.region}</span>
               </p>
+            </div>
           </div>
         </div>
-        
-      </div>
 
-      {/* 모바일 */}
-      <div className="sm:hidden items-center gap-6 min-w-0">
-        {/*이름, 태그*/}
-        <div className="min-w-0">
+        {/* Left - Mobile */}
+        <div className="t:hidden flex flex-1 flex-col min-w-0">
+          {/* 이름, 태그 */}
+          <div className="min-w-0">
             <p className="body_1 text-Gray-7 truncate">{club.name}</p>
-            {/* category tags */}
             <div className="mt-1">
-              <ClubCategoryTags category={club.category} className='body_2_2' />
+              <ClubCategoryTags category={club.category} className="body_2_2" />
             </div>
-        </div>
+          </div>
 
-          <div className="mt-3 flex items-start gap-4">
-            {/* 1) 이미지 */}
+          {/* 이미지 + 정보 */}
+          <div className="mt-5 flex items-start gap-4">
             <Image
               src={imgSrc}
               alt="모임 이미지"
@@ -109,8 +119,6 @@ export default function SearchClubListItem({
               height={72}
               className="shrink-0 rounded-[8px] object-cover"
             />
-
-            {/* 3) 모임 대상, 지역 */}
             <div className="flex flex-col gap-1 min-w-0">
               <p className="body_2_2 text-Gray-4">
                 모임 대상 : <span className="text-Gray-7">{participantText || '-'}</span>
@@ -120,76 +128,87 @@ export default function SearchClubListItem({
               </p>
             </div>
           </div>
-        
-      </div>
+        </div>
 
-      {/* RIGHT: 상태/버튼 */}
-      <div className="flex flex-col justify-between h-full items-end">
-        {/* 오른쪽 상단: 공개/비공개 + applytype 상태 */}
-        <div className="flex flex-col items-end">
-          {/* 공개/비공개 */}
-          <div className="flex items-center gap-1">
-            <span className="body_2_2 lg:body_1_2 text-Gray-4">
-              {club.public ? '공개' : '비공개'}
-            </span>
-            <Image
-              src={club.public ? '/Unlock.svg' : '/lock.svg'}
-              alt=""
-              width={16}
-              height={16}
-            />
+        {/* RIGHT */}
+        <div className="shrink-0 flex flex-col items-end t:justify-between t:h-full">
+          {/* 공개/비공개 + 상태 */}
+          <div className="flex flex-col items-end gap-1">
+            <div className="flex items-center gap-1">
+              <span className="body_1_2 text-Gray-4">{club.public ? '공개' : '비공개'}</span>
+              <Image src={club.public ? '/Unlock.svg' : '/lock.svg'} alt="" width={16} height={16} />
+            </div>
+
+            {applyMeta.label && (
+              <div className="flex items-center gap-1">
+                <span className={['body_1_2', applyMeta.labelClass ?? 'text-Gray-4'].join(' ')}>
+                  {applyMeta.label}
+                </span>
+                {applyMeta.icon && <Image src={applyMeta.icon} alt="" width={16} height={16} />}
+              </div>
+            )}
           </div>
 
-          {applyMeta.label && (
-            <div className="flex items-center gap-1">
-              <span className={['body_2_2 lg:body_1_2', applyMeta.labelClass ?? 'text-Gray-4'].join(' ')}>
-                {applyMeta.label}
-              </span>
-              {applyMeta.icon && (
-                <Image src={applyMeta.icon} alt="" width={16} height={16} />
-              )}
-            </div>
-          )}
-        </div>
-        
-        {/* 오른쪽 하단: 버튼 */}
-        <div className="w-[100px] sm:w-[132px]">
-          {club.applytype === 'No' && (
+          {/* 버튼 */}
+          <div className="w-[100px] t:w-[132px] mt-auto">
+            {club.applytype === 'No' && (
+              <button
+                type="button"
+                onClick={() => onClickApply?.(club.clubId)}
+                className={[
+                  'h-[28px] t:h-[40px] px-4 py-2 w-full',
+                  'flex items-center justify-center',
+                  'rounded-[8px]',
+                  'bg-primary-2 text-White',
+                  'body_2_2 t:body_1_2',
+                  'mb-1',
+                ].join(' ')}
+              >
+                <span className="t:hidden">{isOpen ? '신청 닫기' : '가입신청하기'}</span>
+                <span className="hidden t:inline">가입신청하기</span>
+              </button>
+            )}
+
             <button
               type="button"
-              onClick={() => onClickApply?.(club.clubId)}
+              onClick={() => onClickVisit?.(club.clubId)}
               className={[
-                'flex-1',
-                'h-[28px] sm:h-[40px] px-4 py-2 w-full',
+                'h-[28px] t:h-[40px] px-4 py-2 w-full',
                 'flex items-center justify-center gap-[10px]',
                 'rounded-[8px]',
-                'bg-primary-2 text-White',
-                'body_1_2',
-                'mb-1'
+                'border border-primary-1',
+                'bg-background text-primary-3',
+                'body_2_2 t:body_1_2',
               ].join(' ')}
             >
-              가입하기
+              방문하기
             </button>
-          )}
+          </div>
+        </div>
+      </div>
 
+      {/* ✅ 모바일에서만: 아이템 아래로 확장 신청폼 */}
+      {club.applytype === 'No' && isOpen && (
+        <div className="t:hidden w-full">
+          <textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value.slice(0, 300))}
+            placeholder="신청 사유를 입력해보세요(300자 제한)"
+            className="w-full min-h-[220px] rounded-[12px] bg-Gray-1 p-4 body_2_2 outline-none"
+          />
           <button
             type="button"
-            onClick={() => onClickVisit?.(club.clubId)}
+            disabled={!reason.trim()}
+            onClick={() => onSubmitApply(club.clubId, reason)}
             className={[
-              'flex-1',
-              'h-[28px] sm:h-[40px] px-4 py-2 w-full',
-              'flex items-center justify-center gap-[10px]',
-              'rounded-[8px]',
-              'border border-primary-1',
-              'bg-background text-primary-3',
-              'body_1_2',
+              'mt-4 w-full h-[44px] rounded-[10px] body_1_2',
+              reason.trim() ? 'bg-primary-2 hover:bg-primary-1 text-White' : 'bg-Gray-2 text-Gray-4',
             ].join(' ')}
           >
-            방문하기
+            가입신청하기
           </button>
         </div>
-
-      </div>
+      )}
     </div>
   );
 }
