@@ -15,10 +15,10 @@
   --Gray_6: #434343;
   --Gray_7: #2c2c2c;
 
-  --Secondary_4: #907AF1;
-  --Secondary_3: #7AD1F1;
-  --Secondary_2: #F5BB80;
-  --Secondary_1: #EB9288;
+  --Secondary_4: #907af1;
+  --Secondary_3: #7ad1f1;
+  --Secondary_2: #f5bb80;
+  --Secondary_1: #eb9288;
 
   --Subbrown_4: #eae5e2;
   --Subbrown_3: #d2c5b6;
@@ -31,6 +31,9 @@
 }
 
 @theme inline {
+  --breakpoint-t: 768px;
+  --breakpoint-d: 1440px;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: "Pretendard Variable", Pretendard, system-ui, sans-serif;
@@ -71,7 +74,8 @@
 }
 
 @layer base {
-  html, body {
+  html,
+  body {
     font-family: var(--font-sans);
   }
 }
