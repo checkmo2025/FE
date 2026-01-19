@@ -17,6 +17,7 @@ import SearchClubApplyModal from '@/components/base-ui/Group-Search/search_club_
 
 
 export interface ClubSummary {
+  reason(clubId: number, reason: string): void;
   clubId: number;
   name: string;
   profileImageUrl?: string | null; // 없으면 기본 이미지 쓰면 됨
@@ -34,49 +35,49 @@ export default function Searchpage() {
   const [group, setGroup] = useState<boolean>(false);
   const [region, setRegion] = useState<boolean>(false);
 
+  const [applyClubId, setApplyClubId] = useState<number | null>(null);
+  const selectedClub = dummyClubs.find((c) => c.clubId === applyClubId) ?? null;
   // 모달
   const router = useRouter();
-  const [applyClubId, setApplyClubId] = useState<number | null>(null);
+  
 
   const onClickVisit = (clubId: number) => {
     router.push(`/clubs/${clubId}`); // 네 라우팅에 맞게 바꿔
   };
 
   const onClickApply = (clubId: number) => {
-    setApplyClubId(clubId); // 모달 오픈
+    setApplyClubId((prev) => (prev === clubId ? null : clubId));
   };
   const onCloseApply = () => setApplyClubId(null);
 
-  const onSubmitApply = async (reason: string) => {
-    if (applyClubId == null) return;
+  const onSubmitApply = (clubId: number, reason: string) => {
+    if (!reason.trim()) return;
 
-    // TODO: 여기서 API 호출
-
-    console.log('apply:', applyClubId, reason);
+    console.log('apply:', clubId, reason);
+    // TODO API
     setApplyClubId(null);
   };
 
-
   return (
-    <div className= 'max-w-[1440px] flex flex-col gap-6 lg:flex-row mt-3 sm:mt-5 lg:mt-6 mx-auto px-6 '>
+    <div className= 'max-w-[1440px] flex flex-col gap-6 d:flex-row mt-3 sm:mt-5 d:mt-6 mx-auto px-6'>
       
-      <aside className="lg:w-[332px]">
-        <p className='body_1 sm:subhead_2'>독서 모임</p>
+      <aside className="d:w-[332px]">
+        <p className='body_1 t:subhead_2'>독서 모임</p>
         {/* 모바일 */}
-        <div className="flex w-full sm:hidden mt-3 mb-2">
+        <div className="flex w-full t:hidden mt-5 mb-2">
           <ButtonWithoutImg
             text="+ 모임 생성하기"
             height={36}
             bgColorVar="--primary_1"
             borderColorVar="--primary_1"
             textColorVar="--White"
-            className=" flex-1 subhead_4_1"
+            className=" flex-1 body_1"
+            onClick={() => router.push('/groups/create')}
           />                
         </div>
 
-        {/* sm 이상 */}
-        <div className="hidden w-full sm:flex mt-5 mb-4">
-          
+        {/* 테블릿 이상 */}
+        <div className="hidden w-full t:flex mt-5 mb-4">
            <ButtonWithoutImg
             text="+ 모임 생성하기"
             height={56}
@@ -84,6 +85,7 @@ export default function Searchpage() {
             borderColorVar="--primary_1"
             textColorVar="--White"
             className="flex-1 subhead_4_1"
+            onClick={() => router.push('/groups/create')}
           />
                     
         </div>
@@ -91,10 +93,10 @@ export default function Searchpage() {
         <Mybookclub groups={mydummyGroup} />
       </aside>
 
-      <main className = "w-full max-w-[1040px]" >
+      <main className = "w-full max-w-[1440px]" >
         <div>
-          <p className='body_1 sm:subhead_2'>모임 검색하기</p>  
-          <div className='mt-4 lg:mt-5 mb-4 lg:mb-5'>
+          <p className='body_1 t:subhead_2'>모임 검색하기</p>  
+          <div className='mt-4 d:mt-5 mb-5'>
             <SearchGroupSearch
               value={q}
               onChange={setQ}
@@ -109,7 +111,7 @@ export default function Searchpage() {
           </div>
         </div>
 
-        <div className="w-full ">
+        <div className="w-full">
             <div className="flex flex-col gap-4">
               {dummyClubs.map((club) => (
                 <SearchClubListItem
@@ -117,6 +119,9 @@ export default function Searchpage() {
                   club={club}
                   onClickVisit={onClickVisit}
                   onClickApply={onClickApply}
+                  applyOpenId={applyClubId}
+                  onCloseApply={onCloseApply}
+                  onSubmitApply={onSubmitApply}
                 />
               ))}
             </div>
@@ -124,12 +129,16 @@ export default function Searchpage() {
       
       </main>
 
+      {/* 태블릿 이상: 기존 모달 */}
+    <div className="hidden t:block">
       <SearchClubApplyModal
         open={applyClubId !== null}
-        club={dummyClubs.find((c) => c.clubId === applyClubId) ?? null}
+        club={selectedClub}
         onClose={onCloseApply}
         onSubmit={onSubmitApply}
       />
+    </div>
+
     </div>
      
     

@@ -74,7 +74,7 @@ export default function SearchGroupSearch({
           onSubmit?.();
         }}
         className={[
-          'w-full h-[56px]',
+          'w-full h-[44px] t:h-[56px]',
           'flex items-center gap-[10px]',
           'px-4 py-3',
           'rounded-[8px]',
@@ -87,7 +87,7 @@ export default function SearchGroupSearch({
           placeholder="검색하기 (모임명, 지역별)"
           className={[
             'flex-1 min-w-0 bg-transparent outline-none',
-            'subhead_4_1',
+            'body_1_3 t:subhead_4_1',
             'placeholder:text-Gray-3 text-Gray-7',
           ].join(' ')}
         />
@@ -97,7 +97,7 @@ export default function SearchGroupSearch({
       </form>
 
       {/* 필터 바 */}
-      <div className="flex items-center gap-6 mt-3 subhead_4_1 text-Gray-7 ml-1">
+      <div className="flex items-center gap-6 mt-4 body_1_3 t:subhead_4_1 text-Gray-7 ml-1">
         <div className="relative">
           <button
             type="button"
@@ -136,7 +136,7 @@ export default function SearchGroupSearch({
                   className={[
                     'w-full text-left',
                     'px-4 py-3',
-                    'subhead_4_1',
+                    'body_1_3 t:subhead_4_1',
                     selected ? 'bg-Subbrown-4 text-Gray-7' : 'bg-White text-Gray-7',
                     'hover:bg-Subbrown-4',
                   ].join(' ')}
@@ -148,11 +148,11 @@ export default function SearchGroupSearch({
           </div>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3 t:gap-6">
           <button
             type="button"
             onClick={() => setGroup(!group)}
-            className="flex items-center gap-[12px]"
+            className="flex items-center gap-2 t:gap-3"
             aria-pressed={group}
           >
             <Image
@@ -167,7 +167,7 @@ export default function SearchGroupSearch({
           <button
             type="button"
             onClick={() => setRegion(!region)}
-            className="flex items-center gap-[12px]"
+            className="flex items-center gap-2 t:gap-3"
             aria-pressed={region}
           >
             <Image

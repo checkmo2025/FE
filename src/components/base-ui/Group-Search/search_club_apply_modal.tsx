@@ -21,7 +21,7 @@ type Props = {
   open: boolean;
   club: ClubSummary | null;
   onClose: () => void;
-  onSubmit: (reason: string) => void;
+  onSubmit: (club: number, reason: string) => void;
 };
 
 export default function SearchClubApplyModal({

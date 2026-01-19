@@ -142,3 +142,9 @@ body {
 @utility caption_1_2 {
   @apply text-[12px] font-medium leading-[145%] tracking-[-0.012px];
 }
+
+
+@theme {
+  --breakpoint-t: 768px;
+  --breakpoint-d: 1440px;
+}
