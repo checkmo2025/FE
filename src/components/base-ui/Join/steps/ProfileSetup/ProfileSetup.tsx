@@ -1,5 +1,5 @@
 import React from "react";
-import JoinHeader from "../../JoinHeader ";
+import JoinHeader from "../../JoinHeader";
 import JoinButton from "../../JoinButton";
 import JoinInput from "../../JoinInput";
 import { useProfileSetup } from "./useProfileSetup";

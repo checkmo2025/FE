@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import JoinHeader from "../../JoinHeader ";
+import JoinHeader from "../../JoinHeader";
 import JoinButton from "../../JoinButton";
 import TermsList from "../TermsList";
 import TermsItem from "../TermsItem";

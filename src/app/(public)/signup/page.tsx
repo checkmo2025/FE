@@ -5,11 +5,12 @@ import TermsAgreement from "@/components/base-ui/Join/steps/TermsAgreement/Terms
 import EmailVerification from "@/components/base-ui/Join/steps/EmailVerification/EmailVerification";
 import PasswordEntry from "@/components/base-ui/Join/steps/PasswordEntry/PasswordEntry";
 import ProfileSetup from "@/components/base-ui/Join/steps/ProfileSetup/ProfileSetup";
+import ProfileImage from "@/components/base-ui/Join/steps/ProfileImage/ProfileImage";
 
 export default function SignupPage() {
-  const [step, setStep] = useState<"terms" | "email" | "password" | "profile">(
-    "terms"
-  );
+  const [step, setStep] = useState<
+    "terms" | "email" | "password" | "profile" | "profile-image"
+  >("terms");
 
   return (
     <div
@@ -32,7 +33,10 @@ export default function SignupPage() {
         {step === "password" && (
           <PasswordEntry onNext={() => setStep("profile")} />
         )}
-        {step === "profile" && <ProfileSetup />}
+        {step === "profile" && (
+          <ProfileSetup onNext={() => setStep("profile-image")} />
+        )}
+        {step === "profile-image" && <ProfileImage />}
       </div>
     </div>
   );
