@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import TermsAgreement from "@/components/base-ui/Join/steps/TermsAgreement/TermsAgreement";
 import EmailVerification from "@/components/base-ui/Join/steps/EmailVerification/EmailVerification";
+import PasswordEntry from "@/components/base-ui/Join/steps/PasswordEntry/PasswordEntry";
 
 export default function SignupPage() {
-  const [step, setStep] = useState<"terms" | "email">("terms");
+  const [step, setStep] = useState<"terms" | "email" | "password">("terms");
 
   return (
     <div
@@ -22,7 +23,10 @@ export default function SignupPage() {
             }}
           />
         )}
-        {step === "email" && <EmailVerification />}
+        {step === "email" && (
+          <EmailVerification onNext={() => setStep("password")} />
+        )}
+        {step === "password" && <PasswordEntry />}
       </div>
     </div>
   );
