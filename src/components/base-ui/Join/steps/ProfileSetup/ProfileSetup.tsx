@@ -2,7 +2,7 @@ import React from "react";
 import JoinHeader from "../../JoinHeader ";
 import JoinButton from "../../JoinButton";
 import JoinInput from "../../JoinInput";
-import { useProfileSetup } from "./useProfileSetup ";
+import { useProfileSetup } from "./useProfileSetup";
 
 interface ProfileSetupProps {
   onNext?: () => void;
@@ -11,6 +11,7 @@ interface ProfileSetupProps {
 const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
   const {
     nickname,
+    isNicknameChecked,
     intro,
     name,
     phone,
@@ -38,13 +39,18 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
                 <JoinInput
                   value={nickname}
                   onChange={handleNicknameChange}
+                  disabled={isNicknameChecked}
                   placeholder="닉네임을 입력해주세요(최대 20글자)"
                   className="border-[#EAE5E2] placeholder-[#BBB] text-[14px] font-normal"
                 />
               </div>
               <button
                 onClick={handleCheckDuplicate}
-                className="w-[106px] h-[44px] rounded-[8px] border border-[#D2C5B6] bg-[#EAE5E2] text-[#5E4A40] text-[14px] font-normal"
+                className={`w-[106px] h-[44px] rounded-[8px] border  ${
+                  isNicknameChecked
+                    ? "bg-[#7B6154] border-[1px] border-[#7B6154] text-[#FFF] font-medium"
+                    : "border-[#D2C5B6] bg-[#EAE5E2] text-[#5E4A40] font-normal"
+                } text-[14px] leading-[145%] tracking-[-0.014px]`}
               >
                 중복확인
               </button>
