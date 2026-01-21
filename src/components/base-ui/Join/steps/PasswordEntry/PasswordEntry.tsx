@@ -1,26 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import JoinHeader from "../../JoinHeader ";
 import JoinButton from "../../JoinButton";
 import JoinInput from "../../JoinInput";
+import { usePasswordEntry } from "./usePasswordEntry";
 
 interface PasswordEntryProps {
   onNext?: () => void;
 }
 
 const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isValid, setIsValid] = useState(false);
-
-  useEffect(() => {
-    // 6-12자, 영문 최소 1자, 특수문자 최소 1자
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*]).{6,12}$/;
-    const isPasswordValid = passwordRegex.test(password);
-    const isMatch = password === confirmPassword;
-
-    setIsValid(isPasswordValid && isMatch && password.length > 0);
-  }, [password, confirmPassword]);
-
+  const {
+    password,
+    confirmPassword,
+    isValid,
+    handlePasswordChange,
+    handleConfirmChange,
+  } = usePasswordEntry();
   return (
     <div className="relative flex flex-col items-center w-[766px] px-[56px] py-[99px] bg-white rounded-[8px]">
       <JoinHeader title="비밀번호 입력" />
@@ -31,7 +26,6 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
           {/* 비밀번호 입력 필드 (커스텀 라벨) */}
           <div className="flex flex-col w-full gap-[13px]">
             <div className="flex flex-row items-center gap-2">
-              {" "}
               <span className="text-[#7B6154] font-sans text-[20px] font-semibold leading-[135%] tracking-[-0.02px]">
                 비밀번호
               </span>
@@ -43,7 +37,7 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
               type="password"
               placeholder="비밀번호"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               className="border-[#EAE5E2] placeholder-[#BBB] text-[14px] font-normal"
             />
           </div>
@@ -53,7 +47,7 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
             type="password"
             placeholder="비밀번호 확인"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={handleConfirmChange}
             className="border-[#EAE5E2] placeholder-[#BBB] text-[14px] font-normal"
           />
         </div>

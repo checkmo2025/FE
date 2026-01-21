@@ -1,4 +1,4 @@
-// 비즈니스 로직
+// 이메일 UI 비즈니스 로직
 import { useState, useEffect } from "react";
 
 export const useEmailVerification = () => {
