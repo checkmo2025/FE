@@ -2,10 +2,10 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import JoinHeader from "../JoinHeader ";
-import JoinButton from "../JoinButton";
-import TermsList from "./TermsList";
-import TermsItem from "./TermsItem";
+import JoinHeader from "../../JoinHeader ";
+import JoinButton from "../../JoinButton";
+import TermsList from "../TermsList";
+import TermsItem from "../TermsItem";
 
 export const TERMS_DATA = [
   {
@@ -22,7 +22,11 @@ export const TERMS_DATA = [
   },
 ];
 
-const TermsAgreement = () => {
+interface TermsAgreementProps {
+  onNext: () => void;
+}
+
+const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
   const [agreements, setAgreements] = useState<Record<string, boolean>>({
     servicePrivacy: false,
     termsOfUse: false,
@@ -34,6 +38,11 @@ const TermsAgreement = () => {
   const isButtonEnabled = TERMS_DATA.filter((term) => term.required).every(
     (term) => agreements[term.id]
   );
+
+  const handleNext = () => {
+    console.log("TermsAgreement: Next button clicked");
+    onNext();
+  };
 
   const handleAgreementChange = (id: string, checked: boolean) => {
     setAgreements((prev) => ({ ...prev, [id]: checked }));
@@ -51,7 +60,6 @@ const TermsAgreement = () => {
   return (
     <div className="flex flex-col items-center w-[766px] px-[56px] py-[99px] gap-[101px] bg-white rounded-[8px]">
       <JoinHeader title="약관 동의" />
-
       <TermsList>
         <div className="flex flex-col gap-8 pb-3">
           {TERMS_DATA.map((term) => (
@@ -99,8 +107,9 @@ const TermsAgreement = () => {
           </div>
         </label>
       </TermsList>
-
-      <JoinButton disabled={!isButtonEnabled}>다음</JoinButton>
+      <JoinButton disabled={!isButtonEnabled} onClick={handleNext}>
+        다음
+      </JoinButton>
     </div>
   );
 };

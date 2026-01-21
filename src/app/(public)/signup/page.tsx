@@ -1,7 +1,12 @@
-import React from "react";
-import TermsAgreement from "@/components/base-ui/Join/steps/TermsAgreement";
+"use client";
+
+import React, { useState } from "react";
+import TermsAgreement from "@/components/base-ui/Join/steps/TermsAgreement/TermsAgreement";
+import EmailVerification from "@/components/base-ui/Join/steps/EmailVerification/EmailVerification";
 
 export default function SignupPage() {
+  const [step, setStep] = useState<"terms" | "email">("terms");
+
   return (
     <div
       className="relative flex items-center justify-center w-full min-h-screen py-12 bg-center bg-cover"
@@ -9,7 +14,15 @@ export default function SignupPage() {
     >
       {/* Modal Container */}
       <div className="relative z-10 flex flex-col w-11/12 mx-auto bg-white rounded-lg shadow-lg md:max-w-3xl">
-        <TermsAgreement />
+        {step === "terms" && (
+          <TermsAgreement
+            onNext={() => {
+              console.log("Page: Moving to email step");
+              setStep("email");
+            }}
+          />
+        )}
+        {step === "email" && <EmailVerification />}
       </div>
     </div>
   );
