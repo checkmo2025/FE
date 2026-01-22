@@ -9,7 +9,6 @@ export const useEmailVerification = () => {
   const [isCodeValid, setIsCodeValid] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const [isToastVisible, setIsToastVisible] = useState(false);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -55,20 +54,6 @@ export const useEmailVerification = () => {
     return () => clearInterval(interval);
   }, [timeLeft]);
 
-  useEffect(() => {
-    if (showToast) {
-      const showTimer = setTimeout(() => setIsToastVisible(true), 10);
-      const hideTimer = setTimeout(() => setIsToastVisible(false), 3000);
-      const unmountTimer = setTimeout(() => setShowToast(false), 3300);
-
-      return () => {
-        clearTimeout(showTimer);
-        clearTimeout(hideTimer);
-        clearTimeout(unmountTimer);
-      };
-    }
-  }, [showToast]);
-
   return {
     email,
     isEmailValid,
@@ -81,7 +66,7 @@ export const useEmailVerification = () => {
     isVerified,
     handleVerify,
     showToast,
-    isToastVisible,
+    setShowToast,
     formatTime,
   };
 };

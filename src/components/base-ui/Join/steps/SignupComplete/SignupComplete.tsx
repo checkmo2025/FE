@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import JoinHeader from "../../JoinHeader";
+import JoinButton from "../../JoinButton";
 import { useSignupComplete } from "./useSignupComplete";
 
 const SignupComplete: React.FC = () => {
@@ -49,24 +50,15 @@ const SignupComplete: React.FC = () => {
 
         {/* 3. 버튼 그룹 섹션 */}
         <div className="flex flex-col w-full gap-[20px] mt-[60px]">
-          <button
-            onClick={handleSearchMeeting}
-            className="w-full h-[48px] px-[16px] py-[12px] rounded-[8px] bg-[#7B6154] text-[#FFF] font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px]"
-          >
+          <JoinButton onClick={handleSearchMeeting} className="w-full">
             모임 검색하기
-          </button>
-          <button
-            onClick={handleCreateMeeting}
-            className="w-full h-[48px] px-[16px] py-[12px] rounded-[8px] bg-[#7B6154] text-[#FFF] font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px]"
-          >
+          </JoinButton>
+          <JoinButton onClick={handleCreateMeeting} className="w-full">
             모임 생성하기
-          </button>
-          <button
-            onClick={handleUseWithoutMeeting}
-            className="w-full h-[48px] px-[16px] py-[12px] rounded-[8px] bg-[#7B6154] text-[#FFF] font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px]"
-          >
+          </JoinButton>
+          <JoinButton onClick={handleUseWithoutMeeting} className="w-full">
             모임 없이 이용하기
-          </button>
+          </JoinButton>
         </div>
       </div>
     </div>

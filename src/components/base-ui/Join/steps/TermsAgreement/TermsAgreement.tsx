@@ -27,12 +27,12 @@ interface TermsAgreementProps {
 }
 
 const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
-  const [agreements, setAgreements] = useState<Record<string, boolean>>({
-    servicePrivacy: false,
-    termsOfUse: false,
-    thirdParty: false,
-    marketing: false,
-  });
+  const initialAgreements = TERMS_DATA.reduce((acc, term) => {
+    acc[term.id] = false;
+    return acc;
+  }, {} as Record<string, boolean>);
+
+  const [agreements, setAgreements] = useState(initialAgreements);
 
   const allAgreed = TERMS_DATA.every((term) => agreements[term.id]);
   const isButtonEnabled = TERMS_DATA.filter((term) => term.required).every(
@@ -40,7 +40,6 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
   );
 
   const handleNext = () => {
-    console.log("TermsAgreement: Next button clicked");
     onNext();
   };
 

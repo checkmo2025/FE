@@ -45,6 +45,8 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
           {/* 비밀번호 확인 입력 필드 */}
           <JoinInput
             type="password"
+            label="비밀번호 확인"
+            hideLabel
             placeholder="비밀번호 확인"
             value={confirmPassword}
             onChange={handleConfirmChange}

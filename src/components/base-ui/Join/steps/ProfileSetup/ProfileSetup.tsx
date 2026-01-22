@@ -44,16 +44,15 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
                   className="border-[#EAE5E2] placeholder-[#BBB] text-[14px] font-normal"
                 />
               </div>
-              <button
+              <JoinButton
                 onClick={handleCheckDuplicate}
-                className={`w-[106px] h-[44px] rounded-[8px] border  ${
-                  isNicknameChecked
-                    ? "bg-[#7B6154] border-[1px] border-[#7B6154] text-[#FFF] font-medium"
-                    : "border-[#D2C5B6] bg-[#EAE5E2] text-[#5E4A40] font-normal"
-                } text-[14px] leading-[145%] tracking-[-0.014px]`}
+                variant={isNicknameChecked ? "primary" : "secondary"}
+                className={`w-[106px] h-[44px] px-0 py-0 text-[14px] ${
+                  isNicknameChecked ? "font-medium" : "font-normal"
+                }`}
               >
                 중복확인
-              </button>
+              </JoinButton>
             </div>
           </div>
 

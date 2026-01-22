@@ -3,6 +3,7 @@ import JoinHeader from "../../JoinHeader";
 import JoinButton from "../../JoinButton";
 import JoinInput from "../../JoinInput";
 import { useEmailVerification } from "../useEmailVerification";
+import Toast from "@/components/common/Toast";
 
 interface EmailVerificationProps {
   onNext?: () => void;
@@ -21,7 +22,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ onNext }) => {
     isVerified,
     handleVerify,
     showToast,
-    isToastVisible,
+    setShowToast,
     formatTime,
   } = useEmailVerification();
 
@@ -93,15 +94,10 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ onNext }) => {
         다음
       </JoinButton>
       {showToast && (
-        <div
-          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 inline-flex justify-center items-center h-[88px] pl-[138px] pr-[137px] bg-[#31111D99] rounded-[24px] backdrop-blur-[1px] transition-opacity duration-300 ${
-            isToastVisible ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <span className="text-[#FFF] text-[18px] font-medium leading-[135%] tracking-[-0.018px] whitespace-nowrap">
-            인증이 완료되었습니다.
-          </span>
-        </div>
+        <Toast
+          message="인증이 완료되었습니다."
+          onClose={() => setShowToast(false)}
+        />
       )}
     </div>
   );

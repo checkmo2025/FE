@@ -12,6 +12,20 @@ export default function SignupPage() {
   const [step, setStep] = useState<
     "terms" | "email" | "password" | "profile" | "profile-image" | "complete"
   >("terms");
+  const steps = {
+    terms: (
+      <TermsAgreement
+        onNext={() => {
+          setStep("email");
+        }}
+      />
+    ),
+    email: <EmailVerification onNext={() => setStep("password")} />,
+    password: <PasswordEntry onNext={() => setStep("profile")} />,
+    profile: <ProfileSetup onNext={() => setStep("profile-image")} />,
+    "profile-image": <ProfileImage onNext={() => setStep("complete")} />,
+    complete: <SignupComplete />,
+  };
 
   return (
     <div
@@ -20,27 +34,7 @@ export default function SignupPage() {
     >
       {/* Modal Container */}
       <div className="relative z-10 flex flex-col w-11/12 mx-auto bg-white rounded-lg shadow-lg md:max-w-3xl">
-        {step === "terms" && (
-          <TermsAgreement
-            onNext={() => {
-              console.log("Page: Moving to email step");
-              setStep("email");
-            }}
-          />
-        )}
-        {step === "email" && (
-          <EmailVerification onNext={() => setStep("password")} />
-        )}
-        {step === "password" && (
-          <PasswordEntry onNext={() => setStep("profile")} />
-        )}
-        {step === "profile" && (
-          <ProfileSetup onNext={() => setStep("profile-image")} />
-        )}
-        {step === "profile-image" && (
-          <ProfileImage onNext={() => setStep("complete")} />
-        )}
-        {step === "complete" && <SignupComplete />}
+        {steps[step]}
       </div>
     </div>
   );

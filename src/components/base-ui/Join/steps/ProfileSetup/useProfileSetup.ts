@@ -47,7 +47,11 @@ export const useProfileSetup = () => {
   };
 
   const isValid =
-    nickname !== "" && intro !== "" && name !== "" && phone !== "";
+    nickname !== "" &&
+    isNicknameChecked &&
+    intro !== "" &&
+    name !== "" &&
+    phone !== "";
 
   return {
     nickname,
