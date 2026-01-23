@@ -1,0 +1,245 @@
+/* src/components/base-ui/Login/LoginModal.module.css */
+
+/* [Container] Tablet/Desktop Default (Min-Width: 768px) */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 379px;
+  height: 520px;
+  padding: 20px 40px;
+  gap: 24px;
+  border-radius: 8px;
+  border: 1px solid var(--Subbrown_4);
+  background-color: var(--White);
+  position: relative;
+  overflow: hidden;
+}
+
+/* [Close Icon] */
+.closeIcon {
+  position: absolute;
+  top: 23px;
+  right: 16px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  z-index: 10;
+  color: var(--Primary_1);
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* [Header Logo Wrapper] */
+.headerLogo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.headerLogo svg {
+  fill: var(--Primary_1);
+}
+
+/* [Main Content Wrapper] */
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 40px;
+  flex-shrink: 0;
+}
+
+/* [Input & Social Group Wrapper] */
+.inputSocialWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+/* [Input & Login Button Group] */
+.inputLoginGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%; /* Desktop default */
+  gap: 24px;
+  flex-shrink: 0;
+}
+
+/* [Input Fields Wrapper] */
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 8px; /* Tablet/Desktop Spec */
+  flex-shrink: 0;
+}
+
+/* [Input Field] */
+.input {
+  display: flex;
+  width: 300px; /* Desktop width */
+  height: 44px; /* Desktop height */
+  padding: 12px 16px;
+  align-items: center;
+  border-radius: 8px;
+  border: 1px solid var(--Subbrown_4);
+  background-color: var(--White);
+  outline: none;
+
+  /* Typography */
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 145%;
+  color: var(--Gray_3);
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: var(--Primary_1);
+}
+
+.input::placeholder {
+  color: var(--Gray_3);
+}
+
+/* [Find ID/PW] */
+.findAccount {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px; /* Tablet/Desktop Spec */
+  cursor: pointer;
+}
+
+.findAccount span {
+  font-size: 12px;
+  color: var(--Gray_4);
+  font-weight: 500;
+}
+
+.findAccount .divider {
+  color: var(--Gray_2);
+  text-decoration: none;
+}
+
+.findAccount .link {
+  text-decoration: underline;
+  text-underline-offset: auto;
+}
+
+/* [Login Button] */
+.loginButton {
+  width: 100%;
+  height: 48px; /* Tablet/Desktop Spec */
+  border-radius: 8px;
+  background-color: var(--Primary_1);
+  color: var(--White);
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: filter 0.2s;
+  flex-shrink: 0;
+}
+
+.loginButton:active {
+  filter: brightness(0.9);
+}
+
+.loginButton:disabled {
+  background-color: var(--Gray_3);
+  cursor: not-allowed;
+}
+
+/* [Social Icons] */
+.socialContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-shrink: 0;
+}
+
+.socialIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--Gray_2);
+  background: transparent;
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* [Footer Text] */
+.footerText {
+  text-align: center;
+  font-size: 12px;
+  color: var(--Gray_4);
+  flex-shrink: 0;
+}
+
+.footerLink {
+  text-decoration: underline;
+  text-underline-offset: auto;
+  cursor: pointer;
+}
+
+/* =========================================
+      Mobile Responsive (Max-Width: 767px)
+     Figma Spec: 290px x 430px
+     ========================================= */
+@media (max-width: 767px) {
+  .container {
+    width: 290px;
+    height: 430px;
+    padding: 20px 40px;
+    gap: 24px;
+    justify-content: flex-start; /* Prevent clipping */
+  }
+
+  .closeIcon {
+    right: 14px;
+    top: 14px;
+  }
+
+  .headerLogo svg {
+    width: 76.607px;
+    height: 46.815px;
+  }
+
+  .inputLoginGroup {
+    width: 227px;
+    gap: 24px;
+  }
+
+  .input {
+    width: 228px;
+    height: 32px;
+    padding: 12px 16px;
+  }
+
+  .findAccount span {
+    color: var(--Gray_5);
+  }
+
+  .loginButton {
+    width: 228px;
+    height: 32px;
+  }
+}

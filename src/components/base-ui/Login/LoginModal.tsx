@@ -3,10 +3,18 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import LoginLogo from "./LoginLogo";
+import styles from "./LoginModal.module.css";
 
 type Props = {
   onClose: () => void;
+  onFindAccount?: () => void;
+  onSignUp?: () => void;
 };
+
+interface LoginForm {
+  id: string;
+  password: string;
+}
 
 const SOCIAL_LOGINS = [
   { name: "google", icon: "/googleLogo.svg", alt: "구글 로그인" },
@@ -14,9 +22,15 @@ const SOCIAL_LOGINS = [
   { name: "kakao", icon: "/kakaoLogo.svg", alt: "카카오 로그인" },
 ];
 
-export default function LoginModal({ onClose }: Props) {
-  const [form, setForm] = useState({ id: "", password: "" });
+export default function LoginModal({
+  onClose,
+  onFindAccount,
+  onSignUp,
+}: Props) {
+  const [form, setForm] = useState<LoginForm>({ id: "", password: "" });
+  const [isLoading, setIsLoading] = useState(false);
 
+  // Body scroll lock
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -25,12 +39,43 @@ export default function LoginModal({ onClose }: Props) {
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleLogin = () => {
-    console.log("로그인 실행", form);
-    // TODO: API 호출 로직 (form.id, form.password 사용)
+  const handleLogin = async () => {
+    // 1. Validation
+    if (!form.id || !form.password) {
+      alert("아이디와 비밀번호를 모두 입력해주세요.");
+      return;
+    }
+
+    if (isLoading) return;
+
+    // 2. Submission Logic
+    setIsLoading(true);
+    try {
+      console.log("로그인 시도:", form);
+      // TODO: API Call here
+      // await api.login(form);
+
+      // Simulate delay
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Success handling (e.g., close modal, redirect)
+      // onClose();
+    } catch (error) {
+      console.error("로그인 실패:", error);
+      alert("로그인에 실패했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSocialLogin = (provider: string) => {
+    if (isLoading) return;
+    console.log(`${provider} 로그인 시도`);
+    // TODO: 소셜 로그인(OAuth) 리다이렉트 로직 구현
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -38,87 +83,97 @@ export default function LoginModal({ onClose }: Props) {
       handleLogin();
     }
   };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div
-        className="
-          relative flex flex-col items-center justify-center
-          w-[379px] h-[520px]
-          px-[40px] py-[20px]
-          gap-[24px]
-          rounded-[8px] border border-Subbrown-4 bg-White
-        "
-      >
-        {/* 닫기 버튼 (우측 상단) */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-[23px] right-[16px] w-[24px] h-[24px] cursor-pointer"
-        >
+      <div className={styles.container}>
+        {/* 닫기 버튼 */}
+        <button type="button" onClick={onClose} className={styles.closeIcon}>
           <Image src="/cancle_button.svg" alt="닫기" width={24} height={24} />
         </button>
 
-        {/* 로고 및 안내 문구 */}
-        <div className="flex flex-col items-center gap-4">
+        {/* 로고 영역 */}
+        <div className={styles.headerLogo}>
           <LoginLogo />
         </div>
-        {/* 로그인 입력 폼 */}
-        <div className="flex flex-col items-center gap-[10px] w-full">
-          <input
-            name="id"
-            type="text"
-            value={form.id}
-            onChange={handleChange}
-            placeholder="아이디"
-            className="flex w-[300px] h-[44px] px-4 py-3 items-center gap-[10px] rounded-[8px] border border-Subbrown-4 bg-White outline-none body_1_3 placeholder:text-Gray-3"
-            onKeyDown={handleKeyDown}
-          />
-          <input
-            name="password"
-            type="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="비밀번호"
-            className="flex w-[300px] h-[44px] px-4 py-3 items-center gap-[10px] rounded-[8px] border border-Subbrown-4 bg-White outline-none body_1_3 placeholder:text-Gray-3"
-            onKeyDown={handleKeyDown}
-          />
-          <div className="flex items-center gap-2 mt-1 cursor-pointer">
-            <span className="underline text-Gray-4 body_2_2">아이디 찾기</span>
-            <span className="text-Gray-2 body_2_2">|</span>
-            <span className="underline text-Gray-4 body_2_2">
-              비밀번호 찾기
-            </span>
+
+        {/* 메인 컨텐츠 */}
+        <div className={styles.mainContent}>
+          <div className={styles.inputSocialWrapper}>
+            <div className={styles.inputLoginGroup}>
+              {/* 인풋 필드 */}
+              <div className={styles.inputWrapper}>
+                <input
+                  name="id"
+                  type="text"
+                  value={form.id}
+                  onChange={handleChange}
+                  placeholder="아이디"
+                  className={styles.input}
+                  onKeyDown={handleKeyDown}
+                  disabled={isLoading}
+                />
+                <input
+                  name="password"
+                  type="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  placeholder="비밀번호"
+                  className={styles.input}
+                  onKeyDown={handleKeyDown}
+                  disabled={isLoading}
+                />
+              </div>
+
+              {/* 아이디/비번 찾기 */}
+              <div className={styles.findAccount}>
+                <span className={styles.link} onClick={onFindAccount}>
+                  아이디 찾기
+                </span>
+                <span className={styles.divider}>|</span>
+                <span className={styles.link} onClick={onFindAccount}>
+                  비밀번호 찾기
+                </span>
+              </div>
+
+              {/* 로그인 버튼 */}
+              <button
+                type="button"
+                className={styles.loginButton}
+                onClick={handleLogin}
+                disabled={isLoading}
+              >
+                {isLoading ? "로그인 중..." : "로그인"}
+              </button>
+            </div>
+
+            {/* 소셜 로그인 */}
+            <div className={styles.socialContainer}>
+              {SOCIAL_LOGINS.map((social) => (
+                <button
+                  key={social.name}
+                  type="button"
+                  className={styles.socialIcon}
+                  disabled={isLoading}
+                  onClick={() => handleSocialLogin(social.name)}
+                >
+                  <Image
+                    src={social.icon}
+                    alt={social.alt}
+                    width={40}
+                    height={40}
+                  />
+                </button>
+              ))}
+            </div>
           </div>
-          <button
-            type="button"
-            className="w-full h-[44px] rounded-[8px] bg-primary-1 text-white font-semibold"
-            onClick={handleLogin}
-          >
-            로그인
-          </button>
-        </div>
-        {/* 소셜 로그인 아이콘 영역 */}
-        <div className="flex items-center gap-[24px]">
-          {SOCIAL_LOGINS.map((social) => (
-            <button
-              key={social.name}
-              type="button"
-              className="flex items-center justify-center w-[40px] h-[40px] rounded-full border border-[#DADADA] overflow-hidden"
-            >
-              <Image
-                src={social.icon}
-                alt={social.alt}
-                width={40}
-                height={40}
-              />
-            </button>
-          ))}
-        </div>
-        {/* 회원가입 문구 */}
-        <div className="flex justify-center w-full">
-          <p className="text-center text-Gray-4 body_2_3">
+
+          {/* 하단 안내 문구 */}
+          <p className={styles.footerText}>
             아직 회원이 아니신가요?{" "}
-            <span className="cursor-pointer ">회원가입하러가기</span>
+            <span className={styles.footerLink} onClick={onSignUp}>
+              회원가입하러가기
+            </span>
           </p>
         </div>
       </div>
