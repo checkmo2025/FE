@@ -120,7 +120,9 @@ export default function LoginModal({
                 <button
                   key={social.name}
                   type="button"
-                  className={styles.socialIcon}
+                  className={`${styles.socialIcon} ${
+                    isLoading ? "opacity-60 cursor-not-allowed" : ""
+                  }`}
                   disabled={isLoading}
                   onClick={() => handleSocialLogin(social.name)}
                 >
