@@ -1,4 +1,5 @@
-// 이메일 UI 비즈니스 로직
+// c:\Users\shinwookKang\Desktop\CheckMo\FE\src\components\base-ui\Join\steps\useEmailVerification.tsx
+
 import { useState, useEffect } from "react";
 
 export const useEmailVerification = () => {
@@ -8,7 +9,10 @@ export const useEmailVerification = () => {
   const [verificationCode, setVerificationCode] = useState("");
   const [isCodeValid, setIsCodeValid] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-  const [showToast, setShowToast] = useState(false);
+
+  // Toast Animation State
+  const [showToast, setShowToast] = useState(false); // Controls mounting
+  const [isToastVisible, setIsToastVisible] = useState(false); // Controls opacity
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -54,6 +58,25 @@ export const useEmailVerification = () => {
     return () => clearInterval(interval);
   }, [timeLeft]);
 
+  useEffect(() => {
+    if (showToast) {
+      // 1. Mount (showToast=true) -> Wait 10ms -> Fade In (isToastVisible=true)
+      const showTimer = setTimeout(() => setIsToastVisible(true), 10);
+
+      // 2. Wait 3000ms -> Fade Out (isToastVisible=false)
+      const hideTimer = setTimeout(() => setIsToastVisible(false), 3000);
+
+      // 3. Wait 3300ms (allow transition) -> Unmount (showToast=false)
+      const unmountTimer = setTimeout(() => setShowToast(false), 3300);
+
+      return () => {
+        clearTimeout(showTimer);
+        clearTimeout(hideTimer);
+        clearTimeout(unmountTimer);
+      };
+    }
+  }, [showToast]);
+
   return {
     email,
     isEmailValid,
@@ -66,7 +89,7 @@ export const useEmailVerification = () => {
     isVerified,
     handleVerify,
     showToast,
-    setShowToast,
+    isToastVisible, // Now correctly exported
     formatTime,
   };
 };

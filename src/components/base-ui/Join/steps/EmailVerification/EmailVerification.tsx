@@ -1,12 +1,15 @@
+// c:\Users\shinwookKang\Desktop\CheckMo\FE\src\components\base-ui\Join\steps\EmailVerification\EmailVerification.tsx
+
+"use client";
+
 import React from "react";
 import JoinHeader from "../../JoinHeader";
 import JoinButton from "../../JoinButton";
 import JoinInput from "../../JoinInput";
 import { useEmailVerification } from "../useEmailVerification";
-import Toast from "@/components/common/Toast";
 
 interface EmailVerificationProps {
-  onNext?: () => void;
+  onNext: () => void;
 }
 
 const EmailVerification: React.FC<EmailVerificationProps> = ({ onNext }) => {
@@ -22,16 +25,18 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ onNext }) => {
     isVerified,
     handleVerify,
     showToast,
-    setShowToast,
+    isToastVisible,
     formatTime,
   } = useEmailVerification();
 
   return (
-    <div className="relative flex flex-col items-center w-[766px] px-[56px] py-[99px] bg-white rounded-[8px]">
+    <div className="relative flex flex-col items-center mx-auto w-full max-w-[766px] bg-white rounded-[8px] px-6 py-10 md:px-[40px] md:py-[60px] lg:px-[56px] lg:py-[99px]">
       <JoinHeader title="이메일 인증" />
-      <div className="flex flex-col w-full mt-[90px] mb-[130px]">
-        {/* 이메일 입력 섹션 */}
-        <div className="flex flex-col items-center w-[526px] gap-[30px] mx-auto">
+
+      {/* Content Wrapper: Mobile(mt-10 mb-10) -> Tablet(mt-[60px] mb-[80px]) -> Desktop(mt-[90px] mb-[130px]) */}
+      <div className="flex flex-col w-full mt-10 mb-10 md:mt-[60px] md:mb-[80px] lg:mt-[90px] lg:mb-[130px]">
+        {/* Email Input Section */}
+        <div className="flex flex-col items-center w-full max-w-[526px] gap-[30px] mx-auto">
           <JoinInput
             label="이메일"
             type="email"
@@ -44,7 +49,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ onNext }) => {
             <button
               onClick={startTimer}
               disabled={!isEmailValid}
-              className={`flex justify-center items-center w-[284px] h-[48px] rounded-[8px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px] ${
+              className={`flex justify-center items-center w-full max-w-[284px] h-[48px] rounded-[8px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px] ${
                 isEmailValid
                   ? "bg-[#BBAA9B] text-[#FFF]"
                   : "bg-[#DADADA] text-[#8D8D8D]"
@@ -63,8 +68,8 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ onNext }) => {
           </div>
         </div>
 
-        {/* 인증번호 입력 섹션 */}
-        <div className="flex flex-col items-center w-[526px] gap-[30px] mx-auto mt-[53px]">
+        {/* Verification Code Section */}
+        <div className="flex flex-col items-center w-full max-w-[526px] gap-[30px] mx-auto mt-[53px]">
           <JoinInput
             label="인증번호"
             type="text"
@@ -76,7 +81,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ onNext }) => {
           <button
             onClick={handleVerify}
             disabled={!isCodeValid}
-            className={`flex justify-center items-center w-[284px] h-[48px] rounded-[8px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px] ${
+            className={`flex justify-center items-center w-full max-w-[284px] h-[48px] rounded-[8px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px] ${
               isCodeValid
                 ? "bg-[#BBAA9B] text-[#FFF]"
                 : "bg-[#DADADA] text-[#8D8D8D]"
@@ -89,15 +94,25 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ onNext }) => {
           </button>
         </div>
       </div>
-      {/* 하단 버튼 (임시로 클릭 시 다음 단계 이동 동작 연결) */}
-      <JoinButton onClick={onNext} disabled={!isVerified}>
+
+      <JoinButton
+        onClick={onNext}
+        disabled={!isVerified}
+        className="w-full md:w-[526px]"
+      >
         다음
       </JoinButton>
+
       {showToast && (
-        <Toast
-          message="인증이 완료되었습니다."
-          onClose={() => setShowToast(false)}
-        />
+        <div
+          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 inline-flex justify-center items-center h-auto py-4 px-8 md:h-[88px] md:px-[138px] bg-[#31111D99] rounded-[24px] backdrop-blur-[1px] transition-opacity duration-300 ${
+            isToastVisible ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <span className="text-[#FFF] text-[16px] md:text-[18px] font-medium leading-[135%] tracking-[-0.018px] whitespace-nowrap">
+            인증이 완료되었습니다.
+          </span>
+        </div>
       )}
     </div>
   );
