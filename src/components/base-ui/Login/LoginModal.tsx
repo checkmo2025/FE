@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import LoginLogo from "@/components/base-ui/Login/LoginLogo";
 import styles from "@/components/base-ui/Login/LoginModal.module.css";
 import useLoginForm from "@/components/base-ui/Login/useLoginForm";
@@ -18,6 +19,7 @@ export default function LoginModal({
   onFindAccount,
   onSignUp,
 }: Props) {
+  const router = useRouter();
   const {
     form,
     errors,
@@ -35,6 +37,11 @@ export default function LoginModal({
       document.body.style.overflow = "unset";
     };
   }, []);
+
+  const handleSignUp = () => {
+    if (onSignUp) onSignUp();
+    router.push("/signup");
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -135,7 +142,7 @@ export default function LoginModal({
           {/* 하단 안내 문구 */}
           <p className={styles.footerText}>
             아직 회원이 아니신가요?{" "}
-            <span className={styles.footerLink} onClick={onSignUp}>
+            <span className={styles.footerLink} onClick={handleSignUp}>
               회원가입하러가기
             </span>
           </p>

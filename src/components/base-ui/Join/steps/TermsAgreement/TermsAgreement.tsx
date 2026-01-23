@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import JoinHeader from "../../JoinHeader";
 import JoinButton from "../../JoinButton";
@@ -27,6 +28,7 @@ interface TermsAgreementProps {
 }
 
 const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
+  const router = useRouter();
   const initialAgreements = TERMS_DATA.reduce((acc, term) => {
     acc[term.id] = false;
     return acc;
@@ -56,9 +58,23 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
     setAgreements(newAgreements);
   };
 
+  const handleClose = () => {
+    router.back();
+  };
+
   return (
-    <div className="flex flex-col items-center w-[766px] px-[56px] py-[99px] gap-[101px] bg-white rounded-[8px]">
-      <JoinHeader title="약관 동의" />
+    <div className="flex flex-col items-center w-full h-full justify-between md:justify-start md:px-[clamp(32px,8vw,56px)] md:gap-[clamp(60px,10vh,100px)]">
+      {/* 닫기 버튼 */}
+      <button
+        type="button"
+        onClick={handleClose}
+        className="absolute top-6 right-6"
+      >
+        <Image src="/cancle_button.svg" alt="닫기" width={24} height={24} />
+      </button>
+      <div className="mt-[60px] md:mt-0">
+        <JoinHeader title="약관 동의" />
+      </div>{" "}
       <TermsList>
         <div className="flex flex-col gap-8 pb-3">
           {TERMS_DATA.map((term) => (
@@ -75,9 +91,9 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
 
         <div className="w-full h-[1px] bg-[#D9D9D9]" />
 
-        <label className="flex items-center justify-between w-full cursor-pointer select-none">
+        <label className="items-center justify-between hidden w-full cursor-pointer select-none md:flex">
           <span className="text-[#000000] text-[19.861px] font-normal leading-[15.605px]">
-            전체동의
+            <span className="hidden md:inline">전체동의</span>
           </span>
           <div className="relative flex items-center justify-center w-[24px] h-[24px]">
             <input
@@ -86,6 +102,7 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
               checked={allAgreed}
               onChange={handleAllAgreementChange}
               className="sr-only peer"
+              disabled={false} // 모바일에서 숨겨지더라도 기능은 유지하거나, 필요시 disabled 처리
             />
             <div className="w-full h-full peer-checked:hidden">
               <Image
@@ -93,6 +110,7 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
                 alt="Unchecked"
                 width={24}
                 height={24}
+                className="hidden md:block"
               />
             </div>
             <div className="hidden w-full h-full peer-checked:block">
@@ -101,12 +119,17 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
                 alt="Checked"
                 width={24}
                 height={24}
+                className="hidden md:block"
               />
             </div>
           </div>
         </label>
       </TermsList>
-      <JoinButton disabled={!isButtonEnabled} onClick={handleNext}>
+      <JoinButton
+        disabled={!isButtonEnabled}
+        onClick={handleNext}
+        className="w-[270px] mb-[40px] md:w-[526px] md:mb-0"
+      >
         다음
       </JoinButton>
     </div>

@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { useAuthStore } from "@/store/useAuthStore";
 import toast from "react-hot-toast";
 import { getErrorMessage } from "./errorMapper";
+import { ApiError } from "./ApiError";
 
 interface RequestOptions extends RequestInit {
   headers?: Record<string, string>;
@@ -85,12 +86,7 @@ async function request<T>(
         "요청 처리 중 오류가 발생했습니다.";
 
       // 에러 객체를 확장하여 throw
-      const error: any = new Error(errorMessage);
-      error.code = errorCode;
-      error.response = data;
-      // 비즈니스 로직에서 catch 할 수 있도록 그대로 반환하거나 throw
-      // 현재 구조상 useLoginForm 등에서 data.isSuccess를 체크하므로 data를 반환
-      return data as T;
+      throw new ApiError(errorMessage, errorCode, data);
     }
 
     return data;
