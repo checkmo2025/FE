@@ -1,20 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import LoginLogo from "./LoginLogo";
 import styles from "./LoginModal.module.css";
+import useLoginForm from "./useLoginForm";
 
 type Props = {
   onClose: () => void;
   onFindAccount?: () => void;
   onSignUp?: () => void;
 };
-
-interface LoginForm {
-  id: string;
-  password: string;
-}
 
 const SOCIAL_LOGINS = [
   { name: "google", icon: "/googleLogo.svg", alt: "구글 로그인" },
@@ -27,8 +23,15 @@ export default function LoginModal({
   onFindAccount,
   onSignUp,
 }: Props) {
-  const [form, setForm] = useState<LoginForm>({ id: "", password: "" });
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    form,
+    errors,
+    isLoading,
+    handleChange,
+    handleLogin,
+    handleSocialLogin,
+    handleKeyDown,
+  } = useLoginForm();
 
   // Body scroll lock
   useEffect(() => {
@@ -37,52 +40,6 @@ export default function LoginModal({
       document.body.style.overflow = "unset";
     };
   }, []);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleLogin = async () => {
-    // 1. Validation
-    if (!form.id || !form.password) {
-      alert("아이디와 비밀번호를 모두 입력해주세요.");
-      return;
-    }
-
-    if (isLoading) return;
-
-    // 2. Submission Logic
-    setIsLoading(true);
-    try {
-      console.log("로그인 시도:", form);
-      // TODO: API Call here
-      // await api.login(form);
-
-      // Simulate delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Success handling (e.g., close modal, redirect)
-      // onClose();
-    } catch (error) {
-      console.error("로그인 실패:", error);
-      alert("로그인에 실패했습니다.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSocialLogin = (provider: string) => {
-    if (isLoading) return;
-    console.log(`${provider} 로그인 시도`);
-    // TODO: 소셜 로그인(OAuth) 리다이렉트 로직 구현
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleLogin();
-    }
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -109,20 +66,30 @@ export default function LoginModal({
                   value={form.id}
                   onChange={handleChange}
                   placeholder="아이디"
-                  className={styles.input}
+                  className={`${styles.input} ${
+                    errors?.id ? styles.inputError : ""
+                  }`}
                   onKeyDown={handleKeyDown}
                   disabled={isLoading}
                 />
+                {errors?.id && (
+                  <span className={styles.errorMessage}>{errors.id}</span>
+                )}
                 <input
                   name="password"
                   type="password"
                   value={form.password}
                   onChange={handleChange}
                   placeholder="비밀번호"
-                  className={styles.input}
+                  className={`${styles.input} ${
+                    errors?.password ? styles.inputError : ""
+                  }`}
                   onKeyDown={handleKeyDown}
                   disabled={isLoading}
                 />
+                {errors?.password && (
+                  <span className={styles.errorMessage}>{errors.password}</span>
+                )}
               </div>
 
               {/* 아이디/비번 찾기 */}
