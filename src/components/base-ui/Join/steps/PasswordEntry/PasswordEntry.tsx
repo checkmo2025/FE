@@ -62,8 +62,14 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
 
           {/* Confirm Password Input Section */}
           <div className="flex flex-col w-full gap-2">
+            {/* Custom Label Layout for Confirm Password */}
+            <div className="flex flex-wrap items-end gap-2 mb-1">
+              <span className="text-[#7B6154] font-sans text-[20px] font-semibold leading-[135%] tracking-[-0.02px]">
+                비밀번호 확인
+              </span>
+            </div>
+
             <JoinInput
-              label="비밀번호 확인"
               type="password"
               placeholder="비밀번호를 다시 입력해주세요"
               value={confirmPassword}
@@ -71,6 +77,7 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
               className={`border-[#EAE5E2] placeholder-[#BBB] text-[14px] font-normal ${
                 !isMatch && confirmPassword.length > 0 ? "border-red-500" : ""
               }`}
+              hideLabel
             />
 
             {!isMatch && confirmPassword.length > 0 && (
