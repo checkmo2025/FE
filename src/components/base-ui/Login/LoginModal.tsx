@@ -2,21 +2,16 @@
 
 import Image from "next/image";
 import React, { useEffect } from "react";
-import LoginLogo from "./LoginLogo";
-import styles from "./LoginModal.module.css";
-import useLoginForm from "./useLoginForm";
+import LoginLogo from "@/components/base-ui/Login/LoginLogo";
+import styles from "@/components/base-ui/Login/LoginModal.module.css";
+import useLoginForm from "@/components/base-ui/Login/useLoginForm";
+import { SOCIAL_LOGINS } from "@/constants/auth";
 
 type Props = {
   onClose: () => void;
   onFindAccount?: () => void;
   onSignUp?: () => void;
 };
-
-const SOCIAL_LOGINS = [
-  { name: "google", icon: "/googleLogo.svg", alt: "구글 로그인" },
-  { name: "naver", icon: "/naverLogo.svg", alt: "네이버 로그인" },
-  { name: "kakao", icon: "/kakaoLogo.svg", alt: "카카오 로그인" },
-];
 
 export default function LoginModal({
   onClose,
@@ -31,7 +26,7 @@ export default function LoginModal({
     handleLogin,
     handleSocialLogin,
     handleKeyDown,
-  } = useLoginForm();
+  } = useLoginForm(onClose);
 
   // Body scroll lock
   useEffect(() => {
@@ -61,19 +56,19 @@ export default function LoginModal({
               {/* 인풋 필드 */}
               <div className={styles.inputWrapper}>
                 <input
-                  name="id"
+                  name="email"
                   type="text"
-                  value={form.id}
+                  value={form.email}
                   onChange={handleChange}
-                  placeholder="아이디"
+                  placeholder="이메일"
                   className={`${styles.input} ${
-                    errors?.id ? styles.inputError : ""
+                    errors?.email ? styles.inputError : ""
                   }`}
                   onKeyDown={handleKeyDown}
                   disabled={isLoading}
                 />
-                {errors?.id && (
-                  <span className={styles.errorMessage}>{errors.id}</span>
+                {errors?.email && (
+                  <span className={styles.errorMessage}>{errors.email}</span>
                 )}
                 <input
                   name="password"
