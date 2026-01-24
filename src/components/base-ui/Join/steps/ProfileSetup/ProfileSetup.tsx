@@ -24,30 +24,31 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
   } = useProfileSetup();
 
   return (
-    <div className="relative flex flex-col items-center w-[766px] px-[56px] py-[99px] bg-white rounded-[8px]">
+    <div className="relative flex flex-col items-center mx-auto w-full max-w-[766px] bg-white rounded-[8px] px-6 py-10 md:px-[40px] md:py-[60px] lg:px-[56px] lg:py-[99px]">
       <JoinHeader title="프로필 설정" />
 
-      <div className="flex flex-col w-full mt-[120px] mb-[92px]">
-        <div className="flex flex-col items-start w-[526px] gap-[36px] mx-auto">
+      {/* Content Wrapper: Mobile(mt-10 mb-10) -> Tablet(mt-[60px] mb-[80px]) -> Desktop(mt-[90px] mb-[130px]) */}
+      <div className="flex flex-col w-full mt-10 mb-10 md:mt-[60px] md:mb-[80px] lg:mt-[90px] lg:mb-[130px]">
+        <div className="flex flex-col items-start w-full max-w-[526px] gap-[36px] mx-auto">
           {/* 닉네임 섹션 (Custom Layout) */}
           <div className="flex flex-col w-full gap-[12px]">
             <span className="text-[#7B6154] font-sans text-[20px] font-semibold leading-[135%] tracking-[-0.02px]">
               닉네임
             </span>
-            <div className="flex flex-row justify-between w-full">
-              <div className="w-[412px]">
+            <div className="flex flex-row justify-between w-full gap-2">
+              <div className="flex-1">
                 <JoinInput
                   value={nickname}
                   onChange={handleNicknameChange}
                   disabled={isNicknameChecked}
                   placeholder="닉네임을 입력해주세요(최대 20글자)"
-                  className="border-[#EAE5E2] placeholder-[#BBB] text-[14px] font-normal"
+                  className="border-[#EAE5E2] placeholder-[#BBB] text-[14px] font-normal w-full"
                 />
               </div>
               <JoinButton
                 onClick={handleCheckDuplicate}
                 variant={isNicknameChecked ? "primary" : "secondary"}
-                className={`w-[106px] h-[44px] px-0 py-0 text-[14px] ${
+                className={`w-[106px] h-[44px] px-0 py-0 text-[14px] shrink-0 ${
                   isNicknameChecked ? "font-medium" : "font-normal"
                 }`}
               >
@@ -85,7 +86,11 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
         </div>
       </div>
 
-      <JoinButton onClick={onNext} disabled={!isValid}>
+      <JoinButton
+        onClick={onNext}
+        disabled={!isValid}
+        className="w-full md:w-[526px]"
+      >
         다음
       </JoinButton>
     </div>
