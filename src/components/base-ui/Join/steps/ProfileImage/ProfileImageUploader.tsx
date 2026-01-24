@@ -19,7 +19,7 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center gap-[24px]">
+    <div className="flex flex-col items-center gap-[24px] w-full">
       <div className="relative w-[148px] h-[141px]">
         <div className="w-[138px] h-[138px] rounded-full overflow-hidden bg-gray-200">
           <Image

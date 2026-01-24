@@ -37,13 +37,26 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
             </span>
             <div className="flex flex-row justify-between w-full gap-2">
               <div className="flex-1">
-                <JoinInput
-                  value={nickname}
-                  onChange={handleNicknameChange}
-                  disabled={isNicknameChecked}
-                  placeholder="닉네임을 입력해주세요(최대 20글자)"
-                  className="border-[#EAE5E2] placeholder-[#BBB] text-[14px] font-normal w-full"
-                />
+                {/* Mobile Input */}
+                <div className="block w-full md:hidden">
+                  <JoinInput
+                    value={nickname}
+                    onChange={handleNicknameChange}
+                    disabled={isNicknameChecked}
+                    placeholder="(최대 20자)"
+                    className="border-[#EAE5E2] placeholder-[#BBB] text-[14px] font-normal w-full"
+                  />
+                </div>
+                {/* Desktop Input */}
+                <div className="hidden w-full md:block">
+                  <JoinInput
+                    value={nickname}
+                    onChange={handleNicknameChange}
+                    disabled={isNicknameChecked}
+                    placeholder="닉네임을 입력해주세요(최대 20글자)"
+                    className="border-[#EAE5E2] placeholder-[#BBB] text-[14px] font-normal w-full"
+                  />
+                </div>
               </div>
               <JoinButton
                 onClick={handleCheckDuplicate}
