@@ -95,6 +95,23 @@ export default function CommentItem({
           {/* 드롭다운 메뉴 */}
           {menuOpen && (
             <div className="absolute right-0 top-full mt-1 w-[137px] rounded-lg bg-White shadow-lg z-10 overflow-hidden">
+              {/* 답글달기 */}
+              {!isReply && onReply && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onReply(id);
+                      setMenuOpen(false);
+                    }}
+                    className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+                  >
+                    <Image src="/reply2.svg" alt="답글" width={24} height={24} />
+                    답글달기
+                  </button>
+                  <div className="mx-2 border-b border-Subbrown-4" />
+                </>
+              )}
               {/* 내 댓글일 때: 수정, 삭제 */}
               {isMine ? (
                 <>
@@ -162,15 +179,14 @@ export default function CommentItem({
   // 대댓글이면 reply 아이콘 + 댓글 본체
   if (isReply) {
     return (
-      <div className="flex items-center gap-4 t:gap-8 py-2">
+      <div className="flex items-center gap-4 t:gap-8 py-4">
         <Image
           src="/reply.svg"
           alt="대댓글"
           width={40}
           height={40}
-          className="shrink-0 w-6 h-6 t:w-10 t:h-10 self-start mt-4"
-        />
-        {commentBody}
+          className="shrink-0 w-6 h-6 t:w-10 t:h-10 self-start mt-1"
+        />{commentBody}
       </div>
     );
   }

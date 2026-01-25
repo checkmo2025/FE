@@ -13,17 +13,6 @@ const DUMMY_COMMENTS: Comment[] = [
     createdAt: "2025-09-22T10:00:00",
     isAuthor: true, // 글 작성자
     isMine: true, // 내가 쓴 댓글
-    replies: [
-      {
-        id: 2,
-        authorName: "hy-12345",
-        profileImgSrc: "/profile3.svg",
-        content: "인정합니다.",
-        createdAt: "2025-09-22T11:00:00",
-        isAuthor: false,
-        isMine: false, // 남이 쓴 댓글
-      },
-    ],
   },
   {
     id: 3,
@@ -58,13 +47,34 @@ export default function CommentSection({ storyId }: CommentSectionProps) {
   };
 
   const handleAddReply = (parentId: number, content: string) => {
-    // TODO: 대댓글 입력 UI 구현 필요
-    console.log("대댓글 추가:", parentId, content);
+    // 새 답글 생성
+    const newReply: Comment = {
+      id: Date.now(),
+      authorName: "유빈", 
+      profileImgSrc: "/profile2.svg",
+      content,
+      createdAt: new Date().toISOString(),
+      isAuthor: false,
+      isMine: true,
+    };
+
+    // 원래 댓글 찾아서 replies 배열에 답글 추가
+    setComments((prevComments) => {
+      return prevComments.map((comment) => {
+        if (comment.id === parentId) {
+          // 원래 댓글의 replies 배열에 새 답글 추가
+          return {
+            ...comment,
+            replies: [...(comment.replies || []), newReply],
+          };
+        }
+        return comment;
+      });
+    });
   };
 
   const handleEditComment = (id: number, content: string) => {
-    // TODO: 수정 UI 구현 필요
-    console.log("댓글 수정:", id, content);
+
   };
 
   const handleDeleteComment = (id: number) => {
@@ -72,7 +82,7 @@ export default function CommentSection({ storyId }: CommentSectionProps) {
   };
 
   const handleReportComment = (id: number) => {
-    // TODO: 신고 API 연동
+    // 신고 API 연동
     console.log("댓글 신고:", id);
     alert("신고가 접수되었습니다.");
   };
