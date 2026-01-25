@@ -1,14 +1,29 @@
 "use client";
 
+import { useState } from "react";
 import BookStoryCard from "@/components/base-ui/BookStory/bookstory_card";
 import NewsBannerSlider from "@/components/base-ui/home/NewsBannerSlider";
 import HomeBookclub from "@/components/base-ui/home/home_bookclub";
 import ListSubscribe from "@/components/base-ui/home/list_subscribe";
+import LoginModal from "@/components/base-ui/Login/LoginModal";
 
 export default function HomePage() {
   const groups: { id: string; name: string }[] = [];
+  const [showLoginModal, setShowLoginModal] = useState(false);
   return (
     <div className="mx-auto w-[1400px]">
+      {/* 임시 로그인 모달 테스트 버튼 */}
+      <button
+        onClick={() => setShowLoginModal(true)}
+        className="fixed z-50 px-6 py-3 text-white rounded-full shadow-lg bottom-10 right-10 bg-primary-1 subhead_4_1"
+      >
+        로그인 모달 열기
+      </button>
+
+      {showLoginModal && (
+        <LoginModal onClose={() => setShowLoginModal(false)} />
+      )}
+
       <div className="flex gap-6">
         <section className="w-[332px] pt-6">
           <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">
@@ -26,7 +41,7 @@ export default function HomePage() {
           <NewsBannerSlider />
 
           {/* 책 이야기 card */}
-          <div className="mt-6 grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-3 gap-5 mt-6">
             <BookStoryCard
               authorName="hy_0716"
               createdAt="2026.01.03"

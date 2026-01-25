@@ -25,9 +25,9 @@
   --Subbrown_2: #bbaa9b;
   --Subbrown_1: #a19182;
 
-  --primary_3: #5e4a40;
-  --primary_2: #9a7a6b;
-  --primary_1: #7b6154;
+  --Primary_3: #5e4a40;
+  --Primary_2: #9a7a6b;
+  --Primary_1: #7b6154;
 }
 
 @theme inline {
@@ -61,9 +61,9 @@
   --color-Subbrown-3: var(--Subbrown_3);
   --color-Subbrown-4: var(--Subbrown_4);
 
-  --color-primary-1: var(--primary_1);
-  --color-primary-2: var(--primary_2);
-  --color-primary-3: var(--primary_3);
+  --color-primary-1: var(--Primary_1);
+  --color-primary-2: var(--Primary_2);
+  --color-primary-3: var(--Primary_3);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -146,7 +146,6 @@ body {
 @utility caption_1_2 {
   @apply text-[12px] font-medium leading-[145%] tracking-[-0.012px];
 }
-
 
 @theme {
   --breakpoint-t: 768px;
