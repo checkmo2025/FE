@@ -89,8 +89,8 @@ export default function BookStoryCard({
 
       {/* 제목 + 내용 */}
       <div className="px-4 pt-4 ">
-        <p className="Subhead_2 pb-1 text-Gray-7">{title}</p>
-        <p className="Body_1_3 h-16 pt-1 text-Gray-5 line-clamp-3 overflow-hidden">
+        <p className="subhead_2 pb-1 text-Gray-7">{title}</p>
+        <p className="body_1_3 h-16 pt-1 text-Gray-5 line-clamp-3 overflow-hidden">
           {content}
         </p>
       </div>
