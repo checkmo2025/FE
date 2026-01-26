@@ -1,14 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import BookstoryText from "@/components/base-ui/BookStory/bookstory_text";
+import BookstoryChoosebook from "@/components/base-ui/BookStory/bookstory_choosebook";
+import BookSelectModal from "@/components/layout/BookSelectModal";
 
 export default function NewStoryPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const bookId = searchParams.get("bookId");
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
+  const [isBookSelectModalOpen, setIsBookSelectModalOpen] = useState(false);
+
+  // 더미 데이터 
+  const selectedBook = bookId
+    ? {
+        id: Number(bookId),
+        imgUrl: "/booksample.svg",
+        title: "어린 왕자",
+        author: "김개미, 연수",
+        detail: "최대 500(넘어가면...으로)",
+      }
+    : null;
 
   const handleCancel = () => {
     router.back();
@@ -18,6 +34,10 @@ export default function NewStoryPage() {
     // TODO: 실제 저장 로직 구현
     console.log("저장:", { title, detail });
     router.push("/stories");
+  };
+
+  const handleBookSelect = (selectedBookId: number) => {
+    router.push(`/stories/new?bookId=${selectedBookId}`);
   };
 
   return (
@@ -55,14 +75,27 @@ export default function NewStoryPage() {
       <div className="py-6 px-2.5 t:px-10">
         {/* 책 선택하기 박스 */}
         <div className="flex justify-center mb-6">
-          <div className="flex w-full max-w-[1040px] p-5 justify-center items-center rounded-lg bg-White border-2 border-Subbrown-4">
-            <button
-              type="button"
-              className="flex px-6 py-2 justify-center items-center rounded-lg border border-primary-2 text-primary-2 body_1_2 bg-background cursor-pointer"
-            >
-              책 선택하기
-            </button>
-          </div>
+          {selectedBook ? (
+            <BookstoryChoosebook
+              bookUrl={selectedBook.imgUrl}
+              bookName={selectedBook.title}
+              author={selectedBook.author}
+              bookDetail={selectedBook.detail}
+              onButtonClick={() => {
+                setIsBookSelectModalOpen(true);
+              }}
+            />
+          ) : (
+            <div className="flex w-full max-w-[1040px] p-5 justify-center items-center rounded-lg bg-White border-2 border-Subbrown-4">
+              <button
+                type="button"
+                onClick={() => setIsBookSelectModalOpen(true)}
+                className="flex px-6 py-2 justify-center items-center rounded-lg border border-primary-2 text-primary-2 body_1_2 bg-background cursor-pointer"
+              >
+                책 선택하기
+              </button>
+            </div>
+          )}
         </div>
 
         {/* 글 작성 영역 */}
@@ -95,6 +128,13 @@ export default function NewStoryPage() {
           </div>
         </div>
       </div>
+
+      {/* 책 선택 모달 */}
+      <BookSelectModal
+        isOpen={isBookSelectModalOpen}
+        onClose={() => setIsBookSelectModalOpen(false)}
+        onSelect={handleBookSelect}
+      />
     </div>
   );
 }

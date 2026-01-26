@@ -28,7 +28,7 @@ export default function Search_BookCoverCard({
   return (
     <div
       onClick={onCardClick}
-      className={`relative flex w-[332px] h-[436px] p-[16px] flex-col justify-end items-start gap-[12px] overflow-hidden ${
+      className={`relative flex w-[111px] h-[144px] t:w-[217px] t:h-[286px] d:w-[332px] d:h-[436px] p-[16px] flex-col justify-end items-start gap-[12px] overflow-hidden ${
         onCardClick ? 'cursor-pointer' : ''
       } ${className}`}
     >
@@ -36,7 +36,7 @@ export default function Search_BookCoverCard({
         src={coverSrc}
         alt={title}
         fill
-        sizes="244px"
+        sizes="(max-width: 767px) 111px, (max-width: 1439px) 217px, 332px"
         className="object-cover"
       />
 
@@ -58,10 +58,10 @@ export default function Search_BookCoverCard({
         </button>
 
         <div className="flex flex-col items-start gap-[6px] min-w-0">
-          <p className="text-[color:var(--White,#FFF)] subhead_1 truncate">
+          <p className="text-white subhead_4 t:subhead_1 truncate">
             {title}
           </p>
-          <p className="text-[color:var(--White,#FFF)] subhead_4 truncate">
+          <p className="text-white body_2_3 t:subhead_4 truncate">
             {author}
           </p>
         </div>
