@@ -17,9 +17,11 @@ const TermsItem: React.FC<TermsItemProps> = ({
   onChange,
 }) => {
   return (
-    <label className="flex items-center justify-between w-full cursor-pointer select-none">
+    <label className="flex flex-col items-start gap-[12px] w-full cursor-pointer select-none md:flex-row md:justify-between md:items-center md:gap-0">
       <span className="text-[#353535] text-[19.861px] font-normal leading-[15.605px]">
-        {label} ({required ? "필수" : "선택"})
+        <span className="text-[14px] md:text-[clamp(16px,2.5vw,19.861px)]">
+          {label} ({required ? "필수" : "선택"})
+        </span>
       </span>
       <div className="relative flex items-center justify-center w-[24px] h-[24px]">
         <input

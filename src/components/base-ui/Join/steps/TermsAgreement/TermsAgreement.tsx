@@ -1,6 +1,9 @@
+// TermsAgreement.tsx
+
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import JoinHeader from "../../JoinHeader";
 import JoinButton from "../../JoinButton";
@@ -27,6 +30,7 @@ interface TermsAgreementProps {
 }
 
 const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
+  const router = useRouter();
   const initialAgreements = TERMS_DATA.reduce((acc, term) => {
     acc[term.id] = false;
     return acc;
@@ -56,57 +60,80 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
     setAgreements(newAgreements);
   };
 
+  const handleClose = () => {
+    router.back();
+  };
+
   return (
-    <div className="flex flex-col items-center w-[766px] px-[56px] py-[99px] gap-[101px] bg-white rounded-[8px]">
+    <div className="relative flex flex-col items-center mx-auto w-full max-w-[766px] bg-white rounded-[8px] px-6 py-10 md:px-[40px] md:py-[60px] lg:px-[56px] lg:py-[99px]">
+      {/* 닫기 버튼 */}
+      <button
+        type="button"
+        onClick={handleClose}
+        className="absolute top-6 right-6"
+      >
+        <Image src="/cancle_button.svg" alt="닫기" width={24} height={24} />
+      </button>
+
       <JoinHeader title="약관 동의" />
-      <TermsList>
-        <div className="flex flex-col gap-8 pb-3">
-          {TERMS_DATA.map((term) => (
-            <TermsItem
-              key={term.id}
-              id={term.id}
-              label={term.label}
-              required={term.required}
-              checked={!!agreements[term.id]}
-              onChange={handleAgreementChange}
-            />
-          ))}
-        </div>
 
-        <div className="w-full h-[1px] bg-[#D9D9D9]" />
-
-        <label className="flex items-center justify-between w-full cursor-pointer select-none">
-          <span className="text-[#000000] text-[19.861px] font-normal leading-[15.605px]">
-            전체동의
-          </span>
-          <div className="relative flex items-center justify-center w-[24px] h-[24px]">
-            <input
-              type="checkbox"
-              id="allAgreed"
-              checked={allAgreed}
-              onChange={handleAllAgreementChange}
-              className="sr-only peer"
-            />
-            <div className="w-full h-full peer-checked:hidden">
-              <Image
-                src="/CheckBox_No.svg"
-                alt="Unchecked"
-                width={24}
-                height={24}
+      {/* Content Wrapper: Mobile -> Tablet -> Desktop Spacing */}
+      <div className="flex flex-col w-full mt-10 mb-10 md:mt-[60px] md:mb-[80px] lg:mt-[90px] lg:mb-[130px]">
+        <TermsList>
+          <div className="flex flex-col w-full gap-8 pb-3">
+            {TERMS_DATA.map((term) => (
+              <TermsItem
+                key={term.id}
+                id={term.id}
+                label={term.label}
+                required={term.required}
+                checked={!!agreements[term.id]}
+                onChange={handleAgreementChange}
               />
-            </div>
-            <div className="hidden w-full h-full peer-checked:block">
-              <Image
-                src="/CheckBox_Yes.svg"
-                alt="Checked"
-                width={24}
-                height={24}
-              />
-            </div>
+            ))}
           </div>
-        </label>
-      </TermsList>
-      <JoinButton disabled={!isButtonEnabled} onClick={handleNext}>
+
+          <div className="w-full h-[1px] bg-[#D9D9D9]" />
+
+          {/* 전체 동의 */}
+          <label className="flex items-center justify-between w-full cursor-pointer select-none">
+            <span className="text-[#000000] text-[16px] md:text-[19.861px] font-normal leading-[15.605px]">
+              전체동의
+            </span>
+            <div className="relative flex items-center justify-center w-[24px] h-[24px]">
+              <input
+                type="checkbox"
+                id="allAgreed"
+                checked={allAgreed}
+                onChange={handleAllAgreementChange}
+                className="sr-only peer"
+              />
+              <div className="w-full h-full peer-checked:hidden">
+                <Image
+                  src="/CheckBox_No.svg"
+                  alt="Unchecked"
+                  width={24}
+                  height={24}
+                />
+              </div>
+              <div className="hidden w-full h-full peer-checked:block">
+                <Image
+                  src="/CheckBox_Yes.svg"
+                  alt="Checked"
+                  width={24}
+                  height={24}
+                />
+              </div>
+            </div>
+          </label>
+        </TermsList>
+      </div>
+
+      <JoinButton
+        disabled={!isButtonEnabled}
+        onClick={handleNext}
+        className="w-full md:w-[526px]"
+      >
         다음
       </JoinButton>
     </div>
