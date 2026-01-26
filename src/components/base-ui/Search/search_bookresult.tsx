@@ -37,6 +37,7 @@ export default function SearchBookResult({
     <div
       onClick={onCardClick}
       className={[
+        'relative flex w-full max-w-[1040px] p-[20px] justify-center items-start gap-6 rounded-[8px] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-Subbrown-4',
         onCardClick ? 'cursor-pointer' : '',
         className,
       ].join(' ')}
