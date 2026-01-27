@@ -8,12 +8,13 @@ import MyPageTabs from "@/components/base-ui/MyPage/MyPageTabs";
 import MyBookStoryList from "@/components/base-ui/MyPage/MyBookStoryList";
 import MyLibraryList from "@/components/base-ui/MyPage/MyLibraryList";
 import MyMeetingList from "@/components/base-ui/MyPage/MyMeetingList";
+import MyNotificationList from "@/components/base-ui/MyPage/MyNotificationList";
 
 export default function MyPage() {
   const [activeTab, setActiveTab] = useState("stories");
 
   return (
-    <div className="flex flex-col items-center gap-[24px] w-full min-h-screen bg-white pb-[100px]">
+    <div className="flex flex-col items-center gap-[24px] w-full min-h-screen bg-[#F9F7F6] pb-[100px]">
       <Header />
       <MyPageBreadcrumb />
 
@@ -35,11 +36,7 @@ export default function MyPage() {
         {activeTab === "stories" && <MyBookStoryList />}
         {activeTab === "library" && <MyLibraryList />}
         {activeTab === "meetings" && <MyMeetingList />}
-        {activeTab === "notifications" && (
-          <div className="w-[1048px] h-[300px] flex justify-center items-center text-gray-400">
-            준비 중인 기능입니다.
-          </div>
-        )}
+        {activeTab === "notifications" && <MyNotificationList />}
       </div>
     </div>
   );

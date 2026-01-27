@@ -38,7 +38,7 @@ const MyLibraryList = () => {
                 e.stopPropagation();
                 toggleLike(book.id);
               }}
-              className="absolute top-[12px] right-[12px] w-[24px] h-[24px]"
+              className="absolute top-[12px] right-[12px] w-[24px] h-[24px] z-10"
             >
               <Image
                 src={isLiked ? "/red_heart.svg" : "/gray_heart.svg"}
