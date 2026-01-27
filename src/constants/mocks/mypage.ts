@@ -1,6 +1,10 @@
-// src/constants/mocks/mypage.ts
-
-import { MyPageBookStory, UserProfileData } from "@/types/mypage";
+import {
+  MyPageBookStory,
+  MyPageLibraryBook,
+  MyPageMeeting,
+  MyPageNotification,
+  UserProfileData,
+} from "@/types/mypage";
 
 export const DUMMY_USER_PROFILE: UserProfileData = {
   name: "_hy_0716",
@@ -47,5 +51,50 @@ export const DUMMY_MY_STORIES: MyPageBookStory[] = [
     likeCount: 67,
     commentCount: 12,
     coverImgSrc: "/BookImgSample.svg",
+  },
+];
+
+export const DUMMY_LIBRARY_BOOKS: MyPageLibraryBook[] = Array.from({
+  length: 12,
+}).map((_, i) => ({
+  id: i + 1,
+  src: "/BookImgSample.svg",
+  title: `책 제목 ${i + 1}`,
+  author: "저자 이름",
+  publisher: "출판사",
+  description: "이 책은 정말 재미있는 책입니다. 독서 모임에서 함께 읽어보세요.",
+}));
+
+export const DUMMY_MEETINGS: MyPageMeeting[] = [
+  { id: 1, title: "북적북적" },
+  { id: 2, title: "책 읽는 밤" },
+  { id: 3, title: "마음의 양식" },
+  { id: 4, title: "독서 토론회" },
+];
+
+export const DUMMY_NOTIFICATIONS: MyPageNotification[] = [
+  {
+    id: 1,
+    content: "‘북적북적’ 모임의 새로운 공지사항이 등록되었습니다.",
+    time: "1시간 전",
+    isRead: false,
+  },
+  {
+    id: 2,
+    content: "‘책 읽는 밤’ 모임 참여 신청이 승인되었습니다.",
+    time: "3시간 전",
+    isRead: false,
+  },
+  {
+    id: 3,
+    content: "작성하신 ‘어린 왕자를 읽고 나서’ 글에 새로운 댓글이 달렸습니다.",
+    time: "1일 전",
+    isRead: true,
+  },
+  {
+    id: 4,
+    content: "‘마음의 양식’ 모임 일정이 변경되었습니다.",
+    time: "2일 전",
+    isRead: true,
   },
 ];
