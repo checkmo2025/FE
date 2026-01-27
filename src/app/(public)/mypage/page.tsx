@@ -1,11 +1,16 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Header from "@/components/layout/Header";
 import MyPageBreadcrumb from "@/components/base-ui/MyPage/MyPageBreadcrumb";
 import UserProfile from "@/components/base-ui/MyPage/UserProfile";
 import MyPageTabs from "@/components/base-ui/MyPage/MyPageTabs";
 import MyBookStoryList from "@/components/base-ui/MyPage/MyBookStoryList";
+import MyLibraryList from "@/components/base-ui/MyPage/MyLibraryList";
 
 export default function MyPage() {
+  const [activeTab, setActiveTab] = useState("stories");
+
   return (
     <div className="flex flex-col items-center gap-[24px] w-full min-h-screen bg-white pb-[100px]">
       <Header />
@@ -24,8 +29,15 @@ export default function MyPage() {
           We want the tabs to align with the main content width, likely 1440px or constrained container.
           Assuming 1440px max-width for consistency with Header. */}
       <div className="flex flex-col items-center w-full max-w-[1440px] px-4 md:px-0 gap-[24px] mt-[72px]">
-        <MyPageTabs />
-        <MyBookStoryList />
+        <MyPageTabs activeTab={activeTab} onTabChange={setActiveTab} />
+
+        {activeTab === "stories" && <MyBookStoryList />}
+        {activeTab === "library" && <MyLibraryList />}
+        {(activeTab === "meetings" || activeTab === "notifications") && (
+          <div className="w-[1048px] h-[300px] flex justify-center items-center text-gray-400">
+            준비 중인 기능입니다.
+          </div>
+        )}
       </div>
     </div>
   );
