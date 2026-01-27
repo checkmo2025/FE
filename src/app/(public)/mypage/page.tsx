@@ -7,6 +7,7 @@ import UserProfile from "@/components/base-ui/MyPage/UserProfile";
 import MyPageTabs from "@/components/base-ui/MyPage/MyPageTabs";
 import MyBookStoryList from "@/components/base-ui/MyPage/MyBookStoryList";
 import MyLibraryList from "@/components/base-ui/MyPage/MyLibraryList";
+import MyMeetingList from "@/components/base-ui/MyPage/MyMeetingList";
 
 export default function MyPage() {
   const [activeTab, setActiveTab] = useState("stories");
@@ -33,7 +34,8 @@ export default function MyPage() {
 
         {activeTab === "stories" && <MyBookStoryList />}
         {activeTab === "library" && <MyLibraryList />}
-        {(activeTab === "meetings" || activeTab === "notifications") && (
+        {activeTab === "meetings" && <MyMeetingList />}
+        {activeTab === "notifications" && (
           <div className="w-[1048px] h-[300px] flex justify-center items-center text-gray-400">
             준비 중인 기능입니다.
           </div>
