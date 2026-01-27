@@ -9,8 +9,8 @@ import { DUMMY_MY_STORIES } from "@/constants/mocks/mypage";
 
 const MyBookStoryList = () => {
   return (
-    <div className="flex flex-col items-center w-[1048px] gap-[20px]">
-      <div className="w-full grid grid-cols-3 gap-[20px]">
+    <div className="flex flex-col items-center w-full max-w-[1048px] md:w-[692px] lg:w-[1048px] mx-auto gap-[20px]">
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[20px] md:gap-[12px] lg:gap-[20px]">
         {DUMMY_MY_STORIES.map((story) => (
           <BookStoryCard
             key={story.id}

@@ -15,7 +15,7 @@ interface MyPageTabsProps {
 }
 const MyPageTabs = ({ activeTab, onTabChange }: MyPageTabsProps) => {
   return (
-    <div className="flex items-center w-full max-w-[1440px] px-[197px] border-b-2 border-[#DADADA]">
+    <div className="flex items-center w-full max-w-[1440px] md:w-[768px] lg:w-[1440px] px-4 md:px-[60px] lg:px-[197px] border-b-2 border-[#DADADA]">
       {TABS.map((tab) => (
         <button
           key={tab.id}

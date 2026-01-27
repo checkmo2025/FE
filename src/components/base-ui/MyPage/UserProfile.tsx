@@ -7,9 +7,9 @@ const UserProfile = () => {
   const user = DUMMY_USER_PROFILE;
 
   return (
-    <div className="flex flex-col items-start w-[1440px] gap-[80px]">
+    <div className="flex flex-col items-start w-full max-w-[1440px] gap-[80px] px-4 md:px-[40px] lg:px-0">
       {/* Inner Content (Center Aligned) */}
-      <div className="flex flex-col items-start w-[734px] gap-[40px] mx-auto">
+      <div className="flex flex-col items-start w-full max-w-[734px] gap-[40px] mx-auto md:gap-[40px]">
         {/* Profile Info Area */}
         <div className="flex items-center self-stretch justify-between">
           {/* Profile Image */}
