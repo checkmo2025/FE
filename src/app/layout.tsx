@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import BottomNav from "@/components/layout/BottomNav";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import "@/app/globals.css";
@@ -27,10 +28,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased pb-[70px] t:pb-0`}
       >
         <AuthProvider>
           {children}
+          <BottomNav />
           <Toaster position="top-center" />
         </AuthProvider>
       </body>

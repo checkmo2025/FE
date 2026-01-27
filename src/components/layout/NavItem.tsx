@@ -11,7 +11,7 @@ export function NavItem({ href, label, active }: NavItemProps) {
     <Link
       href={href}
       className={[
-        "flex w-32 items-center justify-center gap-2.5 p-2.5",
+        "flex t:w-[100px] d:w-32 items-center justify-center gap-2.5 p-2.5",
         active ? "border-b-2 border-white" : "border-b-2 border-transparent",
       ].join(" ")}
     >
