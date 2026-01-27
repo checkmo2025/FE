@@ -56,7 +56,7 @@ export default function StoriesPage() {
           ))}
 
           {/* 두 번째 줄: 비로그인 시 사용자 추천 + 카드 3개, 로그인 시 카드 4개 */}
-          {!isLoggedIn && <ListSubscribe />}
+          {!isLoggedIn && <ListSubscribe height="h-[380px]" />}
           {DUMMY_STORIES.slice(4, isLoggedIn ? 8 : 7).map((story) => (
             <div
               key={story.id}

@@ -21,15 +21,15 @@ export default function HomeBookclub({ groups }: Props) {
   return (
     <aside
       className={[
-        'flex flex-col w-[332px] p-5 rounded-[8px] bg-Subbrown-4',
+        'flex flex-col w-[165px] t:w-[332px] pt-[40px] px-5 pb-5 t:p-5 rounded-[8px] bg-Subbrown-4',
         'overflow-hidden transition-[height] duration-200',
-        open ? 'h-[814px]' : 'h-[424px]',
+        open ? 'h-[215px] t:h-[814px]' : 'h-[215px] t:h-[424px]',
       ].join(' ')}
     >
       {/* 0개 */}
       {count === 0 && (
         <div className="">
-          <img src="logo2.svg" alt="로고" className="mx-auto mb-4 mt-[118px]" />
+          <img src="logo2.svg" alt="로고" className="mx-auto mb-4 t:mt-[118px]" />
         </div>
       )}
 
@@ -44,9 +44,9 @@ export default function HomeBookclub({ groups }: Props) {
           {displayGroups.map((group) => (
             <div
               key={group.id}
-              className="flex w-[288px] h-[52px] py-3 px-4 items-center rounded-lg bg-white"
+              className="flex w-full t:w-[288px] h-[52px] py-3 px-4 items-center rounded-lg bg-white"
             >
-              <span className="text-Gray-7 h-6 subhead_4_1">{group.name}</span>
+              <span className="text-Gray-7 h-6 subhead_4_1 truncate">{group.name}</span>
             </div>
           ))}
         </div>
@@ -76,7 +76,7 @@ export default function HomeBookclub({ groups }: Props) {
           <div className="flex flex-col gap-2">
             <button
               type="button"
-              className="w-full h-[48px] py-3 rounded-[8px] bg-white border border-[#E6E6E6]
+              className="w-full h-[32px] t:h-[48px] py-3 rounded-[8px] bg-white border border-[#E6E6E6]
                         text-[13px] flex items-center justify-center gap-2"
             >
               <Image
@@ -84,13 +84,14 @@ export default function HomeBookclub({ groups }: Props) {
                 alt="모임 검색하기"
                 width={24}
                 height={24}
+                className="w-3.5 h-3.5 t:w-6 t:h-6"
               />
-              <span className="text-primary-3 subhead_4_1">모임 검색하기</span>
+              <span className="text-primary-3 body_1_2 t:subhead_4_1">모임 검색하기</span>
             </button>
 
             <button
               type="button"
-              className="w-full h-[48px] py-3 rounded-[6px] bg-[#6B5448] text-white
+              className="w-full h-[32px] t:h-[48px] py-3 rounded-[6px] bg-[#6B5448] text-white
                         text-[13px] flex items-center justify-center gap-2"
             >
               <Image
@@ -98,8 +99,9 @@ export default function HomeBookclub({ groups }: Props) {
                 alt="icon_plus"
                 width={24}
                 height={24}
+                className="w-3.5 h-3.5 t:w-6 t:h-6"
               />
-              <span className="text-color-white subhead_4_1">
+              <span className="text-color-white body_1_2 t:subhead_4_1">
                 모임 생성하기
               </span>
             </button>

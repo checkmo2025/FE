@@ -2,7 +2,11 @@
 
 import ListSubscribeElement from './list_subscribe_element';
 
-export default function ListSubscribe() {
+type ListSubscribeProps = {
+  height?: string;
+};
+
+export default function ListSubscribe({ height = 'h-[380px]' }: ListSubscribeProps) {
   const users = [
     { id: '1', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
     { id: '2', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
@@ -11,7 +15,7 @@ export default function ListSubscribe() {
   ];
 
   return (
-    <section className="w-[336px] h-[380px] rounded-lg border-2 border-Subbrown-4 bg-stone-50 p-5">
+    <section className={`w-full t:w-[336px] ${height} rounded-lg border-2 border-Subbrown-4 bg-stone-50 p-5`}>
       <h3 className="subhead_2 text-Gray-7">사용자 추천</h3>
 
       {/* 리스트 */}
