@@ -37,7 +37,7 @@ export default function SearchBookResult({
     <div
       onClick={onCardClick}
       className={[
-        'flex w-full max-w-[1040px] p-[20px] justify-center items-start gap-[24px] rounded-[8px] bg-[color:var(--White,#FFF)] shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-[color:var(--Subbrown_4,#E0E0E0)]',
+        'relative flex w-full max-w-[1040px] p-[20px] justify-center items-start gap-6 rounded-[8px] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-Subbrown-4',
         onCardClick ? 'cursor-pointer' : '',
         className,
       ].join(' ')}
@@ -54,21 +54,21 @@ export default function SearchBookResult({
 
       <div className="flex flex-1 min-w-0 items-start gap-[24px]">
         <div className="flex flex-col min-w-0 flex-1">
-          <p className="text-[color:var(--Gray_7,#2C2C2C)] subhead_3 truncate">
+          <p className="text-Gray-7 subhead_3 truncate">
             {title}
           </p>
-          <p className="text-[color:var(--Gray_4,#8D8D8D)] subhead_4_1 truncate">
+          <p className="text-Gray-4 t:subhead_4_1 truncate">
             {author}
           </p>
 
           <div className="h-[12px]" />
 
-          <p className="flex1 h-full text-[color:var(--Gray_4,#8D8D8D)] body_1_2 line-clamp-6">
+          <p className="flex1 h-full text-Gray-4 body_1_2 line-clamp-6">
             {clippedDetail}
           </p>
         </div>
 
-        <div className="flex flex-col items-end justify-between shrink-0 self-stretch ml-4 ">
+        <div className="flex flex-col items-end shrink-0 ml-4">
           <button
             type="button"
             onClick={(e) => {
@@ -84,23 +84,23 @@ export default function SearchBookResult({
               height={24}
             />
           </button>
+        </div>
+      </div>
 
-          <button
+      <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               onPencilClick?.();
             }}
             className="
-              flex w-[60px] h-[60px] px-[10px] py-[4.167px]
+              flex absolute bottom-[20px] right-[20px] w-12 h-12 t:w-15 t:h-15 px-[10px] py-[4.167px]
               flex-col justify-center items-center gap-[8.333px] shrink-0
-              rounded-full bg-[color:var(--primary_2)]
+              rounded-full bg-primary-2
             "
           >
             <Image src="/pencil_icon.svg" alt="" width={20} height={20} />
           </button>
-        </div>
-      </div>
     </div>
   );
 }
