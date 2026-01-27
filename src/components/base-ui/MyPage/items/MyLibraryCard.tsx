@@ -13,7 +13,7 @@ interface MyLibraryCardProps {
 const MyLibraryCard = ({ book, isLiked, onToggleLike }: MyLibraryCardProps) => {
   return (
     <div
-      className="relative flex flex-col justify-end items-start gap-[10px] w-[244px] h-[320px] p-[12px] rounded-[4px] shrink-0 cursor-pointer"
+      className="relative flex flex-col justify-end items-start gap-[8px] md:gap-[10px] w-[102px] h-[132px] p-[8px] md:w-[244px] md:h-[320px] md:p-[12px] rounded-[4px] shrink-0 cursor-pointer"
       style={{
         background: `linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.30) 82.79%), url('${book.src}') lightgray 50% / cover no-repeat`,
       }}
@@ -24,13 +24,14 @@ const MyLibraryCard = ({ book, isLiked, onToggleLike }: MyLibraryCardProps) => {
           e.stopPropagation();
           onToggleLike(book.id);
         }}
-        className="w-[24px] h-[24px]"
+        className="w-[20px] h-[20px] md:w-[24px] md:h-[24px]"
       >
         <Image
           src={isLiked ? "/red_heart.svg" : "/gray_heart.svg"}
           alt="like"
           width={24}
           height={24}
+          priority
         />
       </button>
 

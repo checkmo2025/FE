@@ -10,7 +10,7 @@ interface MyNotificationItemProps {
 
 const MyNotificationItem = ({ notification }: MyNotificationItemProps) => {
   return (
-    <div className="flex w-[1048px] p-[28px_20px] justify-between items-center rounded-[8px] bg-white">
+    <div className="flex w-full p-[12px_20px] md:p-[28px_20px] justify-between items-center rounded-[8px] bg-white border border-[#EAE5E2]">
       <div className="flex items-center gap-[12px]">
         {!notification.isRead && (
           <Image
@@ -24,11 +24,11 @@ const MyNotificationItem = ({ notification }: MyNotificationItemProps) => {
         )}
         {notification.isRead && <div className="w-[24px] h-[24px] shrink-0" />}
 
-        <span className="text-[#5C5C5C] font-sans text-[18px] font-medium leading-[135%] tracking-[-0.018px]">
+        <span className="flex-1 text-[#5C5C5C] font-sans text-[12px] md:text-[18px] font-medium leading-[135%] tracking-[-0.018px]">
           {notification.content}
         </span>
       </div>
-      <span className="text-[#BBB] font-sans text-[14px] font-normal leading-[145%] tracking-[-0.014px]">
+      <span className="text-[#BBB] font-sans text-[12px] md:text-[14px] font-normal leading-[145%] tracking-[-0.014px]">
         {notification.time}
       </span>
     </div>

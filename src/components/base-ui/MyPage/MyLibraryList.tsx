@@ -13,7 +13,7 @@ const MyLibraryList = () => {
     );
   };
   return (
-    <div className="flex flex-wrap items-center content-center w-full justify-center gap-[16px] mx-auto md:w-[774px] md:justify-between md:gap-[21px] md:gap-y-[16px] lg:w-[1048px] lg:gap-x-0 lg:gap-y-[16px]">
+    <div className="grid grid-cols-3 gap-x-[18px] gap-y-[12px] px-[18px] w-full mx-auto md:flex md:flex-wrap md:justify-between md:gap-[21px] md:gap-y-[16px] md:w-[774px] md:px-0 lg:w-[1048px] lg:gap-x-0 lg:gap-y-[16px] [&>div]:w-full md:[&>div]:w-[244px]">
       {DUMMY_LIBRARY_BOOKS.map((book) => (
         <MyLibraryCard
           key={book.id}

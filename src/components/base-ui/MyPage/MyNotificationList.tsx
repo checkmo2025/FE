@@ -6,7 +6,7 @@ import MyNotificationItem from "./items/MyNotificationItem";
 
 const MyNotificationList = () => {
   return (
-    <div className="flex flex-col items-start gap-[8px] w-[1048px]">
+    <div className="flex flex-col items-start gap-[8px] w-full max-w-[1048px] mx-auto px-[20px] md:px-0">
       {DUMMY_NOTIFICATIONS.map((notification) => (
         <MyNotificationItem key={notification.id} notification={notification} />
       ))}
