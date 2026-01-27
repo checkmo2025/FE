@@ -1,18 +1,10 @@
 import React from "react";
 import Image from "next/image";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
+import { DUMMY_USER_PROFILE } from "@/constants/mocks/mypage";
 
 const UserProfile = () => {
-  // 더미 데이터 (추후 Props 또는 Context로 교체 가능)
-  const user = {
-    name: "_hy_0716",
-    following: 12, // 구독중
-    subscribers: 123, // 구독자
-
-    intro:
-      "이제 다양한 책을 함께 읽고 서로의 생각을 나누는 특별한 시간을 시작해보세요. 한 권의 책이 주는 작은 울림이 일상에 큰 변화를 가져올지도 모릅니다. 여러분의 이야기가 이 모임을 더욱 풍성하게 만들어줄 거예요.제 다양한 책을 함께 읽고 서로의 생각을 나누는 특별한 시간을 시작해보세요. 한 권의 책이 주는 작은 울림",
-    profileImage: null, // 이미지가 없을 경우 테스트
-  };
+  const user = DUMMY_USER_PROFILE;
 
   return (
     <div className="flex flex-col items-start w-[1440px] gap-[80px]">
