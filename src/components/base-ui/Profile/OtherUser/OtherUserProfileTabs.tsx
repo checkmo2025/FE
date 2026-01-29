@@ -2,9 +2,9 @@
 "use client";
 
 import { useState } from "react";
-import MyLibraryList from "@/components/base-ui/MyPage/MyLibraryList";
-import MyMeetingList from "@/components/base-ui/MyPage/MyMeetingList";
 import BookStoryList from "@/components/base-ui/Profile/BookStoryList";
+import MeetingList from "@/components/base-ui/Profile/MeetingList";
+import LibraryList from "@/components/base-ui/Profile/LibraryList";
 
 const TABS = ["책 이야기", "서재", "모임"] as const;
 type Tab = (typeof TABS)[number];
@@ -16,7 +16,7 @@ export default function OtherUserProfileTabs() {
     <div className="flex w-full flex-col items-center gap-[40px]">
       {/* ===== 탭 메뉴 ===== */}
       <div className="w-full border-b-2 border-[#DADADA]">
-        <div className="mx-auto flex w-[1440px] px-[197px]">
+        <div className="mx-auto flex w-full md:w-[688px] xl:w-[1048px]">
           {TABS.map((tab) => (
             <button
               key={tab}
@@ -34,15 +34,11 @@ export default function OtherUserProfileTabs() {
       </div>
 
       {/* ===== 콘텐츠 영역 ===== */}
-
-      {/* 책 이야기 리스트 */}
-      {activeTab === "책 이야기" && <BookStoryList />}
-
-      {/* 서재 리스트 */}
-      {activeTab === "서재" && <MyLibraryList />}
-
-      {/* 모임 리스트 */}
-      {activeTab === "모임" && <MyMeetingList />}
+      <div className="flex justify-center w-full">
+        {activeTab === "책 이야기" && <BookStoryList />}
+        {activeTab === "서재" && <LibraryList />}
+        {activeTab === "모임" && <MeetingList />}
+      </div>
     </div>
   );
 }
