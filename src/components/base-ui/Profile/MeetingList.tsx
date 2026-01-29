@@ -13,9 +13,6 @@ const MOCK_MEETINGS = [
 
 export default function MeetingList() {
   return (
-    // Responsive Layout Container
-    // Tablet(md): w-[688px]
-    // Desktop(xl): w-[1048px]
     <div className="flex w-full flex-col items-start gap-[8px] md:w-[688px] xl:w-[1048px]">
       {MOCK_MEETINGS.map((meeting) => (
         <MeetingCard

@@ -1,4 +1,3 @@
-// src/components/base-ui/MyPage/MyLibraryList.tsx
 "use client";
 
 import { useState } from "react";

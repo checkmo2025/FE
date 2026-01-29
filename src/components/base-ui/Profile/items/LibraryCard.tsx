@@ -58,11 +58,11 @@ export default function LibraryCard({ book, isLiked, onToggleLike }: Props) {
 
       {/* 텍스트 영역 */}
       <div className="flex flex-col items-start gap-[4px] self-stretch">
-        {/* 책 제목 (24px) */}
+        {/* 책 제목  */}
         <h3 className="self-stretch truncate text-[24px] font-semibold leading-[135%] tracking-[-0.024px] text-white">
           {book.title}
         </h3>
-        {/* 작가 (18px) */}
+        {/* 작가  */}
         <p className="self-stretch truncate text-[18px] font-normal leading-[135%] tracking-[-0.018px] text-white">
           {book.author}
         </p>

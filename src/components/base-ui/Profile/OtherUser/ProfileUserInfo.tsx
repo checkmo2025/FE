@@ -1,4 +1,3 @@
-// src/components/base-ui/Profile/ProfileUserInfo.tsx
 import Image from "next/image";
 
 export default function ProfileUserInfo({ nickname }: { nickname: string }) {

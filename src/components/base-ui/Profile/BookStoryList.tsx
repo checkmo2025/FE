@@ -1,4 +1,3 @@
-// src/components/base-ui/Profile/BookStoryList.tsx
 "use client";
 
 import BookStoryCard from "@/components/base-ui/BookStory/bookstory_card";
