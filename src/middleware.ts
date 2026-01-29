@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // 보호된 경로 (로그인 필요)
-const protectedRoutes = ["/mypage"];
+const protectedRoutes = []; // ["/mypage"] - 개발 중 접근 허용을 위해 임시 주석 처리
 // 인증된 사용자가 접근할 수 없는 경로 (로그인 불필요)
 const authRoutes = ["/login", "/signup"];
 
