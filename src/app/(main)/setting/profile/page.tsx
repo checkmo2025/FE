@@ -1,5 +1,6 @@
 import CategorySelector from "@/components/base-ui/Settings/EditProfile/CategorySelector";
 import ProfileImageSection from "@/components/base-ui/Settings/EditProfile/ProfileImageSection";
+import SettingsTitle from "@/components/base-ui/Settings/SettingsTitle";
 
 export default function ProfileEditPage() {
   const labelStyle =
@@ -12,11 +13,7 @@ export default function ProfileEditPage() {
   return (
     <div className="flex w-[1152px] flex-col items-start gap-[24px] pb-[114px] pl-[68px] pr-[400px]">
       {/* 타이틀 영역 */}
-      <div className="flex w-[1000px] items-center gap-[8px] border-b border-[#EAE5E2] pb-[28px] pt-[28px]">
-        <h2 className="text-[20px] font-semibold leading-[135%] tracking-[-0.02px] text-[#434343]">
-          프로필 편집
-        </h2>
-      </div>
+      <SettingsTitle title="프로필 편집" />
 
       {/* 폼 본문 영역 */}
       <div className="flex w-[688px] flex-col items-center gap-[64px] px-[20px]">
