@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { SETTINGS_MENU } from "@/constants/mocks/setting";
+import { SETTINGS_MENU } from "@/constants/setting/setting";
 import SettingsMenuItem from "./Items/SettingsMenuItem";
 
 export default function SettingsSidebar() {
