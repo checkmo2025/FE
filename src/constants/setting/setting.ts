@@ -1,7 +1,7 @@
 export const SETTINGS_MENU = [
   {
     category: "계정 관리",
-    icon: "/profile.svg",
+    icon: "/Setting_Profile.svg",
     items: [
       { label: "프로필 편집", href: "/setting/profile" },
       { label: "이메일 변경", href: "/setting/email" },
@@ -11,7 +11,7 @@ export const SETTINGS_MENU = [
   },
   {
     category: "서비스",
-    icon: "/profile4.svg",
+    icon: "/Setting_Smile_emoji.svg",
     items: [
       { label: "내 소식 관리", href: "/setting/news" },
       { label: "신고 관리", href: "/setting/report" },
@@ -20,7 +20,7 @@ export const SETTINGS_MENU = [
   },
   {
     category: "기타",
-    icon: "/menu_dots.svg",
+    icon: "/Category.svg",
     items: [
       { label: "고객센터/문의하기", href: "/setting/support" },
       { label: "이용약관", href: "/setting/terms" },
