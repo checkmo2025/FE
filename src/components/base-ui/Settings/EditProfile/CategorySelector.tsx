@@ -21,24 +21,22 @@ export default function CategorySelector() {
   return (
     <div className="flex flex-col items-start gap-[28px] self-stretch">
       <div className="flex items-end gap-[9px] self-stretch">
-        <span className="text-[14px] font-medium leading-[145%] tracking-[-0.014px] text-[#5E4A40]">
-          관심 카테고리
-        </span>
-        <span className="text-[14px] font-medium leading-[145%] tracking-[-0.014px] text-[#BBB]">
-          (최소 1개, 최대 6개 선택)
-        </span>
+        <span className="body_1_2 text-primary-3">관심 카테고리</span>
+        <span className="body_1_2 text-Gray-3">(최소 1개, 최대 6개 선택)</span>
       </div>
 
-      {/* 5열 그리드 배치 */}
-      <div className="grid w-full grid-cols-5 gap-x-[10px] gap-y-[16px]">
+      {/* 태블릿: 3열(w-386px) / 데스크탑: 5열(w-full) */}
+      <div
+        className="grid gap-x-[10px] gap-y-[16px]
+        w-[386px] grid-cols-3
+        xl:w-full xl:grid-cols-5"
+      >
         {CATEGORIES.map((cat) => (
           <div
             key={cat}
-            className="flex h-[44px] w-[122px] items-center justify-center gap-[8px] rounded-[400px] border border-[#D2C5B6] bg-[#F9F7F6] px-[16px] py-[12px] cursor-pointer hover:bg-white"
+            className="flex h-[44px] w-[122px] cursor-pointer items-center justify-center gap-[8px] rounded-[400px] border border-Subbrown-3 bg-background px-[16px] py-[12px] hover:bg-white"
           >
-            <span className="text-[14px] font-normal leading-[145%] tracking-[-0.014px] text-[#5C5C5C]">
-              {cat}
-            </span>
+            <span className="body_1_3 text-Gray-5">{cat}</span>
           </div>
         ))}
       </div>
