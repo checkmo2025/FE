@@ -3,14 +3,13 @@
 import BookStoryCard from "@/components/base-ui/BookStory/bookstory_card";
 
 const MOCK_STORIES = [
-  // ... (Mock 데이터 동일) ...
   {
     id: 1,
     authorName: "hy",
     createdAt: new Date().toISOString(),
     viewCount: 128,
-    title: "제목1",
-    content: "내용...",
+    title: "한밤의 도서관에서 발견한 기적",
+    content: "조용한 도서관 구석에서...",
     likeCount: 42,
     commentCount: 12,
   },
@@ -19,8 +18,8 @@ const MOCK_STORIES = [
     authorName: "hy",
     createdAt: new Date().toISOString(),
     viewCount: 350,
-    title: "제목2",
-    content: "내용...",
+    title: "이기적 유전자, 다시 읽기",
+    content: "대학 시절 읽었던...",
     likeCount: 85,
     commentCount: 24,
   },
@@ -29,8 +28,8 @@ const MOCK_STORIES = [
     authorName: "hy",
     createdAt: new Date().toISOString(),
     viewCount: 95,
-    title: "제목3",
-    content: "내용...",
+    title: "여행의 이유를 찾아서",
+    content: "김영하 작가님의...",
     likeCount: 30,
     commentCount: 5,
   },
@@ -39,8 +38,8 @@ const MOCK_STORIES = [
     authorName: "hy",
     createdAt: new Date().toISOString(),
     viewCount: 420,
-    title: "제목4",
-    content: "내용...",
+    title: "돈의 심리학: 부의 비밀",
+    content: "부자가 되는 것보다...",
     likeCount: 150,
     commentCount: 45,
   },
@@ -49,8 +48,8 @@ const MOCK_STORIES = [
     authorName: "hy",
     createdAt: new Date().toISOString(),
     viewCount: 210,
-    title: "제목5",
-    content: "내용...",
+    title: "불편한 편의점의 따뜻한 위로",
+    content: "제목과는 달리...",
     likeCount: 67,
     commentCount: 18,
   },
@@ -59,8 +58,8 @@ const MOCK_STORIES = [
     authorName: "hy",
     createdAt: new Date().toISOString(),
     viewCount: 88,
-    title: "제목6",
-    content: "내용...",
+    title: "코스모스, 우주를 향한 항해",
+    content: "칼 세이건의 코스모스는...",
     likeCount: 55,
     commentCount: 9,
   },
@@ -69,17 +68,8 @@ const MOCK_STORIES = [
 export default function BookStoryList() {
   return (
     <div className="grid w-full grid-cols-1 gap-y-[40px] md:w-[688px] md:grid-cols-2 md:gap-x-[16px] xl:w-[1048px] xl:grid-cols-3 xl:gap-x-[20px]">
-      {MOCK_STORIES.map((story) => (
-        <BookStoryCard
-          key={story.id}
-          authorName={story.authorName}
-          createdAt={story.createdAt}
-          viewCount={story.viewCount}
-          title={story.title}
-          content={story.content}
-          likeCount={story.likeCount}
-          commentCount={story.commentCount}
-        />
+      {MOCK_STORIES.map(({ id, ...storyData }) => (
+        <BookStoryCard key={id} {...storyData} />
       ))}
     </div>
   );
