@@ -13,7 +13,7 @@ export default function SettingsLayout({
         <SettingsSidebar />
 
         {/* 오른쪽 가변 컨텐츠 영역 */}
-        <section className="flex min-h-[700px] flex-1 flex-col items-start rounded-[12px] bg-white p-[40px] shadow-sm">
+        <section className="flex min-h-[700px] flex-1 flex-col items-start rounded-[12px] bg-white shadow-sm">
           {children}
         </section>
       </div>

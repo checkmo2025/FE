@@ -1,3 +1,4 @@
+// src/components/base-ui/Settings/SettingsMenuItem.tsx
 "use client";
 
 import Link from "next/link";
@@ -12,14 +13,29 @@ export default function SettingsMenuItem({ label, href, isActive }: Props) {
   return (
     <Link
       href={href}
-      className={`flex items-center gap-[10px] self-stretch rounded-[8px] px-[20px] py-[8px] transition-colors ${
-        isActive ? "bg-[#D2C5B6]" : "bg-transparent hover:bg-gray-100"
-      }`}
+      className={`
+        flex items-center gap-[10px] px-[20px] py-[8px] transition-all duration-200
+        
+        /* 기본 레이아웃: width 236px */
+        w-[236px] self-stretch border-radius-[8px] rounded-[8px]
+        
+        /* 1. 선택 시 스타일: 배경 Subbrown_3(#D2C5B6) */
+        /* 2. 호버 시 스타일: 선택되지 않았을 때만 연한 회색 배경 적용 */
+        ${isActive ? "bg-[#D2C5B6]" : "bg-transparent hover:bg-[#F2F2F2]"}
+      `}
     >
       <span
-        className={`text-[14px] leading-[145%] tracking-[-0.014px] ${
-          isActive ? "font-medium text-[#434343]" : "font-normal text-[#8D8D8D]"
-        }`}
+        className={`
+          text-[14px] font-medium leading-[145%] tracking-[-0.014px]
+          
+          /* 1. 선택 시 텍스트 색상: Gray_6(#434343) */
+          /* 2. 기본/호버 텍스트 색상: Gray_4(#8D8D8D) -> 호버 시 Gray_6(#434343) */
+          ${
+            isActive
+              ? "text-[#434343]"
+              : "text-[#8D8D8D] group-hover:text-[#434343]"
+          }
+        `}
       >
         {label}
       </span>
