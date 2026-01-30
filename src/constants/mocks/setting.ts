@@ -14,7 +14,7 @@ export const SETTINGS_MENU = [
     icon: "/profile4.svg",
     items: [
       { label: "내 소식 관리", href: "/setting/news" },
-      { label: "신고 관리", href: "/setting/reports" },
+      { label: "신고 관리", href: "/setting/report" },
       { label: "알림 관리", href: "/setting/notifications" },
     ],
   },
