@@ -1,69 +1,143 @@
+"use client";
+
 import Image from "next/image";
 
 export default function ProfileUserInfo({ nickname }: { nickname: string }) {
-  // 공통 텍스트 스타일
-  const textStyle =
-    "text-[18px] font-medium leading-[135%] tracking-[-0.018px] text-[#8D8D8D]";
-  const numberStyle =
-    "text-[18px] font-medium leading-[135%] tracking-[-0.018px] text-[#7B6154]";
-
   return (
-    <div className="flex w-full flex-col items-center gap-[40px] md:w-[688px] xl:w-[734px]">
-      <div className="flex w-full items-center gap-[38px]">
-        <div className="relative flex h-[138px] w-[138px] shrink-0 items-center justify-center rounded-full border border-[#D2C5B6] bg-[#F9F7F6]">
+    // 전체 컨테이너 (프로필 정보 + 버튼)
+    // 모바일: 너비 339px, gap 24px
+    <div
+      className="flex flex-col items-center
+      w-[339px] gap-[24px]
+      md:w-[688px] md:gap-[40px] xl:w-[734px]"
+    >
+      {/* 1. 프로필 정보 섹션 (이미지 + 텍스트) */}
+      {/* Frame 2087328519 -> Frame 2087328520 */}
+      {/* 모바일: flex-row, items-start, gap-24px (명세 반영) */}
+      <div
+        className="flex w-full items-start
+        flex-row gap-[24px]
+        md:items-center md:gap-[38px]"
+      >
+        {/* 이미지 영역 (image_프로필) */}
+        {/* 모바일: 80x80 */}
+        <div
+          className="relative shrink-0 items-center justify-center rounded-full border border-[#D2C5B6] bg-[#F9F7F6] overflow-hidden
+          h-[80px] w-[80px]
+          md:h-[138px] md:w-[138px]"
+        >
           <Image
             src="/profile.svg"
             alt={`${nickname}님의 프로필`}
             fill
-            className="object-cover rounded-full"
+            className="object-cover"
           />
         </div>
 
-        <div className="flex w-full flex-col items-center gap-[12px] md:w-[512px] xl:w-[558px]">
-          <div className="flex items-start self-stretch justify-between">
-            <div className="flex w-full flex-col items-start gap-[8px]">
-              <h1 className="text-[24px] font-semibold leading-[135%] tracking-[-0.024px] text-[#2C2C2C]">
+        {/* 텍스트 정보 영역 (Frame 2087328476) */}
+        {/* 모바일: w-[189px], gap 12px */}
+        <div
+          className="flex flex-col
+          items-start w-[189px] gap-[12px]
+          md:w-[512px] md:items-center xl:w-[558px]"
+        >
+          {/* 이름 & 통계 (Frame 2087328475) */}
+          <div className="flex items-start justify-between w-full">
+            {/* Frame 2087328474 */}
+            <div className="flex w-full flex-col gap-[8px] items-start">
+              {/* 닉네임 (_hy_0716) */}
+              <h1
+                className="text-[#2C2C2C] font-semibold leading-[135%] tracking-[-0.02px]
+                text-[20px]
+                md:text-[24px] md:tracking-[-0.024px]"
+              >
                 {nickname}
               </h1>
 
-              <div className="flex items-center gap-[12px] self-stretch">
-                <div className="flex items-center gap-[4px]">
-                  <span className={textStyle}>구독중</span>
-                  <span className={numberStyle}>2</span>
+              {/* 구독 통계 (Frame 2087328473) */}
+              <div className="flex items-center gap-[12px]">
+                <div className="flex items-center gap-[4px] md:gap-[4px]">
+                  <span
+                    className="text-[#8D8D8D] font-medium leading-[145%] tracking-[-0.014px]
+                    text-[14px] md:text-[18px]"
+                  >
+                    구독 중
+                  </span>
+                  <span
+                    className="text-[#7B6154] font-medium leading-[145%] tracking-[-0.014px]
+                    text-[14px] md:text-[18px]"
+                  >
+                    2
+                  </span>
                 </div>
-                <div className="flex items-center gap-[4px]">
-                  <span className={textStyle}>구독자</span>
-                  <span className={numberStyle}>2</span>
+
+                <div className="flex items-center gap-[4px] md:gap-[4px]">
+                  <span
+                    className="text-[#8D8D8D] font-medium leading-[145%] tracking-[-0.014px]
+                    text-[14px] md:text-[18px]"
+                  >
+                    구독자
+                  </span>
+                  <span
+                    className="text-[#7B6154] font-medium leading-[145%] tracking-[-0.014px]
+                    text-[14px] md:text-[18px]"
+                  >
+                    2
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          <p className="self-stretch text-[14px] font-medium leading-[145%] tracking-[-0.014px] text-[#8D8D8D]">
+          {/* 소개글 */}
+          {/* 모바일: w-[189px], 12px, Gray_4 */}
+          <p
+            className="break-keep text-[#8D8D8D]
+            w-[189px] text-[12px] font-normal leading-[145%] tracking-[-0.012px] text-left
+            md:w-full md:text-[14px] md:font-medium md:tracking-[-0.014px]"
+          >
             이제 다양한 책을 함께 읽고 서로의 생각을 나누는 특별한 시간을
-            시작해보세요. 한 권의 책이 주는 작은 울림이 일상에 큰 변화를
-            가져올지도 모릅니다. 여러분의 이야기가 이 모임을 더욱 풍성하게
-            만들어줄 거예요.제 다양한 책을 함께 읽고 서로의 생각을 나누는 특별한
-            시간을 시작해보세요. 한 권의 책이 주는 작은 울림
+            시작해보세요. 한 권의 책이 주는 작은 울림이...
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-[24px] self-stretch">
+      {/* 2. 버튼 그룹 (Frame 2087328478) */}
+      <div
+        className="flex items-center
+        gap-[19px] w-full justify-center
+        md:gap-[24px]"
+      >
+        {/* 구독하기 버튼 (CTA1) */}
+        {/* 모바일: w-[220px] h-[32px] */}
         <button
           type="button"
-          className="flex h-[48px] w-full items-center justify-center rounded-[8px] bg-[#EAE5E2] transition-colors md:w-[486px] xl:w-[532px] xl:bg-[#7B6154]"
+          className="flex items-center justify-center rounded-[8px] bg-[#7B6154] transition-colors
+            w-[220px] h-[32px]
+            md:w-[486px] md:h-[48px] xl:w-[532px]"
         >
-          <span className="text-[18px] font-medium text-[#5E4A40] xl:text-white">
-            구독 중
+          <span
+            className="text-white font-semibold leading-[145%] tracking-[-0.014px]
+            text-[14px]
+            md:text-[18px] md:font-medium"
+          >
+            구독하기
           </span>
         </button>
 
+        {/* 신고하기 버튼 (CTA2) */}
+        {/* 모바일: w-[100px] h-[32px] */}
         <button
           type="button"
-          className="flex h-[48px] w-[178px] shrink-0 items-center justify-center rounded-[8px] border border-[#D2C5B6] bg-white transition-colors hover:bg-gray-50"
+          className="flex shrink-0 items-center justify-center rounded-[8px] border border-[#D2C5B6] bg-white transition-colors hover:bg-gray-50
+            w-[100px] h-[32px]
+            md:w-[178px] md:h-[48px]"
         >
-          <span className="text-[18px] font-medium text-[#8D8D8D]">
+          <span
+            className="text-[#8D8D8D] font-medium leading-[145%] tracking-[-0.014px]
+            text-[14px]
+            md:text-[18px]"
+          >
             신고하기
           </span>
         </button>

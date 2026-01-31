@@ -67,7 +67,13 @@ const MOCK_STORIES = [
 
 export default function BookStoryList() {
   return (
-    <div className="grid w-full grid-cols-1 gap-y-[40px] md:w-[688px] md:grid-cols-2 md:gap-x-[16px] xl:w-[1048px] xl:grid-cols-3 xl:gap-x-[20px]">
+    <div
+      className="grid w-full justify-items-center
+      grid-cols-2 gap-x-[17px] gap-y-[13px]
+      md:w-[688px] md:gap-x-[16px] md:gap-y-[40px]
+      xl:w-[1048px] xl:grid-cols-3 xl:gap-x-[20px]"
+    >
+      {/* 데이터 매핑... */}
       {MOCK_STORIES.map(({ id, ...storyData }) => (
         <BookStoryCard key={id} {...storyData} />
       ))}

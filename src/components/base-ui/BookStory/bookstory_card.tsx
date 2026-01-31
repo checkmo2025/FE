@@ -15,6 +15,7 @@ type Props = {
   onSubscribeClick?: () => void;
   subscribeText?: string;
 };
+
 function timeAgo(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
   const minutes = Math.floor(diff / 60000);
@@ -43,29 +44,30 @@ export default function BookStoryCard({
   subscribeText = "구독",
 }: Props) {
   return (
-    <div className="flex h-[380px] w-[336px] flex-col overflow-hidden rounded-lg border-2 border-Subbrown-4 bg-White hover:border-primary-2 transition-colors">
-      {/* 상단 프로필 */}
-      <div className="flex items-center gap-2 px-4 py-3">
-        {/* 프로필 */}
-        <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full">
+    <div
+      className="flex flex-col overflow-hidden rounded-lg border-2 border-Subbrown-4 bg-White hover:border-primary-2 transition-colors
+      /* 모바일: 161px x 243px */
+      w-[161px] h-[243px]
+      /* 데스크탑(md 이상): 336px x 380px */
+      md:w-[336px] md:h-[380px]"
+    >
+      {/* 1. 상단 프로필 (모바일 숨김 / 데스크탑 노출) */}
+      <div className="items-center hidden gap-2 px-4 py-3 md:flex">
+        <div className="relative w-8 h-8 overflow-hidden rounded-full shrink-0">
           <Image
             src={profileImgSrc}
-            alt={`${authorName} profile`}
+            alt={authorName}
             fill
             className="object-cover"
             sizes="32px"
           />
         </div>
-
-        {/* 이름 + 시간 + 조회수 */}
-        <div className="min-w-0 flex-1">
-          <p className="body_1 text-Gray-7 truncate">{authorName}</p>
-          <p className="body_2_3 text-Gray-3 truncate">
+        <div className="flex-1 min-w-0">
+          <p className="truncate body_1 text-Gray-7">{authorName}</p>
+          <p className="truncate body_2_3 text-Gray-3">
             {timeAgo(createdAt)} 조회수 {viewCount}
           </p>
         </div>
-
-        {/* 구독 버튼 */}
         <button
           type="button"
           onClick={onSubscribeClick}
@@ -75,45 +77,67 @@ export default function BookStoryCard({
         </button>
       </div>
 
-      {/* 책 이미지 */}
-      <div className="relative h-36 w-full shrink-0 bg-Subbrown-4">
+      {/* 2. 책 이미지 (모바일: flex-1 / 데스크탑: h-36) */}
+      <div className="relative flex-1 w-full shrink-0 bg-Subbrown-4 md:h-36 md:flex-none">
         {coverImgSrc && (
-          <Image
-            src={coverImgSrc}
-            alt="bookstory cover"
-            fill
-            className="object-cover"
-          />
+          <Image src={coverImgSrc} alt="cover" fill className="object-cover" />
         )}
       </div>
 
-      {/* 제목 + 내용 */}
-      <div className="px-4 pt-4 ">
-        <p className="subhead_2 pb-1 text-Gray-7">{title}</p>
-        <p className="body_1_3 h-16 pt-1 text-Gray-5 line-clamp-3 overflow-hidden">
-          {content}
+      {/* 3. 제목 + 내용 */}
+      <div
+        className="flex flex-col
+        px-[16px] md:px-4 md:pt-4"
+      >
+        {/* 제목 */}
+        <p
+          className="text-Gray-7 truncate
+          /* 모바일: 중앙 정렬, mt-3, 14px */
+          text-center mt-[12px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px]
+          /* 데스크탑: 좌측 정렬, subhead_2 */
+          md:text-left md:mt-0 md:subhead_2 md:pb-1"
+        >
+          {title}
         </p>
+
+        {/* 내용 */}
+        <div
+          className="text-Gray-5 overflow-hidden
+          /* 모바일: h-[76px], flex center, 12px */
+          flex flex-col justify-center h-[76px] text-center text-[12px] font-medium leading-[145%] tracking-[-0.012px] line-clamp-3
+          /* 데스크탑: h-16, block, body_1_3 */
+          md:block md:h-16 md:pt-1 md:text-left md:body_1_3"
+        >
+          {content}
+        </div>
       </div>
 
-      {/* 좋아요 + 댓글 */}
-      <div className="mt-1 grid grid-cols-[1fr_auto_1fr] items-center px-2">
-        {/* 좋아요 */}
-        <div className="flex items-center justify-center gap-2 pt-1 ">
-          <Image
-            src="/gray_heart.svg"
-            alt="좋아요 아이콘"
-            width={24}
-            height={24}
-          />
+      {/* 4. 하단 통계 (좋아요/댓글) */}
+      {/* 모바일 버전 Footer */}
+      <div className="flex md:hidden h-[37px] items-start border-t border-Subbrown-4 pt-[4px] pb-[12px]">
+        <div className="flex flex-1 items-center justify-center gap-[6px] border-r-2 border-Gray-2 h-[32px]">
+          <Image src="/gray_heart.svg" alt="좋아요" width={20} height={20} />
+          <span className="text-[12px] font-medium text-Gray-4">
+            {likeCount}
+          </span>
+        </div>
+        <div className="flex flex-1 items-center justify-center gap-[6px] h-[32px]">
+          <Image src="/comment.svg" alt="댓글" width={20} height={20} />
+          <span className="text-[12px] font-medium text-Gray-4">
+            {commentCount}
+          </span>
+        </div>
+      </div>
+
+      {/* 데스크탑 버전 Footer */}
+      <div className="hidden md:grid mt-1 grid-cols-[1fr_auto_1fr] items-center px-2 pb-[10px]">
+        <div className="flex items-center justify-center gap-2 pt-1">
+          <Image src="/gray_heart.svg" alt="좋아요" width={24} height={24} />
           <span className="body_1_2 text-Gray-4">좋아요 {likeCount}</span>
         </div>
-
-        {/* 구분선 */}
-        <div className="h-10 w-[1.8px] mt-2 rounded-full bg-Gray-2 " />
-
-        {/* 댓글 */}
+        <div className="h-10 w-[1.8px] mt-2 rounded-full bg-Gray-2" />
         <div className="flex items-center justify-center gap-2 pt-1">
-          <Image src="/comment.svg" alt="댓글 아이콘" width={24} height={24} />
+          <Image src="/comment.svg" alt="댓글" width={24} height={24} />
           <span className="body_1_2 text-Gray-4">댓글 {commentCount}</span>
         </div>
       </div>
