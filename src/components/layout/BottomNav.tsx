@@ -31,7 +31,7 @@ const NAV_ITEMS = [
   },
   {
     label: "마이페이지",
-    href: "/mypage",
+    href: "/setting",
     iconBefore: "/before_my.svg",
     iconAfter: "/after_my.svg",
   },
@@ -41,7 +41,7 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-White border-t border-Gray-2 t:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-White border-Gray-2 t:hidden">
       <div className="flex items-center justify-around h-[70px] px-2">
         {NAV_ITEMS.map((item) => {
           const isActive =
