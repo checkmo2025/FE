@@ -49,8 +49,14 @@ export default function LibraryList() {
 
   return (
     <div
-      className="grid w-full justify-center 
+      className="grid w-full justify-items-center
+      /* [수정] 모바일: 3열, 가로간격 15px (누락 수정), 세로간격 20px */
+      grid-cols-3 gap-x-[15px] gap-y-[20px]
+      
+      /* 태블릿(md): 3열 유지 */
       md:w-[688px] md:grid-cols-3 md:gap-x-[21.5px] md:gap-y-[16px]
+      
+      /* 데스크탑(xl): 4열 */
       xl:w-[1048px] xl:grid-cols-4 xl:gap-x-[24px] xl:gap-y-[16px]"
     >
       {MOCK_LIBRARY_BOOKS.map((book) => (

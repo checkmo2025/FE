@@ -13,12 +13,20 @@ const MOCK_MEETINGS = [
 
 export default function MeetingList() {
   return (
-    <div className="flex w-full flex-col items-start gap-[8px] md:w-[688px] xl:w-[1048px]">
+    <div
+      className="flex w-full flex-col items-center 
+      /* 모바일: 세로 간격 12px (BookStoryList와 통일) */
+      gap-[12px]
+      
+      /* 태블릿/데스크탑: 좌측 정렬, 간격 8px */
+      md:w-[688px] md:items-start md:gap-[8px] 
+      xl:w-[1048px]"
+    >
       {MOCK_MEETINGS.map((meeting) => (
         <MeetingCard
           key={meeting.id}
           title={meeting.title}
-          // showMoreIcon={false} // 기본값이 false이므로 생략 가능
+          // showMoreIcon={false}
         />
       ))}
     </div>

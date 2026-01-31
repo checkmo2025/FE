@@ -3,7 +3,7 @@
 import { useState } from "react";
 import MyLibraryList from "@/components/base-ui/MyPage/MyLibraryList";
 import MyMeetingList from "@/components/base-ui/MyPage/MyMeetingList";
-import BookStoryList from "@/components/base-ui/Profile/BookStoryList"; // 아래에서 수정
+import BookStoryList from "@/components/base-ui/Profile/BookStoryList";
 
 const TABS = ["책 이야기", "서재", "모임"] as const;
 type Tab = (typeof TABS)[number];
@@ -27,7 +27,6 @@ export default function OtherUserProfileTabs() {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`flex-1 py-[10px] text-center font-medium md:font-semibold transition-colors
-                /* 모바일: 14px / 데스크탑: 20px */
                 text-[14px] md:text-[20px]
                 ${
                   activeTab === tab
@@ -42,7 +41,13 @@ export default function OtherUserProfileTabs() {
       </div>
 
       {/* ===== 콘텐츠 영역 ===== */}
-      <div className="flex justify-center w-full md:px-0">
+      <div
+        className="flex justify-center w-full 
+        /* 모바일: 양옆 패딩 18px 적용 (여기서 339px 영역 확보) */
+        px-[18px] 
+        /* 데스크탑: 패딩 0 (부모 너비 688px/1048px 따름) */
+        md:px-0"
+      >
         {TAB_CONTENT[activeTab]}
       </div>
     </div>
