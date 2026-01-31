@@ -18,20 +18,21 @@ export default function OtherUserProfileTabs() {
   };
 
   return (
-    <div className="flex w-full flex-col items-center gap-[24px] md:gap-[40px]">
-      {/* ===== 탭 메뉴 ===== */}
-      <div className="w-full border-b-2 border-[#DADADA]">
-        <div className="mx-auto flex w-full md:w-[688px] xl:w-[1048px]">
+    <div className="flex w-full flex-col items-center gap-[24px] t:gap-[40px]">
+      {/* 탭 헤더 */}
+      <div className="w-full border-b-2 border-Gray-2">
+        <div className="mx-auto flex w-full t:w-[688px] d:w-[1048px]">
           {TABS.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-[10px] text-center font-medium md:font-semibold transition-colors
-                text-[14px] md:text-[20px]
+              className={`flex-1 py-[10px] text-center transition-colors
+                /* 14px Medium -> body_1_2, 20px Semibold -> subhead_3 */
+                body_1_2 t:subhead_3
                 ${
                   activeTab === tab
-                    ? "border-b-2 border-[#5E4A40] text-[#5E4A40]"
-                    : "text-[#BBB]"
+                    ? "border-b-2 border-primary-3 text-primary-3"
+                    : "text-Gray-3"
                 }`}
             >
               {tab}
@@ -40,14 +41,8 @@ export default function OtherUserProfileTabs() {
         </div>
       </div>
 
-      {/* ===== 콘텐츠 영역 ===== */}
-      <div
-        className="flex justify-center w-full 
-        /* 모바일: 양옆 패딩 18px 적용 (여기서 339px 영역 확보) */
-        px-[18px] 
-        /* 데스크탑: 패딩 0 (부모 너비 688px/1048px 따름) */
-        md:px-0"
-      >
+      {/* 컨텐츠 영역 */}
+      <div className="flex justify-center w-full px-[18px] t:px-0">
         {TAB_CONTENT[activeTab]}
       </div>
     </div>

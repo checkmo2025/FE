@@ -70,10 +70,9 @@ export default function BookStoryList() {
     <div
       className="grid w-full justify-items-center
       grid-cols-2 gap-x-[17px] gap-y-[12px]
-      md:w-[688px] md:gap-x-[16px] md:gap-y-[40px]
-      xl:w-[1048px] xl:grid-cols-3 xl:gap-x-[20px]"
+      t:w-[688px] t:gap-x-[16px] t:gap-y-[40px]
+      d:w-[1048px] d:grid-cols-3 d:gap-x-[20px]"
     >
-      {/* 데이터 매핑... */}
       {MOCK_STORIES.map(({ id, ...storyData }) => (
         <BookStoryCard key={id} {...storyData} />
       ))}
