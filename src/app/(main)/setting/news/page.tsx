@@ -33,12 +33,20 @@ const MOCK_NEWS = [
 
 export default function MyNewsPage() {
   return (
-    <div className="flex w-[1152px] flex-col items-start gap-[24px] pb-[98px] px-[76px]">
-      {/* 1. 타이틀 영역 (재사용 컴포넌트) */}
+    <div
+      className="flex flex-col items-start gap-[24px] pb-[98px]
+      w-full md:w-[480px] md:px-0
+      xl:w-[1152px] xl:px-[76px]"
+    >
+      {/* 1. 타이틀 영역 */}
       <SettingsTitle title="내 소식 관리" />
 
       {/* 2. 뉴스 리스트 영역 */}
-      <div className="flex flex-col items-start gap-[8px] self-stretch">
+      <div
+        className="flex flex-col items-start gap-[8px] self-stretch
+        w-full md:w-[480px] md:px-[20px]
+        xl:w-auto xl:px-0"
+      >
         {MOCK_NEWS.map((news) => (
           <NewsList
             key={news.id}
@@ -47,7 +55,7 @@ export default function MyNewsPage() {
             content={news.content}
             date={news.date}
             imageUrl={news.imageUrl}
-            className="w-full"
+            className="w-full md:min-h-[185px]"
           />
         ))}
       </div>

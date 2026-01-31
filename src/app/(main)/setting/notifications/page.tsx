@@ -3,18 +3,26 @@ import NotificationItem from "@/components/base-ui/Settings/Notification/Notific
 
 export default function NotificationPage() {
   return (
-    // 전체 컨테이너: w-[1152px], px-[68px]/[400px] (프로필/이메일 변경과 동일 규격)
-    <div className="flex w-[1152px] flex-col items-start gap-[24px] pb-[314px] pl-[68px] pr-[400px]">
+    // 전체 컨테이너
+    <div
+      className="flex flex-col items-start gap-[24px] pb-[314px]
+      w-full md:w-[480px] md:px-0
+      xl:w-[1152px] xl:pl-[68px] xl:pr-[400px]"
+    >
       {/* 1. 타이틀 영역 */}
       <SettingsTitle title="알림 관리" />
 
-      {/* 2. 본문 영역 (w-[688px]) */}
-      <div className="flex w-[688px] flex-col items-start gap-[40px] px-[20px]">
+      {/* 2. 본문 영역 */}
+      <div
+        className="flex flex-col items-start px-[20px]
+        w-full md:w-[480px] gap-[60px]
+        xl:w-[688px] xl:gap-[40px]"
+      >
         {/* 섹션 1: 책모 알림 */}
         <div className="flex flex-col items-start gap-[20px] self-stretch">
           <h3 className="body_1_2 text-Gray-7">책모 알림</h3>
 
-          <div className="flex flex-col gap-[20px]">
+          <div className="flex flex-col gap-[20px] self-stretch">
             <NotificationItem
               title="책 이야기 좋아요 알림"
               description="내 책이야기 좋아요 활동에 대한 알림 수신"
@@ -30,23 +38,22 @@ export default function NotificationPage() {
           </div>
         </div>
 
-        {/* 섹션 2: 독서 모임 알림 (동일한 UI 구조 반복) */}
+        {/* 섹션 2: 독서 모임 알림 */}
         <div className="flex flex-col items-start gap-[20px] self-stretch">
           <h3 className="body_1_2 text-Gray-7">독서 모임 알림</h3>
 
-          <div className="flex flex-col gap-[20px]">
+          <div className="flex flex-col gap-[20px] self-stretch">
             <NotificationItem
-              title="독서 모임 가입 알림"
-              description="나의 독서 모임 가입 활동에 대한 알림 수신"
+              title="모임 참여 신청/승인 알림"
+              description="모임 참여 신청 및 승인 결과에 대한 알림 수신"
             />
             <NotificationItem
-              title="공지사항 알림"
-              description="내가 가입한 독서 모임의 공지사항 등록에 대한 알림 수신"
+              title="모임 공지사항 알림"
+              description="참여 중인 모임의 새로운 공지사항 등록 알림 수신"
             />
             <NotificationItem
-              title="정기 모임 생성 알림"
-              description="내가 가입한 독서 모임의 정기 모임 생성에 대한 알림 수신
-"
+              title="모임 댓글/답글 알림"
+              description="작성한 게시글에 대한 댓글 및 답글 알림 수신"
             />
           </div>
         </div>
