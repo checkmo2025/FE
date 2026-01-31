@@ -25,7 +25,8 @@ export default function ReportItem({
       xl:w-[1000px]"
     >
       {/* 신고 카테고리 뱃지: 60px */}
-      <div className="flex w-[60px] shrink-0 items-center justify-center gap-[10px] rounded-[4px] bg-[#FF5151] p-[4px]">
+      <div className="flex w-[60px] shrink-0 items-center justify-center gap-[10px] rounded-[4px] bg-Red p-[4px]">
+        {" "}
         <span className="body_2_2 text-White">{category}</span>
       </div>
 

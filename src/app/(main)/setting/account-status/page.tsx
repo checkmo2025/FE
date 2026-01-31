@@ -1,4 +1,3 @@
-// src/app/(main)/settings/account-status/page.tsx
 import SettingsTitle from "@/components/base-ui/Settings/SettingsTitle";
 import SocialLoginCard from "@/components/base-ui/Settings/SocialLogin/SocialLoginCard";
 import WithdrawalNotice from "@/components/base-ui/Settings/SocialLogin/WithdrawalNotice";

@@ -8,6 +8,7 @@ export default function SettingsLayout({
 }) {
   return (
     <main className="flex min-h-screen w-full flex-col items-center bg-background pb-[114px]">
+      {" "}
       <div className="mx-auto flex w-full md:max-w-[768px] xl:max-w-[1440px] items-start justify-center gap-[30px] transition-all duration-300">
         {/* 사이드바 (왼쪽) */}
         <SettingsSidebar />

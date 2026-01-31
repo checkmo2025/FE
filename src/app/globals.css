@@ -3,6 +3,7 @@
 :root {
   --White: #fff;
   --Black: #000000;
+  --Red: #ff5151;
 
   --background: #f9f7f6;
   --foreground: #171717;
@@ -42,6 +43,7 @@
   /* Colors */
   --color-White: var(--White);
   --color-Black: var(--Black);
+  --color-Red: var(--Red);
 
   --color-Gray-1: var(--Gray_1);
   --color-Gray-2: var(--Gray_2);
