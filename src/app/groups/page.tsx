@@ -42,7 +42,7 @@ export default function Searchpage() {
   
 
   const onClickVisit = (clubId: number) => {
-    router.push(`/clubs/${clubId}`); // 네 라우팅에 맞게 바꿔
+    router.push(`/groups/${clubId}`);
   };
 
   const onClickApply = (clubId: number) => {
