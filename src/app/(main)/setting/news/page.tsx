@@ -2,6 +2,7 @@
 
 import SettingsTitle from "@/components/base-ui/Settings/SettingsTitle";
 import NewsList from "@/components/base-ui/News/news_list";
+import MobileSettingHeader from "@/components/base-ui/Settings/MobileSettingHeader";
 
 // UI 확인을 위한 Mock Data
 const MOCK_NEWS = [
@@ -35,16 +36,24 @@ export default function MyNewsPage() {
   return (
     <div
       className="flex flex-col items-start gap-[24px] pb-[98px]
-      w-full md:w-[480px] md:px-0
+      w-full md:w-[480px]
       xl:w-[1152px] xl:px-[76px]"
     >
-      {/* 1. 타이틀 영역 */}
-      <SettingsTitle title="내 소식 관리" />
+      <div className="flex flex-col w-full">
+        <MobileSettingHeader title="뒤로가기" />
+        <div className="hidden w-full md:block">
+          <SettingsTitle title="내 소식 관리" />
+        </div>
+        {/* 모바일용 타이틀 (명세: Frame 2087328543, h-40, padding 28px 20px) */}
+        <div className="md:hidden flex items-center justify-center w-full px-[20px] py-[28px] h-[40px]">
+          <h2 className="text-center subhead_3 text-Gray-6">내 소식 관리</h2>
+        </div>
+      </div>
 
-      {/* 2. 뉴스 리스트 영역 */}
+      {/* 리스트 영역: 모바일 w-[339px] (px-20 적용시 w-full) */}
       <div
-        className="flex flex-col items-start gap-[8px] self-stretch
-        w-full md:w-[480px] md:px-[20px]
+        className="flex flex-col items-start gap-[8px] self-stretch px-[20px]
+        w-full md:w-[480px]
         xl:w-auto xl:px-0"
       >
         {MOCK_NEWS.map((news) => (
@@ -55,7 +64,7 @@ export default function MyNewsPage() {
             content={news.content}
             date={news.date}
             imageUrl={news.imageUrl}
-            className="w-full md:min-h-[185px]"
+            className="w-full"
           />
         ))}
       </div>

@@ -21,9 +21,9 @@ export default function SocialLoginCard({ provider, email }: Props) {
 
   return (
     <div
-      className={`flex w-[420px] h-[64px] items-center gap-[77px] rounded-[8px] px-[20px] ${bgColor}`}
+      className={`flex items-center gap-[20px] md:gap-[77px] rounded-[8px] px-[20px] h-[64px] ${bgColor}
+      w-full max-w-[420px]`}
     >
-      {/* 아이콘 이미지 */}
       <div className="relative h-[42.56px] w-[42.56px] shrink-0">
         <Image
           src={icon}
@@ -33,8 +33,7 @@ export default function SocialLoginCard({ provider, email }: Props) {
         />
       </div>
 
-      {/* 이메일 텍스트 */}
-      <span className="subhead_4_1 text-Gray-7">{email}</span>
+      <span className="truncate subhead_4_1 text-Gray-7">{email}</span>
     </div>
   );
 }

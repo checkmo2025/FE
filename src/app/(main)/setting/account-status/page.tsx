@@ -1,3 +1,4 @@
+import MobileSettingHeader from "@/components/base-ui/Settings/MobileSettingHeader";
 import SettingsTitle from "@/components/base-ui/Settings/SettingsTitle";
 import SocialLoginCard from "@/components/base-ui/Settings/SocialLogin/SocialLoginCard";
 import WithdrawalNotice from "@/components/base-ui/Settings/SocialLogin/WithdrawalNotice";
@@ -5,28 +6,34 @@ import WithdrawalNotice from "@/components/base-ui/Settings/SocialLogin/Withdraw
 export default function AccountStatusPage() {
   return (
     // 전체 컨테이너
-
     <div
-      className="flex flex-col items-start pb-[266px]
-      w-full md:w-[480px] md:px-0
+      className="flex flex-col items-start gap-[60px] md:gap-[120px] pb-[266px]
+      w-full md:w-[480px]
       xl:w-[1152px] xl:pl-[68px] xl:pr-[400px]"
     >
-      {/* 섹션 1: 소셜 로그인 연동 관리 */}
+      {/* 1. 헤더 영역 (소셜 로그인 섹션 포함) */}
       <div className="flex flex-col items-start gap-[24px] self-stretch">
-        <SettingsTitle title="소셜 로그인 연동 관리" />
+        <div className="flex flex-col w-full">
+          {/* 모바일: 뒤로가기 헤더 */}
+          <MobileSettingHeader title="뒤로가기" />
 
-        {/* 카드 영역 */}
-        <div className="px-[20px]">
-          {/* SocialLoginCard는 w-[420px]로 고정되어 있어 480px 컨테이너 안에 잘 맞습니다. */}
+          <SettingsTitle title="소셜 로그인 연동 관리" />
+        </div>
+
+        <div className="px-[20px] w-full flex justify-center md:block">
+          {/* SocialLoginCard는 내부적으로 w-[420px] 고정이므로 모바일(375px)에서 넘칠 수 있음.
+              모바일 대응을 위해 SocialLoginCard 내부 수정이 필요할 수 있으나, 
+              현재는 w-full max-w-[420px] 등으로 감싸거나 스크롤 처리.
+              여기서는 flex justify-center로 중앙 배치하되, 카드 너비가 화면보다 크면 잘릴 수 있음.
+              -> SocialLoginCard를 w-full로 반응형 수정하는 것이 좋음. (아래 참고)
+           */}
           <SocialLoginCard provider="kakao" email="yhi9839@gmail.com" />
         </div>
       </div>
 
-      {/* 섹션 2: 탈퇴/비활성화 */}
+      {/* 2. 탈퇴/비활성화 섹션 */}
       <div className="flex flex-col items-start gap-[24px] self-stretch">
         <SettingsTitle title="탈퇴/비활성화" />
-
-        {/* 안내문 본문 */}
 
         <div
           className="flex flex-col items-start gap-[40px] px-[20px]
@@ -35,7 +42,6 @@ export default function AccountStatusPage() {
         >
           <WithdrawalNotice />
 
-          {/* 탈퇴 버튼 영역 */}
           <div
             className="flex w-full pt-[10px]
             justify-center xl:justify-end"
@@ -43,14 +49,16 @@ export default function AccountStatusPage() {
             <button
               className="flex items-center justify-center gap-[10px] rounded-[8px] transition-colors
                
-               /* 태블릿(md) 스타일: w-[420px], h-[40px], bg-[#3D3D3D] (Dark Gray), Text White */
-               md:w-[420px] md:h-[40px] md:bg-[#3D3D3D]
-               
-               /* 데스크탑(xl) 스타일: w-[200px], h-[48px], bg-Subbrown-4, Text Primary-3 */
+               /* 모바일(기본): w-[339px](w-full), h-[40px], bg-[#3D3D3D] */
+               w-full h-[40px] bg-[#3D3D3D]
+
+               /* 태블릿(md): w-[420px] (기존 유지) */
+               md:w-[420px]
+
+               /* 데스크탑(xl): w-[200px], h-[48px], bg-Subbrown-4 */
                xl:w-[200px] xl:h-[48px] xl:bg-Subbrown-4 xl:hover:bg-Subbrown-3"
             >
-              {/* 텍스트 스타일 분기 */}
-              <span className=" md:subhead_4_1 md:text-White xl:body_1 xl:text-primary-3">
+              <span className=" subhead_4_1 text-White xl:body_1 xl:text-primary-3">
                 탈퇴하기
               </span>
             </button>

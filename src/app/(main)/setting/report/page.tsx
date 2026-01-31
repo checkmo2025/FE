@@ -1,5 +1,6 @@
 import SettingsTitle from "@/components/base-ui/Settings/SettingsTitle";
 import ReportItem from "@/components/base-ui/Settings/Report/ReportItem";
+import MobileSettingHeader from "@/components/base-ui/Settings/MobileSettingHeader";
 
 // UI 확인을 위한 Mock Data
 const MOCK_REPORTS = [
@@ -29,21 +30,23 @@ const MOCK_REPORTS = [
 
 export default function ReportPage() {
   return (
-    // 전체 컨테이너
-    // 태블릿(md): w-[480px], px-0
-    // 데스크탑(xl): w-[1152px], px-[76px]
     <div
       className="flex flex-col items-start gap-[24px] pb-[12px]
-      w-full md:w-[480px] md:px-0
+      w-full md:w-[480px]
       xl:w-[1152px] xl:px-[76px]"
     >
-      {/* 1. 타이틀 영역 */}
-      <SettingsTitle title="신고 관리" />
+      <div className="flex flex-col w-full">
+        <MobileSettingHeader title="뒤로가기" />
+        <div className="hidden w-full md:block">
+          <SettingsTitle title="신고 관리" />
+        </div>
+        <div className="md:hidden flex items-center justify-center w-full px-[20px] py-[28px] h-[40px]">
+          <h2 className="text-center subhead_3 text-Gray-6">신고 관리</h2>
+        </div>
+      </div>
 
-      {/* 2. 신고 리스트 영역 */}
-      {/* 태블릿: padding 0 20px (컨테이너 480px - 내부 440px = 40px 여백) */}
       <div
-        className="flex flex-col items-start gap-[8px] self-stretch
+        className="flex flex-col items-start gap-[8px] self-stretch px-[20px]
         md:px-[20px] xl:px-0"
       >
         {MOCK_REPORTS.map((report) => (

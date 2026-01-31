@@ -31,40 +31,68 @@ export default function NewsList({
     <div
       onClick={handleClick}
       className={[
-        // 전체 컨테이너: 높이 자동(내부 콘텐츠 따름), 패딩 20px
-        "flex w-full items-start p-[20px]",
-        // 태블릿 이상에서 gap 적용 (명세의 122px은 공간 부족 시 자동 축소되도록 justify-between 권장되나, xl에서 적용)
-        "justify-between gap-[12px] xl:gap-[122px]",
+        "relative flex w-full items-start p-[20px]",
         "rounded-[8px] border border-Subbrown-4 bg-white",
+        "justify-between gap-[12px] xl:gap-[122px]",
         id ? "cursor-pointer hover:opacity-80 transition-opacity" : "",
         className,
       ].join(" ")}
     >
-      {/* [좌측 그룹] Frame 2087328004: 이미지 + 텍스트 */}
+      {/* [좌측 그룹] 이미지 + 텍스트 */}
       <div className="flex flex-1 items-start gap-[24px] min-w-0">
-        {/* 이미지: 100px x 145px (20:29 비율) */}
-        <div className="relative w-[100px] h-[145px] shrink-0">
+        {/* 이미지 */}
+        <div
+          className="relative shrink-0 
+          w-[80px] h-[116px] 
+          md:w-[100px] md:h-[145px]"
+        >
           <Image src={imageUrl} alt={title} fill className="object-cover" />
         </div>
 
-        {/* 텍스트 컬럼: Frame 2087327989 */}
-        {/* 너비 316px (태블릿 기준) / 데스크탑에선 늘어날 수 있음 */}
-        <div className="flex flex-col items-start gap-[8px] md:w-[316px] xl:w-auto min-w-0">
-          {/* 제목 Wrapper: Frame 2087327988 */}
+        {/* 텍스트 컬럼 */}
+        <div
+          className="flex flex-col items-start gap-[4px] min-w-0
+          w-[173px] md:w-[316px] xl:w-auto"
+        >
+          {/* 제목 Wrapper */}
           <div className="flex h-[27px] flex-col items-start self-stretch justify-center">
-            <h3 className="w-full truncate subhead_3 text-Black">{title}</h3>
+            {/* 모바일 14px(Body_1) / 태블릿이상 20px(Subhead_3) */}
+            <h3
+              className="text-Black truncate w-full
+              text-[14px] font-semibold leading-[145%] tracking-[-0.014px]
+              md:subhead_3"
+            >
+              {title}
+            </h3>
           </div>
 
-          {/* 내용: 너비 273px (명세 반영) */}
-          <p className="body_1_2 text-Gray-4 line-clamp-6 w-full md:w-[273px] xl:w-full">
+          {/* 내용 */}
+          {/* 모바일 12px(Body_2.3) / 태블릿이상 14px(Body_1.2) */}
+          <p
+            className="text-Gray-4 line-clamp-4 md:line-clamp-6 w-full
+            text-[12px] font-normal leading-[145%] tracking-[-0.012px]
+            md:body_1_2 md:w-[273px] xl:w-full"
+          >
             {content}
           </p>
         </div>
       </div>
 
-      {/* [우측] 날짜: 너비 79px */}
-      <div className="flex w-[79px] h-[20px] flex-col justify-center shrink-0">
-        <span className="text-right body_1_2 text-Gray-3">{date}</span>
+      {/* [우측] 날짜 */}
+      {/* 모바일: absolute right-5 bottom-2.5 */}
+      {/* 태블릿이상: static block */}
+      <div
+        className="flex w-[79px] h-[20px] flex-col justify-center shrink-0
+        absolute right-[20px] bottom-[10px]
+        md:static"
+      >
+        <span
+          className="text-Gray-3 text-right
+          text-[12px] font-normal leading-[145%] tracking-[-0.012px]
+          md:body_1_2"
+        >
+          {date}
+        </span>
       </div>
     </div>
   );

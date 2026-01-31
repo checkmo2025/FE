@@ -1,21 +1,39 @@
+"use client";
+
 import SettingsTitle from "@/components/base-ui/Settings/SettingsTitle";
 import NotificationItem from "@/components/base-ui/Settings/Notification/NotificationItem";
+import MobileSettingHeader from "@/components/base-ui/Settings/MobileSettingHeader";
 
 export default function NotificationPage() {
   return (
     // 전체 컨테이너
     <div
       className="flex flex-col items-start gap-[24px] pb-[314px]
-      w-full md:w-[480px] md:px-0
+      w-full md:w-[480px]
       xl:w-[1152px] xl:pl-[68px] xl:pr-[400px]"
     >
-      {/* 1. 타이틀 영역 */}
-      <SettingsTitle title="알림 관리" />
+      {/* 1. 헤더 영역 */}
+      <div className="flex flex-col w-full">
+        {/* 모바일: 뒤로가기 헤더 */}
+        <MobileSettingHeader title="뒤로가기" />
+
+        {/* 태블릿/데스크탑: 타이틀 (md 이상 block) */}
+        <div className="hidden w-full md:block">
+          <SettingsTitle title="알림 관리" />
+        </div>
+
+        {/* 모바일: 타이틀  */}
+        <div className="md:hidden flex items-center justify-center w-full px-[20px] py-[28px] h-[40px] border-b border-Subbrown-4">
+          <h2 className="text-center subhead_3 text-Gray-6">알림 관리</h2>
+        </div>
+      </div>
 
       {/* 2. 본문 영역 */}
+
       <div
         className="flex flex-col items-start px-[20px]
-        w-full md:w-[480px] gap-[60px]
+        w-full gap-[10px]
+        md:w-[480px] md:gap-[60px]
         xl:w-[688px] xl:gap-[40px]"
       >
         {/* 섹션 1: 책모 알림 */}
