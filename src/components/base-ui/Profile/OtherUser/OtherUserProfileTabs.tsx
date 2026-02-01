@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import MyLibraryList from "@/components/base-ui/MyPage/MyLibraryList";
-import MyMeetingList from "@/components/base-ui/MyPage/MyMeetingList";
+import LibraryList from "@/components/base-ui/Profile/LibraryList";
+import MeetingList from "@/components/base-ui/Profile/MeetingList";
 import BookStoryList from "@/components/base-ui/Profile/BookStoryList";
 
 const TABS = ["책 이야기", "서재", "모임"] as const;
@@ -13,8 +13,8 @@ export default function OtherUserProfileTabs() {
 
   const TAB_CONTENT: Record<Tab, React.ReactNode> = {
     "책 이야기": <BookStoryList />,
-    서재: <MyLibraryList />,
-    모임: <MyMeetingList />,
+    서재: <LibraryList />,
+    모임: <MeetingList />,
   };
 
   return (
@@ -27,7 +27,6 @@ export default function OtherUserProfileTabs() {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`flex-1 py-[10px] text-center transition-colors
-                /* 14px Medium -> body_1_2, 20px Semibold -> subhead_3 */
                 body_1_2 t:subhead_3
                 ${
                   activeTab === tab
