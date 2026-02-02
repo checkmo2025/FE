@@ -68,8 +68,8 @@ export default function Searchpage() {
           <ButtonWithoutImg
             text="+ 모임 생성하기"
             height={36}
-            bgColorVar="--primary_1"
-            borderColorVar="--primary_1"
+            bgColorVar="--Primary_1"
+            borderColorVar="--Primary_1"
             textColorVar="--White"
             className=" flex-1 body_1"
             onClick={() => router.push('/groups/create')}
@@ -81,8 +81,8 @@ export default function Searchpage() {
            <ButtonWithoutImg
             text="+ 모임 생성하기"
             height={56}
-            bgColorVar="--primary_1"
-            borderColorVar="--primary_1"
+            bgColorVar="--Primary_1"
+            borderColorVar="--Primary_1"
             textColorVar="--White"
             className="flex-1 subhead_4_1"
             onClick={() => router.push('/groups/create')}
