@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { NavItem } from "./NavItem";
+import { useState } from "react";
+import SearchModal from "./SearchModal";
 
 const NAV = [
   { label: "책모 홈", href: "/" },
@@ -24,7 +26,7 @@ const getPageTitle = (pathname: string) => {
 export default function Header() {
   const pathname = usePathname();
   const pageTitle = getPageTitle(pathname);
-
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   return (
     <header className="w-full bg-primary-1">
       <div className="mx-auto w-full max-w-[1440px] px-4 py-4 t:px-6 t:py-7 d:px-3">
@@ -71,7 +73,11 @@ export default function Header() {
 
           {/*아이콘*/}
           <div className="flex items-center gap-2.5 t:gap-4">
-            <Link href="/search" aria-label="검색" className="relative w-6 h-6">
+          <button
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              aria-label="검색"
+              className="relative h-6 w-6 cursor-pointer"
+            >
               <Image
                 src="/search_light.svg"
                 alt="검색"
@@ -79,7 +85,7 @@ export default function Header() {
                 className="object-contain"
                 priority
               />
-            </Link>
+            </button>
 
             <Link
               href="/notification"
@@ -112,6 +118,7 @@ export default function Header() {
           </div>
         </div>
       </div>
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </header>
   );
 }
