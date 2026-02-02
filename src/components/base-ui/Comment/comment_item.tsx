@@ -95,7 +95,7 @@ export default function CommentItem({
           {/* 드롭다운 메뉴 */}
           {menuOpen && (
             <div className="absolute right-0 top-full mt-1 w-[137px] rounded-lg bg-White shadow-lg z-10 overflow-hidden">
-              {/* 답글달기 */}
+              {/* 답글달기 - onReply가 있을 때만 표시 */}
               {!isReply && onReply && (
                 <>
                   <button
@@ -115,27 +115,6 @@ export default function CommentItem({
               {/* 내 댓글일 때: 수정, 삭제 */}
               {isMine ? (
                 <>
-                  {onEdit && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onEdit(id, content);
-                        setMenuOpen(false);
-                      }}
-                      className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
-                    >
-                      <Image
-                        src="/report.svg"
-                        alt="수정"
-                        width={24}
-                        height={24}
-                      />
-                      수정하기
-                    </button>
-                  )}
-                  {onEdit && onDelete && (
-                    <div className="mx-2 border-b border-Subbrown-4" />
-                  )}
                   {onDelete && (
                     <button
                       type="button"
@@ -146,12 +125,33 @@ export default function CommentItem({
                       className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
                     >
                       <Image
-                        src="/share.svg"
+                        src="/delete.svg"
                         alt="삭제"
                         width={24}
                         height={24}
                       />
                       삭제하기
+                    </button>
+                  )}
+                  {onEdit && onDelete && (
+                    <div className="mx-2 border-b border-Subbrown-4" />
+                  )}
+                  {onEdit && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onEdit(id, content);
+                        setMenuOpen(false);
+                      }}
+                      className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+                    >
+                      <Image
+                        src="/edit2.svg"
+                        alt="수정"
+                        width={24}
+                        height={24}
+                      />
+                      수정하기
                     </button>
                   )}
                 </>
