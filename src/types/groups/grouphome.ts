@@ -36,7 +36,11 @@ export interface ClubLinks {
   contactUrl?: string;
 }
 
-// --- result ---
+export interface ClubModalLink {
+  id?: number;
+  url: string;
+}
+
 export interface ClubHomeResponseResult {
   clubId: number;
   name: string;
@@ -46,16 +50,19 @@ export interface ClubHomeResponseResult {
   participantTypes: ParticipantType[];
   open: boolean;
 
-  // ✅ "추가될 거라고 가정"한 필드들
+
   description?: string;
   recentNotice?: ClubRecentNotice;
   links?: ClubLinks;
+
+  modalLinks?: ClubModalLink[];
 }
 
-// --- response (ApiResponse 없이 그냥 직접 정의) ---
+
 export interface ClubHomeResponse {
   isSuccess: boolean;
   code: string;
   message: string;
   result: ClubHomeResponseResult;
 }
+

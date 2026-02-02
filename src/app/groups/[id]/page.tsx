@@ -4,6 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { useState } from 'react';
+
 import { DUMMY_CLUB_HOME } from './dummy';
 import ClubCategoryTags from '@/components/base-ui/Group-Search/search_clublist/search_club_category_tags';
 import { BOOK_CATEGORIES } from '@/types/groups/groups';
@@ -31,6 +33,8 @@ export default function GroupDetailPage() {
   const nums = DUMMY_CLUB_HOME.category
     .map((c) => BOOK_CATEGORIES.indexOf(c.description as never) + 1)
     .filter((n) => n >= 1 && n <= 15);
+
+  const [isContactOpen, setIsContactOpen] = useState(false);
 
   return (
     <main className="w-full">
@@ -132,7 +136,7 @@ export default function GroupDetailPage() {
                 />
                 <ButtonWithoutImg
                   text="Contact US"
-                  onClick={() => router.push(contactUrl)}
+                  onClick={() => setIsContactOpen(true)}
                   bgColorVar="--Subbrown_4"
                   borderColorVar="--Subbrown_2"
                   textColorVar="--Primary_3"
@@ -203,7 +207,7 @@ export default function GroupDetailPage() {
             />
             <ButtonWithoutImg
               text="Contact US"
-              onClick={() => router.push(contactUrl)}
+              onClick={() => setIsContactOpen(true)}
               bgColorVar="--Subbrown_4"
               borderColorVar="--Subbrown_2"
               textColorVar="--Primary_3"
@@ -213,6 +217,91 @@ export default function GroupDetailPage() {
         </div>
     </div>
     </div>
+
+    {/* Contact Modal */}
+    {isContactOpen && (
+      <div
+        className="
+          fixed inset-0 z-50
+          flex items-center justify-center
+          bg-black/30
+          px-4
+        "
+        onClick={() => setIsContactOpen(false)}
+        role="dialog"
+        aria-modal="true"
+      >
+        {/* 모달 박스 (바깥 클릭 닫힘 방지) */}
+        <div
+          className="
+            w-full
+            max-w-[500px]
+            rounded-[8px]
+            bg-background
+            px-[20px] py-[24px]
+            flex flex-col items-start gap-6
+            max-t:w-[339px]
+          "
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* 헤더: 타이틀 + X */}
+          <div className="w-full flex items-center justify-between">
+            <p className="subhead_4_1 text-Gray-7">Contact Us</p>
+
+            <button
+              type="button"
+              onClick={() => setIsContactOpen(false)}
+              className="shrink-0"
+              aria-label="닫기"
+            >
+              {/* TODO: 실제 X 아이콘 파일명 맞춰서 교체 */}
+              <Image
+                src="/icon_minus_1.svg"
+                alt=""
+                width={24}
+                height={24}
+                className="object-contain"
+              />
+            </button>
+          </div>
+
+          {/* 리스트 */}
+          <div className="w-full rounded-[8px] overflow-hidden items-center">
+            {(DUMMY_CLUB_HOME.modalLinks ?? []).map((item) => (
+              <a
+                key={item.id}
+                href={item.url}
+                target="_blank"
+                rel="noreferrer"
+                className="
+                  w-full
+                  flex items-center gap-2
+                  px-5 py-[10px]
+                  border-b border-Subbrown-4
+                  last:border-b-0
+                  hover:bg-Subbrown-4/40
+                "
+              >
+                {/* TODO: 실제 링크 아이콘 파일명 맞춰서 교체 */}
+                <Image
+                  src="/link.svg"
+                  alt=""
+                  width={24}
+                  height={24}
+                  className="object-contain shrink-0"
+                />
+
+                {/* 내부 글씨: 모바일만 body_2_3, 그 외 body_1_3 */}
+                <p className="text-Gray-5 body_2_3 t:body_1_3">
+                  {item.url}
+                </p>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
+
     </main>
   );
 }
