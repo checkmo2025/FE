@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 type ButtonWithoutImgProps = {
   text: string;
@@ -14,6 +14,7 @@ type ButtonWithoutImgProps = {
   hoverBorderColorVar?: string;
   hoverTextColorVar?: string;
 
+  // ✅ 기본 고정폭 제거 (반응형은 className으로)
   width?: number;
   height?: number;
 
@@ -27,23 +28,23 @@ const toCssColor = (v?: string) => {
   const s = v.trim();
   if (s.startsWith('var(')) return s;
   if (s.startsWith('--')) return `var(${s})`;
-  return s; // "#fff", "red", "rgba(...)" 등
+  return s;
 };
 
 export default function ButtonWithoutImg({
   text,
   onClick,
 
-  bgColorVar = '--primary_2',
-  borderColorVar = '--primary_2',
+  bgColorVar = '--Primary_2',
+  borderColorVar = '--Primary_2',
   textColorVar = '--White',
 
   hoverBgColorVar,
   hoverBorderColorVar,
   hoverTextColorVar,
 
-  width = 132,
-  height = 44,
+  width,
+  height,
 
   disabled = false,
   type = 'button',
@@ -51,15 +52,9 @@ export default function ButtonWithoutImg({
 }: ButtonWithoutImgProps) {
   const [isHover, setIsHover] = useState(false);
 
-  const bg = toCssColor(
-    isHover && hoverBgColorVar ? hoverBgColorVar : bgColorVar,
-  );
-  const border = toCssColor(
-    isHover && hoverBorderColorVar ? hoverBorderColorVar : borderColorVar,
-  );
-  const textColor = toCssColor(
-    isHover && hoverTextColorVar ? hoverTextColorVar : textColorVar,
-  );
+  const bg = toCssColor(isHover && hoverBgColorVar ? hoverBgColorVar : bgColorVar);
+  const border = toCssColor(isHover && hoverBorderColorVar ? hoverBorderColorVar : borderColorVar);
+  const textColor = toCssColor(isHover && hoverTextColorVar ? hoverTextColorVar : textColorVar);
 
   return (
     <button
@@ -69,8 +64,8 @@ export default function ButtonWithoutImg({
       onMouseEnter={disabled ? undefined : () => setIsHover(true)}
       onMouseLeave={disabled ? undefined : () => setIsHover(false)}
       style={{
-        width,
-        height,
+        ...(width ? { width } : {}),
+        ...(height ? { height } : {}),
         backgroundColor: bg,
         borderColor: border,
         color: textColor,
