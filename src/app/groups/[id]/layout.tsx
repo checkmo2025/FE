@@ -65,7 +65,7 @@ export default function GroupDetailLayout({
       <div className="mx-auto w-full max-w-[1440px] px-4 t:px-6 py-3 t:py-8">
         <div className="flex flex-col d:flex-row gap-6 d:gap-8">
           {/* 사이드바 */}
-          <aside className="shrink-0 w-full t:w-auto d:w-[296px] transition-all duration-300">
+          <aside className="shrink-0 w-full t:w-auto d:w-[236px] transition-all duration-300">
             <nav className="flex flex-row d:flex-col gap-2 t:gap-0 d:gap-3 justify-center t:justify-between d:justify-start t:mx-auto">
               {/* 카테고리 버튼 */}
               <button
