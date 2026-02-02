@@ -49,9 +49,10 @@ export default function LibraryList() {
 
   return (
     <div
-      className="grid w-full justify-center 
-      md:w-[688px] md:grid-cols-3 md:gap-x-[21.5px] md:gap-y-[16px]
-      xl:w-[1048px] xl:grid-cols-4 xl:gap-x-[24px] xl:gap-y-[16px]"
+      className="grid w-full justify-items-center
+      grid-cols-3 gap-x-[15px] gap-y-[20px]
+      t:w-[688px] t:grid-cols-3 t:gap-x-[21.5px] t:gap-y-[16px]
+      d:w-[1048px] d:grid-cols-4 d:gap-x-[24px] d:gap-y-[16px]"
     >
       {MOCK_LIBRARY_BOOKS.map((book) => (
         <LibraryCard

@@ -13,13 +13,14 @@ const MOCK_MEETINGS = [
 
 export default function MeetingList() {
   return (
-    <div className="flex w-full flex-col items-start gap-[8px] md:w-[688px] xl:w-[1048px]">
+    <div
+      className="flex w-full flex-col items-center
+      gap-[12px]
+      t:w-[688px] t:items-start t:gap-[8px] 
+      d:w-[1048px]"
+    >
       {MOCK_MEETINGS.map((meeting) => (
-        <MeetingCard
-          key={meeting.id}
-          title={meeting.title}
-          // showMoreIcon={false} // 기본값이 false이므로 생략 가능
-        />
+        <MeetingCard key={meeting.id} title={meeting.title} />
       ))}
     </div>
   );
