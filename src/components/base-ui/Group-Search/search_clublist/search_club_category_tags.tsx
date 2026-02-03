@@ -48,7 +48,7 @@ export default function ClubCategoryTags({ category, className }: Props) {
           <span
             key={n}
             className={[
-              'h-[21px] my-auto py-[1px] inline-flex item-center justify-center body_1_2',
+              'h-[21px] my-auto py-[1px] inline-flex items-center justify-center body_2_2',
               'rounded-[8px] text-White',
               short ? 'w-[44px]' : 'px-2',
               getBgByCategory(n),
