@@ -107,7 +107,7 @@ export default function HomePage() {
           <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">
             독서모임
           </h2>
-          <div className="flex gap-6">
+      <div className="flex gap-6">
             <HomeBookclub groups={groups} />
             <ListSubscribe height="h-[424px]" />
           </div>
@@ -150,17 +150,17 @@ export default function HomePage() {
         <div className="flex-1 pt-6 flex flex-col gap-6">
           {/* 소식 */}
           <section>
-            <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">
-              소식
-            </h2>
-            <NewsBannerSlider />
+          <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">
+            소식
+          </h2>
+          <NewsBannerSlider />
           </section>
 
           {/* 책 이야기 카드 */}
           <section>
             <div className="grid grid-cols-3 gap-5">
               {DUMMY_STORIES.slice(0, 3).map((story) => (
-                <BookStoryCard
+            <BookStoryCard
                   key={story.id}
                   authorName={story.authorName}
                   createdAt={story.createdAt}
@@ -170,10 +170,10 @@ export default function HomePage() {
                   likeCount={story.likeCount}
                   commentCount={story.commentCount}
                   subscribeText="구독"
-                />
+            />
               ))}
-            </div>
-          </section>
+          </div>
+        </section>
         </div>
       </div>
     </div>
