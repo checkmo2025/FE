@@ -30,10 +30,7 @@ const BOOKCASE_DATA = [
 
 export default function BookcasePage() {
   return (
-    // [Layout] 상위 Layout에서 전체 패딩(px-4 -> 16px)을 잡고 있으므로,
-    // 375px(화면) - 32px(패딩) = 343px(가용 공간)
-    // 166px(카드) * 2 + 10px(gap) = 342px
-    // 따라서 딱 맞게 2열 배치가 가능합니다.
+    // [Layout]
     <div className="w-full flex flex-col gap-[24px]">
       {/* 책장 리스트 영역 */}
       {BOOKCASE_DATA.map((group) => (
@@ -47,9 +44,6 @@ export default function BookcasePage() {
           </div>
 
           {/* 카드 리스트 */}
-          {/* 모바일: justify-center (166px 카드 2개를 중앙에 배치하여 여백 균형 맞춤)
-             태블릿 이상(t:): justify-start (좌측 정렬로 변경)
-          */}
           <div className="flex flex-wrap items-center gap-[10px] self-stretch justify-center t:justify-start">
             {group.books.map((book) => (
               <BookcaseCard
