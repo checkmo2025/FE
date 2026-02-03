@@ -30,7 +30,6 @@ const BOOKCASE_DATA = [
 
 export default function BookcasePage() {
   return (
-    // [Layout]
     <div className="w-full flex flex-col gap-[24px]">
       {/* 책장 리스트 영역 */}
       {BOOKCASE_DATA.map((group) => (
@@ -44,7 +43,8 @@ export default function BookcasePage() {
           </div>
 
           {/* 카드 리스트 */}
-          <div className="flex flex-wrap items-center gap-[10px] self-stretch justify-center t:justify-start">
+
+          <div className="flex flex-wrap items-center gap-[10px] self-stretch justify-center d:justify-start">
             {group.books.map((book) => (
               <BookcaseCard
                 key={book.id}
