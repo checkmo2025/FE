@@ -91,18 +91,20 @@ export default function BookcaseCard({
               { label: "발제", onClick: onTopicClick },
               { label: "한줄평", onClick: onReviewClick },
               { label: "정기모임", onClick: onMeetingClick },
-            ].map((item) => (
-              <button
-                key={item.label}
-                onClick={item.onClick}
-                className="flex items-center justify-between self-stretch border-b border-Subbrown-4 p-[4px] hover:bg-Gray-1 transition-colors"
-              >
-                <span className="body_2_2 text-Gray-7">{item.label}</span>
-                <div className="relative h-[24px] w-[24px]">
-                  <Image src="/bookcase_arrow.svg" alt="arrow" fill />
-                </div>
-              </button>
-            ))}
+            ]
+              .filter((item) => item.onClick)
+              .map((item) => (
+                <button
+                  key={item.label}
+                  onClick={item.onClick}
+                  className="flex items-center justify-between self-stretch border-b border-Subbrown-4 p-[4px] hover:bg-Gray-1 transition-colors"
+                >
+                  <span className="body_2_2 text-Gray-7">{item.label}</span>
+                  <div className="relative h-[24px] w-[24px]">
+                    <Image src="/bookcase_arrow.svg" alt="arrow" fill />
+                  </div>
+                </button>
+              ))}
           </div>
 
           <div className="flex items-center">{renderStars()}</div>
