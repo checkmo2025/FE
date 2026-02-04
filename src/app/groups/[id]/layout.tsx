@@ -17,6 +17,11 @@ export default function GroupDetailLayout({
   const groupId = params.id as string;
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
+  // 공지사항 작성 페이지는 레이아웃 적용 X
+  if (pathname?.includes('/manage/notice/new')) {
+    return <>{children}</>;
+  }
+
   const getActiveTab = (): TabType => {
     if (pathname.includes("/notice")) return "notice";
     if (pathname.includes("/meeting/bookcase")) return "bookshelf";
