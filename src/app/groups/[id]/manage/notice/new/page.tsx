@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, type ChangeEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
+import BookshelfModal from '@/components/base-ui/Group/BookshelfModal';
 
 export default function NewNoticePage() {
   const params = useParams();
@@ -18,6 +19,10 @@ export default function NewNoticePage() {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
   const [voteDate, setVoteDate] = useState('');
+  const [isBookshelfModalOpen, setIsBookshelfModalOpen] = useState(false);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleCancel = () => {
     router.back();
@@ -63,15 +68,26 @@ export default function NewNoticePage() {
   };
 
   const handleRegisterBookshelf = () => {
-    setSelectedOption(selectedOption === 'bookshelf' ? null : 'bookshelf');
-    // TODO: 책장 등록 기능
+    const nextSelected =
+      selectedOption === 'bookshelf' ? null : 'bookshelf';
+    setSelectedOption(nextSelected);
+    setIsBookshelfModalOpen(nextSelected === 'bookshelf');
     console.log('책장 등록');
   };
 
   const handleImageFile = () => {
-    setSelectedOption(selectedOption === 'image' ? null : 'image');
-    // TODO: 이미지 파일 업로드
+    setSelectedOption('image');
+    imageInputRef.current?.click();
     console.log('이미지 파일');
+  };
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const urls = Array.from(files).map((file) => URL.createObjectURL(file));
+    // 이전에 선택한 이미지들에 새로 선택한 이미지들을 추가
+    setImagePreviews((prev) => [...prev, ...urls]);
   };
 
   return (
@@ -104,7 +120,7 @@ export default function NewNoticePage() {
               />
             </div>
 
-            {/* 투표 영역 */}
+            {/* 투표 / 이미지 영역 */}
             <div className="mt-0 h-[496px]">
               {selectedOption === 'vote' && (
                 <div className="h-full rounded-[8px] bg-background border border-Gray-2 p-4 flex flex-col gap-6">
@@ -185,6 +201,43 @@ export default function NewNoticePage() {
                   </div>
                 </div>
               )}
+
+              {selectedOption === 'image' && (
+                <div className="h-full flex items-end">
+                  {imagePreviews.length > 0 ? (
+                    <div className="flex gap-4 overflow-x-auto [&::-webkit-scrollbar]:hidden scrollbar-none">
+                      {imagePreviews.map((src, index) => (
+                        <div
+                          key={index}
+                          className="relative w-[254px] h-[254px] shrink-0 rounded-[8px] overflow-hidden bg-Gray-2"
+                        >
+                          <Image
+                            src={src}
+                            alt={`첨부 이미지 ${index + 1}`}
+                            fill
+                            className="object-cover"
+                          />
+                          {/* 이미지 삭제 */}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setImagePreviews((prev) =>
+                                prev.filter((_, i) => i !== index),
+                              )
+                            }
+                            className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/60"
+                            aria-label="이미지 삭제"
+                          >
+                            <span className="text-[12px] text-White leading-none">
+                              ×
+                            </span>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              )}
             </div>
             
             <div className="mt-auto pt-6 flex justify-end gap-4">
@@ -243,6 +296,14 @@ export default function NewNoticePage() {
                 이미지 파일
               </button>
             </div>
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={handleImageChange}
+            />
           </div>
           </div>
         </div>
@@ -267,6 +328,17 @@ export default function NewNoticePage() {
           </div>
         </div>
       </div>
+
+      {/* 책장 등록 모달 */}
+      <BookshelfModal
+        isOpen={isBookshelfModalOpen}
+        onClose={() => {
+          setIsBookshelfModalOpen(false);
+          setSelectedOption((prev) =>
+            prev === 'bookshelf' ? null : prev,
+          );
+        }}
+      />
     </div>
   );
 }
