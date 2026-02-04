@@ -30,6 +30,9 @@ export default function BookshelfModal({ isOpen, onClose }: Props) {
                   author="저자 이름"
                   category={{ generation: '7기', genre: '소설/시/희곡' }}
                   rating={4}
+                  onTopicClick={() => {}}
+                  onReviewClick={() => {}}
+                  onMeetingClick={() => {}}
                 />
               </div>
             ))}
