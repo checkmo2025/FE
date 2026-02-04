@@ -89,7 +89,6 @@ export default function NewNoticePage() {
     // 이전에 선택한 이미지들에 새로 선택한 이미지들을 추가
     setImagePreviews((prev) => [...prev, ...urls]);
   };
-
   return (
     <div className="w-full">
       <div className="py-6 px-2.5 t:px-10">
