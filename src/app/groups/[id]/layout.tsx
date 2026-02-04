@@ -19,7 +19,7 @@ export default function GroupDetailLayout({
 
   const getActiveTab = (): TabType => {
     if (pathname.includes("/notice")) return "notice";
-    if (pathname.includes("/bookshelf")) return "bookshelf";
+    if (pathname.includes("/meeting/bookcase")) return "bookshelf";
     return "home";
   };
 
@@ -29,23 +29,23 @@ export default function GroupDetailLayout({
   const groupName = "긁적긁적 독서 모임";
 
   const tabs = [
-    { 
-      id: "home" as TabType, 
-      label: "모임 홈", 
+    {
+      id: "home" as TabType,
+      label: "모임 홈",
       href: `/groups/${groupId}`,
-      icon: "/group_home.svg" 
+      icon: "/group_home.svg",
     },
-    { 
-      id: "notice" as TabType, 
-      label: "공지사항", 
+    {
+      id: "notice" as TabType,
+      label: "공지사항",
       href: `/groups/${groupId}/notice`,
-      icon: "/Notification2.svg" 
+      icon: "/Notification2.svg",
     },
-    { 
-      id: "bookshelf" as TabType, 
-      label: "책장", 
-      href: `/groups/${groupId}/bookshelf`,
-      icon: "/bookshelf.svg" 
+    {
+      id: "bookshelf" as TabType,
+      label: "책장",
+      href: `/groups/${groupId}/meeting/bookcase`,
+      icon: "/bookshelf.svg",
     },
   ];
 
@@ -54,19 +54,17 @@ export default function GroupDetailLayout({
       {/* 헤더 */}
       <div className="w-full t:h-21.5">
         <div className="mx-auto w-full max-w-[1440px] t:px-10 d:px-5 ">
-          <div className="border-b-2 border-Subbrown-4 px-5 py-3 t:py-7">
-            <h1 className="text-Gray-7 body_1 t:subhead_2 ">
-              {groupName}
-            </h1>
+          <div className="px-5 py-3 border-b-2 border-Subbrown-4 t:py-7">
+            <h1 className="text-Gray-7 body_1 t:subhead_2 ">{groupName}</h1>
           </div>
         </div>
       </div>
 
       <div className="mx-auto w-full max-w-[1440px] px-4 t:px-6 py-3 t:py-8">
-        <div className="flex flex-col d:flex-row gap-6 d:gap-8">
+        <div className="flex flex-col gap-6 d:flex-row d:gap-8">
           {/* 사이드바 */}
           <aside className="shrink-0 w-full t:w-auto d:w-[236px] transition-all duration-300">
-            <nav className="flex flex-row d:flex-col gap-2 t:gap-0 d:gap-3 justify-center t:justify-between d:justify-start t:mx-auto">
+            <nav className="flex flex-row justify-center gap-2 d:flex-col t:gap-0 d:gap-3 t:justify-between d:justify-start t:mx-auto">
               {/* 카테고리 버튼 */}
               <button
                 onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}
@@ -77,17 +75,29 @@ export default function GroupDetailLayout({
                   bg-transparent text-Gray-7
                   active:bg-transparent focus:outline-none
                   w-fit justify-center t:w-[164px] t:mr-[-66px]
-                  ${isSidebarExpanded ? "d:w-full d:justify-start d:mr-0" : "d:w-fit d:justify-start d:mr-0"}
+                  ${
+                    isSidebarExpanded
+                      ? "d:w-full d:justify-start d:mr-0"
+                      : "d:w-fit d:justify-start d:mr-0"
+                  }
                 `}
-                aria-label={isSidebarExpanded ? "사이드바 접기" : "사이드바 펼치기"}
+                aria-label={
+                  isSidebarExpanded ? "사이드바 접기" : "사이드바 펼치기"
+                }
               >
-                <div className="relative w-6 h-6 t:w-8 t:h-8 shrink-0 flex items-center justify-center cursor-pointer">
-                  <div className={`absolute inset-0 rounded-lg ${
-                    isSidebarExpanded ? "bg-primary-2 -m-3 t:-m-4" : ""
-                  }`}></div>
+                <div className="relative flex items-center justify-center w-6 h-6 cursor-pointer t:w-8 t:h-8 shrink-0">
+                  <div
+                    className={`absolute inset-0 rounded-lg ${
+                      isSidebarExpanded ? "bg-primary-2 -m-3 t:-m-4" : ""
+                    }`}
+                  ></div>
                   <div className="relative w-full h-full">
                     <Image
-                      src={isSidebarExpanded ? "/after_category.svg" : "/before_category.svg"}
+                      src={
+                        isSidebarExpanded
+                          ? "/after_category.svg"
+                          : "/before_category.svg"
+                      }
                       alt="토글"
                       fill
                       className="object-contain"
@@ -95,11 +105,11 @@ export default function GroupDetailLayout({
                   </div>
                 </div>
               </button>
-              
+
               {/* 메뉴들 */}
               {tabs.map((tab) => {
                 const isActive = activeTab === tab.id;
-                
+
                 return (
                   <Link
                     key={tab.id}
@@ -114,7 +124,11 @@ export default function GroupDetailLayout({
                           : "bg-transparent text-Gray-7 hover:bg-Subbrown-4"
                       }
                       w-fit justify-center t:w-[164px] d:justify-start
-                      ${isSidebarExpanded ? "d:w-full" : "d:w-fit d:justify-center"}
+                      ${
+                        isSidebarExpanded
+                          ? "d:w-full"
+                          : "d:w-fit d:justify-center"
+                      }
                     `}
                   >
                     <div className="relative w-6 h-6 t:w-8 t:h-8 shrink-0">
