@@ -63,7 +63,7 @@ export default function NewNoticePage() {
             }
           : null,
     });
-    router.push(`/groups/${groupId}/manage/notice`);
+    router.push(`/groups/${groupId}/admin/notice`);
   };
 
   const handleCreateVote = () => {
