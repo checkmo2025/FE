@@ -46,7 +46,7 @@ export default function GroupDetailLayout({
         {
           id: "home" as TabType,
           label: "모임 홈",
-          href: `/groups/${groupId}/admin/bookcase`,
+          href: `/groups/${groupId}/admin`,
           icon: "/group_home.svg",
         },
         {
