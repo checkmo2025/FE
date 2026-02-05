@@ -4,6 +4,7 @@ import { useState, useRef, type ChangeEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import BookshelfModal from '@/components/base-ui/Group/BookshelfModal';
+import BookDetailCard from '@/components/base-ui/Bookcase/BookDetailCard';
 
 export default function NewNoticePage() {
   const params = useParams();
@@ -21,6 +22,14 @@ export default function NewNoticePage() {
   const [voteDate, setVoteDate] = useState('');
   const [isBookshelfModalOpen, setIsBookshelfModalOpen] = useState(false);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [selectedBook, setSelectedBook] = useState<{
+    id: number;
+    title: string;
+    author: string;
+    category: { generation: string; genre: string };
+    rating: number;
+    description: string;
+  } | null>(null);
 
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -75,6 +84,18 @@ export default function NewNoticePage() {
     console.log('책장 등록');
   };
 
+  const handleBookSelect = (book: {
+    id: number;
+    title: string;
+    author: string;
+    category: { generation: string; genre: string };
+    rating: number;
+    description: string;
+  }) => {
+    setSelectedBook(book);
+    setSelectedOption('bookshelf');
+  };
+
   const handleImageFile = () => {
     setSelectedOption('image');
     imageInputRef.current?.click();
@@ -96,6 +117,20 @@ export default function NewNoticePage() {
         <div className="flex justify-center">
           <div className="w-full max-w-[1040px]">
             <p className="subhead_4_1 text-Gray-7 mb-4">공지사항 작성</p>
+            
+            {/* 선택된 책 표시 */}
+            {selectedBook && (
+              <div className="mb-4 p-4 rounded-[8px] bg-White border border-Subbrown-4">
+                <BookDetailCard
+                  title={selectedBook.title}
+                  author={selectedBook.author}
+                  description={selectedBook.description}
+                  category={selectedBook.category}
+                  rating={selectedBook.rating}
+                />
+              </div>
+            )}
+
             {/* 입력 박스 */}
             <div className="relative flex w-full h-[760px] p-[16px] flex-col rounded-[8px] border-2 border-Subbrown-4 bg-White">
             {/* 제목 */}
@@ -337,6 +372,7 @@ export default function NewNoticePage() {
             prev === 'bookshelf' ? null : prev,
           );
         }}
+        onSelect={handleBookSelect}
       />
     </div>
   );

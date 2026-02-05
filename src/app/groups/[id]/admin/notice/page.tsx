@@ -54,7 +54,7 @@ export default function GroupManageNoticePage() {
   };
 
   const handleAddNotice = () => {
-    router.push(`/groups/${groupId}/manage/notice/new`);
+    router.push(`/groups/${groupId}/admin/notice/new`);
   };
 
   return (
