@@ -28,9 +28,13 @@ const DUMMY_COMMENTS: Comment[] = [
 // 어떤 글의 댓글인지 구분(나중에 api 연동 시 사용)
 type CommentSectionNoticeProps = {
   noticeId: number;
+  isAdminView?: boolean;
 };
 
-export default function CommentSectionNotice({ noticeId }: CommentSectionNoticeProps) {
+export default function CommentSectionNotice({
+  noticeId,
+  isAdminView = false,
+}: CommentSectionNoticeProps) {
   const [comments, setComments] = useState<Comment[]>(DUMMY_COMMENTS);
 
   const handleAddComment = (content: string) => {
@@ -70,6 +74,7 @@ export default function CommentSectionNotice({ noticeId }: CommentSectionNoticeP
       onEditComment={handleEditComment}
       onDeleteComment={handleDeleteComment}
       onReportComment={handleReportComment}
+      isAdminView={isAdminView}
     />
   );
 }
