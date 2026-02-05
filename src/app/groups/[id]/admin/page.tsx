@@ -195,30 +195,24 @@ export default function AdminGroupHomePage() {
 
             {/* 3) 내용 */}
             <div className="min-w-0 flex-1 relative">
-              {/* 운영진용: 회원 관리하기 버튼 (오른쪽 상단) */}
+              {/* 운영진용 */}
               <div className="absolute top-0 right-0">
-                <button
+              <button
                   type="button"
                   onClick={handleManageMembers}
                   className="
-                    flex items-center gap-2
-                    px-4 py-2
-                    rounded-[8px]
-                    border border-Subbrown-4
-                    bg-White
-                    body_1_2 text-Gray-7
-                    hover:bg-Subbrown-4/40
-                    transition-colors
+                    flex items-center gap-1
+                    body_1_2 text-Gray-4 hover:text-Gray-7 underline underline-offset-2 cursor-pointer
                   "
-                >
+                > 
+                  모임 관리하기
                   <Image
                     src="/Setting.svg"
                     alt="설정"
-                    width={20}
-                    height={20}
-                    className="object-contain"
+                    width={24}
+                    height={24}
+                    className="object-contain opacity-60"
                   />
-                  회원 관리하기
                 </button>
               </div>
 
