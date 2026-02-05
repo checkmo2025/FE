@@ -53,8 +53,7 @@ export default function NewBookshelfPage() {
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [meetingName, setMeetingName] = useState('');
   const [meetingLocation, setMeetingLocation] = useState('');
-  const [meetingStartDate, setMeetingStartDate] = useState('');
-  const [meetingEndDate, setMeetingEndDate] = useState('');
+  const [meetingDate, setMeetingDate] = useState('');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [isBookSelectModalOpen, setIsBookSelectModalOpen] = useState(false);
@@ -71,8 +70,7 @@ export default function NewBookshelfPage() {
       tags: selectedTags,
       meetingName,
       meetingLocation,
-      meetingStartDate,
-      meetingEndDate,
+      meetingDate,
       title,
       content,
     });
@@ -220,8 +218,8 @@ export default function NewBookshelfPage() {
               <div className="flex gap-2">
                 <input
                   type="text"
-                  value={meetingStartDate}
-                  onChange={(e) => setMeetingStartDate(e.target.value)}
+                  value={meetingDate}
+                  onChange={(e) => setMeetingDate(e.target.value)}
                   placeholder="2000.00.00의 양식으로 작성해주세요"
                   className="flex-1 px-4 py-3 h-14 rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 body_1_3 placeholder:text-Gray-3"
                 />

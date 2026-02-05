@@ -75,15 +75,15 @@ export default function AdminMembersPage() {
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      Object.values(menuRefs.current).forEach((ref) => {
-        if (ref && !ref.contains(e.target as Node)) {
-          setOpenMenuId(null);
-        }
-      });
+      if (openMenuId === null) return;
+      const menuRef = menuRefs.current[openMenuId];
+      if (menuRef && !menuRef.contains(e.target as Node)) {
+        setOpenMenuId(null);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [openMenuId]);
 
   const handleRoleEdit = (memberId: number) => {
     setOpenMenuId(openMenuId === memberId ? null : memberId);

@@ -318,8 +318,7 @@ export default function AdminGroupHomePage() {
             {(DUMMY_CLUB_HOME.modalLinks ?? []).map((item: ClubModalLink) => (
               <a
                 key={item.id}
-                href={item.url}
-                target="_blank"
+                href={/^(https?:\/\/|\/)/.test(item.url) ? item.url : '#'}
                 rel="noreferrer"
                 className="
                   w-full
