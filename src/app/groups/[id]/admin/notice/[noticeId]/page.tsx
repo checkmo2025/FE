@@ -95,6 +95,7 @@ export default function AdminNoticeDetailPage() {
               allowMultiple={notice.allowMultiple || false}
               isPublic={notice.isPublic || false}
               images={notice.images}
+              isAdmin
             />
           ) : (
             <NoticeDetail

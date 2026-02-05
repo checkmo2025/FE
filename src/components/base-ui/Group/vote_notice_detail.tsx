@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 
 type VoteOption = {
@@ -20,6 +20,7 @@ type VoteNoticeDetailProps = {
   allowMultiple: boolean;
   isPublic: boolean;
   images?: string[];
+  isAdmin?: boolean;
 };
 
 export default function VoteNoticeDetail({
@@ -33,9 +34,27 @@ export default function VoteNoticeDetail({
   allowMultiple,
   isPublic,
   images,
+  isAdmin = false,
 }: VoteNoticeDetailProps) {
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
   const [hasVoted, setHasVoted] = useState(false);
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // 운영진용 상단 햄버거 메뉴
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isAdmin]);
 
   const handleOptionClick = (optionId: number) => {
     if (hasVoted) return;
@@ -106,6 +125,43 @@ export default function VoteNoticeDetail({
         )}
         <h2 className="subhead_1 t:headline_3 text-Gray-7 flex-1">{title}</h2>
         <span className="body_1_2 text-Gray-4 shrink-0">{date}</span>
+        {isAdmin && (
+          <div className="relative shrink-0" ref={menuRef}>
+            <button
+              type="button"
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="cursor-pointer"
+            >
+              <Image src="/menu_dots.svg" alt="메뉴" width={24} height={24} />
+            </button>
+
+            {menuOpen && (
+              <div className="absolute right-0 top-full mt-1 w-34 h-22 rounded-lg bg-White z-10 px-2 shadow-md">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                  }}
+                  className="flex w-full items-center gap-2 px-4 py-2.5 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
+                >
+                  <Image src="/delete.svg" alt="삭제" width={24} height={24} />
+                  삭제하기
+                </button>
+                <div className="mx-2 border-b border-Subbrown-4" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                  }}
+                  className="flex w-full items-center gap-2 px-4 py-2.5 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
+                >
+                  <Image src="/edit2.svg" alt="수정" width={24} height={24} />
+                  수정하기
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="mb-6">
