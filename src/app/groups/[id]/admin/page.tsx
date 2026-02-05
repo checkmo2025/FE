@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
 import { useState } from 'react';
 
@@ -16,6 +16,8 @@ const DEFAULT_CLUB_IMG = '/ClubDefaultImg.svg';
 
 export default function AdminGroupHomePage() {
   const router = useRouter();
+  const params = useParams();
+  const groupId = params.id as string;
 
   const noticeText = DUMMY_CLUB_HOME.recentNotice?.title ?? '공지사항이 없습니다.';
   const noticeUrl = DUMMY_CLUB_HOME.recentNotice?.url ?? '/groups';
@@ -37,7 +39,7 @@ export default function AdminGroupHomePage() {
   const [isContactOpen, setIsContactOpen] = useState(false);
 
   const handleManageMembers = () => {
-    // TODO: 모임 관리 페이지로 이동
+    router.push(`/groups/${groupId}/admin/members`);
   };
 
   return (
