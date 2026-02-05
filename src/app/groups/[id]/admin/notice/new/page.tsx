@@ -1,10 +1,19 @@
 'use client';
 
-import { useState, useRef, type ChangeEvent } from 'react';
+import { useState, useRef, useEffect, type ChangeEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import BookshelfModal from '@/components/base-ui/Group/BookshelfModal';
 import BookDetailCard from '@/components/base-ui/Bookcase/BookDetailCard';
+
+type Book = {
+  id: number;
+  title: string;
+  author: string;
+  category: { generation: string; genre: string };
+  rating: number;
+  description: string;
+};
 
 export default function NewNoticePage() {
   const params = useParams();
@@ -22,14 +31,7 @@ export default function NewNoticePage() {
   const [voteDate, setVoteDate] = useState('');
   const [isBookshelfModalOpen, setIsBookshelfModalOpen] = useState(false);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [selectedBook, setSelectedBook] = useState<{
-    id: number;
-    title: string;
-    author: string;
-    category: { generation: string; genre: string };
-    rating: number;
-    description: string;
-  } | null>(null);
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
 
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -84,14 +86,7 @@ export default function NewNoticePage() {
     console.log('책장 등록');
   };
 
-  const handleBookSelect = (book: {
-    id: number;
-    title: string;
-    author: string;
-    category: { generation: string; genre: string };
-    rating: number;
-    description: string;
-  }) => {
+  const handleBookSelect = (book: Book) => {
     setSelectedBook(book);
     setSelectedOption('bookshelf');
   };
@@ -110,6 +105,13 @@ export default function NewNoticePage() {
     // 이전에 선택한 이미지들에 새로 선택한 이미지들을 추가
     setImagePreviews((prev) => [...prev, ...urls]);
   };
+
+  // 생성한 object URL 정리
+  useEffect(() => {
+    return () => {
+      imagePreviews.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [imagePreviews]);
   return (
     <div className="w-full">
       <div className="py-6 px-2.5 t:px-10">

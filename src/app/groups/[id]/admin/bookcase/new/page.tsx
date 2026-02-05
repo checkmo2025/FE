@@ -6,30 +6,28 @@ import Image from 'next/image';
 import BookSelectModal from '@/components/layout/BookSelectModal';
 import BookstoryChoosebook from '@/components/base-ui/BookStory/bookstory_choosebook';
 
-const TAG_LABELS = [
-  '여행',
-  '외국어',
-  '어린이/청소년',
-  '종교/철학',
-  '인문학',
-  '에세이',
-  '소설/시/희곡',
-  '과학',
-  '컴퓨터/IT',
-  '경제/경영',
-  '자기계발',
-  '사회과학',
-  '정치/외교/국방',
-  '역사/문화',
-  '예술/대중문화',
-];
+const TAGS = [
+  { label: '여행', colorClass: 'bg-Secondary-2' },
+  { label: '외국어', colorClass: 'bg-Secondary-2' },
+  { label: '어린이/청소년', colorClass: 'bg-Secondary-2' },
+  { label: '종교/철학', colorClass: 'bg-Secondary-2' },
+  { label: '인문학', colorClass: 'bg-Secondary-1' },
+  { label: '에세이', colorClass: 'bg-Secondary-1' },
+  { label: '소설/시/희곡', colorClass: 'bg-Secondary-1' },
+  { label: '과학', colorClass: 'bg-Secondary-3' },
+  { label: '컴퓨터/IT', colorClass: 'bg-Secondary-3' },
+  { label: '경제/경영', colorClass: 'bg-Secondary-3' },
+  { label: '자기계발', colorClass: 'bg-Secondary-3' },
+  { label: '사회과학', colorClass: 'bg-Secondary-4' },
+  { label: '정치/외교/국방', colorClass: 'bg-Secondary-4' },
+  { label: '역사/문화', colorClass: 'bg-Secondary-4' },
+  { label: '예술/대중문화', colorClass: 'bg-Secondary-4' },
+] as const;
+
+const TAG_LABELS = TAGS.map((tag) => tag.label);
 
 const getTagBgColor = (index: number) => {
-  if (index >= 0 && index <= 3) return 'bg-Secondary-2';
-  if (index >= 4 && index <= 6) return 'bg-Secondary-1';
-  if (index >= 7 && index <= 10) return 'bg-Secondary-3';
-  if (index >= 11 && index <= 14) return 'bg-Secondary-4';
-  return 'bg-Subbrown-4';
+  return TAGS[index]?.colorClass ?? 'bg-Subbrown-4';
 };
 
 export default function NewBookshelfPage() {
