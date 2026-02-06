@@ -1,11 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import BookDetailCard from "@/components/base-ui/Bookcase/BookDetailCard";
 import BookDetailNav from "@/components/base-ui/Bookcase/BookDetailNav";
 import TeamFilter from "@/components/base-ui/Bookcase/Admin/TeamFilter";
 import TeamSection from "@/components/base-ui/Bookcase/Admin/TeamSection";
 import MeetingInfo from "@/components/base-ui/Bookcase/MeetingInfo";
+
+import DebateList from "@/components/base-ui/Bookcase/DebateList";
+import LongtermChatInput from "@/components/base-ui/LongtermInput";
+import DebateSection from "./DebateSection";
 
 // --- Mock Data ---
 const MOCK_BOOK_DETAIL = {
@@ -22,6 +27,25 @@ const MOCK_MEETING_INFO = {
   date: "2000.00.00",
   location: "제이스 스터디룸",
 };
+
+const MOCK_DEBATE_TOPICS = [
+  {
+    id: 1,
+    name: "_hy_0716",
+    content:
+      "메노키오의 사례에서 볼 수 있듯이 시대마다 ‘허용되는 사상’과 ‘탄압받는 사상’이 존재한다. 현대사회에서 비슷한 사례는 무엇이 있을까?",
+  },
+  {
+    id: 2,
+    name: "_hy_0716",
+    content: "표현의 자유는 어디까지 허용되어야 하는가? 플랫폼 규제는 검열인가 보호인가?",
+  },
+  {
+    id: 3,
+    name: "_hy_0716",
+    content: "지금 우리가 ‘당연하다’고 믿는 상식 중, 훗날 탄압/조롱의 대상이 될 수도 있는 건 뭐가 있을까?",
+  },
+];
 
 // 조별 멤버 데이터
 const MOCK_TEAMS_DATA = [
@@ -51,9 +75,17 @@ export default function AdminBookDetailPage() {
     "정기모임"
   );
 
+  const  DEFAULT_PROFILE = "/profile4.svg";
+  const [MyprofileImageUrl, setMyprofileImageUrl] = useState("/profile4.svg");
+  const [MyName, setMyName] = useState("aasdfsad");
+
+  // 발제
+  const [isDebateWriting, setIsDebateWriting] = useState(false);
+  const [debateDraft, setDebateDraft] = useState("");
+
   // 조 선택 상태 관리
   const [selectedTeam, setSelectedTeam] = useState("A조");
-
+  
   // 현재 선택된 조의 데이터 찾기
   const currentTeamData = MOCK_TEAMS_DATA.find(
     (t) => t.teamName === selectedTeam
@@ -108,11 +140,22 @@ export default function AdminBookDetailPage() {
               </>
             )}
 
-            {activeTab === "발제" && (
-              <div className="w-full p-10 text-center text-Gray-4">
-                발제 콘텐츠 준비 중...
-              </div>
+            {activeTab === '발제' && (
+              <DebateSection
+                myName={MyName}
+                myProfileImageUrl={MyprofileImageUrl}
+                defaultProfileUrl="/profile4.svg"
+                isWriting={isDebateWriting}
+                onToggleWriting={() => setIsDebateWriting((v) => !v)}
+                onSendDebate={(text) => {
+                  console.log('send:', text);
+                  // TODO: API 붙일 곳
+                  return true;
+                }}
+                items={MOCK_DEBATE_TOPICS}
+              />
             )}
+
 
             {activeTab === "한줄평" && (
               <div className="w-full p-10 text-center text-Gray-4">
