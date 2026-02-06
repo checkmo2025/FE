@@ -111,7 +111,7 @@ export default function NewNoticePage() {
     return () => {
       imagePreviews.forEach((url) => URL.revokeObjectURL(url));
     };
-  }, [imagePreviews]);
+  }, []);
   return (
     <div className="w-full">
       <div className="py-6 px-2.5 t:px-10">
@@ -256,11 +256,13 @@ export default function NewNoticePage() {
                           {/* 이미지 삭제 */}
                           <button
                             type="button"
-                            onClick={() =>
+                            onClick={() => {
+                              const urlToRemove = imagePreviews[index];
+                              URL.revokeObjectURL(urlToRemove);
                               setImagePreviews((prev) =>
                                 prev.filter((_, i) => i !== index),
-                              )
-                            }
+                              );
+                            }}
                             className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/60"
                             aria-label="이미지 삭제"
                           >
