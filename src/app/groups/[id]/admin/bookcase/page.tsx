@@ -1,40 +1,82 @@
+// src/app/groups/[id]/admin/bookcase/page.tsx
+
 "use client";
 
-import BookDetailCard from "@/components/base-ui/Bookcase/BookDetailCard";
+import { useRouter, useParams } from "next/navigation";
+import BookcaseCard from "@/components/base-ui/Bookcase/BookcaseCard";
 
-// [Mock Data] 실제로는 API로 불러올 데이터
-const ADMIN_BOOKS = [
-  {
-    id: 1,
+// [1] 더미 데이터 생성 헬퍼 함수 (회원 페이지와 동일)
+const createMockBooks = (generation: string, count: number) =>
+  Array.from({ length: count }).map((_, i) => ({
+    id: `${generation}-${i}`, // 실제 DB 연동 시 bookId가 들어감
     title: "채식주의자",
     author: "한강 지음",
     imageUrl: "/dummy_book_cover.png",
-    category: { generation: "7기", genre: "소설/시/희곡" },
+    category: {
+      generation: generation,
+      genre: "소설/시/희곡",
+    },
     rating: 4.5,
-    description:
-      "책을 좋아하는 사람들이 모여 각자의 속도로 읽고, 각자의 언어로 생각을 나누는 책 모임입니다. 이 모임은 정답을 찾기보다 질문을 남기는 시간을 소중히 여기며, 한 권의 책을 통해 서로의 관점과 경험을 자연스럽게 공유하는 것을 목표로 합니다. 문학, 에세이, 인문 등 다양한 장르를 함께 읽으며 책 속 문장이 개인의 기억과 일상으로 확장되는 순간을 발견하고자 합니다. 발언의 부담 없이 듣는 것만으로도 충분하며, 말하고 싶을 때 편안하게 참여할 수 있는 분위기를 지향합니다. 책을 매개로 사유의 폭을 넓히고, 혼자 읽을 때는 지나쳤던 감정과 생각을 함께 천천히 짚어가는 모임입니다. 읽는 즐거움과 나누는 기쁨을 경험하고 싶은 분이라면 누구나 환영합니다. (← 이게 500자)",
+  }));
+
+// [2] 기수별 데이터 그룹화
+const BOOKCASE_DATA = [
+  {
+    generation: "8기",
+    books: createMockBooks("8기", 4),
+  },
+  {
+    generation: "7기",
+    books: createMockBooks("7기", 8),
   },
 ];
 
-export default function AdminBookcasePage() {
+export default function AdminBookcaseListPage() {
+  const router = useRouter();
+  const params = useParams();
+  const groupId = params.id as string;
+
+  // [이동 로직] 도서 상세(운영진) 페이지로 이동
+  const handleGoToDetail = (bookId: string) => {
+    // 경로: /groups/[id]/admin/bookcase/[bookId]
+    router.push(`/groups/${groupId}/admin/bookcase/${bookId}`);
+  };
+
   return (
-    <div className="flex w-full flex-col gap-[40px] pb-[100px]">
-      {/* 2. 도서 리스트  */}
-      <div className="flex flex-col gap-[32px]">
-        {ADMIN_BOOKS.map((book) => (
-          <div key={book.id} className="flex flex-col gap-[16px]">
-            {/* 방금 만든 상세 카드 컴포넌트 */}
-            <BookDetailCard
-              imageUrl={book.imageUrl}
-              title={book.title}
-              author={book.author}
-              description={book.description}
-              category={book.category}
-              rating={book.rating}
-            />
+    // [UI] 회원 페이지와 동일한 레이아웃 구조
+    <div className="w-full flex flex-col gap-[24px]">
+      {/* 책장 리스트 영역 */}
+      {BOOKCASE_DATA.map((group) => (
+        <section
+          key={group.generation}
+          className="flex flex-col items-start gap-[8px] self-stretch"
+        >
+          {/* 기수 라벨 */}
+          <div className="flex w-[112px] items-center gap-[10px] px-[12px] py-[10px]">
+            <span className="text-Gray-4 body_1_2">{group.generation}</span>
           </div>
-        ))}
-      </div>
+
+          {/* 카드 리스트 */}
+          {/* 반응형 정렬: 모바일/태블릿(Center) -> 데스크탑(Start) */}
+          <div className="flex flex-wrap items-center gap-[10px] self-stretch justify-center d:justify-start">
+            {group.books.map((book) => (
+              <BookcaseCard
+                key={book.id}
+                title={book.title}
+                author={book.author}
+                imageUrl={book.imageUrl}
+                category={book.category}
+                rating={book.rating}
+                // [Click Event] 카드의 인터랙션 요소를 클릭하면 상세 페이지로 이동
+                // BookcaseCard 컴포넌트 특성상 버튼별 핸들러가 나뉘어 있으므로 모두 상세 이동으로 연결
+                onTopicClick={() => handleGoToDetail(book.id)}
+                onReviewClick={() => handleGoToDetail(book.id)}
+                onMeetingClick={() => handleGoToDetail(book.id)}
+              />
+            ))}
+          </div>
+        </section>
+      ))}
     </div>
   );
 }
