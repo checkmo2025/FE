@@ -3,9 +3,9 @@
 import { useState } from "react";
 import BookDetailCard from "@/components/base-ui/Bookcase/BookDetailCard";
 import BookDetailNav from "@/components/base-ui/Bookcase/BookDetailNav";
-import AdminMeetingInfo from "@/components/base-ui/Bookcase/Admin/AdminMeetingInfo";
 import TeamFilter from "@/components/base-ui/Bookcase/Admin/TeamFilter";
 import TeamSection from "@/components/base-ui/Bookcase/Admin/TeamSection";
+import MeetingInfo from "@/components/base-ui/Bookcase/MeetingInfo";
 
 // --- Mock Data ---
 const MOCK_BOOK_DETAIL = {
@@ -60,8 +60,8 @@ export default function AdminBookDetailPage() {
   );
 
   return (
-    <div className="flex w-[1441px] flex-col items-start gap-[24px]">
-      <div className="flex w-[1145px] flex-col items-start gap-[40px] pl-[40px] pr-[65px]">
+    <div className="flex flex-col w-full items-start gap-[24px]">
+      <div className="flex flex-col w-full items-start gap-[40px]">
         {/* 1. 도서 상세 카드 */}
         <BookDetailCard
           title={MOCK_BOOK_DETAIL.title}
@@ -73,7 +73,7 @@ export default function AdminBookDetailPage() {
         />
 
         {/* 2. 하단 상세 정보 영역 */}
-        <div className="flex flex-col items-start gap-[24px] self-stretch">
+        <div className="flex w-full flex-col items-start gap-[24px] self-stretch">
           {/* 내비게이션 바 */}
           <BookDetailNav activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -82,11 +82,10 @@ export default function AdminBookDetailPage() {
             {activeTab === "정기모임" && (
               <>
                 {/* 2-1. 모임 정보 카드 */}
-                <AdminMeetingInfo
+                <MeetingInfo
                   meetingName={MOCK_MEETING_INFO.name}
                   date={MOCK_MEETING_INFO.date}
                   location={MOCK_MEETING_INFO.location}
-                  onManageGroupClick={() => console.log("조 관리 클릭")}
                 />
 
                 {/* 2-2. 조별 멤버 리스트 영역 (Frame 2087328794) */}

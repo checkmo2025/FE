@@ -60,8 +60,8 @@ export default function AdminBookDetailPage() {
   );
 
   return (
-    <div className="flex w-[1441px] flex-col items-start gap-[24px]">
-      <div className="flex w-[1145px] flex-col items-start gap-[40px] pl-[40px] pr-[65px]">
+    <div className="flex flex-col items-start gap-[24px]">
+      <div className="flex flex-col items-start gap-[40px] pl-[40px] pr-[65px]">
         {/* 1. 도서 상세 카드 */}
         <BookDetailCard
           title={MOCK_BOOK_DETAIL.title}
