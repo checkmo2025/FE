@@ -5,66 +5,17 @@ import BookDetailCard from "@/components/base-ui/Bookcase/BookDetailCard";
 import BookDetailNav from "@/components/base-ui/Bookcase/BookDetailNav";
 import MeetingInfo from "@/components/base-ui/Bookcase/MeetingInfo";
 import DebateSection from "./DebateSection";
-import TeamFilter from "@/components/base-ui/Group/TeamFilter";
-import TeamSection from "@/components/base-ui/Group/TeamSection";
+import TeamFilter from "@/components/base-ui/Bookcase/bookid/TeamFilter";
+import TeamSection from "@/components/base-ui/Bookcase/bookid/TeamSection";
+import ReviewSection from "./ReviewSection";
 
-// --- Mock Data ---
-const MOCK_BOOK_DETAIL = {
-  title: "채식주의자",
-  author: "한강 지음",
-  imageUrl: "/dummy_book_cover.png",
-  description: `책을 좋아하는 사람들이 모여 각자의 속도로 읽고... (생략)`,
-  category: { generation: "7기", genre: "소설/시/희곡" },
-  rating: 4.5,
-};
-
-const MOCK_MEETING_INFO = {
-  name: "정기모임 이름 어쩌고",
-  date: "2000.00.00",
-  location: "제이스 스터디룸",
-};
-
-const MOCK_DEBATE_TOPICS = [
-  {
-    id: 1,
-    name: "_hy_0716",
-    content:
-      "메노키오의 사례에서 볼 수 있듯이 시대마다 ‘허용되는 사상’과 ‘탄압받는 사상’이 존재한다. 현대사회에서 비슷한 사례는 무엇이 있을까?",
-  },
-  {
-    id: 2,
-    name: "_hy_0716",
-    content: "표현의 자유는 어디까지 허용되어야 하는가? 플랫폼 규제는 검열인가 보호인가?",
-  },
-  {
-    id: 3,
-    name: "_hy_0716",
-    content: "지금 우리가 ‘당연하다’고 믿는 상식 중, 훗날 탄압/조롱의 대상이 될 수도 있는 건 뭐가 있을까?",
-  },
-];
-
-// 조별 멤버 데이터
-const MOCK_TEAMS_DATA = [
-  {
-    teamName: "A조",
-    members: [
-      { id: "1", name: "유저 1", profileImageUrl: "/dummy_profile.png" },
-      { id: "2", name: "유저 2", profileImageUrl: "/dummy_profile.png" },
-      { id: "3", name: "유저 3", profileImageUrl: "/dummy_profile.png" },
-    ],
-  },
-  {
-    teamName: "B조",
-    members: [
-      { id: "4", name: "유저 4" }, // 이미지 없는 경우 테스트
-      { id: "5", name: "유저 5" },
-    ],
-  },
-  { teamName: "C조", members: [] },
-  { teamName: "D조", members: [] },
-  { teamName: "E조", members: [] },
-  { teamName: "F조", members: [] },
-];
+import {
+  MOCK_BOOK_DETAIL,
+  MOCK_MEETING_INFO,
+  MOCK_DEBATE_TOPICS,
+  MOCK_TEAMS_DATA,
+  MOCK_REVIEWS,
+} from './dummy';
 
 export default function AdminBookDetailPage() {
   const [activeTab, setActiveTab] = useState<"발제" | "한줄평" | "정기모임">(
@@ -79,6 +30,8 @@ export default function AdminBookDetailPage() {
   const [isDebateWriting, setIsDebateWriting] = useState(false);
   const [debateDraft, setDebateDraft] = useState("");
 
+
+  const [isReviewWriting, setIsReviewWriting] = useState(false);
   // 조 선택 상태 관리
   const [selectedTeam, setSelectedTeam] = useState("A조");
   
@@ -153,10 +106,20 @@ export default function AdminBookDetailPage() {
             )}
 
 
-            {activeTab === "한줄평" && (
-              <div className="w-full p-10 text-center text-Gray-4">
-                한줄평 콘텐츠 준비 중...
-              </div>
+            {activeTab === '한줄평' && (
+              <ReviewSection
+                myName={MyName}
+                myProfileImageUrl={MyprofileImageUrl}
+                defaultProfileUrl="/profile4.svg"
+                isWriting={isReviewWriting}
+                onToggleWriting={() => setIsReviewWriting((v) => !v)}
+                onSendReview={(text, rating) => {
+                  console.log('review send:', { text, rating });
+                  return true;
+                }}
+                items={MOCK_REVIEWS}
+                onClickMore={(id) => console.log('more:', id)}
+              />
             )}
           </div>
         </div>
