@@ -145,8 +145,6 @@ export default function GroupDetailPage() {
               </div>
             </div>
           </div>
-
-
         <div className="flex flex-col gap-6 d:hidden">
 
           <div className="flex flex-col gap-4 t:flex-row t:items-start t:gap-6">
@@ -155,7 +153,7 @@ export default function GroupDetailPage() {
               className="
                 relative shrink-0 overflow-hidden
                 w-[110px] h-[110px]
-                t:w-[300px] t:h-[300px]
+                t:w-[200px] t:h-[200px]
                 rounded-[12px]
                 bg-Gray-1
               "
