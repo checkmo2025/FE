@@ -1,6 +1,10 @@
 "use client";
 
+
 import BookcaseCard from "@/components/base-ui/Bookcase/BookcaseCard";
+import { useParams, useRouter } from "next/navigation";
+
+
 
 // [1] 더미 데이터 생성 헬퍼 함수
 const createMockBooks = (generation: string, count: number) =>
@@ -29,6 +33,15 @@ const BOOKCASE_DATA = [
 ];
 
 export default function BookcasePage() {
+  const router = useRouter();
+  const params = useParams();
+  const groupId = params.id as string;
+
+  const handleGoToDetail = (bookId: string) => {
+    // 경로: /groups/[id]/admin/bookcase/[bookId]
+    router.push(`/groups/${groupId}/bookcase/${bookId}`);
+  };
+
   return (
     <div className="w-full flex flex-col gap-[24px]">
       {/* 책장 리스트 영역 */}
@@ -54,9 +67,9 @@ export default function BookcasePage() {
                 category={book.category}
                 rating={book.rating}
                 // 이벤트 핸들러
-                onTopicClick={() => console.log("발제", book.id)}
-                onReviewClick={() => console.log("한줄평", book.id)}
-                onMeetingClick={() => console.log("정기모임", book.id)}
+                onTopicClick={() => handleGoToDetail(book.id)}
+                onReviewClick={() => handleGoToDetail(book.id)}
+                onMeetingClick={() => handleGoToDetail(book.id)}
               />
             ))}
           </div>

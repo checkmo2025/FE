@@ -32,7 +32,7 @@ export default function GroupDetailLayout({
     }
 
     if (pathname.includes("/notice")) return "notice";
-    if (pathname.includes("/meeting/bookcase")) return "bookshelf";
+    if (pathname.includes("/bookcase")) return "bookshelf";
     return "home";
   };
 
@@ -78,7 +78,7 @@ export default function GroupDetailLayout({
         {
           id: "bookshelf" as TabType,
           label: "책장",
-          href: `/groups/${groupId}/meeting/bookcase`,
+          href: `/groups/${groupId}/bookcase`,
           icon: "/bookshelf.svg",
         },
       ];
