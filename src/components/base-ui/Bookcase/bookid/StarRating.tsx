@@ -49,7 +49,7 @@ export function StarRating({
     );
   });
 
-  return <div className={`flex items-center gap-1 ${className}`}>{stars}</div>;
+  return <div className={`flex items-center ${className}`}>{stars}</div>;
 }
 
 type SelectorProps = CommonProps & {
@@ -77,7 +77,7 @@ export function StarSelector({
   };
 
   return (
-    <div className={`flex items-center gap-1 ${className}`}>
+    <div className={`flex items-center ${className}`}>
       {Array.from({ length: max }, (_, i) => {
         const full = value >= i + 1;
         const half = !full && value >= i + 0.5;

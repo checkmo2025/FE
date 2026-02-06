@@ -42,12 +42,15 @@ export default function ReviewList({ items, onClickMore }: Props) {
             <div
               className="
                 grid items-center gap-x-3
-                grid-cols-[auto_1fr_auto]
-                t:grid-cols-[auto_auto_1fr_auto]
+                grid-cols-[auto_auto_1fr_auto]
               "
             >
-              {/* 프로필 + 이름 */}
-              <div className="flex shrink-0 items-center gap-3 t:min-w-[150px] d:min-w-[200px]">
+              <div className="
+                grid items-center gap-x-1
+                grid-cols-[auto_auto_1fr_auto]
+              ">
+                {/* 프로필 + 이름 */}
+              <div className="flex items-center gap-3 min-w-0 t:min-w-[120px] d:min-w-[170px]">
                 <Image
                   src={profileSrc}
                   alt=""
@@ -55,15 +58,18 @@ export default function ReviewList({ items, onClickMore }: Props) {
                   height={28}
                   className="rounded-full object-cover w-[24px] h-[24px] t:w-[28px] t:h-[28px] d:w-[40px] d:h-[40px]"
                 />
-                <p className="text-Gray-7 body_1_2 d:subhead_4_1 truncate">{item.name}</p>
+                <p className="text-Gray-7 body_1_2 d:subhead_4_1 truncate max-w-[72px] t:max-w-[96px] d:max-w-[120px]">
+                  {item.name}
+                </p>
               </div>
 
-              {/* 별점: 모바일에서는 2번째 컬럼(1fr)이라도 왼쪽 정렬 */}
+              {/* 별점:*/}
               <StarRating
                 value={item.rating}
-                className="justify-self-start"
+                className="justify-self-start w-fit"
                 starClassName="w-[16px] h-[16px] t:w-[18px] t:h-[18px] d:w-[20px] d:h-[20px]"
               />
+              </div>
 
               {/* 내용: t 이상에서만 같은 줄 */}
               <p

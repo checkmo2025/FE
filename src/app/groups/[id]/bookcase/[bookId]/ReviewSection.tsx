@@ -43,7 +43,6 @@ export default function ReviewSection({
   const [newRating, setNewRating] = useState<number>(0);
 
   const handleSend = (text: string) => {
-    // (6,7 느낌) 별점 최소 1점
     if (newRating < 1) return false;
 
     const ok = onSendReview(text, newRating);
@@ -87,14 +86,14 @@ export default function ReviewSection({
             bg-White
             px-5 py-3
             flex flex-col
-            gap-3
+            t:gap-5
             mb-[6px]
             t:flex-row t:items-center
           "
         >
           {/* (모바일) 프로필+이름 / 별점은 한 덩어리로 보이게 */}
-          <div className="grid grid-cols-[auto_1fr] items-center gap-x-3 t:flex t:items-center t:gap-3 t:shrink-0">
-            <div className="flex shrink-0 items-center gap-3 t:min-w-[150px] d:min-w-[200px]">
+          <div className="grid grid-cols-[auto_1fr] items-center gap-x-3 t:flex t:items-center t:gap-1 t:shrink-0">
+            <div className="flex shrink-0 items-center gap-3 t:min-w-[120px] d:min-w-[170px]">
               <Image
                 src={profileSrc}
                 alt=""
