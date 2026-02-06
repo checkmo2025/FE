@@ -3,8 +3,9 @@
 import Image from 'next/image';
 import React from 'react';
 
-import DebateList from '@/components/base-ui/Bookcase/DebateList';
+
 import LongtermChatInput from '@/components/base-ui/LongtermInput';
+import DebateList from '@/components/base-ui/Group/DebateList';
 
 type DebateItem = {
   id: number;

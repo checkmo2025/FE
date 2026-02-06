@@ -1,16 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import BookDetailCard from "@/components/base-ui/Bookcase/BookDetailCard";
 import BookDetailNav from "@/components/base-ui/Bookcase/BookDetailNav";
-import TeamFilter from "@/components/base-ui/Bookcase/Admin/TeamFilter";
-import TeamSection from "@/components/base-ui/Bookcase/Admin/TeamSection";
 import MeetingInfo from "@/components/base-ui/Bookcase/MeetingInfo";
-
-import DebateList from "@/components/base-ui/Bookcase/DebateList";
-import LongtermChatInput from "@/components/base-ui/LongtermInput";
 import DebateSection from "./DebateSection";
+import TeamFilter from "@/components/base-ui/Group/TeamFilter";
+import TeamSection from "@/components/base-ui/Group/TeamSection";
 
 // --- Mock Data ---
 const MOCK_BOOK_DETAIL = {
