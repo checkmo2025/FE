@@ -43,6 +43,9 @@ export const DUMMY_CLUB_HOME_RESPONSE: ClubHomeResponse = {
       { id: 2, url: 'https://open.kakao.com/o/g0AbCDeF' },
       { id: 3, url: 'https://forms.gle/8YqZpZkQkQ2nH9rK9' },
     ],
+
+    // 운영진 여부 (true: 운영진, false: 일반 회원)
+    isAdmin: true,
   },
 };
 
