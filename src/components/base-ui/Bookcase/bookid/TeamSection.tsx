@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import TeamMemberItem from "./TeamMemberItem";
 
 
+
 type Member = {
   id: string;
   name: string;
