@@ -23,7 +23,7 @@ export default function TeamSection({ teamName, members }: Props) {
 
   const handleGo = () => {
     const base = pathname.replace(/\/$/, "");
-    const next = `${base}/${encodeURIComponent(teamName)}`;
+    const next = `${base}/meeting?team=${encodeURIComponent(teamName)}`;
     router.push(next);
   };
 
