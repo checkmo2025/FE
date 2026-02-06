@@ -2,19 +2,25 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
 import { useState } from 'react';
 
-import { DUMMY_CLUB_HOME } from './dummy';
+
 import ClubCategoryTags from '@/components/base-ui/Group-Search/search_clublist/search_club_category_tags';
 import { BOOK_CATEGORIES } from '@/types/groups/groups';
 import ButtonWithoutImg from '@/components/base-ui/button_without_img';
+import type { ClubModalLink } from '@/types/groups/grouphome';
+import { DUMMY_CLUB_HOME } from './dummy';
+import GroupAdminMenu from '@/components/base-ui/Group/group_admin_menu';
+
 
 const DEFAULT_CLUB_IMG = '/ClubDefaultImg.svg';
 
-export default function GroupDetailPage() {
+export default function AdminGroupHomePage() {
   const router = useRouter();
+  const params = useParams();
+  const groupId = params.id as string;
 
   const noticeText = DUMMY_CLUB_HOME.recentNotice?.title ?? '공지사항이 없습니다.';
   const noticeUrl = DUMMY_CLUB_HOME.recentNotice?.url ?? '/groups';
@@ -26,13 +32,12 @@ export default function GroupDetailPage() {
   const contactUrl = DUMMY_CLUB_HOME.links?.contactUrl ?? '/contact';
 
   const participantText = DUMMY_CLUB_HOME.participantTypes
-    .map((p) => p.description)
+    .map((p: { description: string }) => p.description)
     .join(', ');
 
-  // description(한글 라벨) -> 1~15 번호
   const nums = DUMMY_CLUB_HOME.category
-    .map((c) => BOOK_CATEGORIES.indexOf(c.description as never) + 1)
-    .filter((n) => n >= 1 && n <= 15);
+    .map((c: { description: string }) => BOOK_CATEGORIES.indexOf(c.description as never) + 1)
+    .filter((n: number) => n >= 1 && n <= 15);
 
   const [isContactOpen, setIsContactOpen] = useState(false);
 
@@ -50,7 +55,7 @@ export default function GroupDetailPage() {
             bg-White
             p-4
             cursor-pointer
-            hover:bg-[color:var(--background)]
+            hover:bg-background
             focus-visible:outline-none
             focus-visible:ring-2 focus-visible:ring-Subbrown-2
           "
@@ -99,7 +104,12 @@ export default function GroupDetailPage() {
             </div>
 
             {/* 3) 텍스트 + 4) 버튼 (같은 컬럼) */}
-            <div className="min-w-0 flex-1 flex flex-col min-h-[300px]">
+            <div className="min-w-0 flex-1 flex flex-col min-h-[300px] relative">
+              {/* 운영진용 모임 관리 드롭다운 */}
+              <div className="absolute top-0 right-0">
+                <GroupAdminMenu groupId={Number(groupId)} />
+              </div>
+
               {/* chips */}
               <div className="flex flex-wrap gap-3">
                 <ClubCategoryTags category={nums} />
@@ -108,18 +118,18 @@ export default function GroupDetailPage() {
               <div className="mt-3 space-y-2">
                 <div className="flex items-start gap-3">
                   <p className="body_1_3 text-Gray-5 shrink-0">모임 대상</p>
-                  <p className="body_1_3 text-Gray-7 min-w-0 break-words">{participantText}</p>
+                  <p className="body_1_3 text-Gray-7 min-w-0 wrap-break-word">{participantText}</p>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <p className="body_1_3 text-Gray-5 shrink-0">활동 지역</p>
-                  <p className="body_1_3 text-Gray-7 min-w-0 break-words">{DUMMY_CLUB_HOME.region ?? '-'}</p>
+                  <p className="body_1_3 text-Gray-7 min-w-0 wrap-break-word">{DUMMY_CLUB_HOME.region ?? '-'}</p>
                 </div>
               </div>
 
               <div className="mt-[19px]">
                 <p className="body_1_3 text-Gray-5">설명</p>
-                <p className="body_1_3 text-Gray-5 mt-2 whitespace-pre-line break-words">
+                <p className="body_1_3 text-Gray-5 mt-2 whitespace-pre-line wrap-break-word">
                   {DUMMY_CLUB_HOME.description ?? '설명이 없습니다.'}
                 </p>
               </div>
@@ -145,6 +155,8 @@ export default function GroupDetailPage() {
               </div>
             </div>
           </div>
+
+
         <div className="flex flex-col gap-6 d:hidden">
 
           <div className="flex flex-col gap-4 t:flex-row t:items-start t:gap-6">
@@ -153,7 +165,7 @@ export default function GroupDetailPage() {
               className="
                 relative shrink-0 overflow-hidden
                 w-[110px] h-[110px]
-                t:w-[200px] t:h-[200px]
+                t:w-[300px] t:h-[300px]
                 rounded-[12px]
                 bg-Gray-1
               "
@@ -167,7 +179,12 @@ export default function GroupDetailPage() {
             </div>
 
             {/* 3) 내용 */}
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 relative">
+              {/* 운영진용 모임 관리 드롭다운 */}
+              <div className="absolute top-0 right-0">
+                <GroupAdminMenu groupId={Number(groupId)} />
+              </div>
+
               <div className="flex flex-wrap gap-3">
                 <ClubCategoryTags category={nums} />
               </div>
@@ -175,18 +192,18 @@ export default function GroupDetailPage() {
               <div className="mt-3 space-y-2">
                 <div className="flex items-start gap-3">
                   <p className="body_1_3 text-Gray-5 shrink-0">모임 대상</p>
-                  <p className="body_1_3 text-Gray-7 min-w-0 break-words">{participantText}</p>
+                  <p className="body_1_3 text-Gray-7 min-w-0 wrap-break-word">{participantText}</p>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <p className="body_1_3 text-Gray-5 shrink-0">활동 지역</p>
-                  <p className="body_1_3 text-Gray-7 min-w-0 break-words">{DUMMY_CLUB_HOME.region ?? '-'}</p>
+                  <p className="body_1_3 text-Gray-7 min-w-0 wrap-break-word">{DUMMY_CLUB_HOME.region ?? '-'}</p>
                 </div>
               </div>
 
               <div className="mt-[19px]">
                 <p className="body_1_3 text-Gray-5">설명</p>
-                <p className="body_1_3 text-Gray-5 mt-2 whitespace-pre-line break-words">
+                <p className="body_1_3 text-Gray-5 mt-2 whitespace-pre-line wrap-break-word">
                   {DUMMY_CLUB_HOME.description ?? '설명이 없습니다.'}
                 </p>
               </div>
@@ -265,11 +282,10 @@ export default function GroupDetailPage() {
 
           {/* 리스트 */}
           <div className="w-full rounded-[8px] overflow-hidden items-center">
-            {(DUMMY_CLUB_HOME.modalLinks ?? []).map((item) => (
+            {(DUMMY_CLUB_HOME.modalLinks ?? []).map((item: ClubModalLink) => (
               <a
                 key={item.id}
-                href={item.url}
-                target="_blank"
+                href={/^(https?:\/\/|\/)/.test(item.url) ? item.url : '#'}
                 rel="noreferrer"
                 className="
                   w-full

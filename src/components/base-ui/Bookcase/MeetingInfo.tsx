@@ -20,7 +20,7 @@ export default function MeetingInfo({
       {/* 정보 컨테이너 */}
       <div className="flex w-full flex-col items-start justify-center gap-[12px]">
         {/* 상단: 모임 이름 + 조 관리 버튼 */}
-        <div className="flex  items-center justify-between">
+        <div className="flex w-full items-center justify-between">
           {/* 모임 이름 영역 */}
           <div className="flex flex-col items-start gap-[24px]">
             <div className="flex items-center justify-between w-full">
