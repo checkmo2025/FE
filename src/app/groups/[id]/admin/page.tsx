@@ -11,6 +11,7 @@ import ClubCategoryTags from '@/components/base-ui/Group-Search/search_clublist/
 import { BOOK_CATEGORIES } from '@/types/groups/groups';
 import ButtonWithoutImg from '@/components/base-ui/button_without_img';
 import type { ClubModalLink } from '@/types/groups/grouphome';
+import GroupAdminMenu from '@/components/base-ui/Group/group_admin_menu';
 
 const DEFAULT_CLUB_IMG = '/ClubDefaultImg.svg';
 
@@ -37,10 +38,6 @@ export default function AdminGroupHomePage() {
     .filter((n: number) => n >= 1 && n <= 15);
 
   const [isContactOpen, setIsContactOpen] = useState(false);
-
-  const handleManageMembers = () => {
-    router.push(`/groups/${groupId}/admin/members`);
-  };
 
   return (
     <main className="w-full">
@@ -106,25 +103,9 @@ export default function AdminGroupHomePage() {
 
             {/* 3) 텍스트 + 4) 버튼 (같은 컬럼) */}
             <div className="min-w-0 flex-1 flex flex-col min-h-[300px] relative">
-              {/* 운영진용 */}
+              {/* 운영진용 모임 관리 드롭다운 */}
               <div className="absolute top-0 right-0">
-                <button
-                  type="button"
-                  onClick={handleManageMembers}
-                  className="
-                    flex items-center gap-1
-                    body_1_2 text-Gray-4 hover:text-Gray-7 underline underline-offset-2 cursor-pointer
-                  "
-                > 
-                  모임 관리하기
-                  <Image
-                    src="/Setting.svg"
-                    alt="설정"
-                    width={24}
-                    height={24}
-                    className="object-contain opacity-60"
-                  />
-                </button>
+                <GroupAdminMenu groupId={Number(groupId)} />
               </div>
 
               {/* chips */}
@@ -197,25 +178,9 @@ export default function AdminGroupHomePage() {
 
             {/* 3) 내용 */}
             <div className="min-w-0 flex-1 relative">
-              {/* 운영진용 */}
+              {/* 운영진용 모임 관리 드롭다운 */}
               <div className="absolute top-0 right-0">
-              <button
-                  type="button"
-                  onClick={handleManageMembers}
-                  className="
-                    flex items-center gap-1
-                    body_1_2 text-Gray-4 hover:text-Gray-7 underline underline-offset-2 cursor-pointer
-                  "
-                > 
-                  모임 관리하기
-                  <Image
-                    src="/Setting.svg"
-                    alt="설정"
-                    width={24}
-                    height={24}
-                    className="object-contain opacity-60"
-                  />
-                </button>
+                <GroupAdminMenu groupId={Number(groupId)} />
               </div>
 
               <div className="flex flex-wrap gap-3">

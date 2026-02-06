@@ -56,6 +56,9 @@ export interface ClubHomeResponseResult {
   links?: ClubLinks;
 
   modalLinks?: ClubModalLink[];
+
+  // 운영진 여부
+  isAdmin?: boolean;
 }
 
 

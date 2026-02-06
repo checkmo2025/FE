@@ -23,9 +23,22 @@ type RoleType = 'admin' | 'member' | 'creator' | null;
 type RoleEditDropdownProps = {
   isOpen: boolean;
   onSelectRole: (role: RoleType) => void;
+  buttonRef: React.RefObject<HTMLButtonElement | null>;
 };
 
-function RoleEditDropdown({ isOpen, onSelectRole }: RoleEditDropdownProps) {
+function RoleEditDropdown({ isOpen, onSelectRole, buttonRef }: RoleEditDropdownProps) {
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.bottom + 4,
+        left: rect.right - 136, // w-34 = 136px
+      });
+    }
+  }, [isOpen, buttonRef]);
+
   if (!isOpen) return null;
 
   const roles = [
@@ -36,7 +49,10 @@ function RoleEditDropdown({ isOpen, onSelectRole }: RoleEditDropdownProps) {
   ];
 
   return (
-    <div className="absolute right-0 top-full mt-1 w-34 h-44 rounded-lg bg-White shadow-lg z-10 overflow-hidden">
+    <div
+      className="fixed w-34 h-44 rounded-lg border border-Subbrown-4 bg-White shadow-md z-50 overflow-hidden"
+      style={{ top: position.top, left: position.left }}
+    >
       {roles.map((role, index) => (
         <div key={role.label}>
           {index > 0 && <div className="mx-3 border-b border-Subbrown-4" />}
@@ -45,7 +61,7 @@ function RoleEditDropdown({ isOpen, onSelectRole }: RoleEditDropdownProps) {
             onClick={() => {
               onSelectRole(role.type);
             }}
-            className="flex w-full h-11 items-center gap-3 px-4 body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+            className="flex w-full h-11 items-center gap-3 px-4 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
           >
             <Image
               src={role.icon}
@@ -68,6 +84,7 @@ export default function AdminMembersPage() {
   const [members, setMembers] = useState(DUMMY_MEMBERS);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const menuRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
+  const buttonRefs = useRef<{ [key: number]: HTMLButtonElement | null }>({});
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const totalPages = Math.ceil(members.length / itemsPerPage);
@@ -160,7 +177,7 @@ export default function AdminMembersPage() {
             <div className="divide-y divide-Subbrown-4 border-b border-Subbrown-4">
               {currentMembers.map((member) => (
                 <div key={member.id} className="flex items-center">
-                  <div className="w-45 h-15 d:w-45 px-4 py-3 flex items-center gap-2 shrink-0">
+                  <div className="w-45 h-15 px-4 py-3 flex items-center gap-2 shrink-0">
                     <div className="relative w-6 h-6 rounded-full overflow-hidden shrink-0">
                       <Image
                         src="/profile2.svg"
@@ -187,6 +204,7 @@ export default function AdminMembersPage() {
                   <div className="w-28 d:w-28 px-4 py-3 shrink-0 relative" ref={(el) => { menuRefs.current[member.id] = el; }}>
                     <button
                       type="button"
+                      ref={(el) => { buttonRefs.current[member.id] = el; }}
                       onClick={() => handleRoleEdit(member.id)}
                       className="body_1_2 text-Gray-7 underline underline-offset-2 cursor-pointer"
                     >
@@ -195,6 +213,7 @@ export default function AdminMembersPage() {
                     <RoleEditDropdown
                       isOpen={openMenuId === member.id}
                       onSelectRole={(role) => handleSelectRole(member.id, role)}
+                      buttonRef={{ current: buttonRefs.current[member.id] }}
                     />
                   </div>
                 </div>
