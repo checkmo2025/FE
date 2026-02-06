@@ -21,15 +21,11 @@ export default function AdminBookDetailPage() {
   const [activeTab, setActiveTab] = useState<"발제" | "한줄평" | "정기모임">(
     "정기모임"
   );
-
-  const  DEFAULT_PROFILE = "/profile4.svg";
   const [MyprofileImageUrl, setMyprofileImageUrl] = useState("/profile4.svg");
   const [MyName, setMyName] = useState("aasdfsad");
 
   // 발제
   const [isDebateWriting, setIsDebateWriting] = useState(false);
-  const [debateDraft, setDebateDraft] = useState("");
-
 
   const [isReviewWriting, setIsReviewWriting] = useState(false);
   // 조 선택 상태 관리
