@@ -20,6 +20,7 @@ type CommentListNoticeProps = {
   onEditComment?: (id: number, content: string) => void;
   onDeleteComment?: (id: number) => void;
   onReportComment?: (id: number) => void;
+  isAdminView?: boolean;
 };
 
 export default function CommentListNotice({
@@ -28,6 +29,7 @@ export default function CommentListNotice({
   onEditComment,
   onDeleteComment,
   onReportComment,
+  isAdminView = false,
 }: CommentListNoticeProps) {
   return (
     <div className="w-full">
@@ -46,6 +48,7 @@ export default function CommentListNotice({
             createdAt={comment.createdAt}
             isAuthor={comment.isAuthor}
             isMine={comment.isMine}
+            isAdminView={isAdminView}
             onEdit={onEditComment}
             onDelete={onDeleteComment}
             onReport={onReportComment}

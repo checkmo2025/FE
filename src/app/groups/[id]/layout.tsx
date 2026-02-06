@@ -17,7 +17,20 @@ export default function GroupDetailLayout({
   const groupId = params.id as string;
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
+  // 공지사항 작성 페이지와 책장 작성 페이지는 레이아웃 적용 X
+  if (pathname?.includes('/admin/notice/new') || pathname?.includes('/admin/bookcase/new')) {
+    return <>{children}</>;
+  }
+
+  const isAdmin = pathname.includes("/admin");
+
   const getActiveTab = (): TabType => {
+    if (isAdmin) {
+      if (pathname.includes("/admin/notice")) return "notice";
+      if (pathname.includes("/admin/bookcase")) return "bookshelf";
+      return "home";
+    }
+
     if (pathname.includes("/notice")) return "notice";
     if (pathname.includes("/meeting/bookcase")) return "bookshelf";
     return "home";
@@ -28,26 +41,47 @@ export default function GroupDetailLayout({
   // 더미 데이터
   const groupName = "긁적긁적 독서 모임";
 
-  const tabs = [
-    {
-      id: "home" as TabType,
-      label: "모임 홈",
-      href: `/groups/${groupId}`,
-      icon: "/group_home.svg",
-    },
-    {
-      id: "notice" as TabType,
-      label: "공지사항",
-      href: `/groups/${groupId}/notice`,
-      icon: "/Notification2.svg",
-    },
-    {
-      id: "bookshelf" as TabType,
-      label: "책장",
-      href: `/groups/${groupId}/meeting/bookcase`,
-      icon: "/bookshelf.svg",
-    },
-  ];
+  const tabs = isAdmin
+    ? [
+        {
+          id: "home" as TabType,
+          label: "모임 홈",
+          href: `/groups/${groupId}/admin/bookcase`,
+          icon: "/group_home.svg",
+        },
+        {
+          id: "notice" as TabType,
+          label: "공지사항",
+          href: `/groups/${groupId}/admin/notice`,
+          icon: "/Notification2.svg",
+        },
+        {
+          id: "bookshelf" as TabType,
+          label: "책장",
+          href: `/groups/${groupId}/admin/bookcase`,
+          icon: "/bookshelf.svg",
+        },
+      ]
+    : [
+        {
+          id: "home" as TabType,
+          label: "모임 홈",
+          href: `/groups/${groupId}`,
+          icon: "/group_home.svg",
+        },
+        {
+          id: "notice" as TabType,
+          label: "공지사항",
+          href: `/groups/${groupId}/notice`,
+          icon: "/Notification2.svg",
+        },
+        {
+          id: "bookshelf" as TabType,
+          label: "책장",
+          href: `/groups/${groupId}/meeting/bookcase`,
+          icon: "/bookshelf.svg",
+        },
+      ];
 
   return (
     <div className="w-full">

@@ -13,6 +13,7 @@ type CommentItemProps = {
   isAuthor?: boolean; // 글 작성자 여부 (작성자 뱃지용)
   isMine?: boolean; // 내가 쓴 댓글인지 여부 (메뉴 분기용)
   isReply?: boolean; // 대댓글 여부
+  isAdminView?: boolean; // 운영진용 화면인지 여부
   onReply?: (id: number) => void;
   onEdit?: (id: number, content: string) => void;
   onDelete?: (id: number) => void;
@@ -36,6 +37,7 @@ export default function CommentItem({
   isAuthor = false,
   isMine = false,
   isReply = false,
+  isAdminView = false,
   onReply,
   onEdit,
   onDelete,
@@ -156,17 +158,24 @@ export default function CommentItem({
                   )}
                 </>
               ) : (
-                /* 남의 댓글일 때: 신고하기 */
+                /* 남의 댓글일 때 */
                 <button
                   type="button"
                   onClick={() => {
-                    onReport?.(id);
+                    if (!isAdminView) {
+                      onReport?.(id);
+                    }
                     setMenuOpen(false);
                   }}
                   className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
                 >
-                  <Image src="/report.svg" alt="신고" width={24} height={24} />
-                  신고하기
+                  <Image
+                    src={isAdminView ? "/Hide.svg" : "/report.svg"}
+                    alt={isAdminView ? "가리기" : "신고"}
+                    width={24}
+                    height={24}
+                  />
+                  {isAdminView ? "가리기" : "신고하기"}
                 </button>
               )}
             </div>
