@@ -12,8 +12,7 @@ export default async function OtherUserProfilePage({ params }: PageProps) {
 
   return (
     <main className="flex flex-col items-center w-full min-h-screen bg-background">
-      {/* 1. 헤더 */}
-      <Header />
+     
 
       {/* 2. 메인 컨텐츠 래퍼 */}
       <div
