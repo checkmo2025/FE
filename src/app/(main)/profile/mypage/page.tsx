@@ -15,7 +15,6 @@ export default function MyPage() {
 
   return (
     <div className="flex flex-col items-center gap-[10px] md:gap-[24px] w-full min-h-screen bg-[#F9F7F6] pb-[100px]">
-      <Header />
       <MyPageBreadcrumb />
 
       {/* Profile Section (Breadcrumb 아래 80px 간격은 UserProfile 내부 gap으로 처리됨을 가정하거나 여기서 margin으로 처리) */}
