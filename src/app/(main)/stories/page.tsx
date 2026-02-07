@@ -1,6 +1,6 @@
 "use client";
-import BookStoryCard from "@/components/base-ui/BookStory/bookstory_card";
-import ListSubscribe from "@/components/base-ui/home/list_subscribe";
+import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
+import ListSubscribeLarge from "@/components/base-ui/home/list_subscribe_large";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { DUMMY_STORIES } from "@/data/dummyStories";
@@ -42,7 +42,7 @@ export default function StoriesPage() {
               onClick={() => handleCardClick(story.id)}
               className="cursor-pointer"
             >
-              <BookStoryCard
+              <BookStoryCardLarge
                 authorName={story.authorName}
                 createdAt={story.createdAt}
                 viewCount={story.viewCount}
@@ -56,14 +56,14 @@ export default function StoriesPage() {
           ))}
 
           {/* 두 번째 줄: 비로그인 시 사용자 추천 + 카드 3개, 로그인 시 카드 4개 */}
-          {!isLoggedIn && <ListSubscribe height="h-[380px]" />}
+          {!isLoggedIn && <ListSubscribeLarge height="h-[380px]" />}
           {DUMMY_STORIES.slice(4, isLoggedIn ? 8 : 7).map((story) => (
             <div
               key={story.id}
               onClick={() => handleCardClick(story.id)}
               className="cursor-pointer"
             >
-              <BookStoryCard
+              <BookStoryCardLarge
                 authorName={story.authorName}
                 createdAt={story.createdAt}
                 viewCount={story.viewCount}

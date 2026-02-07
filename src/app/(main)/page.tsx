@@ -4,10 +4,11 @@ import { useState } from "react";
 import BookStoryCard from "@/components/base-ui/BookStory/bookstory_card";
 import NewsBannerSlider from "@/components/base-ui/home/NewsBannerSlider";
 import HomeBookclub from "@/components/base-ui/home/home_bookclub";
-import ListSubscribe from "@/components/base-ui/home/list_subscribe";
+import ListSubscribeLarge from "@/components/base-ui/home/list_subscribe_large";
 import ListSubscribeElement from "@/components/base-ui/home/list_subscribe_element";
 import LoginModal from "@/components/base-ui/Login/LoginModal";
 import { DUMMY_STORIES } from "@/data/dummyStories";
+import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
 
 export default function HomePage() {
   const groups: { id: string; name: string }[] = [];
@@ -76,7 +77,7 @@ export default function HomePage() {
         <section className="pt-6">
           <div className="grid grid-cols-1 gap-5">
             {DUMMY_STORIES.slice(0, 3).map((story) => (
-              <BookStoryCard
+              <BookStoryCardLarge
                 key={story.id}
                 authorName={story.authorName}
                 createdAt={story.createdAt}
@@ -109,7 +110,7 @@ export default function HomePage() {
           </h2>
       <div className="flex gap-6">
             <HomeBookclub groups={groups} />
-            <ListSubscribe height="h-[424px]" />
+            <ListSubscribeLarge height="h-[424px]" />
           </div>
         </section>
 
@@ -142,7 +143,7 @@ export default function HomePage() {
           </h2>
           <HomeBookclub groups={groups} />
           <div className="pt-6">
-            <ListSubscribe />
+            <ListSubscribeLarge height="h-[424px]" />
           </div>
         </section>
 
