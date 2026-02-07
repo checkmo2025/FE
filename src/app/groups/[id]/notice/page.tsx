@@ -1,12 +1,17 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 import NoticeItem from '@/components/base-ui/Group/notice_item';
 
 export default function GroupNoticePage() {
   const params = useParams();
   const router = useRouter();
   const groupId = params.id as string;
+  
+  // TODO: 실제 관리자 여부는 API로 확인
+  const isAdmin = true; // true: 관리자, false: 일반회원
+
   // 더미 데이터
   const pinnedNotices = [
     {
@@ -51,8 +56,12 @@ export default function GroupNoticePage() {
     router.push(`/groups/${groupId}/notice/${id}`);
   };
 
+  const handleAddNotice = () => {
+    router.push(`/groups/${groupId}/admin/notice/new`);
+  };
+
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       {/* 고정 공지사항 */}
       {pinnedNotices.length > 0 && (
         <div className="mb-3 flex flex-col gap-3">
@@ -85,6 +94,24 @@ export default function GroupNoticePage() {
           />
         ))}
       </div>
+
+      {/* 관리자일 때만 공지사항 작성 버튼 표시 */}
+      {isAdmin && (
+        <div className="fixed bottom-21 t:bottom-40 left-1/2 -translate-x-1/2 w-full max-w-[1440px] px-4 pointer-events-none">
+          <button
+            onClick={handleAddNotice}
+            className="absolute bottom-0 right-4 cursor-pointer pointer-events-auto hover:opacity-80 transition-opacity"
+            aria-label="공지사항 작성"
+          >
+            <Image
+              src="/add_story.svg"
+              alt="공지사항 작성"
+              width={88}
+              height={88}
+            />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
