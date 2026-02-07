@@ -75,7 +75,7 @@ export default function HomePage() {
 
         {/* 책 이야기 카드 */}
         <section className="pt-6">
-          <div className="grid grid-cols-1 gap-5">
+          <div className="flex flex-col gap-5 items-center">
             {DUMMY_STORIES.slice(0, 3).map((story) => (
               <BookStoryCardLarge
                 key={story.id}
@@ -108,7 +108,7 @@ export default function HomePage() {
           <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">
             독서모임
           </h2>
-      <div className="flex gap-6">
+          <div className="flex gap-6 justify-center">
             <HomeBookclub groups={groups} />
             <ListSubscribeLarge height="h-[424px]" />
           </div>
@@ -116,8 +116,8 @@ export default function HomePage() {
 
         {/* 책 이야기 카드 */}
         <section className="pt-6">
-          <div className="grid grid-cols-2 gap-5">
-            {DUMMY_STORIES.slice(0, 3).map((story) => (
+          <div className="flex flex-wrap gap-5 justify-center">
+            {DUMMY_STORIES.slice(0, 4).map((story) => (
               <BookStoryCard
                 key={story.id}
                 authorName={story.authorName}
@@ -143,7 +143,7 @@ export default function HomePage() {
           </h2>
           <HomeBookclub groups={groups} />
           <div className="pt-6">
-            <ListSubscribeLarge height="h-[424px]" />
+            <ListSubscribeLarge height="h-[380px]" />
           </div>
         </section>
 
