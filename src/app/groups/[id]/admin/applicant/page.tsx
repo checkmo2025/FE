@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useHeaderTitle } from '@/contexts/HeaderTitleContext';
 
 // 더미 데이터
 const DUMMY_APPLICANTS = [
@@ -93,7 +94,9 @@ function JoinMessageModal({ isOpen, onClose, message }: JoinMessageModalProps) {
 
 export default function AdminApplicantPage() {
   const params = useParams();
+  const router = useRouter();
   const groupId = params.id as string;
+  const { setCustomTitle } = useHeaderTitle();
   const [applicants, setApplicants] = useState(DUMMY_APPLICANTS);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [messageModal, setMessageModal] = useState<{ isOpen: boolean; message: string }>({
@@ -105,6 +108,12 @@ export default function AdminApplicantPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const totalPages = Math.ceil(applicants.length / itemsPerPage);
+
+  // 모바일 헤더 타이틀 설정
+  useEffect(() => {
+    setCustomTitle('가입 신청 관리');
+    return () => setCustomTitle(null);
+  }, [setCustomTitle]);
 
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
@@ -148,11 +157,25 @@ export default function AdminApplicantPage() {
   const currentApplicants = applicants.slice(startIndex, endIndex);
 
   return (
-    <div className="w-full px-4">
-      <div className="mx-auto w-full max-w-260 py-6">
-        <div className="mb-2">
-          <h1 className="subhead_1 t:subhead_3 text-Gray-7">모임 가입 신청 관리</h1>
-        </div>
+    <div className="w-full">
+
+      <div className="t:hidden px-2.5 py-3">
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="flex items-center gap-2 text-Gray-7 body_1_2"
+        >
+          <Image src="/back.svg" alt="뒤로가기" width={12} height={12} />
+          <span>뒤로가기</span>
+        </button>
+      </div>
+      <div className="t:hidden border-b border-Gray-2" />
+
+      <div className="px-4.5 t:px-10 d:px-4">
+        <div className="mx-auto w-full max-w-260 py-6">
+          <div className="mb-2">
+            <h1 className="subhead_1 t:subhead_3 text-Gray-7">모임 가입 신청 관리</h1>
+          </div>
         <div className="mb-6">
           <p className="body_1_3 text-Gray-4 whitespace-pre-line">
           운영진은 가입 처리를 통해 회원의 가입 유무를 선택 가능합니다. <br/> 이때 공개모임의 경우 모든 신청마다 즉시 가입완료 처리 됩니다.
@@ -160,29 +183,33 @@ export default function AdminApplicantPage() {
         </div>
 
         {/* 테이블 */}
-        <div className="w-full overflow-x-auto">
-          <div className="min-w-200 d:min-w-0">
+        <div className="w-full">
+          <div>
+            {/* 테이블 헤더 */}
             <div className="flex items-center border-b border-Subbrown-3">
-              <div className="w-45 px-4 py-3 shrink-0">
+              {/* ID - 태블릿/데스크탑에서만 */}
+              <div className="hidden t:block t:w-28 d:w-45 t:px-3 d:px-4 py-3 shrink-0">
                 <p className="body_1_2 text-Gray-4">ID</p>
               </div>
-              <div className="w-45 px-4 py-3 shrink-0">
+              <div className="w-14 t:w-16 d:w-45 py-3 t:px-3 d:px-4 shrink-0">
                 <p className="body_1_2 text-Gray-4">이름</p>
               </div>
-              <div className="w-42 px-4 py-3 shrink-0">
+              {/* 이메일 - 태블릿/데스크탑에서만 */}
+              <div className="hidden t:block t:w-40 d:w-42 t:px-3 d:px-4 py-3 shrink-0">
                 <p className="body_1_2 text-Gray-4">이메일</p>
               </div>
-              <div className="w-42 px-4 py-3 shrink-0">
+              <div className="w-24 t:w-24 d:w-42 py-3 t:px-3 d:px-4 shrink-0">
                 <p className="body_1_2 text-Gray-4">신청 일자</p>
               </div>
-              <div className="w-28 px-4 py-3 shrink-0">
-                <p className="body_1_2 text-Gray-4">프로필 보기</p>
+              <div className="w-14 t:w-24 d:w-28 py-3 t:px-3 d:px-4 shrink-0">
+                <p className="body_1_2 text-Gray-4 t:hidden">프로필</p>
+                <p className="body_1_2 text-Gray-4 hidden t:block">프로필 보기</p>
               </div>
-              <div className="w-28 px-4 py-3 shrink-0">
+              <div className="w-20 t:w-24 d:w-28 py-3 t:px-3 d:px-4 shrink-0">
                 <p className="body_1_2 text-Gray-4">가입메시지</p>
               </div>
-              <div className="w-28 px-4 py-3 shrink-0">
-                <p className="body_1_2 text-Gray-4">가입 처리</p>
+              <div className="w-12 t:w-20 d:w-28 py-3 t:px-3 d:px-4 shrink-0">
+                <p className="body_1_2 text-Gray-4">수정</p>
               </div>
             </div>
 
@@ -190,7 +217,8 @@ export default function AdminApplicantPage() {
             <div className="divide-y divide-Subbrown-4 border-b border-Subbrown-4 overflow-visible">
               {currentApplicants.map((applicant) => (
                 <div key={applicant.id} className="flex items-center">
-                  <div className="w-45 h-15 d:w-45 px-4 py-3 flex items-center gap-2 shrink-0">
+                  {/* ID - 태블릿/데스크탑에서만 */}
+                  <div className="hidden t:flex t:w-28 d:w-45 h-15 t:px-3 d:px-4 py-3 items-center gap-2 shrink-0">
                     <div className="relative w-6 h-6 rounded-full overflow-hidden shrink-0">
                       <Image
                         src="/profile2.svg"
@@ -200,21 +228,22 @@ export default function AdminApplicantPage() {
                         sizes="24px"
                       />
                     </div>
-                    <p className="body_1_2 text-Gray-7">{applicant.userId}</p>
+                    <p className="body_1_2 text-Gray-7 truncate">{applicant.userId}</p>
                   </div>
-                  <div className="w-45 px-4 py-3 shrink-0">
+                  <div className="w-14 t:w-16 d:w-45 py-3 t:px-3 d:px-4 shrink-0">
                     <p className="body_1_2 text-Gray-7">{applicant.name}</p>
                   </div>
-                  <div className="w-42 px-4 py-3 shrink-0">
-                    <p className="body_1_2 text-Gray-7">{applicant.email}</p>
+                  {/* 이메일 - 태블릿/데스크탑에서만 */}
+                  <div className="hidden t:block t:w-40 d:w-42 t:px-3 d:px-4 py-3 shrink-0">
+                    <p className="body_1_2 text-Gray-7 truncate">{applicant.email}</p>
                   </div>
-                  <div className="w-42 px-4 py-3 shrink-0">
+                  <div className="w-24 t:w-24 d:w-42 py-3 t:px-3 d:px-4 shrink-0">
                     <p className="body_1_2 text-Gray-7">{applicant.applyDate}</p>
                   </div>
-                  <div className="w-28 px-4 py-3 shrink-0">
+                  <div className="w-14 t:w-24 d:w-28 py-3 t:px-3 d:px-4 shrink-0">
                     <p className="body_1_2 text-Gray-7 underline underline-offset-2 cursor-pointer">바로가기</p>
                   </div>
-                  <div className="w-28 px-4 py-3 shrink-0">
+                  <div className="w-20 t:w-24 d:w-28 py-3 t:px-3 d:px-4 shrink-0">
                     <button
                       type="button"
                       onClick={() => handleMessageClick(applicant.message)}
@@ -223,7 +252,7 @@ export default function AdminApplicantPage() {
                       가입메시지
                     </button>
                   </div>
-                  <div className="w-28 d:w-28 px-4 py-3 shrink-0 relative" ref={(el) => { menuRefs.current[applicant.id] = el; }}>
+                  <div className="w-12 t:w-20 d:w-28 py-3 t:px-3 d:px-4 shrink-0 relative" ref={(el) => { menuRefs.current[applicant.id] = el; }}>
                     <button
                       type="button"
                       ref={(el) => { buttonRefs.current[applicant.id] = el; }}
@@ -288,6 +317,7 @@ export default function AdminApplicantPage() {
               className="object-contain"
             />
           </button>
+        </div>
         </div>
       </div>
 
