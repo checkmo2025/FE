@@ -6,6 +6,7 @@ import Image from "next/image";
 import { NavItem } from "./NavItem";
 import { useState } from "react";
 import SearchModal from "./SearchModal";
+import { useHeaderTitle } from "@/contexts/HeaderTitleContext";
 
 const NAV = [
   { label: "책모 홈", href: "/" },
@@ -25,7 +26,9 @@ const getPageTitle = (pathname: string) => {
 
 export default function Header() {
   const pathname = usePathname();
-  const pageTitle = getPageTitle(pathname);
+  const defaultTitle = getPageTitle(pathname);
+  const { customTitle } = useHeaderTitle();
+  const pageTitle = customTitle || defaultTitle;
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   return (
     <header className="w-full bg-primary-1">

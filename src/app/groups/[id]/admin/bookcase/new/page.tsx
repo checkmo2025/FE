@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import BookSelectModal from '@/components/layout/BookSelectModal';
 import BookstoryChoosebook from '@/components/base-ui/BookStory/bookstory_choosebook';
+import { useHeaderTitle } from '@/contexts/HeaderTitleContext';
 
 const TAGS = [
   { label: '여행', colorClass: 'bg-Secondary-2' },
@@ -36,6 +37,13 @@ export default function NewBookshelfPage() {
   const searchParams = useSearchParams();
   const groupId = params.id as string;
   const bookId = searchParams.get('bookId');
+  const { setCustomTitle } = useHeaderTitle();
+
+  // 모바일 헤더 타이틀 설정
+  useEffect(() => {
+    setCustomTitle('책장 작성');
+    return () => setCustomTitle(null);
+  }, [setCustomTitle]);
 
   // 더미 데이터
   const selectedBook = bookId
@@ -89,9 +97,26 @@ export default function NewBookshelfPage() {
     router.push(`/groups/${groupId}/admin/bookcase/new?bookId=${selectedBookId}`);
   };
 
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
     <div className="w-full">
-      <div className="py-6 px-2.5 t:px-10">
+      {/* 뒤로가기 - 모바일에서만 */}
+      <div className="t:hidden px-2.5 py-3">
+        <button
+          type="button"
+          onClick={handleBack}
+          className="flex items-center gap-2 text-Gray-7 body_1_2"
+        >
+          <Image src="/back.svg" alt="뒤로가기" width={12} height={12} />
+          <span>뒤로가기</span>
+        </button>
+      </div>
+      <div className="t:hidden border-b border-Gray-2" />
+
+      <div className="py-4 t:py-6 px-2.5 t:px-10">
         <div className="flex justify-center">
           <div className="w-full max-w-[1040px] flex flex-col gap-6">
             <p className="subhead_3 text-Gray-7">책장 작성</p>
@@ -113,7 +138,7 @@ export default function NewBookshelfPage() {
                 <button
                   type="button"
                   onClick={() => setIsBookSelectModalOpen(true)}
-                  className="w-full px-4 py-3 rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 body_1_2 text-center underline cursor-pointer"
+                  className="w-full px-4 py-3 rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 subhead_4 d:body_1_2 text-center underline underline-offset-3 cursor-pointer"
                 >
                   선택하기
                 </button>
@@ -189,7 +214,7 @@ export default function NewBookshelfPage() {
             </div>
 
             {/* 정기모임이름 */}
-            <div className="flex flex-col gap-2 pt-5">
+            <div className="flex flex-col gap-2 t:pt-5">
               <label className="subhead_4_1 text-Gray-7">정기모임이름</label>
               <input
                 type="text"
@@ -201,7 +226,7 @@ export default function NewBookshelfPage() {
             </div>
 
             {/* 모임 장소 */}
-            <div className="flex flex-col gap-2 pt-5">
+            <div className="flex flex-col gap-2 t:pt-5">
               <label className="subhead_4_1 text-Gray-7">모임 장소</label>
               <input
                 type="text"
@@ -213,7 +238,7 @@ export default function NewBookshelfPage() {
             </div>
 
             {/* 모임 날짜 */}
-            <div className="flex flex-col gap-2 pt-5">
+            <div className="flex flex-col gap-2 t:pt-5">
               <label className="subhead_4_1 text-Gray-7">모임 날짜</label>
               <div className="flex gap-2">
                 <input
@@ -227,7 +252,7 @@ export default function NewBookshelfPage() {
             </div>
 
             {/* 본문 작성 */}
-            <div className="flex flex-col gap-2 pt-5">
+            <div className="flex flex-col gap-2 t:pt-5">
               <label className="subhead_4_1 text-Gray-7">본문 작성</label>
               <div className="flex flex-col gap-4 p-4 rounded-[8px] border border-Subbrown-4 bg-White">
                 <input

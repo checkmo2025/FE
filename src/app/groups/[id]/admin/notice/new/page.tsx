@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import BookshelfModal from '@/components/base-ui/Group/BookshelfModal';
 import BookDetailCard from '@/components/base-ui/Bookcase/BookDetailCard';
+import { useHeaderTitle } from '@/contexts/HeaderTitleContext';
 
 type Book = {
   id: number;
@@ -19,6 +20,7 @@ export default function NewNoticePage() {
   const params = useParams();
   const router = useRouter();
   const groupId = params.id as string;
+  const { setCustomTitle } = useHeaderTitle();
   
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -34,6 +36,12 @@ export default function NewNoticePage() {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
 
   const imageInputRef = useRef<HTMLInputElement | null>(null);
+
+  // 모바일 헤더 타이틀 설정
+  useEffect(() => {
+    setCustomTitle('공지사항 작성');
+    return () => setCustomTitle(null);
+  }, [setCustomTitle]);
 
   const handleCancel = () => {
     router.back();

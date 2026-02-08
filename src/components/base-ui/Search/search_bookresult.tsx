@@ -57,7 +57,7 @@ export default function SearchBookResult({
           <p className="text-Gray-7 subhead_3 truncate">
             {title}
           </p>
-          <p className="text-Gray-4 t:subhead_4_1 truncate">
+          <p className="text-Gray-4 subhead_4_1 truncate">
             {author}
           </p>
 
@@ -68,7 +68,7 @@ export default function SearchBookResult({
           </p>
         </div>
 
-        <div className="flex flex-col items-end shrink-0 ml-4">
+        <div className="hidden d:flex flex-col items-end shrink-0 ml-4">
           <button
             type="button"
             onClick={(e) => {
