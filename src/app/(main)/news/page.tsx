@@ -65,7 +65,7 @@ const DUMMY_BOOKS = [
 export default function NewsPage() {
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4">
-      <div className="flex justify-center items-center mt-7 mb-6">
+      <div className="flex justify-center items-center mt-7 mb-3 t:mb-6">
         <div className="relative w-full h-[297px] t:h-[468px]" style={{ maxWidth: 'clamp(339px, 100%, 1040px)' }}>
           <Image
             src="/news_sample.svg"
@@ -78,8 +78,11 @@ export default function NewsPage() {
         </div>
       </div>
 
+      {/* 오늘의 추천 */}
+      <TodayRecommendedBooks books={DUMMY_BOOKS}  className="d:hidden"/>
+
       {/* 뉴스 리스트 */}
-      <div className="flex flex-col gap-4 items-center">
+      <div className="flex flex-col gap-4 items-center w-full max-w-[1040px] mx-auto">
         {DUMMY_NEWS.map((news) => (
           <NewsList
             key={news.id}
@@ -94,9 +97,7 @@ export default function NewsPage() {
 
       <div className="w-screen -mx-4 my-8 border-b-4 border-Gray-1"></div>
 
-      {/* 오늘의 추천 */}
-      <TodayRecommendedBooks books={DUMMY_BOOKS} />
-
+      <TodayRecommendedBooks books={DUMMY_BOOKS}  className="hidden d:flex"/>
       {/* 문의하기 */}
       <button
         type="button"
