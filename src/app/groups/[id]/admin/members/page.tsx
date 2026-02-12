@@ -1,24 +1,94 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import Image from 'next/image';
+import { useState, useRef, useEffect } from "react";
+import { useParams } from "next/navigation";
+import Image from "next/image";
 
 // 더미 데이터
 const DUMMY_MEMBERS = [
-  { id: 1, userId: 'hy_0716', name: '윤현일', email: 'yhi9839@naver.com', joinDate: '2000.00.00', role: 'member' },
-  { id: 2, userId: 'hy_0716', name: '윤현일', email: 'yhi9839@naver.com', joinDate: '2000.00.00', role: 'member' },
-  { id: 3, userId: 'hy_0716', name: '윤현일', email: 'yhi9839@naver.com', joinDate: '2000.00.00', role: 'member' },
-  { id: 4, userId: 'hy_0716', name: '윤현일', email: 'yhi9839@naver.com', joinDate: '2000.00.00', role: 'member' },
-  { id: 5, userId: 'hy_0716', name: '윤현일', email: 'yhi9839@naver.com', joinDate: '2000.00.00', role: 'member' },
-  { id: 6, userId: 'hy_0716', name: '윤현일', email: 'yhi9839@naver.com', joinDate: '2000.00.00', role: 'member' },
-  { id: 7, userId: 'hy_0716', name: '윤현일', email: 'yhi9839@naver.com', joinDate: '2000.00.00', role: 'member' },
-  { id: 8, userId: 'hy_0716', name: '윤현일', email: 'yhi9839@naver.com', joinDate: '2000.00.00', role: 'member' },
-  { id: 9, userId: 'hy_0716', name: '윤현일', email: 'yhi9839@naver.com', joinDate: '2000.00.00', role: 'member' },
-  { id: 10, userId: 'hy_0716', name: '윤현일', email: 'yhi9839@naver.com', joinDate: '2000.00.00', role: 'member' },
+  {
+    id: 1,
+    userId: "hy_0716",
+    name: "윤현일",
+    email: "yhi9839@naver.com",
+    joinDate: "2000.00.00",
+    role: "member",
+  },
+  {
+    id: 2,
+    userId: "hy_0716",
+    name: "윤현일",
+    email: "yhi9839@naver.com",
+    joinDate: "2000.00.00",
+    role: "member",
+  },
+  {
+    id: 3,
+    userId: "hy_0716",
+    name: "윤현일",
+    email: "yhi9839@naver.com",
+    joinDate: "2000.00.00",
+    role: "member",
+  },
+  {
+    id: 4,
+    userId: "hy_0716",
+    name: "윤현일",
+    email: "yhi9839@naver.com",
+    joinDate: "2000.00.00",
+    role: "member",
+  },
+  {
+    id: 5,
+    userId: "hy_0716",
+    name: "윤현일",
+    email: "yhi9839@naver.com",
+    joinDate: "2000.00.00",
+    role: "member",
+  },
+  {
+    id: 6,
+    userId: "hy_0716",
+    name: "윤현일",
+    email: "yhi9839@naver.com",
+    joinDate: "2000.00.00",
+    role: "member",
+  },
+  {
+    id: 7,
+    userId: "hy_0716",
+    name: "윤현일",
+    email: "yhi9839@naver.com",
+    joinDate: "2000.00.00",
+    role: "member",
+  },
+  {
+    id: 8,
+    userId: "hy_0716",
+    name: "윤현일",
+    email: "yhi9839@naver.com",
+    joinDate: "2000.00.00",
+    role: "member",
+  },
+  {
+    id: 9,
+    userId: "hy_0716",
+    name: "윤현일",
+    email: "yhi9839@naver.com",
+    joinDate: "2000.00.00",
+    role: "member",
+  },
+  {
+    id: 10,
+    userId: "hy_0716",
+    name: "윤현일",
+    email: "yhi9839@naver.com",
+    joinDate: "2000.00.00",
+    role: "member",
+  },
 ];
 
-type RoleType = 'admin' | 'member' | 'creator' | null;
+type RoleType = "admin" | "member" | "creator" | null;
 
 type RoleEditDropdownProps = {
   isOpen: boolean;
@@ -26,7 +96,11 @@ type RoleEditDropdownProps = {
   buttonRef: React.RefObject<HTMLButtonElement | null>;
 };
 
-function RoleEditDropdown({ isOpen, onSelectRole, buttonRef }: RoleEditDropdownProps) {
+function RoleEditDropdown({
+  isOpen,
+  onSelectRole,
+  buttonRef,
+}: RoleEditDropdownProps) {
   const [position, setPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
@@ -42,10 +116,10 @@ function RoleEditDropdown({ isOpen, onSelectRole, buttonRef }: RoleEditDropdownP
   if (!isOpen) return null;
 
   const roles = [
-    { type: 'admin' as RoleType, label: '운영진 역할', icon: '/admin.svg' },
-    { type: 'member' as RoleType, label: '회원 역할', icon: '/member.svg' },
-    { type: 'creator' as RoleType, label: '개설자 역할', icon: '/leader.svg' },
-    { type: null, label: '회원 탈퇴', icon: '/logout.svg' },
+    { type: "admin" as RoleType, label: "운영진 역할", icon: "/admin.svg" },
+    { type: "member" as RoleType, label: "회원 역할", icon: "/member.svg" },
+    { type: "creator" as RoleType, label: "개설자 역할", icon: "/leader.svg" },
+    { type: null, label: "회원 탈퇴", icon: "/logout.svg" },
   ];
 
   return (
@@ -98,8 +172,8 @@ export default function AdminMembersPage() {
         setOpenMenuId(null);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [openMenuId]);
 
   const handleRoleEdit = (memberId: number) => {
@@ -112,24 +186,20 @@ export default function AdminMembersPage() {
       setMembers(members.filter((m) => m.id !== memberId));
     } else {
       // 역할 변경
-      setMembers(
-        members.map((m) =>
-          m.id === memberId ? { ...m, role } : m
-        )
-      );
+      setMembers(members.map((m) => (m.id === memberId ? { ...m, role } : m)));
     }
     setOpenMenuId(null);
   };
 
   const getRoleLabel = (role: string) => {
     switch (role) {
-      case 'admin':
-        return '운영진';
-      case 'creator':
-        return '개설자';
-      case 'member':
+      case "admin":
+        return "운영진";
+      case "creator":
+        return "개설자";
+      case "member":
       default:
-        return '회원';
+        return "회원";
     }
   };
 
@@ -145,39 +215,54 @@ export default function AdminMembersPage() {
         </div>
         <div className="mb-6">
           <p className="body_1_3 text-Gray-4 whitespace-pre-line">
-          개설자는 독서모임을 생성한 계정에게 최초 부여되며, 독서 모임 당 개설자 계정은 한개입니다.<br />개설자가 운영진 혹은 회원에게 개설자 역할을 부여 할 수 있으며, 이때 부여한 계정은 "운영진"역할로 변경됩니다.
+            개설자는 독서모임을 생성한 계정에게 최초 부여되며, 독서 모임 당
+            개설자 계정은 한개입니다.
+            <br />
+            개설자가 운영진 혹은 회원에게 개설자 역할을 부여 할 수 있으며, 이때
+            부여한 계정은 "운영진"역할로 변경됩니다.
           </p>
         </div>
 
         {/* 테이블 */}
-        <div className="w-full overflow-x-auto">
-          <div className="min-w-200 d:min-w-0">
+        <div className="w-full overflow-x-auto t:overflow-visible d:overflow-x-auto">
+          <div className="min-w-fit t:min-w-0 d:min-w-200">
+            {/* 테이블 헤더 */}
             <div className="flex items-center border-b border-Subbrown-3">
-              <div className="w-45 d:w-45 px-4 py-3 shrink-0">
+              {/* ID - 태블릿/데스크탑에서만 */}
+              <div className="hidden t:block t:w-35 d:w-45 t:px-3 d:px-4 py-3 shrink-0">
                 <p className="body_1_2 text-Gray-4">ID</p>
               </div>
-              <div className="w-45 d:w-45 px-4 py-3 shrink-0">
+              {/* 이름 */}
+              <div className="w-20 t:w-16 d:w-45 px-3 t:px-3 d:px-4 py-3 shrink-0">
                 <p className="body_1_2 text-Gray-4">이름</p>
               </div>
-              <div className="w-56 d:w-56 px-4 py-3 shrink-0">
+              {/* 이메일 - 태블릿/데스크탑에서만 */}
+              <div className="hidden t:block t:w-39 d:w-56 t:px-3 d:px-4 py-3 shrink-0">
                 <p className="body_1_2 text-Gray-4">이메일</p>
               </div>
-              <div className="w-56 d:w-56 px-4 py-3 shrink-0">
-                <p className="body_1_2 text-Gray-4">가입 일자</p>
+              {/* 신청 일자 */}
+              <div className="w-28 t:w-23 d:w-56 px-3 t:px-3 d:px-4 py-3 shrink-0">
+                <p className="body_1_2 text-Gray-4 ">가입 일자</p>
               </div>
-              <div className="w-28 d:w-28 px-4 py-3 shrink-0">
+              {/* 역할 */}
+              <div className="w-16 t:w-20 d:w-28 px-3 t:px-3 d:px-4 py-3 shrink-0">
                 <p className="body_1_2 text-Gray-4">역할</p>
               </div>
-              <div className="w-28 d:w-28 px-4 py-3 shrink-0">
-                <p className="body_1_2 text-Gray-4">역할 수정</p>
+              {/* 역할수정 */}
+              <div className="w-20 t:w-25 d:w-28 px-3 t:px-3 d:px-4 py-3 shrink-0">
+                <p className="body_1_2 text-Gray-4 t:hidden d:hidden">
+                  역할수정
+                </p>
+                <p className="body_1_2 text-Gray-4 hidden t:block">역할 수정</p>
               </div>
             </div>
 
             {/* 테이블 바디 */}
-            <div className="divide-y divide-Subbrown-4 border-b border-Subbrown-4">
+            <div className="divide-y divide-Subbrown-4 border-b border-Subbrown-4 overflow-visible">
               {currentMembers.map((member) => (
                 <div key={member.id} className="flex items-center">
-                  <div className="w-45 h-15 px-4 py-3 flex items-center gap-2 shrink-0">
+                  {/* ID - 태블릿/데스크탑에서만 */}
+                  <div className="hidden t:flex t:w-35 d:w-45 h-15 t:px-3 d:px-4 py-3 items-center gap-2 shrink-0">
                     <div className="relative w-6 h-6 rounded-full overflow-hidden shrink-0">
                       <Image
                         src="/profile2.svg"
@@ -189,26 +274,43 @@ export default function AdminMembersPage() {
                     </div>
                     <p className="body_1_2 text-Gray-7">{member.userId}</p>
                   </div>
-                  <div className="w-45 d:w-45 px-4 py-3 shrink-0">
+                  {/* 이름 */}
+                  <div className="w-20 t:w-16 d:w-45 px-3 t:px-3 d:px-4 py-3 shrink-0">
                     <p className="body_1_2 text-Gray-7">{member.name}</p>
                   </div>
-                  <div className="w-56 d:w-56 px-4 py-3 shrink-0">
-                    <p className="body_1_2 text-Gray-7">{member.email}</p>
+                  {/* 이메일 - 태블릿/데스크탑에서만 */}
+                  <div className="hidden t:block t:w-39 d:w-56 t:px-3 d:px-4 py-3 shrink-0">
+                    <p className="body_1_2 text-Gray-7 truncate">
+                      {member.email}
+                    </p>
                   </div>
-                  <div className="w-56 d:w-56 px-4 py-3 shrink-0">
+                  {/* 가입 일자 */}
+                  <div className="w-28 t:w-23 d:w-56 px-3 t:px-3 d:px-4 py-3 shrink-0">
                     <p className="body_1_2 text-Gray-7">{member.joinDate}</p>
                   </div>
-                  <div className="w-28 d:w-28 px-4 py-3 shrink-0">
-                    <p className="body_1_2 text-Gray-7">{getRoleLabel(member.role)}</p>
+                  {/* 역할 */}
+                  <div className="w-16 t:w-20 d:w-28 px-3 t:px-3 d:px-4 py-3 shrink-0">
+                    <p className="body_1_2 text-Gray-7">
+                      {getRoleLabel(member.role)}
+                    </p>
                   </div>
-                  <div className="w-28 d:w-28 px-4 py-3 shrink-0 relative" ref={(el) => { menuRefs.current[member.id] = el; }}>
+                  {/* 역할수정 */}
+                  <div
+                    className="w-20 t:w-25 d:w-28 px-3 t:px-3 d:px-4 py-3 shrink-0 relative"
+                    ref={(el) => {
+                      menuRefs.current[member.id] = el;
+                    }}
+                  >
                     <button
                       type="button"
-                      ref={(el) => { buttonRefs.current[member.id] = el; }}
+                      ref={(el) => {
+                        buttonRefs.current[member.id] = el;
+                      }}
                       onClick={() => handleRoleEdit(member.id)}
                       className="body_1_2 text-Gray-7 underline underline-offset-2 cursor-pointer"
                     >
-                      역할 수정
+                      <span className="t:hidden d:hidden">역할수정</span>
+                      <span className="hidden t:inline">역할 수정</span>
                     </button>
                     <RoleEditDropdown
                       isOpen={openMenuId === member.id}
@@ -245,8 +347,8 @@ export default function AdminMembersPage() {
               onClick={() => setCurrentPage(page)}
               className={`px-3 py-1 body_1_2 ${
                 currentPage === page
-                  ? 'text-Gray-7 font-semibold'
-                  : 'text-Gray-4 hover:text-Gray-7'
+                  ? "text-Gray-7 font-semibold"
+                  : "text-Gray-4 hover:text-Gray-7"
               }`}
             >
               {page}
@@ -254,7 +356,9 @@ export default function AdminMembersPage() {
           ))}
           <button
             type="button"
-            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+            }
             disabled={currentPage === totalPages}
             className="p-2 disabled:opacity-40 disabled:cursor-not-allowed"
           >
@@ -268,7 +372,6 @@ export default function AdminMembersPage() {
           </button>
         </div>
       </div>
-
     </div>
   );
 }
