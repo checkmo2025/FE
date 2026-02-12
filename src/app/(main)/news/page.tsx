@@ -9,28 +9,32 @@ const DUMMY_NEWS = [
     id: 1,
     imageUrl: "/news_sample.svg",
     title: "책 읽는 한강공원",
-    content: "소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용",
+    content:
+      "소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용",
     date: "2025-10-09",
   },
   {
     id: 2,
     imageUrl: "/news_sample.svg",
     title: "책 읽는 한강공원",
-    content: "소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용",
+    content:
+      "소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용",
     date: "2025-10-09",
   },
   {
     id: 3,
     imageUrl: "/news_sample.svg",
     title: "책 읽는 한강공원",
-    content: "소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용",
+    content:
+      "소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용",
     date: "2025-10-09",
   },
   {
     id: 4,
     imageUrl: "/news_sample.svg",
     title: "책 읽는 한강공원",
-    content: "소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용",
+    content:
+      "소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용",
     date: "2025-10-09",
   },
 ];
@@ -64,9 +68,12 @@ const DUMMY_BOOKS = [
 
 export default function NewsPage() {
   return (
-    <div className="mx-auto w-full max-w-[1400px] px-4">
+    <div className="mx-auto w-full max-w-[1400px] px-4 overflow-x-hidden scrollbar-hide">
       <div className="flex justify-center items-center mt-7 mb-3 t:mb-6">
-        <div className="relative w-full h-[297px] t:h-[468px]" style={{ maxWidth: 'clamp(339px, 100%, 1040px)' }}>
+        <div
+          className="relative w-full h-[297px] t:h-[468px]"
+          style={{ maxWidth: "clamp(339px, 100%, 1040px)" }}
+        >
           <Image
             src="/news_sample.svg"
             alt="소식 배너"
@@ -79,7 +86,7 @@ export default function NewsPage() {
       </div>
 
       {/* 오늘의 추천 */}
-      <TodayRecommendedBooks books={DUMMY_BOOKS}  className="d:hidden"/>
+      <TodayRecommendedBooks books={DUMMY_BOOKS} className="d:hidden" />
 
       {/* 뉴스 리스트 */}
       <div className="flex flex-col gap-4 items-center w-full max-w-[1040px] mx-auto">
@@ -95,13 +102,13 @@ export default function NewsPage() {
         ))}
       </div>
 
-      <div className="w-screen -mx-4 my-8 border-b-4 border-Gray-1"></div>
+      <div className="w-full my-8 border-b-4 border-Gray-1"></div>
 
-      <TodayRecommendedBooks books={DUMMY_BOOKS}  className="hidden d:flex"/>
+      <TodayRecommendedBooks books={DUMMY_BOOKS} className="hidden d:flex" />
       {/* 문의하기 */}
       <button
         type="button"
-        className="fixed bottom-[86px] right-6 t:bottom-8 t:right-8 z-[60] cursor-pointer hover:opacity-80 transition-opacity w-12 h-12 t:w-[88px] t:h-[88px]"
+        className="fixed bottom-21 right-4 t:bottom-8 t:right-8 z-[60] cursor-pointer hover:opacity-80 transition-opacity w-18 h-18 t:w-22 t:h-22"
         aria-label="문의하기"
       >
         <Image

@@ -78,15 +78,19 @@ export default function StoriesPage() {
         </div>
 
         {/* 글쓰기 버튼  */}
-        <div className="fixed bottom-21 t:bottom-40 left-1/2 -translate-x-1/2 w-full max-w-[1400px] px-4 pointer-events-none">
-          <button
-            type="button"
-            className="absolute bottom-0 right-4 cursor-pointer pointer-events-auto"
-            onClick={() => router.push("/stories/new")}
-          >
-            <Image src="/add_story.svg" alt="글쓰기" width={72} height={72} />
-          </button>
-        </div>
+        <button
+          type="button"
+          className="fixed bottom-21 right-4 t:bottom-8 t:right-8 z-[60] cursor-pointer hover:opacity-80 transition-opacity w-18 h-18 t:w-22 t:h-22"
+          onClick={() => router.push("/stories/new")}
+        >
+          <Image
+            src="/add_story.svg"
+            alt="글쓰기"
+            width={88}
+            height={88}
+            className="w-full h-full"
+          />
+        </button>
       </div>
     </div>
   );
