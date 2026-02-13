@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { DUMMY_LIBRARY_BOOKS } from "@/constants/mocks/mypage";
-import LibraryCard from "./items/LibraryCard";
+import LibraryCard from "@/components/base-ui/Profile/items/LibraryCard";
 
 const LibraryList = () => {
   const [likedBooks, setLikedBooks] = useState<number[]>([]);
