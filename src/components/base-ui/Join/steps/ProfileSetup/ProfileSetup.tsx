@@ -1,5 +1,5 @@
 import React from "react";
-import JoinHeader from "../../JoinHeader";
+import JoinLayout from "../../JoinLayout";
 import JoinButton from "../../JoinButton";
 import JoinInput from "../../JoinInput";
 import { useProfileSetup } from "./useProfileSetup";
@@ -24,89 +24,106 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
   } = useProfileSetup();
 
   return (
-    <div className="relative flex flex-col items-center mx-auto w-full max-w-[766px] bg-white rounded-[8px] px-6 py-10 md:px-[40px] md:py-[60px] lg:px-[56px] lg:py-[99px]">
-      <JoinHeader title="프로필 설정" />
-
-      {/* Content Wrapper: Mobile(mt-10 mb-10) -> Tablet(mt-[60px] mb-[80px]) -> Desktop(mt-[90px] mb-[130px]) */}
-      <div className="flex flex-col w-full mt-10 mb-10 md:mt-[60px] md:mb-[80px] lg:mt-[90px] lg:mb-[130px]">
-        <div className="flex flex-col items-start w-full max-w-[526px] gap-[36px] mx-auto">
-          {/* 닉네임 섹션 (Custom Layout) */}
-          <div className="flex flex-col w-full gap-[12px]">
-            <span className="text-[#7B6154] font-sans text-[20px] font-semibold leading-[135%] tracking-[-0.02px]">
-              닉네임
-            </span>
-            <div className="flex flex-row justify-between w-full gap-2">
-              <div className="flex-1">
-                {/* Mobile Input */}
-                <div className="block w-full md:hidden">
-                  <JoinInput
-                    value={nickname}
-                    onChange={handleNicknameChange}
-                    disabled={isNicknameChecked}
-                    placeholder="(최대 20자)"
-                    className="border-[#EAE5E2] placeholder-[#BBB] text-[14px] font-normal w-full"
-                  />
+    <JoinLayout title="프로필 설정">
+      <div className="flex flex-col items-center w-full gap-[20px] t:gap-[100px]">
+        {/* Form Container */}
+        <div className="flex flex-col w-[272px] t:w-[526px] gap-[20px] t:gap-[36px]">
+          {/* Group 1: Nickname & Intro */}
+          <div className="flex flex-col gap-[16px]">
+            {/* 닉네임 섹션 */}
+            <div className="flex flex-col w-full gap-[12px]">
+              <span className="text-primary-1 font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px] t:text-[20px] t:leading-[135%] t:tracking-[-0.02px]">
+                닉네임
+              </span>
+              <div className="flex flex-row justify-between w-full gap-[8px]">
+                <div className="w-[158px] t:flex-1">
+                  {/* Mobile Input */}
+                  <div className="block w-full t:hidden">
+                    <JoinInput
+                      value={nickname}
+                      onChange={handleNicknameChange}
+                      disabled={isNicknameChecked}
+                      placeholder="(최대 20자)"
+                      className="h-[36px] py-0 border-Subbrown-4 placeholder-Gray-3 text-[14px] font-normal w-full bg-white"
+                    />
+                  </div>
+                  {/* Desktop Input */}
+                  <div className="hidden w-full t:block">
+                    <JoinInput
+                      value={nickname}
+                      onChange={handleNicknameChange}
+                      disabled={isNicknameChecked}
+                      placeholder="닉네임을 입력해주세요(최대 20글자)"
+                      className="h-[44px] border-Subbrown-4 placeholder-Gray-3 text-[14px] font-normal w-full bg-white"
+                    />
+                  </div>
                 </div>
-                {/* Desktop Input */}
-                <div className="hidden w-full md:block">
-                  <JoinInput
-                    value={nickname}
-                    onChange={handleNicknameChange}
-                    disabled={isNicknameChecked}
-                    placeholder="닉네임을 입력해주세요(최대 20글자)"
-                    className="border-[#EAE5E2] placeholder-[#BBB] text-[14px] font-normal w-full"
-                  />
-                </div>
+                <JoinButton
+                  onClick={handleCheckDuplicate}
+                  variant={isNicknameChecked ? "primary" : "secondary"}
+                  className={`w-[106px] h-[36px] t:h-[44px] px-0 py-0 text-[14px] shrink-0 ${
+                    isNicknameChecked ? "font-medium" : "font-normal"
+                  }`}
+                >
+                  중복확인
+                </JoinButton>
               </div>
-              <JoinButton
-                onClick={handleCheckDuplicate}
-                variant={isNicknameChecked ? "primary" : "secondary"}
-                className={`w-[106px] h-[44px] px-0 py-0 text-[14px] shrink-0 ${
-                  isNicknameChecked ? "font-medium" : "font-normal"
-                }`}
-              >
-                중복확인
-              </JoinButton>
+              
+            </div>
+              {/* 한줄소개 */}
+            <div className="flex flex-col w-full gap-[12px]">
+              <span className="text-primary-1 font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px] t:text-[20px] t:leading-[135%] t:tracking-[-0.02px]">
+                소개
+              </span>
+              <JoinInput
+                value={intro}
+                onChange={handleIntroChange}
+                placeholder="40자 이내로 작성해주세요"
+                className="h-[36px] t:h-[44px] py-0 t:py-[12px] border-Subbrown-4 placeholder-Gray-3 text-[14px] font-normal bg-white"
+              />
             </div>
           </div>
 
-          {/* 한줄소개 */}
+         {/* Group 2: Name & Phone */}
+          <div className="flex flex-col gap-[36px]">
+            {/* 이름 */}
+            <div className="flex flex-col w-full gap-[12px]">
+              <span className="text-primary-1 font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px] t:text-[20px] t:leading-[135%] t:tracking-[-0.02px]">
+                이름
+              </span>
           <JoinInput
-            label="소개"
-            value={intro}
-            onChange={handleIntroChange}
-            placeholder="40자 이내로 작성해주세요"
-            className="border-[#EAE5E2] placeholder-[#BBB] text-[14px] font-normal"
-          />
-
-          {/* 이름 */}
-          <JoinInput
-            label="이름"
             value={name}
             onChange={handleNameChange}
-            placeholder="이름을 입력해주세요"
-            className="border-[#EAE5E2] placeholder-[#BBB] text-[14px] font-normal"
-          />
+              placeholder="이름을 입력해주세요"
+                className="h-[36px] t:h-[44px] py-0 t:py-[12px] border-Subbrown-4 placeholder-Gray-3 text-[14px] font-normal bg-white"
+              />
+            </div>
 
-          {/* 전화번호 */}
-          <JoinInput
-            label="전화번호"
+            {/* 전화번호 */}
+            <div className="flex flex-col w-full gap-[12px]">
+              <span className="text-primary-1 font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px] t:text-[20px] t:leading-[135%] t:tracking-[-0.02px]">
+                전화번호
+              </span>
+              <JoinInput
+
             value={phone}
             onChange={handlePhoneChange}
             placeholder="010-0000-0000"
-            className="border-[#EAE5E2] placeholder-[#BBB] text-[14px] font-normal"
-          />
+    className="h-[36px] t:h-[44px] py-0 t:py-[12px] border-Subbrown-4 placeholder-Gray-3 text-[14px] font-normal bg-white"
+                  />
         </div>
       </div>
 
-      <JoinButton
-        onClick={onNext}
-        disabled={!isValid}
-        className="w-full md:w-[526px]"
-      >
-        다음
-      </JoinButton>
-    </div>
+        <JoinButton
+          onClick={onNext}
+          disabled={!isValid}
+          className="w-[272px] t:w-[526px]"
+        >
+          다음
+        </JoinButton>
+      </div>
+      </div>
+    </JoinLayout>
   );
 };
 
