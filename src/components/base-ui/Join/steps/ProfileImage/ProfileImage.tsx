@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import JoinHeader from "../../JoinHeader";
+import JoinLayout from "../../JoinLayout";
 import JoinButton from "../../JoinButton";
 import { useProfileImage } from "./useProfileImage";
 import ProfileImageUploader from "./ProfileImageUploader";
@@ -26,7 +26,7 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ onNext }) => {
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 768); // 768px matches 't:' breakpoint
     };
 
     // Initial check
@@ -52,25 +52,23 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ onNext }) => {
     ? mobileStep === "interest" && !isValid
     : !isValid;
 
-  // Dynamic Header Title based on Mobile Step
+  // Dynamic Header Title
   const headerTitle = isMobile
-    ? mobileStep === "image"
-      ? "프로필 설정"
-      : "관심 카테고리"
+    ? mobileStep === "interest"
+      ? "관심 카테고리"
+      : "프로필 선택"
     : "";
 
   return (
-    <div className="relative flex flex-col items-center mx-auto w-full max-w-[766px] bg-white rounded-[8px] px-6 py-10 md:px-[40px] md:py-[60px] lg:px-[56px] lg:py-[99px]">
-      <JoinHeader title={headerTitle} />
-
-      {/* Content Wrapper: Reduced Desktop Spacing (lg:mt-[50px] lg:mb-[80px]) */}
-      <div className="flex flex-col w-full mt-10 mb-10 md:mt-[60px] md:mb-[80px] lg:mt-[50px] lg:mb-[80px]">
-        <div className="flex flex-col items-center w-full max-w-[526px] gap-10 md:gap-[42px] mx-auto">
+    <JoinLayout title={headerTitle} desktopGap="t:gap-[60px]">
+      <div className="flex flex-col items-center w-full gap-[40px] t:gap-[60px]">
+        {/* Content Container */}
+        <div className="flex flex-col items-center w-[272px] t:w-[526px] gap-[40px] t:gap-[42px]">
           {/* Profile Image Uploader: Visible on Desktop OR Mobile Step 1 */}
           <div
             className={`${
               mobileStep === "image" ? "flex" : "hidden"
-            } md:flex flex-col w-full items-center`}
+            } t:flex flex-col w-full items-center`}
           >
             <ProfileImageUploader
               profileImage={profileImage}
@@ -83,7 +81,7 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ onNext }) => {
           <div
             className={`${
               mobileStep === "interest" ? "flex" : "hidden"
-            } md:flex flex-col w-full`}
+            } t:flex flex-col w-full`}
           >
             <InterestCategorySelector
               selectedInterests={selectedInterests}
@@ -91,16 +89,16 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ onNext }) => {
             />
           </div>
         </div>
-      </div>
 
-      <JoinButton
-        onClick={handleNextClick}
-        disabled={isButtonDisabled}
-        className="w-full md:w-[526px]"
-      >
-        다음
-      </JoinButton>
-    </div>
+        <JoinButton
+          onClick={handleNextClick}
+          disabled={isButtonDisabled}
+          className="w-[272px] t:w-[526px]"
+        >
+          {isMobile && mobileStep === "image" ? "다음" : "가입 완료"}
+        </JoinButton>
+      </div>
+    </JoinLayout>
   );
 };
 

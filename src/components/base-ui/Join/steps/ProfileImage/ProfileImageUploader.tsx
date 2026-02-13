@@ -21,7 +21,7 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
   return (
     <div className="flex flex-col items-center gap-[24px] w-full">
       <div className="relative w-[148px] h-[141px]">
-        <div className="w-[138px] h-[138px] rounded-full overflow-hidden bg-gray-200">
+        <div className="w-[138px] h-[138px] rounded-full overflow-hidden bg-Subbrown-4">
           <Image
             src={profileImage || "/default_profile_1.svg"}
             alt="Profile"
@@ -39,7 +39,7 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
         />
         <button
           onClick={handleEditClick}
-          className="absolute bottom-0 right-0 p-[10px] rounded-[79px] bg-[#5E4A40] flex justify-center items-center"
+          className="absolute bottom-0 right-0 p-[10px] rounded-[79px] bg-primary-3 flex justify-center items-center"
         >
           <svg
             width="24"
@@ -67,7 +67,7 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
       </div>
       <button
         onClick={onReset}
-        className="px-[20px] py-[10px] rounded-[8px] bg-[#5E4A40] text-[#FFF] text-[18px] font-medium leading-[135%] tracking-[-0.018px]"
+        className="px-[20px] py-[10px] rounded-[8px] bg-primary-3 text-White text-[18px] font-medium leading-[135%] tracking-[-0.018px]"
       >
         기본 프로필 이미지
       </button>
