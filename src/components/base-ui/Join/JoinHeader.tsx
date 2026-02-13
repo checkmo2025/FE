@@ -11,9 +11,9 @@ const JoinHeader: React.FC<JoinHeaderProps> = ({ title = "약관 동의" }) => {
       <Image
         src="/Vector.svg"
         alt="CheckMo Logo"
-        width={77}
-        height={47}
-        className="w-[76.6px] h-[46.8px]"
+        width={76.607}
+        height={46.815}
+        className="w-[76.607px] h-[46.815px]"
       />
       <h2 className="self-stretch text-center font-sans text-[24px] font-semibold leading-[1.35] tracking-[-0.024px] text-[#7B6154]">
         {title}

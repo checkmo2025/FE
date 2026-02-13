@@ -3,24 +3,21 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
-import JoinHeader from "../../JoinHeader";
-import JoinButton from "../../JoinButton";
-import TermsList from "../TermsList";
-import TermsItem from "../TermsItem";
+import JoinLayout from "@/components/base-ui/Join/JoinLayout";
+import JoinButton from "@/components/base-ui/Join/JoinButton";
 
 export const TERMS_DATA = [
   {
     id: "servicePrivacy",
-    label: "서비스 이용을 위한 필수 개인정보 수집·이용 동의",
+    label: "서비스 이용을 위한 필수 개인정보 수집·이용 동의 (필수)",
     required: true,
   },
-  { id: "termsOfUse", label: "책모 이용약관 동의", required: true },
-  { id: "thirdParty", label: "개인정보 제3자 제공 동의", required: false },
+  { id: "termsOfUse", label: "책모 이용약관 동의 (필수)", required: true },
+  { id: "thirdParty", label: "개인정보 제3자 제공 동의 (선택)", required: false },
   {
     id: "marketing",
-    label: "마케팅 및 이벤트 정보 수신 동의",
+    label: "마케팅 및 이벤트 정보 수신 동의 (선택)",
     required: false,
   },
 ];
@@ -30,7 +27,6 @@ interface TermsAgreementProps {
 }
 
 const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
-  const router = useRouter();
   const initialAgreements = TERMS_DATA.reduce((acc, term) => {
     acc[term.id] = false;
     return acc;
@@ -51,8 +47,8 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
     setAgreements((prev) => ({ ...prev, [id]: checked }));
   };
 
-  const handleAllAgreementChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const checked = e.target.checked;
+  const handleAllAgreementChange = () => {
+    const checked = !allAgreed;
     const newAgreements = TERMS_DATA.reduce((acc, term) => {
       acc[term.id] = checked;
       return acc;
@@ -60,83 +56,69 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
     setAgreements(newAgreements);
   };
 
-  const handleClose = () => {
-    router.back();
-  };
-
   return (
-    <div className="relative flex flex-col items-center mx-auto w-full max-w-[766px] bg-white rounded-[8px] px-6 py-10 md:px-[40px] md:py-[60px] lg:px-[56px] lg:py-[99px]">
-      {/* 닫기 버튼 */}
-      <button
-        type="button"
-        onClick={handleClose}
-        className="absolute top-6 right-6"
-      >
-        <Image src="/cancle_button.svg" alt="닫기" width={24} height={24} />
-      </button>
-
-      <JoinHeader title="약관 동의" />
-
-      {/* Content Wrapper: Mobile -> Tablet -> Desktop Spacing */}
-      <div className="flex flex-col w-full mt-10 mb-10 md:mt-[60px] md:mb-[80px] lg:mt-[90px] lg:mb-[130px]">
-        <TermsList>
-          <div className="flex flex-col w-full gap-8 pb-3">
+    <JoinLayout title="약관 동의">
+      <div className="flex flex-col items-center w-full gap-[40px]">
+        {/* 약관 동의 박스 Frame */}
+        <div className="flex flex-col justify-center w-[270px] h-[297px] px-[24px] gap-[24px] rounded-[12px] bg-background t:w-[584px] t:h-[386px] t:px-[40px] t:pt-[24px] t:pb-[36px]">
+          {/* 개별 약관 리스트 */}
+          <div className="flex flex-col gap-[20px]">
             {TERMS_DATA.map((term) => (
-              <TermsItem
+              <div
                 key={term.id}
-                id={term.id}
-                label={term.label}
-                required={term.required}
-                checked={!!agreements[term.id]}
-                onChange={handleAgreementChange}
-              />
+                className="flex items-center justify-between w-full cursor-pointer"
+                onClick={() =>
+                  handleAgreementChange(term.id, !agreements[term.id])
+                }
+              >
+                <span className="text-[#353535] font-sans text-[12px] font-normal leading-[145%] tracking-[-0.012px] t:text-[19.861px] t:leading-[15.605px]">
+                  {term.label}
+                </span>
+                <div className="relative w-[15px] h-[15px] shrink-0 t:w-[24px] t:h-[24px]">
+                  <Image
+                    src={
+                      agreements[term.id]
+                        ? "/CheckBox_Yes.svg"
+                        : "/CheckBox_No.svg"
+                    }
+                    alt="checkbox"
+                    fill
+                  />
+                </div>
+              </div>
             ))}
           </div>
 
-          <div className="w-full h-[1px] bg-[#D9D9D9]" />
+          {/* 구분선 (vector 129) */}
+          <div className="w-[190px] h-[1px] bg-Gray-2 my-[8px] mx-auto t:w-[504px]" />
 
           {/* 전체 동의 */}
-          <label className="flex items-center justify-between w-full cursor-pointer select-none">
-            <span className="text-[#000000] text-[16px] md:text-[19.861px] font-normal leading-[15.605px]">
+          <div
+            className="flex items-center justify-between w-full cursor-pointer"
+            onClick={handleAllAgreementChange}
+          >
+            <span className="text-Black font-sans text-[12px] font-normal leading-[145%] tracking-[-0.012px] t:text-[19.861px] t:leading-[15.605px]">
               전체동의
             </span>
-            <div className="relative flex items-center justify-center w-[24px] h-[24px]">
-              <input
-                type="checkbox"
-                id="allAgreed"
-                checked={allAgreed}
-                onChange={handleAllAgreementChange}
-                className="sr-only peer"
+            <div className="relative w-[15px] h-[15px] shrink-0 t:w-[24px] t:h-[24px]">
+              <Image
+                src={allAgreed ? "/CheckBox_Yes.svg" : "/CheckBox_No.svg"}
+                alt="checkbox"
+                fill
               />
-              <div className="w-full h-full peer-checked:hidden">
-                <Image
-                  src="/CheckBox_No.svg"
-                  alt="Unchecked"
-                  width={24}
-                  height={24}
-                />
-              </div>
-              <div className="hidden w-full h-full peer-checked:block">
-                <Image
-                  src="/CheckBox_Yes.svg"
-                  alt="Checked"
-                  width={24}
-                  height={24}
-                />
-              </div>
             </div>
-          </label>
-        </TermsList>
-      </div>
+          </div>
+        </div>
 
-      <JoinButton
-        disabled={!isButtonEnabled}
-        onClick={handleNext}
-        className="w-full md:w-[526px]"
-      >
-        다음
-      </JoinButton>
-    </div>
+        <JoinButton
+          disabled={!isButtonEnabled}
+          onClick={handleNext}
+          className="w-[270px] t:w-[526px]"
+        >
+          다음
+        </JoinButton>
+      </div>
+    </JoinLayout>
   );
 };
 
