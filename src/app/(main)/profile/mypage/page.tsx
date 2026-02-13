@@ -6,9 +6,10 @@ import MyPageBreadcrumb from "@/components/base-ui/MyPage/MyPageBreadcrumb";
 import UserProfile from "@/components/base-ui/MyPage/UserProfile";
 import MyPageTabs from "@/components/base-ui/MyPage/MyPageTabs";
 import MyBookStoryList from "@/components/base-ui/MyPage/MyBookStoryList";
-import MyLibraryList from "@/components/base-ui/MyPage/MyLibraryList";
+
 import MyMeetingList from "@/components/base-ui/MyPage/MyMeetingList";
 import MyNotificationList from "@/components/base-ui/MyPage/MyNotificationList";
+import MyLibraryList from "@/components/base-ui/Profile/LibraryList";
 
 export default function MyPage() {
   const [activeTab, setActiveTab] = useState("stories");

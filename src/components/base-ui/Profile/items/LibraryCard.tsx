@@ -1,72 +1,49 @@
 "use client";
 
 import Image from "next/image";
+import { MyPageLibraryBook } from "@/types/mypage";
 
-type LibraryBookProps = {
-  id: number;
-  title: string;
-  author: string;
-  coverImg: string;
-};
-
-type Props = {
-  book: LibraryBookProps;
+interface MyLibraryCardProps {
+  book: MyPageLibraryBook;
   isLiked: boolean;
   onToggleLike: (id: number) => void;
-};
+}
 
-export default function LibraryCard({ book, isLiked, onToggleLike }: Props) {
+const MyLibraryCard = ({ book, isLiked, onToggleLike }: MyLibraryCardProps) => {
   return (
     <div
-      className={`
-        relative flex flex-col items-start justify-end gap-[10px] overflow-hidden rounded-[4px] p-[12px] shrink-0
-        
-        /* Tablet (md): w 215px, h 282px */
-        w-full md:w-[215px] md:h-[282px]
-        
-        /* Desktop (xl): w 244px, h 320px */
-        xl:w-[244px] xl:h-[320px]
-      `}
+      className="relative flex flex-col justify-end items-start gap-[8px] md:gap-[10px] w-[102px] h-[132px] p-[8px] md:w-[244px] md:h-[320px] md:p-[12px] rounded-[4px] shrink-0 cursor-pointer"
       style={{
-        background: `linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.30) 82.79%)`,
+        background: `linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.30) 82.79%), url('${book.src}') lightgray 50% / cover no-repeat`,
       }}
     >
-      {/* 배경 이미지 */}
-      <div className="absolute inset-0 -z-10">
-        <Image
-          src={book.coverImg}
-          alt={book.title}
-          fill
-          className="object-cover"
-          sizes="(max-width: 1280px) 215px, 244px"
-        />
-      </div>
-
-      {/* 좋아요 아이콘 */}
       <button
         type="button"
-        onClick={() => onToggleLike(book.id)}
-        className="relative h-[24px] w-[24px] shrink-0 transition-transform hover:scale-110 active:scale-95"
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleLike(book.id);
+        }}
+        className="w-[20px] h-[20px] md:w-[24px] md:h-[24px]"
       >
         <Image
           src={isLiked ? "/red_heart.svg" : "/gray_heart.svg"}
-          alt={isLiked ? "좋아요 취소" : "좋아요"}
-          fill
-          className="object-contain"
+          alt="like"
+          width={24}
+          height={24}
+          priority
         />
       </button>
 
-      {/* 텍스트 영역 */}
-      <div className="flex flex-col items-start gap-[4px] self-stretch">
-        {/* 책 제목  */}
-        <h3 className="self-stretch truncate text-[24px] font-semibold leading-[135%] tracking-[-0.024px] text-white">
+      <div className="flex flex-col items-start gap-[4px] w-full">
+        <span className="text-white text-[18px] font-bold leading-tight truncate w-full">
           {book.title}
-        </h3>
-        {/* 작가  */}
-        <p className="self-stretch truncate text-[18px] font-normal leading-[135%] tracking-[-0.018px] text-white">
+        </span>
+        <span className="text-gray-200 text-[14px] font-medium truncate w-full">
           {book.author}
-        </p>
+        </span>
       </div>
     </div>
   );
-}
+};
+
+export default MyLibraryCard;
