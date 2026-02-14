@@ -1,67 +1,29 @@
 "use client";
 
-import { useState } from "react";
-import LibraryCard from "@/components/base-ui/Profile/items/LibraryCard";
+import React, { useState } from "react";
+import { DUMMY_LIBRARY_BOOKS } from "@/constants/mocks/mypage";
+import LibraryCard from "./items/LibraryCard";
 
-// Mock Data
-const MOCK_LIBRARY_BOOKS = [
-  {
-    id: 1,
-    title: "불편한 편의점",
-    author: "김호연",
-    coverImg: "/dummy_book_1.png",
-  },
-  { id: 2, title: "아몬드", author: "손원평", coverImg: "/dummy_book_2.png" },
-  {
-    id: 3,
-    title: "미드나잇 라이브러리",
-    author: "매트 헤이그",
-    coverImg: "/dummy_book_3.png",
-  },
-  {
-    id: 4,
-    title: "달러구트 꿈 백화점",
-    author: "이미예",
-    coverImg: "/dummy_book_4.png",
-  },
-  {
-    id: 5,
-    title: "지구 끝의 온실",
-    author: "김초엽",
-    coverImg: "/dummy_book_5.png",
-  },
-  {
-    id: 6,
-    title: "물고기는 존재하지 않는다",
-    author: "룰루 밀러",
-    coverImg: "/dummy_book_6.png",
-  },
-];
-
-export default function LibraryList() {
+const LibraryList = () => {
   const [likedBooks, setLikedBooks] = useState<number[]>([]);
 
-  const handleToggleLike = (id: number) => {
+  const toggleLike = (id: number) => {
     setLikedBooks((prev) =>
       prev.includes(id) ? prev.filter((bookId) => bookId !== id) : [...prev, id]
     );
   };
-
   return (
-    <div
-      className="grid w-full justify-items-center
-      grid-cols-3 gap-x-[15px] gap-y-[20px]
-      t:w-[688px] t:grid-cols-3 t:gap-x-[21.5px] t:gap-y-[16px]
-      d:w-[1048px] d:grid-cols-4 d:gap-x-[24px] d:gap-y-[16px]"
-    >
-      {MOCK_LIBRARY_BOOKS.map((book) => (
+    <div className="grid grid-cols-3 gap-x-[18px] gap-y-[12px] px-[18px] w-full mx-auto md:flex md:flex-wrap md:justify-between md:gap-[21px] md:gap-y-[16px] md:w-[774px] md:px-0 lg:w-[1048px] lg:gap-x-0 lg:gap-y-[16px] [&>div]:w-full md:[&>div]:w-[244px]">
+      {DUMMY_LIBRARY_BOOKS.map((book) => (
         <LibraryCard
           key={book.id}
           book={book}
           isLiked={likedBooks.includes(book.id)}
-          onToggleLike={handleToggleLike}
+          onToggleLike={toggleLike}
         />
       ))}
     </div>
   );
-}
+};
+
+export default LibraryList;

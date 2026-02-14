@@ -30,8 +30,8 @@ export default function OtherUserProfileTabs() {
                 body_1_2 t:subhead_3
                 ${
                   activeTab === tab
-                    ? "border-b-2 border-primary-3 text-primary-3"
-                    : "text-Gray-3"
+                    ? "border-b-2 border-primary-3 text-primary-3 -mb-[2px]"
+                    : "text-Gray-3 border-b-2 border-transparent"
                 }`}
             >
               {tab}

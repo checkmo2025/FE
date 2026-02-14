@@ -106,7 +106,7 @@ export default function Header() {
 
             {/* 태블릿부터 프로필 표시 */}
             <Link
-              href="/mypage"
+              href="/profile/mypage"
               aria-label="프로필"
               className="relative hidden w-6 h-6 t:block"
             >

@@ -11,24 +11,16 @@ export default async function OtherUserProfilePage({ params }: PageProps) {
   const { nickname } = await params;
 
   return (
-    <main className="flex flex-col items-center w-full min-h-screen bg-background">
-     
+    <div className="flex flex-col items-center gap-[10px] md:gap-[24px] w-full min-h-screen bg-[#F9F7F6] pb-[100px]">
+      <ProfileBreadcrumb />
 
-      {/* 2. 메인 컨텐츠 래퍼 */}
-      <div
-        className="flex w-full max-w-screen-d flex-col items-start 
-        gap-[24px] t:gap-[80px] 
-        px-0 t:px-6 d:px-3"
-      >
-        {/* 목차 (Breadcrumb) */}
-        <ProfileBreadcrumb />
-
-        {/* 프로필 정보 및 탭 섹션 */}
-        <section className="flex w-full flex-col items-center gap-[24px] t:gap-[72px] pb-[100px]">
-          <ProfileUserInfo nickname={nickname} />
-          <OtherUserProfileTabs />
-        </section>
+      <div className="mt-[12px] md:mt-[56px]">
+        <ProfileUserInfo nickname={nickname} />
       </div>
-    </main>
+
+      <div className="flex flex-col items-center w-full max-w-[1440px] px-4 md:px-0 gap-[24px] mt-[10px] md:mt-[72px]">
+        <OtherUserProfileTabs />
+      </div>
+    </div>
   );
 }
