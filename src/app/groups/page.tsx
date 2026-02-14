@@ -13,7 +13,7 @@ import SearchClubListItem from '@/components/base-ui/Group-Search/search_clublis
 import SearchClubApplyModal from '@/components/base-ui/Group-Search/search_club_apply_modal';
 
 
-
+export type { Category, ParticipantType };
 
 
 export interface ClubSummary {
