@@ -94,38 +94,48 @@ export default function GroupDetailLayout({
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-[1440px] px-4 t:px-6 py-3 t:py-8">
-        <div className="flex flex-col gap-6 d:flex-row d:gap-8">
+      <div className="mx-auto w-full max-w-[1440px] px-4 t:px-6 py-3 t:pt-3 t:pb-8">
+        <div className="flex flex-col gap-6 t:gap-9 d:flex-row d:gap-8">
           {/* 사이드바 */}
-          <aside className="shrink-0 w-full t:w-auto d:w-[236px] transition-all duration-300">
-            <nav className="flex flex-row justify-center gap-2 d:flex-col t:gap-0 d:gap-3 t:justify-between d:justify-start t:mx-auto">
+          <aside className="shrink-0 w-full t:w-auto d:w-[236px]">
+            <nav className="flex flex-row justify-center gap-[7px] t:gap-[8px] d:flex-col d:gap-3 d:justify-start t:mx-auto">
               {/* 카테고리 버튼 */}
               <button
                 onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}
                 className={`
-                  flex items-center gap-1.5 t:gap-3
-                  px-4 py-3 t:py-4 rounded-lg
-                  transition-all duration-200
-                  bg-transparent text-Gray-7
+                  flex items-center justify-center
+                  rounded-lg
+                  text-Gray-7
                   active:bg-transparent focus:outline-none
-                  w-fit justify-center t:w-[164px] t:mr-[-66px]
+                  w-[47px] h-[40px] bg-primary-2 t:w-[56px] t:h-[48px] d:w-fit d:h-auto d:px-4 d:py-4 d:bg-transparent
+                  pointer-events-none d:pointer-events-auto cursor-default d:cursor-pointer
                   ${
                     isSidebarExpanded
-                      ? "d:w-full d:justify-start d:mr-0"
-                      : "d:w-fit d:justify-start d:mr-0"
+                      ? "d:w-full d:justify-start"
+                      : "d:w-fit d:justify-start"
                   }
                 `}
                 aria-label={
                   isSidebarExpanded ? "사이드바 접기" : "사이드바 펼치기"
                 }
               >
-                <div className="relative flex items-center justify-center w-6 h-6 cursor-pointer t:w-8 t:h-8 shrink-0">
+                <div className="relative flex items-center justify-center w-6 h-6 t:w-6 t:h-6 d:w-8 d:h-8 shrink-0">
                   <div
-                    className={`absolute inset-0 rounded-lg ${
-                      isSidebarExpanded ? "bg-primary-2 -m-3 t:-m-4" : ""
+                    className={`absolute inset-0 rounded-lg hidden d:block ${
+                      isSidebarExpanded ? "bg-primary-2 -m-4" : ""
                     }`}
                   ></div>
-                  <div className="relative w-full h-full">
+                  {/* 모바일/태블릿: 항상 흰색 아이콘 */}
+                  <div className="relative w-full h-full d:hidden">
+                    <Image
+                      src="/after_category.svg"
+                      alt="토글"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  {/* 데스크탑: 상태에 따라 아이콘 변경 */}
+                  <div className="relative w-full h-full hidden d:block">
                     <Image
                       src={
                         isSidebarExpanded
@@ -141,49 +151,50 @@ export default function GroupDetailLayout({
               </button>
 
               {/* 메뉴들 */}
-              {tabs.map((tab) => {
-                const isActive = activeTab === tab.id;
+              <div className="flex flex-row gap-[7px] t:gap-[66px] d:flex-col d:gap-3">
+                {tabs.map((tab) => {
+                  const isActive = activeTab === tab.id;
 
-                return (
-                  <Link
-                    key={tab.id}
-                    href={tab.href}
-                    className={`
-                      flex items-center gap-1.5 t:gap-3
-                      px-4 py-3 t:py-4 rounded-lg
-                      transition-all duration-200
-                      ${
-                        isActive
-                          ? "bg-Subbrown-4 text-Gray-7"
-                          : "bg-transparent text-Gray-7 hover:bg-Subbrown-4"
-                      }
-                      w-fit justify-center t:w-[164px] d:justify-start
-                      ${
-                        isSidebarExpanded
-                          ? "d:w-full"
-                          : "d:w-fit d:justify-center"
-                      }
-                    `}
-                  >
-                    <div className="relative w-6 h-6 t:w-8 t:h-8 shrink-0">
-                      <Image
-                        src={tab.icon}
-                        alt={tab.label}
-                        fill
-                        className="object-contain"
-                      />
-                    </div>
-                    <span className="whitespace-nowrap body_1_2 d:hidden">
-                      {tab.label}
-                    </span>
-                    {isSidebarExpanded && (
-                      <span className="hidden d:inline whitespace-nowrap body_1_2 t:subhead_4_1">
+                  return (
+                    <Link
+                      key={tab.id}
+                      href={tab.href}
+                      className={`
+                        flex items-center justify-center gap-1 t:gap-3
+                        px-2 py-2 t:px-4 t:py-3 rounded-lg
+                        ${
+                          isActive
+                            ? "bg-Subbrown-4 text-Gray-7"
+                            : "bg-transparent text-Gray-7 hover:bg-Subbrown-4"
+                        }
+                        w-[90px] h-[40px] t:w-[164px] t:h-[48px]
+                        ${
+                          isSidebarExpanded
+                            ? "d:w-full d:justify-start d:h-auto d:py-4"
+                            : "d:w-fit d:justify-center d:h-auto d:py-4"
+                        }
+                      `}
+                    >
+                      <div className="relative w-6 h-6 t:w-8 t:h-8 shrink-0">
+                        <Image
+                          src={tab.icon}
+                          alt={tab.label}
+                          fill
+                          className="object-contain"
+                        />
+                      </div>
+                      <span className="whitespace-nowrap body_1_2 d:hidden">
                         {tab.label}
                       </span>
-                    )}
-                  </Link>
-                );
-              })}
+                      {isSidebarExpanded && (
+                        <span className="hidden d:inline whitespace-nowrap body_1_2 t:subhead_4_1">
+                          {tab.label}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
             </nav>
           </aside>
 

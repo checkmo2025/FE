@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import BottomNav from "@/components/layout/BottomNav";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import { HeaderTitleProvider } from "@/contexts/HeaderTitleContext";
 import "@/app/globals.css";
 
 const geistSans = Geist({
@@ -31,9 +32,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased pb-[70px] t:pb-0`}
       >
         <AuthProvider>
-          {children}
-          <BottomNav />
-          <Toaster position="top-center" />
+          <HeaderTitleProvider>
+            {children}
+            <BottomNav />
+            <Toaster position="top-center" />
+          </HeaderTitleProvider>
         </AuthProvider>
       </body>
     </html>

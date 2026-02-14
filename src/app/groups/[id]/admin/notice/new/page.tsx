@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import BookshelfModal from '@/components/base-ui/Group/BookshelfModal';
 import BookDetailCard from '@/components/base-ui/Bookcase/BookDetailCard';
+import { useHeaderTitle } from '@/contexts/HeaderTitleContext';
 
 type Book = {
   id: number;
@@ -19,6 +20,7 @@ export default function NewNoticePage() {
   const params = useParams();
   const router = useRouter();
   const groupId = params.id as string;
+  const { setCustomTitle } = useHeaderTitle();
   
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -34,6 +36,12 @@ export default function NewNoticePage() {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
 
   const imageInputRef = useRef<HTMLInputElement | null>(null);
+
+  // 모바일 헤더 타이틀 설정
+  useEffect(() => {
+    setCustomTitle('공지사항 작성');
+    return () => setCustomTitle(null);
+  }, [setCustomTitle]);
 
   const handleCancel = () => {
     router.back();
@@ -114,11 +122,26 @@ export default function NewNoticePage() {
   }, []);
   return (
     <div className="w-full">
-      <div className="py-6 px-2.5 t:px-10">
+      {/* 뒤로가기 - 모바일에서만 표시 */}
+      <div className="t:hidden px-2.5 py-3">
+        <button
+          type="button"
+          onClick={handleCancel}
+          className="flex items-center gap-2 text-Gray-7 body_1_2"
+        >
+          <Image src="/back.svg" alt="뒤로가기" width={12} height={12} />
+          <span>뒤로가기</span>
+        </button>
+      </div>
+
+      {/* 구분선 */}
+      <div className="t:hidden border-b border-Gray-2" />
+      
+      <div className="py-4 t:pt-6 t:px-10">
         {/* 제목 및 내용 입력 영역 */}
         <div className="flex justify-center">
           <div className="w-full max-w-[1040px]">
-            <p className="subhead_4_1 text-Gray-7 mb-4">공지사항 작성</p>
+            <p className="subhead_4_1 text-Gray-7 px-5 t:px-1 d:px-0 mb-3">공지사항 작성</p>
             
             {/* 선택된 책 표시 */}
             {selectedBook && (
@@ -134,32 +157,32 @@ export default function NewNoticePage() {
             )}
 
             {/* 입력 박스 */}
-            <div className="relative flex w-full h-[760px] p-[16px] flex-col rounded-[8px] border-2 border-Subbrown-4 bg-White">
+            <div className={`relative flex w-full p-4 t:p-5 flex-col rounded-2 border border-Subbrown-4 t:border-2 bg-White ${selectedOption === 'vote' ? 'min-h-63' : 'h-63'} t:h-190`}>
             {/* 제목 */}
-            <div className="flex p-[10px] items-center gap-[10px] border-b border-b-Subbrown-4">
+            <div className="flex px-2 py-3 items-center  border-b border-b-Subbrown-4">
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="제목을 입력해주세요"
-                className="w-full bg-transparent outline-none text-Gray-7 subhead_3 t:subhead_4_1 placeholder:text-Gray-3"
+                placeholder="제목을 입력해주세요."
+                className="w-full bg-transparent outline-none text-Gray-7 subhead_4_1 placeholder:text-Gray-3"
               />
             </div>
 
             {/* 내용 */}
-            <div className="flex p-[10px] items-start gap-[10px] h-[140px]">
+            <div className="flex p-2.5 items-start gap-2.5 min-h-20 t:h-35">
               <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="내용을 입력해주세요"
-                rows={4}
-                className="w-full resize-none bg-transparent outline-none text-Gray-7 body_1 t:body_1_3 placeholder:text-Gray-3 whitespace-pre-wrap"
+                rows={2}
+                className="w-full resize-none bg-transparent outline-none text-Gray-7 body_1_3 placeholder:text-Gray-3 whitespace-pre-wrap"
               />
             </div>
 
-            {/* 투표 / 이미지 영역 */}
-            <div className="mt-0 h-[496px]">
+            {/* 투표 */}
+            <div className="mt-0 min-h-0 t:h-[496px]">
               {selectedOption === 'vote' && (
-                <div className="h-full rounded-[8px] bg-background border border-Gray-2 p-4 flex flex-col gap-6">
+                <div className="min-h-0 t:h-full rounded-[8px] bg-background border border-Gray-2 p-4 flex flex-col gap-6">
                   <div className="flex flex-col gap-3">
                     {[0, 1, 2, 3].map((index) => (
                       <div
@@ -239,7 +262,7 @@ export default function NewNoticePage() {
               )}
 
               {selectedOption === 'image' && (
-                <div className="h-full flex items-end">
+                <div className="min-h-0 t:h-full flex items-end">
                   {imagePreviews.length > 0 ? (
                     <div className="flex gap-4 overflow-x-auto [&::-webkit-scrollbar]:hidden scrollbar-none">
                       {imagePreviews.map((src, index) => (
@@ -278,7 +301,7 @@ export default function NewNoticePage() {
               )}
             </div>
             
-            <div className="mt-auto pt-6 flex justify-end gap-4">
+            <div className="mt-auto pt-6 flex justify-center t:justify-end gap-4">
               <button
                 type="button"
                 onClick={handleCreateVote}

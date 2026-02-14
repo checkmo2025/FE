@@ -17,7 +17,6 @@ export default function BookSelectModal({
   onSelect,
 }: BookSelectModalProps) {
   const router = useRouter();
-  const [topOffset, setTopOffset] = useState(0);
   const [likedResults, setLikedResults] = useState<Record<number, boolean>>({});
   const [searchValue, setSearchValue] = useState("");
 
@@ -84,19 +83,21 @@ export default function BookSelectModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed top-[108px] t:top-0 left-0 right-0 bottom-0 t:inset-0 z-50 flex items-center justify-center p-0 t:p-4"
       onClick={onClose}
     >
-      {/* 배경 오버레이 */}
-      <div className="fixed inset-0 bg-black/50 -z-10" />
+      {/* 배경 오버레이 - 태블릿/데스크탑에서만 */}
+      <div className="hidden t:block fixed inset-0 bg-black/50 -z-10" />
 
-      {/* 모달 */}
+      {/* 모달/전체화면 */}
       <div
-        className="bg-background rounded-lg shadow-lg w-full max-w-[1121px] max-h-[60vh] t:max-h-[748px] overflow-hidden flex flex-col d:px-10 py-2 t:py-6 d:py-6"
+        className="bg-background w-full h-full t:rounded-lg t:shadow-lg t:max-w-[1121px] t:max-h-[748px] t:h-auto overflow-hidden flex flex-col d:px-10 py-0 t:py-6 d:py-6"
         onClick={(e) => e.stopPropagation()}
       >
+
+
           {/* 검색창 */}
-          <div className="px-4 py-3 t:px-6 t:py-4 border-b border-Subbrown-4">
+          <div className="px-4 py-5 t:px-6 t:py-4 border-b border-Subbrown-4">
             <div className="flex items-center gap-3">
               <div className="relative w-6 h-6 t:w-12 t:h-12 shrink-0 mr-4 t:mr-7.5">
                 <Image
@@ -136,8 +137,8 @@ export default function BookSelectModal({
           </div>
 
           {/* 검색 결과 */}
-          <div className="px-4 py-2 t:px-6 t:py-4 overflow-y-auto flex-1">
-            <p className="text-Gray-4 body_1_2 t:subhead_4_1 mb-14">
+          <div className="py-2 t:px-6 t:py-4 overflow-y-auto flex-1">
+            <p className="text-Gray-4 subhead_4_1 mb-4 t:mb-14 px-5">
               총 <span className="text-primary-3">{searchResults.length}개</span>의
               검색결과가 있습니다.
             </p>
@@ -154,12 +155,10 @@ export default function BookSelectModal({
                     setLikedResults((prev) => ({ ...prev, [result.id]: liked }))
                   }
                   onPencilClick={() => {
-                    // 책 선택 시
                     onSelect(result.id);
                     onClose();
                   }}
                   onCardClick={() => {
-                    // 책 선택 시
                     onSelect(result.id);
                     onClose();
                   }}
@@ -169,6 +168,5 @@ export default function BookSelectModal({
           </div>
         </div>
       </div>
-
   );
 }

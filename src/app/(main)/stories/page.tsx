@@ -1,6 +1,6 @@
 "use client";
-import BookStoryCard from "@/components/base-ui/BookStory/bookstory_card";
-import ListSubscribe from "@/components/base-ui/home/list_subscribe";
+import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
+import ListSubscribeLarge from "@/components/base-ui/home/list_subscribe_large";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { DUMMY_STORIES } from "@/data/dummyStories";
@@ -42,7 +42,7 @@ export default function StoriesPage() {
               onClick={() => handleCardClick(story.id)}
               className="cursor-pointer"
             >
-              <BookStoryCard
+              <BookStoryCardLarge
                 authorName={story.authorName}
                 createdAt={story.createdAt}
                 viewCount={story.viewCount}
@@ -56,14 +56,14 @@ export default function StoriesPage() {
           ))}
 
           {/* 두 번째 줄: 비로그인 시 사용자 추천 + 카드 3개, 로그인 시 카드 4개 */}
-          {!isLoggedIn && <ListSubscribe height="h-[380px]" />}
+          {!isLoggedIn && <ListSubscribeLarge height="h-[380px]" />}
           {DUMMY_STORIES.slice(4, isLoggedIn ? 8 : 7).map((story) => (
             <div
               key={story.id}
               onClick={() => handleCardClick(story.id)}
               className="cursor-pointer"
             >
-              <BookStoryCard
+              <BookStoryCardLarge
                 authorName={story.authorName}
                 createdAt={story.createdAt}
                 viewCount={story.viewCount}
@@ -78,15 +78,19 @@ export default function StoriesPage() {
         </div>
 
         {/* 글쓰기 버튼  */}
-        <div className="fixed bottom-21 t:bottom-40 left-1/2 -translate-x-1/2 w-full max-w-[1400px] px-4 pointer-events-none">
-          <button
-            type="button"
-            className="absolute bottom-0 right-4 cursor-pointer pointer-events-auto"
-            onClick={() => router.push("/stories/new")}
-          >
-            <Image src="/add_story.svg" alt="글쓰기" width={72} height={72} />
-          </button>
-        </div>
+        <button
+          type="button"
+          className="fixed bottom-21 right-4 t:bottom-8 t:right-8 z-[60] cursor-pointer hover:opacity-80 transition-opacity w-18 h-18 t:w-22 t:h-22"
+          onClick={() => router.push("/stories/new")}
+        >
+          <Image
+            src="/add_story.svg"
+            alt="글쓰기"
+            width={88}
+            height={88}
+            className="w-full h-full"
+          />
+        </button>
       </div>
     </div>
   );

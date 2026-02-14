@@ -12,6 +12,7 @@ type BookCoverCardProps = {
 
   onCardClick?: () => void;
   className?: string;
+  responsive?: boolean; // 모바일/태블릿 반응형 여부
 };
 
 export default function BookCoverCard({
@@ -22,13 +23,20 @@ export default function BookCoverCard({
   onLikeChange,
   onCardClick,
   className = '',
+  responsive = false,
 }: BookCoverCardProps) {
   const coverSrc = imgUrl && imgUrl.length > 0 ? imgUrl : '/booksample.svg';
+
+  const sizeClasses = responsive
+    ? 'w-[157px] h-[206px]'
+    : 'w-61 h-80';
+
+  const imageSizes = responsive ? '(max-width: 768px) 156px, 160px' : '244px';
 
   return (
     <div
       onClick={onCardClick}
-      className={`relative flex w-[244px] h-[320px] p-[12px] flex-col justify-end items-start gap-[10px] overflow-hidden ${
+      className={`relative flex ${sizeClasses} p-[12px] flex-col justify-end items-start gap-[10px] overflow-hidden ${
         onCardClick ? 'cursor-pointer' : ''
       } ${className}`}
     >
@@ -36,7 +44,7 @@ export default function BookCoverCard({
         src={coverSrc}
         alt={title}
         fill
-        sizes="244px"
+        sizes={imageSizes}
         className="object-cover"
       />
 

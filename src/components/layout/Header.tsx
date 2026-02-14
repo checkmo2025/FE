@@ -6,6 +6,7 @@ import Image from "next/image";
 import { NavItem } from "./NavItem";
 import { useState } from "react";
 import SearchModal from "./SearchModal";
+import { useHeaderTitle } from "@/contexts/HeaderTitleContext";
 
 const NAV = [
   { label: "책모 홈", href: "/" },
@@ -25,11 +26,13 @@ const getPageTitle = (pathname: string) => {
 
 export default function Header() {
   const pathname = usePathname();
-  const pageTitle = getPageTitle(pathname);
+  const defaultTitle = getPageTitle(pathname);
+  const { customTitle } = useHeaderTitle();
+  const pageTitle = customTitle || defaultTitle;
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   return (
     <header className="w-full bg-primary-1">
-      <div className="mx-auto w-full max-w-[1440px] px-4 py-4 t:px-6 t:py-7 d:px-3">
+      <div className="mx-auto w-full max-w-[1440px] px-4 py-3 t:px-6 t:py-5 d:px-3">
         <div className="relative flex items-center justify-between w-full">
           {/*로고 + 메뉴*/}
           <div className="flex items-center t:gap-2.5 d:gap-8">
@@ -73,7 +76,7 @@ export default function Header() {
 
           {/*아이콘*/}
           <div className="flex items-center gap-2.5 t:gap-4">
-          <button
+            <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               aria-label="검색"
               className="relative h-6 w-6 cursor-pointer"
@@ -118,7 +121,10 @@ export default function Header() {
           </div>
         </div>
       </div>
-      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
     </header>
   );
 }
