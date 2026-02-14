@@ -1,23 +1,19 @@
 // JoinLayout.tsx
 
 import React from "react";
+import JoinHeader from "./JoinHeader";
 
 interface JoinLayoutProps {
   children: React.ReactNode;
+  title?: string;
+  desktopGap?: string;
 }
 
-const JoinLayout: React.FC<JoinLayoutProps> = ({ children }) => {
+const JoinLayout: React.FC<JoinLayoutProps> = ({ children, title, desktopGap = "t:gap-[100px]" }) => {
   return (
-    <div
-      className="flex flex-col items-center justify-center w-full min-h-screen pb-[75px] bg-center bg-cover bg-no-repeat"
-      style={{ backgroundImage: `url('/background.png')` }}
-    >
-      {/* 
-        Container Layout Rules:
-        - Mobile: Fixed w-[352px], Fluid px-[24px]
-        - Desktop: Fixed w-[766px], Strict Padding px-[56px] py-[99px]
-      */}
-      <div className="relative flex flex-col items-center w-[352px] h-[720px] px-[24px] md:w-[766px] md:h-auto md:min-h-0 md:px-[56px] md:py-[99px] md:gap-0 rounded-xl bg-white shadow-lg mx-auto">
+    <div className={`relative flex flex-col items-center mx-auto bg-white shadow-lg rounded-[8px] w-[352px] h-[650px] px-[24px] py-[40px] gap-[40px] t:w-[700px] t:h-[1004px] t:px-[56px] t:py-[99px] ${desktopGap}`}>
+      <JoinHeader title={title} />
+      <div className="flex flex-col items-center w-full">
         {children}
       </div>
     </div>
