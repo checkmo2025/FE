@@ -1,0 +1,50 @@
+import React from "react";
+import Image from "next/image";
+interface TermsItemProps {
+  id: string;
+  label: string;
+  required: boolean;
+  checked: boolean;
+  onChange: (id: string, checked: boolean) => void;
+  link?: string;
+}
+
+const TermsItem: React.FC<TermsItemProps> = ({
+  id,
+  label,
+  required,
+  checked,
+  onChange,
+}) => {
+  return (
+    <label className="flex flex-col items-start gap-[12px] w-full cursor-pointer select-none md:flex-row md:justify-between md:items-center md:gap-0">
+      <span className="text-[#353535] text-[19.861px] font-normal leading-[15.605px]">
+        <span className="text-[14px] md:text-[clamp(16px,2.5vw,19.861px)]">
+          {label} ({required ? "필수" : "선택"})
+        </span>
+      </span>
+      <div className="relative flex items-center justify-center w-[24px] h-[24px]">
+        <input
+          type="checkbox"
+          id={id}
+          checked={checked}
+          onChange={(e) => onChange(id, e.target.checked)}
+          className="sr-only peer"
+        />
+        <div className="w-full h-full peer-checked:hidden">
+          <Image
+            src="/CheckBox_No.svg"
+            alt="Unchecked"
+            width={24}
+            height={24}
+          />
+        </div>
+        <div className="hidden w-full h-full peer-checked:block">
+          <Image src="/CheckBox_Yes.svg" alt="Checked" width={24} height={24} />
+        </div>
+      </div>
+    </label>
+  );
+};
+
+export default TermsItem;

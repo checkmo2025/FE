@@ -1,26 +1,148 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css");
 @import "tailwindcss";
-
 :root {
-  --background: #ffffff;
+  --White: #fff;
+  --Black: #000000;
+  --Red: #ff5151;
+
+  --background: #f9f7f6;
   --foreground: #171717;
+
+  --Gray_1: #eeeeee;
+  --Gray_2: #dadada;
+  --Gray_3: #bbbbbb;
+  --Gray_4: #8d8d8d;
+  --Gray_5: #5c5c5c;
+  --Gray_6: #434343;
+  --Gray_7: #2c2c2c;
+
+  --Secondary_4: #907af1;
+  --Secondary_3: #7ad1f1;
+  --Secondary_2: #f5bb80;
+  --Secondary_1: #eb9288;
+
+  --Subbrown_4: #eae5e2;
+  --Subbrown_3: #d2c5b6;
+  --Subbrown_2: #bbaa9b;
+  --Subbrown_1: #a19182;
+
+  --Primary_3: #5e4a40;
+  --Primary_2: #9a7a6b;
+  --Primary_1: #7b6154;
 }
 
 @theme inline {
+  --breakpoint-t: 768px;
+  --breakpoint-d: 1440px;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: "Pretendard Variable", Pretendard, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
+
+  /* Colors */
+  --color-White: var(--White);
+  --color-Black: var(--Black);
+  --color-Red: var(--Red);
+
+  --color-Gray-1: var(--Gray_1);
+  --color-Gray-2: var(--Gray_2);
+  --color-Gray-3: var(--Gray_3);
+  --color-Gray-4: var(--Gray_4);
+  --color-Gray-5: var(--Gray_5);
+  --color-Gray-6: var(--Gray_6);
+  --color-Gray-7: var(--Gray_7);
+
+  --color-Secondary-1: var(--Secondary_1);
+  --color-Secondary-2: var(--Secondary_2);
+  --color-Secondary-3: var(--Secondary_3);
+  --color-Secondary-4: var(--Secondary_4);
+
+  --color-Subbrown-1: var(--Subbrown_1);
+  --color-Subbrown-2: var(--Subbrown_2);
+  --color-Subbrown-3: var(--Subbrown_3);
+  --color-Subbrown-4: var(--Subbrown_4);
+
+  --color-primary-1: var(--Primary_1);
+  --color-primary-2: var(--Primary_2);
+  --color-primary-3: var(--Primary_3);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html,
+  body {
+    font-family: var(--font-sans);
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Headline */
+@utility headline_1 {
+  @apply text-[48px] font-bold leading-[135%] tracking-[-0.02px];
+}
+@utility headline_2 {
+  @apply text-[36px] font-bold leading-[135%] tracking-[-0.02px];
+}
+@utility headline_3 {
+  @apply text-[32px] font-bold leading-[135%] tracking-[-0.02px];
+}
+
+/* subhead */
+@utility subhead_1 {
+  @apply text-[24px] font-semibold leading-[135%] tracking-[-0.02px];
+}
+@utility subhead_2 {
+  @apply text-[22px] font-semibold leading-[135%] tracking-[-0.02px];
+}
+@utility subhead_3 {
+  @apply text-[20px] font-semibold leading-[135%] tracking-[-0.02px];
+}
+@utility subhead_3_1 {
+  @apply text-[18px] font-semibold leading-[135%] tracking-[-0.02px];
+}
+@utility subhead_3_2 {
+  @apply text-[18px] font-medium leading-[135%] tracking-[-0.02px];
+}
+@utility subhead_4_1 {
+  @apply text-[18px] font-medium leading-[135%] tracking-[-0.018px];
+}
+
+/* Body */
+@utility body_1 {
+  @apply text-[14px] font-semibold leading-[145%] tracking-[-0.014px] truncate;
+}
+@utility body_1_1 {
+  @apply text-[14px] font-semibold leading-[145%] tracking-[-0.014px];
+}
+@utility body_1_2 {
+  @apply text-[14px] font-medium leading-[145%] tracking-[-0.014px];
+}
+@utility body_1_3 {
+  @apply text-[14px] font-normal leading-[145%] tracking-[-0.014px];
+}
+@utility body_2_1 {
+  @apply text-[12px] font-semibold leading-[145%] tracking-[-0.012px];
+}
+@utility body_2_2 {
+  @apply text-[12px] font-medium leading-[145%] tracking-[-0.012px];
+}
+@utility body_2_3 {
+  @apply text-[12px] font-normal leading-[145%] tracking-[-0.012px];
+}
+
+/* Caption */
+@utility caption_1_1 {
+  @apply text-[12px] font-semibold leading-[145%] tracking-[-0.012px];
+}
+@utility caption_1_2 {
+  @apply text-[12px] font-medium leading-[145%] tracking-[-0.012px];
+}
+
+@theme {
+  --breakpoint-t: 768px;
+  --breakpoint-d: 1440px;
 }

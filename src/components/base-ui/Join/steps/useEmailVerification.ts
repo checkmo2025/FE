@@ -1,0 +1,95 @@
+// c:\Users\shinwookKang\Desktop\CheckMo\FE\src\components\base-ui\Join\steps\useEmailVerification.tsx
+
+import { useState, useEffect } from "react";
+
+export const useEmailVerification = () => {
+  const [email, setEmail] = useState("");
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [isCodeValid, setIsCodeValid] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+
+  // Toast Animation State
+  const [showToast, setShowToast] = useState(false); // Controls mounting
+  const [isToastVisible, setIsToastVisible] = useState(false); // Controls opacity
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    setIsEmailValid(emailRegex.test(value));
+  };
+
+  const handleVerificationCodeChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = e.target.value;
+    if (/^\d*$/.test(value) && value.length <= 6) {
+      setVerificationCode(value);
+      setIsCodeValid(value.length === 6);
+    }
+  };
+
+  const startTimer = () => {
+    if (isEmailValid) {
+      setTimeLeft(300);
+    }
+  };
+
+  const handleVerify = () => {
+    if (isCodeValid) {
+      setIsVerified(true);
+      setShowToast(true);
+    }
+  };
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+  };
+
+  useEffect(() => {
+    if (timeLeft === null || timeLeft === 0) return;
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => (prev !== null && prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [timeLeft]);
+
+  useEffect(() => {
+    if (showToast) {
+      // 1. Mount (showToast=true) -> Wait 10ms -> Fade In (isToastVisible=true)
+      const showTimer = setTimeout(() => setIsToastVisible(true), 10);
+
+      // 2. Wait 3000ms -> Fade Out (isToastVisible=false)
+      const hideTimer = setTimeout(() => setIsToastVisible(false), 3000);
+
+      // 3. Wait 3300ms (allow transition) -> Unmount (showToast=false)
+      const unmountTimer = setTimeout(() => setShowToast(false), 3300);
+
+      return () => {
+        clearTimeout(showTimer);
+        clearTimeout(hideTimer);
+        clearTimeout(unmountTimer);
+      };
+    }
+  }, [showToast]);
+
+  return {
+    email,
+    isEmailValid,
+    handleEmailChange,
+    verificationCode,
+    isCodeValid,
+    handleVerificationCodeChange,
+    timeLeft,
+    startTimer,
+    isVerified,
+    handleVerify,
+    showToast,
+    isToastVisible, // Now correctly exported
+    formatTime,
+  };
+};

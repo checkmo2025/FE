@@ -1,0 +1,137 @@
+/* src/components/base-ui/Signup/SignupTerms.module.css */
+
+/* [Container] Tablet Default (Min-Width: 768px) */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 700px;
+  height: 1004px;
+  padding: 56px;
+  background-color: var(--White);
+  border-radius: 8px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* [Close Icon] */
+.closeIcon {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+/* [Header] */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--Primary_1);
+  line-height: 135%;
+}
+
+/* [Terms List Container] */
+.termsContainer {
+  display: flex;
+  flex-direction: column;
+  width: 584px;
+  height: 386px;
+  padding: 40px;
+  gap: 32px;
+  border-radius: 12px;
+  background-color: #f9f7f6;
+  margin-bottom: 40px;
+}
+
+/* [Terms Item] */
+.termItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.termLabel {
+  font-size: 19.86px;
+  color: #353535;
+  font-weight: 400;
+}
+
+.checkbox {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background-color: var(--Gray_2);
+}
+
+/* [Next Button] */
+.nextButton {
+  width: 526px;
+  height: 48px;
+  border-radius: 8px;
+  background-color: var(--Primary_1);
+  color: var(--White);
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: filter 0.2s;
+}
+
+.nextButton:disabled {
+  background-color: var(--Gray_2);
+  cursor: not-allowed;
+}
+
+/* =========================================
+     Mobile Responsive (Max-Width: 767px)
+     ========================================= */
+@media (max-width: 767px) {
+  .container {
+    width: 352px;
+    height: 650px;
+    padding: 20px;
+  }
+
+  .header {
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .termsContainer {
+    width: 270px;
+    height: 297px;
+    padding: 20px;
+    gap: 24px;
+  }
+
+  .termLabel {
+    font-size: 12px;
+  }
+
+  .nextButton {
+    width: 270px;
+  }
+}
