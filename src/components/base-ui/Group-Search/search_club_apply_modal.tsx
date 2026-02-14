@@ -166,7 +166,7 @@ export default function SearchClubApplyModal({
           <div className="w-full flex justify-end">
             <button
               type="button"
-              onClick={() => onSubmit(reason)}
+              onClick={() => onSubmit(club.clubId,reason)}
               className={[
                 'h-[40px] px-4 rounded-[8px]',
                 'bg-primary-2 text-White border border-primary-2',
