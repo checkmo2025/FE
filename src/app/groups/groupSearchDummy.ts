@@ -26,6 +26,7 @@ export const dummyClubs: ClubSummary[] = [
     applytype: "Yes",
     region: "서울",
     participantTypes: ["STUDENT", "MEETING"],
+    reason: "함께 성장하는 모임입니다.",
   },
   {
     clubId: 202,
@@ -36,6 +37,7 @@ export const dummyClubs: ClubSummary[] = [
     applytype: "Wait",
     region: "경기",
     participantTypes: ["WORKER", "OFFLINE"],
+    reason: "퇴근 후 알찬 시간",
   },
   {
     clubId: 203,
@@ -46,6 +48,7 @@ export const dummyClubs: ClubSummary[] = [
     applytype: "Wait",
     region: "온라인",
     participantTypes: ["ONLINE"],
+    reason: "새벽 기상 미션",
   },
   {
     clubId: 204,
@@ -56,6 +59,7 @@ export const dummyClubs: ClubSummary[] = [
     applytype: "No",
     region: "부산",
     participantTypes: ["CLUB", "OFFLINE"],
+    reason: "고전의 깊이",
   },
   {
     clubId: 205,
@@ -66,6 +70,7 @@ export const dummyClubs: ClubSummary[] = [
     applytype: "Yes",
     region: "대구",
     participantTypes: ["MEETING", "OFFLINE"],
+    reason: "상상력을 자극하는 시간",
   },
   {
     clubId: 206,
@@ -76,6 +81,7 @@ export const dummyClubs: ClubSummary[] = [
     applytype: "Yes",
     region: "인천",
     participantTypes: ["WORKER", "MEETING"],
+    reason: "지식을 넓히는 독서",
   },
   {
     clubId: 207,
@@ -86,6 +92,7 @@ export const dummyClubs: ClubSummary[] = [
     applytype: "No",
     region: "온라인",
     participantTypes: ["ONLINE", "WORKER"],
+    reason: "자기계발 끝판왕",
   },
   {
     clubId: 208,
@@ -96,6 +103,7 @@ export const dummyClubs: ClubSummary[] = [
     applytype: "Wait",
     region: "서울",
     participantTypes: ["STUDENT", "OFFLINE"],
+    reason: "감성을 채우는 시간",
   },
   {
     clubId: 209,
@@ -106,6 +114,7 @@ export const dummyClubs: ClubSummary[] = [
     applytype: "Yes",
     region: "대전",
     participantTypes: ["CLUB", "MEETING"],
+    reason: "범인은 누구인가",
   },
   {
     clubId: 210,
@@ -116,6 +125,7 @@ export const dummyClubs: ClubSummary[] = [
     applytype: "Wait",
     region: "광주",
     participantTypes: ["MEETING", "OFFLINE"],
+    reason: "글쓰기의 즐거움",
   },
   {
     clubId: 211,
@@ -126,6 +136,7 @@ export const dummyClubs: ClubSummary[] = [
     applytype: "No",
     region: "온라인",
     participantTypes: ["ONLINE", "WORKER"],
+    reason: "경제를 보는 눈",
   },
   {
     clubId: 212,
@@ -136,6 +147,7 @@ export const dummyClubs: ClubSummary[] = [
     applytype: "Yes",
     region: "서울",
     participantTypes: ["STUDENT", "CLUB"],
+    reason: "생각의 깊이를 더하다",
   },
   {
     clubId: 213,
@@ -146,6 +158,7 @@ export const dummyClubs: ClubSummary[] = [
     applytype: "Wait",
     region: "온라인",
     participantTypes: ["ONLINE", "STUDENT"],
+    reason: "영어 실력 향상",
   },
   {
     clubId: 214,
@@ -156,6 +169,7 @@ export const dummyClubs: ClubSummary[] = [
     applytype: "Yes",
     region: "경기",
     participantTypes: ["MEETING", "OFFLINE"],
+    reason: "동심으로 돌아가는 시간",
   },
   {
     clubId: 215,
@@ -166,5 +180,6 @@ export const dummyClubs: ClubSummary[] = [
     applytype: "Wait",
     region: "부산",
     participantTypes: ["CLUB", "OFFLINE"],
+    reason: "책 수다의 매력",
   },
 ];
