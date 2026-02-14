@@ -17,7 +17,7 @@ import SearchClubApplyModal from '@/components/base-ui/Group-Search/search_club_
 
 
 export interface ClubSummary {
-  reason(clubId: number, reason: string): void;
+  reason: string;
   clubId: number;
   name: string;
   profileImageUrl?: string | null; // 없으면 기본 이미지 쓰면 됨
