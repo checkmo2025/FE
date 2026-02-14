@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { useState } from "react";
-import Subscribe_elements from "@/components/base-ui/Profile/subscribe_element";
 import Setting_ReportList from "@/components/base-ui/Settings/setting_report_list";
 
 export default function UiTestClient() {

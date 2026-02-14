@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import BookstoryText from "@/components/base-ui/BookStory/bookstory_text";
 import BookstoryChoosebook from "@/components/base-ui/BookStory/bookstory_choosebook";
 import BookSelectModal from "@/components/layout/BookSelectModal";
 
-export default function NewStoryPage() {
+function StoryNewContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const bookId = searchParams.get("bookId");
@@ -136,5 +136,13 @@ export default function NewStoryPage() {
         onSelect={handleBookSelect}
       />
     </div>
+  );
+}
+
+export default function NewStoryPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <StoryNewContent />
+    </Suspense>
   );
 }
