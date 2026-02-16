@@ -1,24 +1,24 @@
-// c:\Users\shinwookKang\Desktop\CheckMo\FE\src\components\base-ui\Join\steps\useEmailVerification.tsx
-
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useSignup } from "@/contexts/SignupContext";
 
 export const useEmailVerification = () => {
-  const [email, setEmail] = useState("");
-  const [isEmailValid, setIsEmailValid] = useState(false);
-  const [timeLeft, setTimeLeft] = useState<number | null>(null);
-  const [verificationCode, setVerificationCode] = useState("");
-  const [isCodeValid, setIsCodeValid] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
+  const {
+    email,
+    setEmail,
+    verificationCode,
+    setVerificationCode,
+    isVerified,
+    setIsVerified,
+    timeLeft,
+    setTimeLeft,
+    showToast,
+  } = useSignup();
 
-  // Toast Animation State
-  const [showToast, setShowToast] = useState(false); // Controls mounting
-  const [isToastVisible, setIsToastVisible] = useState(false); // Controls opacity
+  const isEmailValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+  const isCodeValid = verificationCode.length === 6;
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setEmail(value);
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    setIsEmailValid(emailRegex.test(value));
+    setEmail(e.target.value);
   };
 
   const handleVerificationCodeChange = (
@@ -27,7 +27,6 @@ export const useEmailVerification = () => {
     const value = e.target.value;
     if (/^\d*$/.test(value) && value.length <= 6) {
       setVerificationCode(value);
-      setIsCodeValid(value.length === 6);
     }
   };
 
@@ -40,7 +39,7 @@ export const useEmailVerification = () => {
   const handleVerify = () => {
     if (isCodeValid) {
       setIsVerified(true);
-      setShowToast(true);
+      showToast("인증이 완료되었습니다.");
     }
   };
 
@@ -53,29 +52,10 @@ export const useEmailVerification = () => {
   useEffect(() => {
     if (timeLeft === null || timeLeft === 0) return;
     const interval = setInterval(() => {
-      setTimeLeft((prev) => (prev !== null && prev > 0 ? prev - 1 : 0));
+      setTimeLeft(timeLeft > 0 ? timeLeft - 1 : 0);
     }, 1000);
     return () => clearInterval(interval);
-  }, [timeLeft]);
-
-  useEffect(() => {
-    if (showToast) {
-      // 1. Mount (showToast=true) -> Wait 10ms -> Fade In (isToastVisible=true)
-      const showTimer = setTimeout(() => setIsToastVisible(true), 10);
-
-      // 2. Wait 3000ms -> Fade Out (isToastVisible=false)
-      const hideTimer = setTimeout(() => setIsToastVisible(false), 3000);
-
-      // 3. Wait 3300ms (allow transition) -> Unmount (showToast=false)
-      const unmountTimer = setTimeout(() => setShowToast(false), 3300);
-
-      return () => {
-        clearTimeout(showTimer);
-        clearTimeout(hideTimer);
-        clearTimeout(unmountTimer);
-      };
-    }
-  }, [showToast]);
+  }, [timeLeft, setTimeLeft]);
 
   return {
     email,
@@ -88,8 +68,6 @@ export const useEmailVerification = () => {
     startTimer,
     isVerified,
     handleVerify,
-    showToast,
-    isToastVisible, // Now correctly exported
     formatTime,
   };
 };

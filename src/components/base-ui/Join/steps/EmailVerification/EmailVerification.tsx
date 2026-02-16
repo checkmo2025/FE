@@ -24,17 +24,15 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ onNext }) => {
     startTimer,
     isVerified,
     handleVerify,
-    showToast,
-    isToastVisible,
     formatTime,
   } = useEmailVerification();
 
   return (
     <JoinLayout title="이메일 인증">
       <div className="flex flex-col items-center w-full gap-[40px]">
-        {/* Form Container: Frame 2087328372 */}
+        {/* Form Container */}
         <div className="flex flex-col items-center w-full gap-[30px]">
-          {/* Email Input Group: Frame 2087328369 */}
+          {/* Email Input Group */}
           <div className="flex flex-col items-start gap-[12px] w-[270px] t:w-[526px]">
             <JoinInput
               label="이메일"
@@ -48,11 +46,10 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ onNext }) => {
               <button
                 onClick={startTimer}
                 disabled={!isEmailValid}
-                className={`flex justify-center items-center w-full t:w-[284px] h-[48px] rounded-[8px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px] transition-colors ${
-                  isEmailValid
+                className={`flex justify-center items-center w-full t:w-[284px] h-[48px] rounded-[8px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px] transition-colors ${isEmailValid
                     ? "bg-Subbrown-2 text-white"
                     : "bg-Gray-2 text-Gray-4"
-                }`}
+                  }`}
               >
                 인증 번호 발송
               </button>
@@ -77,18 +74,17 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ onNext }) => {
             <button
               onClick={handleVerify}
               disabled={!isCodeValid}
-              className={`flex justify-center items-center w-full t:w-[284px] h-[48px] rounded-[8px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px] self-center transition-colors ${
-                isCodeValid
+              className={`flex justify-center items-center w-full t:w-[284px] h-[48px] rounded-[8px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px] self-center transition-colors ${isCodeValid
                   ? "bg-Subbrown-2 text-white"
                   : "bg-Gray-2 text-Gray-4"
-              }`}
+                }`}
             >
               인증 완료
             </button>
           </div>
         </div>
 
-        {/* Next Button: CTA_2 */}
+        {/* Next Button */}
         <JoinButton
           onClick={onNext}
           disabled={!isVerified}
@@ -96,19 +92,6 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ onNext }) => {
         >
           다음
         </JoinButton>
-
-        {/* Toast Notification */}
-        {showToast && (
-          <div
-            className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 inline-flex justify-center items-center h-auto py-4 px-8 md:h-[88px] md:px-[138px] bg-[#31111D99] rounded-[24px] backdrop-blur-[1px] transition-opacity duration-300 ${
-              isToastVisible ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <span className="text-white text-[16px] md:text-[18px] font-medium leading-[135%] tracking-[-0.018px] whitespace-nowrap">
-              인증이 완료되었습니다.
-            </span>
-          </div>
-        )}
       </div>
     </JoinLayout>
   );

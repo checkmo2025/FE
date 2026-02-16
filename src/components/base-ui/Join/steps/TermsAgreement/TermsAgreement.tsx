@@ -2,10 +2,11 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import JoinLayout from "@/components/base-ui/Join/JoinLayout";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
+import { useSignup } from "@/contexts/SignupContext";
 
 export const TERMS_DATA = [
   {
@@ -27,12 +28,7 @@ interface TermsAgreementProps {
 }
 
 const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
-  const initialAgreements = TERMS_DATA.reduce((acc, term) => {
-    acc[term.id] = false;
-    return acc;
-  }, {} as Record<string, boolean>);
-
-  const [agreements, setAgreements] = useState(initialAgreements);
+  const { agreements, setAgreements } = useSignup();
 
   const allAgreed = TERMS_DATA.every((term) => agreements[term.id]);
   const isButtonEnabled = TERMS_DATA.filter((term) => term.required).every(
@@ -44,7 +40,7 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
   };
 
   const handleAgreementChange = (id: string, checked: boolean) => {
-    setAgreements((prev) => ({ ...prev, [id]: checked }));
+    setAgreements({ ...agreements, [id]: checked });
   };
 
   const handleAllAgreementChange = () => {

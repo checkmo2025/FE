@@ -1,12 +1,9 @@
 import { useRouter } from "next/navigation";
+import { useSignup } from "@/contexts/SignupContext";
 
 export const useSignupComplete = () => {
   const router = useRouter();
-
-  // 더미 데이터
-  const nickname = "닉네임";
-  const intro = "안녕하세요~ 윤현일입니다.";
-  const profileImage = "/profile.svg"; // 이미지가 없을 경우 /default_profile_1.svg 사용 권장
+  const { nickname, intro, profileImage } = useSignup();
 
   const handleSearchMeeting = () => {
     console.log("Search Meeting clicked");
@@ -24,9 +21,9 @@ export const useSignupComplete = () => {
   };
 
   return {
-    nickname,
-    intro,
-    profileImage,
+    nickname: nickname || "닉네임",
+    intro: intro || "안녕하세요~",
+    profileImage: profileImage || "/profile.svg",
     handleSearchMeeting,
     handleCreateMeeting,
     handleUseWithoutMeeting,
