@@ -102,7 +102,7 @@ export default function GroupNoticePage() {
       </div>
 
       {/* 페이지네이션 */}
-      <div className="fixed bottom-20 left-0 right-0 t:bottom-24 d:bottom-4 d:left-[200px] py-4 flex items-center justify-center gap-0 z-50">
+      <div className="fixed bottom-20 left-0 right-0 t:bottom-24 d:bottom-4 d:left-50 py-4 flex items-center justify-center gap-0 z-50">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
