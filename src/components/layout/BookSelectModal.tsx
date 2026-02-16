@@ -83,7 +83,7 @@ export default function BookSelectModal({
 
   return (
     <div
-      className="fixed top-[108px] t:top-0 left-0 right-0 bottom-0 t:inset-0 z-50 flex items-center justify-center p-0 t:p-4"
+      className="fixed top-[60px] left-0 right-0 bottom-0 t:inset-0 z-50 flex items-center justify-center p-0 t:p-4"
       onClick={onClose}
     >
       {/* 배경 오버레이 - 태블릿/데스크탑에서만 */}
