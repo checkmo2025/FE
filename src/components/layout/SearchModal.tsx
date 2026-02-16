@@ -86,8 +86,8 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
         className="fixed left-0 right-0 z-50 bg-primary-1 border-b border-white/20"
         style={{ top: `${topOffset}px` }}
       >
-      <div className="mx-auto w-full max-w-[1440px] px-4 py-3 t:px-10 t:py-4">
-        <div className="flex items-center gap-3">
+      <div className="mx-auto w-full max-w-[1440px] px-4 py-3 t:py-4">
+        <div className="w-full t:w-[683px] d:w-[1400px] t:mx-auto flex items-center gap-3">
           <div className="relative w-7 h-7 t:w-8 t:h-8 d:w-12 d:h-12 shrink-0 mr-5 t:mr-7.5">
             <Image
               src="/thick_search.svg"
@@ -125,29 +125,31 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-[1440px] px-4 t:px-10 d:px-[40px]">
-        <div className="border-b-2 border-background"></div>
+      <div className="mx-auto w-full max-w-[1440px] px-4">
+        <div className="w-full t:w-[683px] d:w-[1400px] t:mx-auto border-b-2 border-background"></div>
       </div>
 
       {/* 오늘의 추천 책 */}
-      <div className="mx-auto w-full max-w-[1440px] px-4 py-4 t:px-7 t:py-5 mt-2">
-        <h3 className="text-white subhead_1 mb-6">오늘의 추천 책</h3>
-        <div className="flex gap-2 t:gap-4 overflow-x-auto">
-          {recommendedBooks.slice(0, 4).map((book, index) => (
-            <div key={book.id} className={index === 3 ? "hidden d:block" : ""}>
-              <Search_BookCoverCard
-                imgUrl={book.imgUrl}
-                title={book.title}
-                author={book.author}
-                liked={likedBooks[book.id] || false}
-                onLikeChange={(liked) =>
-                  setLikedBooks((prev) => ({ ...prev, [book.id]: liked }))
-                }
-              />
-            </div>
-          ))}
+      <div className="mx-auto w-full max-w-[1440px] px-4 py-4 t:px-6 d:px-4 t:py-5 mt-2">
+        <div className="w-full t:w-[683px] d:w-[1400px] t:mx-auto">
+          <h3 className="text-white subhead_1 mb-6">오늘의 추천 책</h3>
+          <div className="flex gap-2 t:gap-4 d:gap-6 justify-center">
+            {recommendedBooks.slice(0, 4).map((book, index) => (
+              <div key={book.id} className={`shrink-0 ${index === 3 ? 'hidden d:block' : ''}`}>
+                <Search_BookCoverCard
+                  imgUrl={book.imgUrl}
+                  title={book.title}
+                  author={book.author}
+                  liked={likedBooks[book.id] || false}
+                  onLikeChange={(liked) =>
+                    setLikedBooks((prev) => ({ ...prev, [book.id]: liked }))
+                  }
+                />
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex t:mx-8 d:mx-8 justify-end mt-4">
+        <div className="flex justify-end mt-4 w-full t:w-[683px] d:w-[1400px] t:mx-auto">
           <Link
             href="#"
             className="flex items-center gap-1 text-white body_1_2 t:subhead_4_1 hover:opacity-80 border-b border-white"
