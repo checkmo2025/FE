@@ -57,6 +57,18 @@ const JoinInput: React.FC<JoinInputProps> = ({
       : "password"
     : type;
 
+  const hasHeight = className?.includes("h-");
+  const hasPx =
+    className?.includes("px-") ||
+    className?.includes("pl-") ||
+    className?.includes("pr-") ||
+    className?.includes("p-");
+  const hasPy =
+    className?.includes("py-") ||
+    className?.includes("pt-") ||
+    className?.includes("pb-") ||
+    className?.includes("p-");
+
   return (
     <div className="flex flex-col items-start w-full gap-[12px]">
       {label && (
@@ -77,8 +89,9 @@ const JoinInput: React.FC<JoinInputProps> = ({
       <div className="relative w-full">
         <input
           type={inputType}
-          className={`w-full h-[44px] px-[16px] py-[12px] bg-white border rounded-[8px] outline-none ${className} ${isPasswordType ? "pr-[40px]" : ""
-            }`}
+          className={`w-full bg-white border rounded-[8px] outline-none ${!hasHeight ? "h-[44px]" : ""
+            } ${!hasPx ? "px-[16px]" : ""} ${!hasPy ? "py-[12px]" : ""} ${className || ""
+            } ${isPasswordType ? "pr-[40px]" : ""}`}
           {...props}
         />
         {isPasswordType && (

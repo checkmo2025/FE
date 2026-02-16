@@ -50,7 +50,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
               <span className="text-primary-1 font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px] t:text-[20px] t:leading-[135%] t:tracking-[-0.02px]">
                 닉네임
               </span>
-              <div className="flex flex-row justify-between w-full gap-[8px]">
+              <div className="flex flex-row items-center justify-between w-full gap-[8px]">
                 <div className="w-[158px] t:flex-1">
                   {/* Mobile Input */}
                   <div className="block w-full t:hidden">
