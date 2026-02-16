@@ -76,14 +76,14 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     <>
       {/* 배경 블러 */}
       <div
-        className="fixed left-0 right-0 bottom-0 bg-black/50 backdrop-blur-xs z-40"
+        className="fixed left-0 right-0 bottom-0 bg-black/50 backdrop-blur-xs z-40 animate-fade-in"
         onClick={onClose}
         style={{ top: `${topOffset}px` }}
       />
       
       {/* 모달 */}
       <div
-        className="fixed left-0 right-0 z-50 bg-primary-1 border-b border-white/20"
+        className="fixed left-0 right-0 z-50 bg-primary-1 border-b border-white/20 animate-slide-down"
         style={{ top: `${topOffset}px` }}
       >
       <div className="mx-auto w-full max-w-[1440px] px-4 py-3 t:py-4">
