@@ -32,7 +32,7 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   return (
     <header className="w-full bg-primary-1">
-      <div className="mx-auto w-full max-w-[1440px] px-4 py-3 t:px-6 t:py-5 d:px-3">
+      <div className="mx-auto w-full max-w-[1440px] px-4 py-3 t:px-6 t:py-3.5 d:px-3">
         <div className="relative flex items-center justify-between w-full">
           {/*로고 + 메뉴*/}
           <div className="flex items-center t:gap-2.5 d:gap-8">
