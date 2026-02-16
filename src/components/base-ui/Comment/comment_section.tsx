@@ -43,7 +43,7 @@ export default function CommentSection({ storyId }: CommentSectionProps) {
       isAuthor: false,
       isMine: true, // 내가 쓴 댓글
     };
-    setComments([...comments, newComment]);
+    setComments([newComment, ...comments]);
   };
 
   const handleAddReply = (parentId: number, content: string) => {
