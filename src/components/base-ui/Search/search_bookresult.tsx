@@ -1,5 +1,5 @@
-'use client';
-import Image from 'next/image';
+"use client";
+import Image from "next/image";
 
 type SearchBookResultProps = {
   imgUrl?: string; // 없으면 booksample.svg
@@ -27,20 +27,20 @@ export default function SearchBookResult({
   onPencilClick,
   onCardClick,
 
-  className = '',
+  className = "",
 }: SearchBookResultProps) {
-  const coverSrc = imgUrl && imgUrl.length > 0 ? imgUrl : '/booksample.svg';
+  const coverSrc = imgUrl && imgUrl.length > 0 ? imgUrl : "/booksample.svg";
   const clippedDetail =
-    detail.length > 500 ? detail.slice(0, 500) + '...' : detail;
+    detail.length > 500 ? detail.slice(0, 500) + "..." : detail;
 
   return (
     <div
       onClick={onCardClick}
       className={[
-        'relative flex w-full max-w-[1040px] p-[20px] justify-center items-start gap-6 rounded-[8px] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-Subbrown-4',
-        onCardClick ? 'cursor-pointer' : '',
+        "relative flex w-full p-[20px] justify-center items-start gap-6 rounded-[8px] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-Subbrown-4",
+        onCardClick ? "cursor-pointer" : "",
         className,
-      ].join(' ')}
+      ].join(" ")}
     >
       <div className="relative w-[126px] h-[183px] shrink-0">
         <Image
@@ -54,12 +54,8 @@ export default function SearchBookResult({
 
       <div className="flex flex-1 min-w-0 items-start gap-[24px]">
         <div className="flex flex-col min-w-0 flex-1">
-          <p className="text-Gray-7 subhead_3 truncate">
-            {title}
-          </p>
-          <p className="text-Gray-4 subhead_4_1 truncate">
-            {author}
-          </p>
+          <p className="text-Gray-7 subhead_3 truncate">{title}</p>
+          <p className="text-Gray-4 subhead_4_1 truncate">{author}</p>
 
           <div className="h-[12px]" />
 
@@ -78,7 +74,7 @@ export default function SearchBookResult({
             className="w-[24px] h-[24px] shrink-0"
           >
             <Image
-              src={liked ? '/red_heart.svg' : '/gray_heart.svg'}
+              src={liked ? "/red_heart.svg" : "/gray_heart.svg"}
               alt=""
               width={24}
               height={24}
@@ -88,19 +84,19 @@ export default function SearchBookResult({
       </div>
 
       <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onPencilClick?.();
-            }}
-            className="
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onPencilClick?.();
+        }}
+        className="
               flex absolute bottom-[20px] right-[20px] w-12 h-12 t:w-15 t:h-15 px-[10px] py-[4.167px]
               flex-col justify-center items-center gap-[8.333px] shrink-0
               rounded-full bg-primary-2
             "
-          >
-            <Image src="/pencil_icon.svg" alt="" width={20} height={20} />
-          </button>
+      >
+        <Image src="/pencil_icon.svg" alt="" width={20} height={20} />
+      </button>
     </div>
   );
 }
