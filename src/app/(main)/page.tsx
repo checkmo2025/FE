@@ -13,13 +13,13 @@ import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_la
 export default function HomePage() {
   const groups: { id: string; name: string }[] = [];
   const [showLoginModal, setShowLoginModal] = useState(false);
-  
+
   // 사용자 더미 데이터
   const users = [
-    { id: '1', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-    { id: '2', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-    { id: '3', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-    { id: '4', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
+    { id: "1", name: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
+    { id: "2", name: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
+    { id: "3", name: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
+    { id: "4", name: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
   ];
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 t:px-6">
@@ -39,9 +39,7 @@ export default function HomePage() {
       <div className="flex flex-col gap-6 t:hidden">
         {/* 소식 */}
         <section className="pt-6">
-          <h2 className="pb-4 body_1 leading-7 text-zinc-800">
-            소식
-          </h2>
+          <h2 className="pb-4 body_1 leading-7 text-zinc-800">소식</h2>
           <NewsBannerSlider />
         </section>
 
@@ -49,9 +47,7 @@ export default function HomePage() {
         <section className="w-full">
           <div className="flex gap-4">
             <div className="flex-1">
-              <h2 className="pb-2 body_1 leading-7 text-zinc-800">
-                독서모임
-              </h2>
+              <h2 className="pb-2 body_1 leading-7 text-zinc-800">독서모임</h2>
               <HomeBookclub groups={groups} />
             </div>
             <div className="flex-1">
@@ -65,7 +61,7 @@ export default function HomePage() {
                     name={u.name}
                     subscribingCount={u.subscribingCount}
                     subscribersCount={u.subscribersCount}
-                    onSubscribeClick={() => console.log('subscribe', u.id)}
+                    onSubscribeClick={() => console.log("subscribe", u.id)}
                   />
                 ))}
               </div>
@@ -151,17 +147,17 @@ export default function HomePage() {
         <div className="flex-1 pt-6 flex flex-col gap-6">
           {/* 소식 */}
           <section>
-          <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">
-            소식
-          </h2>
-          <NewsBannerSlider />
+            <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">
+              소식
+            </h2>
+            <NewsBannerSlider />
           </section>
 
           {/* 책 이야기 카드 */}
           <section>
             <div className="grid grid-cols-3 gap-5">
               {DUMMY_STORIES.slice(0, 3).map((story) => (
-            <BookStoryCard
+                <BookStoryCard
                   key={story.id}
                   authorName={story.authorName}
                   createdAt={story.createdAt}
@@ -171,10 +167,10 @@ export default function HomePage() {
                   likeCount={story.likeCount}
                   commentCount={story.commentCount}
                   subscribeText="구독"
-            />
+                />
               ))}
-          </div>
-        </section>
+            </div>
+          </section>
         </div>
       </div>
     </div>
