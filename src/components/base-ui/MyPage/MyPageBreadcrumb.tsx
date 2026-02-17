@@ -8,13 +8,13 @@ const MyPageBreadcrumb = () => {
         <span className="text-[#BBB] font-sans text-[18px] font-medium leading-[135%] tracking-[-0.018px]">
           전체
         </span>
-                <Image
-                    src="/Polygon6.svg"
-                    alt="arrow"
-                    width={12}
-                    height={12}
-                    className="rotate-90 t:rotate-0"
-                  />
+        <Image
+          src="/Polygon6.svg"
+          alt="arrow"
+          width={12}
+          height={12}
+          className="shrink-0"
+        />
         <span className="text-[#2C2C2C] font-sans text-[18px] font-medium leading-[135%] tracking-[-0.018px]">
           마이페이지
         </span>
