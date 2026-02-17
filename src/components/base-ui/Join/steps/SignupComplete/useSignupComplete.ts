@@ -23,7 +23,7 @@ export const useSignupComplete = () => {
   return {
     nickname: nickname || "닉네임",
     intro: intro || "안녕하세요~",
-    profileImage: profileImage || "/profile.svg",
+    profileImage: profileImage || "/default_profile_1.svg",
     handleSearchMeeting,
     handleCreateMeeting,
     handleUseWithoutMeeting,

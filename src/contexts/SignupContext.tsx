@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode, useCallback } from "react";
+import React, { createContext, useContext, useState, ReactNode, useCallback, useRef, useMemo } from "react";
 
 interface SignupState {
     // Terms
@@ -72,22 +72,29 @@ const SignupContext = createContext<SignupContextType | undefined>(undefined);
 
 export const SignupProvider = ({ children }: { children: ReactNode }) => {
     const [state, setState] = useState<SignupState>(initialState);
+    const toastTimers = useRef<NodeJS.Timeout[]>([]);
 
     const showToast = useCallback((message: string) => {
+        // Clear existing timers
+        toastTimers.current.forEach(clearTimeout);
+        toastTimers.current = [];
+
         setState((prev) => ({ ...prev, toast: { message, visible: true } }));
 
         // Fade out after 2.5s
-        setTimeout(() => {
+        const fadeOutTimer = setTimeout(() => {
             setState((prev) => prev.toast ? { ...prev, toast: { ...prev.toast, visible: false } } : prev);
         }, 2500);
 
         // Unmount after 3s
-        setTimeout(() => {
+        const unmountTimer = setTimeout(() => {
             setState((prev) => ({ ...prev, toast: null }));
         }, 3000);
+
+        toastTimers.current.push(fadeOutTimer, unmountTimer);
     }, []);
 
-    const actions: SignupActions = {
+    const actions = useMemo((): SignupActions => ({
         setAgreements: (agreements) => setState((prev) => ({ ...prev, agreements })),
         setEmail: (email) => setState((prev) => ({ ...prev, email })),
         setVerificationCode: (verificationCode) => setState((prev) => ({ ...prev, verificationCode })),
@@ -105,10 +112,12 @@ export const SignupProvider = ({ children }: { children: ReactNode }) => {
         setSelectedInterests: (selectedInterests) => setState((prev) => ({ ...prev, selectedInterests })),
         showToast,
         resetSignup: () => setState(initialState),
-    };
+    }), [showToast]);
+
+    const contextValue = useMemo(() => ({ ...state, ...actions }), [state, actions]);
 
     return (
-        <SignupContext.Provider value={{ ...state, ...actions }}>
+        <SignupContext.Provider value={contextValue}>
             {children}
         </SignupContext.Provider>
     );
