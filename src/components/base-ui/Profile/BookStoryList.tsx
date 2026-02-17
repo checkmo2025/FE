@@ -67,15 +67,14 @@ const MOCK_STORIES = [
 
 export default function BookStoryList() {
   return (
-    <div
-      className="grid w-full justify-items-center
-      grid-cols-2 gap-x-[17px] gap-y-[12px]
-      t:w-[688px] t:gap-x-[16px] t:gap-y-[40px]
-      d:w-[1048px] d:grid-cols-3 d:gap-x-[20px]"
-    >
-      {MOCK_STORIES.map(({ id, ...storyData }) => (
-        <BookStoryCard key={id} {...storyData} />
-      ))}
+    <div className="flex flex-col items-center w-full max-w-[1048px] mx-auto gap-[20px] px-[18px] md:px-[40px] lg:px-0">
+      <div
+        className="grid grid-cols-2 min-[540px]:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-[20px] md:gap-[12px] lg:gap-[20px] w-fit"
+      >
+        {MOCK_STORIES.map(({ id, ...storyData }) => (
+          <BookStoryCard key={id} {...storyData} />
+        ))}
+      </div>
     </div>
   );
 }

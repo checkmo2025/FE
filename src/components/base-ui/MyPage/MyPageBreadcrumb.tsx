@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const MyPageBreadcrumb = () => {
   return (
-    <div className="flex flex-col items-start w-full md:w-[724px] lg:w-[1396px] px-[10px] py-[12px] gap-[10px] border-b border-[#DADADA]">
+    <div className="flex flex-col items-start w-full max-w-[1440px] px-[18px] md:px-[40px] lg:px-[20px] py-[12px] gap-[10px] border-b border-[#DADADA] mx-auto">
       <div className="flex items-center gap-[20px] self-stretch">
         <span className="text-[#BBB] font-sans text-[18px] font-medium leading-[135%] tracking-[-0.018px]">
           전체

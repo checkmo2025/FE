@@ -7,7 +7,7 @@ const UserProfile = () => {
   const user = DUMMY_USER_PROFILE;
 
   return (
-    <div className="flex flex-col items-start w-full max-w-[1440px] gap-[24px] md:gap-[80px] px-[18px] md:px-[40px] lg:px-0">
+    <div className="flex flex-col items-start w-full max-w-[1440px] gap-[24px] md:gap-[80px] px-[18px] md:px-[40px] lg:px-0 mx-auto">
       {/* Inner Content (Center Aligned) */}
       <div className="flex flex-col items-start w-full max-w-[734px] gap-[24px] md:gap-[40px] mx-auto">
         {/* Profile Info Area */}
