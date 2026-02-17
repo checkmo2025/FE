@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/useAuthStore";
 import { LoginForm } from "@/types/auth";
@@ -47,18 +46,11 @@ export default function useLoginForm(onSuccess?: () => void) {
       const data = await authService.login(form);
 
       console.log("로그인 성공:", data);
-      // 1. Token Storage (Secure Cookie)
-      if (data.isSuccess && data.result?.accessToken) {
-        Cookies.set("accessToken", data.result.accessToken, {
-          secure: true,
-          sameSite: "strict",
-        });
-      }
 
-      // 2. Global State Update
+      // 1. Global State Update
       login({ email: form.email });
 
-      // 3. Navigation & UI Feedback
+      // 2. Navigation & UI Feedback
       toast.success("로그인에 성공했습니다!");
       if (onSuccess) onSuccess();
       router.push("/");

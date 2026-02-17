@@ -20,6 +20,8 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ onNext }) => {
     toggleInterest,
     handleResetImage,
     handleImageUpload,
+    handleFinish,
+    isLoading,
     isValid,
   } = useProfileImage();
   const { showToast } = useSignup();
@@ -41,6 +43,8 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ onNext }) => {
   }, []);
 
   const handleNextClick = () => {
+    if (isLoading) return;
+
     // 1. 프로필 사진 업로드 안하거나, 기본 프로필 사진 사용 클릭 안하고 다음 버튼 클릭시
     if (!isProfileImageSet && (isMobile ? mobileStep === "image" : true)) {
       showToast("프로필 사진을 입력해주세요!");
@@ -60,7 +64,7 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ onNext }) => {
     }
 
     if (isValid) {
-      onNext?.();
+      handleFinish(() => onNext?.());
     }
   };
 
@@ -109,10 +113,10 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ onNext }) => {
 
         <JoinButton
           onClick={handleNextClick}
-          disabled={isButtonDisabled}
+          disabled={isButtonDisabled || isLoading}
           className="w-[272px] t:w-[526px]"
         >
-          {isMobile && mobileStep === "image" ? "다음" : "가입 완료"}
+          {isLoading ? "처리 중..." : (isMobile && mobileStep === "image" ? "다음" : "가입 완료")}
         </JoinButton>
       </div>
     </JoinLayout>

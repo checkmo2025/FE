@@ -1,4 +1,5 @@
 import { useSignup } from "@/contexts/SignupContext";
+import { authService } from "@/services/authService";
 
 export const useProfileSetup = () => {
   const {
@@ -50,13 +51,22 @@ export const useProfileSetup = () => {
     setPhone(formatted);
   };
 
-  const handleCheckDuplicate = () => {
+  const handleCheckDuplicate = async () => {
     if (!nickname) return;
 
-    // 더미 로직: 중복 확인 결과 표시
-    console.log("Check duplicate nickname:", nickname);
-    setIsNicknameChecked(true);
-    showToast("사용 가능한 닉네임입니다.");
+    try {
+      const response = await authService.checkNickname(nickname);
+      // Backend Spec: result: false (not duplicated/available), result: true (duplicated/taken)
+      if (response.isSuccess && response.result === false) {
+        setIsNicknameChecked(true);
+        showToast("사용 가능한 닉네임입니다.");
+      } else {
+        showToast("이미 사용 중인 닉네임입니다.");
+        setIsNicknameChecked(false);
+      }
+    } catch (error: any) {
+      showToast(error.message || "닉네임 확인 중 오류가 발생했습니다.");
+    }
   };
 
   const isNicknameValid = nickname.length > 0;
