@@ -1,24 +1,34 @@
-import { useState } from "react";
+import { useSignup } from "@/contexts/SignupContext";
 
 export const useProfileSetup = () => {
-  const [nickname, setNickname] = useState("");
-  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
-
-  const [intro, setIntro] = useState("");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const {
+    nickname,
+    setNickname,
+    isNicknameChecked,
+    setIsNicknameChecked,
+    intro,
+    setIntro,
+    name,
+    setName,
+    phone,
+    setPhone,
+    showToast,
+  } = useSignup();
 
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNickname(e.target.value);
+    const value = e.target.value;
+    // 닉네임 : 영어 소문자 및 특수문자, 숫자만 사용 가능, 최대 20글자
+    const filteredValue = value.replace(/[^a-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, "").slice(0, 20);
+    setNickname(filteredValue);
     setIsNicknameChecked(false);
   };
 
   const handleIntroChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIntro(e.target.value);
+    setIntro(e.target.value.slice(0, 40)); // 최대 40자
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
+    setName(e.target.value.slice(0, 10)); // 10자 제한
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,9 +52,14 @@ export const useProfileSetup = () => {
 
   const handleCheckDuplicate = () => {
     if (!nickname) return;
+
+    // 더미 로직: 중복 확인 결과 표시
     console.log("Check duplicate nickname:", nickname);
     setIsNicknameChecked(true);
+    showToast("사용 가능한 닉네임입니다.");
   };
+
+  const isNicknameValid = nickname.length > 0;
 
   const isValid =
     nickname !== "" &&
@@ -56,6 +71,7 @@ export const useProfileSetup = () => {
   return {
     nickname,
     isNicknameChecked,
+    isNicknameValid,
     intro,
     name,
     phone,

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 
 interface JoinInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  description?: string;
   hideLabel?: boolean;
 }
 
@@ -42,6 +43,7 @@ const EyeOffIcon = () => (
 
 const JoinInput: React.FC<JoinInputProps> = ({
   label,
+  description,
   hideLabel,
   className,
   type,
@@ -55,23 +57,41 @@ const JoinInput: React.FC<JoinInputProps> = ({
       : "password"
     : type;
 
+  const hasHeight = className?.includes("h-");
+  const hasPx =
+    className?.includes("px-") ||
+    className?.includes("pl-") ||
+    className?.includes("pr-") ||
+    className?.includes("p-");
+  const hasPy =
+    className?.includes("py-") ||
+    className?.includes("pt-") ||
+    className?.includes("pb-") ||
+    className?.includes("p-");
+
   return (
     <div className="flex flex-col items-start w-full gap-[12px]">
       {label && (
-        <span
-          className={`text-[#7B6154] font-sans text-[20px] font-semibold leading-[135%] tracking-[-0.02px] ${
-            hideLabel ? "sr-only" : ""
-          }`}
-        >
-          {label}
-        </span>
+        <div className="flex items-center gap-[8px]">
+          <span
+            className={`text-[#7B6154] font-sans text-[20px] font-semibold leading-[135%] tracking-[-0.02px] ${hideLabel ? "sr-only" : ""
+              }`}
+          >
+            {label}
+          </span>
+          {description && (
+            <span className="text-Gray-4 body_2_2 font-sans truncate hidden t:block">
+              {description}
+            </span>
+          )}
+        </div>
       )}
       <div className="relative w-full">
         <input
           type={inputType}
-          className={`w-full h-[44px] px-[16px] py-[12px] bg-white border rounded-[8px] outline-none ${className} ${
-            isPasswordType ? "pr-[40px]" : ""
-          }`}
+          className={`w-full bg-white border rounded-[8px] outline-none ${!hasHeight ? "h-[44px]" : ""
+            } ${!hasPx ? "px-[16px]" : ""} ${!hasPy ? "py-[12px]" : ""} ${className || ""
+            } ${isPasswordType ? "pr-[40px]" : ""}`}
           {...props}
         />
         {isPasswordType && (

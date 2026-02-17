@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useSignup } from "@/contexts/SignupContext";
 
 export const INTEREST_CATEGORIES = [
   "소설/시/희곡",
@@ -19,23 +20,31 @@ export const INTEREST_CATEGORIES = [
 ];
 
 export const useProfileImage = () => {
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const [profileImage, setProfileImage] = useState<string | null>(
-    "/default_profile_1.svg"
-  );
+  const {
+    selectedInterests,
+    setSelectedInterests,
+    profileImage,
+    setProfileImage,
+    isProfileImageSet,
+    setIsProfileImageSet,
+    showToast,
+  } = useSignup();
 
   const toggleInterest = (category: string) => {
     if (selectedInterests.includes(category)) {
-      setSelectedInterests((prev) => prev.filter((c) => c !== category));
+      setSelectedInterests(selectedInterests.filter((c) => c !== category));
     } else {
       if (selectedInterests.length < 6) {
-        setSelectedInterests((prev) => [...prev, category]);
+        setSelectedInterests([...selectedInterests, category]);
+      } else {
+        showToast("카테고리는 최대 6개까지 선택 가능합니다.");
       }
     }
   };
 
   const handleResetImage = () => {
     setProfileImage("/default_profile_1.svg");
+    setIsProfileImageSet(true);
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,6 +52,7 @@ export const useProfileImage = () => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
+      setIsProfileImageSet(true);
     }
   };
 
@@ -55,11 +65,12 @@ export const useProfileImage = () => {
     };
   }, [profileImage]);
 
-  const isValid = selectedInterests.length >= 1;
+  const isValid = selectedInterests.length >= 1 && selectedInterests.length <= 6;
 
   return {
     selectedInterests,
     profileImage,
+    isProfileImageSet,
     toggleInterest,
     handleResetImage,
     handleImageUpload,
