@@ -1,10 +1,20 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
 import { DUMMY_USER_PROFILE } from "@/constants/mocks/mypage";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const UserProfile = () => {
-  const user = DUMMY_USER_PROFILE;
+  const { user: authUser } = useAuthStore();
+
+  // 서버 데이터가 있으면 사용하고, 없으면 더미 데이터 사용 (구독자 수 등은 현재 API에 없음)
+  const user = {
+    ...DUMMY_USER_PROFILE,
+    name: authUser?.nickname || authUser?.email || DUMMY_USER_PROFILE.name,
+    intro: authUser?.description || DUMMY_USER_PROFILE.intro,
+    profileImage: authUser?.profileImageUrl || DUMMY_USER_PROFILE.profileImage,
+  };
 
   return (
     <div className="flex flex-col items-start w-full max-w-[1440px] gap-[24px] md:gap-[80px] px-[18px] md:px-[40px] lg:px-0 mx-auto">
@@ -72,14 +82,17 @@ const UserProfile = () => {
                   />
                 </button>
                 {/* Settings Icon: Absolute on Mobile, Static on Tablet+ */}
-                <button className="absolute right-0 top-0 md:static flex items-center justify-center w-[24px] h-[24px]">
+                <Link
+                  href="/setting/profile"
+                  className="absolute right-0 top-0 md:static flex items-center justify-center w-[24px] h-[24px]"
+                >
                   <Image
                     src="/Setting_icon.svg"
                     alt="Settings"
                     width={24}
                     height={24}
                   />
-                </button>
+                </Link>
               </div>
             </div>
 

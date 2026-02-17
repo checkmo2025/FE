@@ -1,8 +1,26 @@
+"use client";
+
+import { useAuthStore } from "@/store/useAuthStore";
 import CategorySelector from "@/components/base-ui/Settings/EditProfile/CategorySelector";
 import ProfileImageSection from "@/components/base-ui/Settings/EditProfile/ProfileImageSection";
 import SettingsDetailLayout from "@/components/base-ui/Settings/SettingsDetailLayout";
+import { useState, useEffect } from "react";
 
 export default function ProfileEditPage() {
+  const { user } = useAuthStore();
+  const [nickname, setNickname] = useState(user?.nickname || "");
+  const [intro, setIntro] = useState(user?.description || "");
+  const [name, setName] = useState(user?.nickname || ""); // Assuming nickname is used for name if not separate
+  const [phone, setPhone] = useState(""); // Phone not in User type yet
+
+  useEffect(() => {
+    if (user) {
+      setNickname(user.nickname || "");
+      setIntro(user.description || "");
+      setName(user.nickname || "");
+    }
+  }, [user]);
+
   // 공통 스타일 상수
   const inputContainerClass =
     "flex items-center gap-[10px] rounded-[8px] border border-Subbrown-4 bg-White px-[16px] py-[12px] h-[36px] md:h-[52px]";
@@ -53,8 +71,8 @@ export default function ProfileEditPage() {
                   label === "소개"
                     ? "20자 이내로 작성해주세요"
                     : label === "전화번호"
-                    ? "010-0000-0000"
-                    : `${label}을 입력해주세요`
+                      ? "010-0000-0000"
+                      : `${label}을 입력해주세요`
                 }
               />
             </div>

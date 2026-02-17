@@ -8,4 +8,5 @@ export const AUTH_ENDPOINTS = {
   EMAIL_CONFIRM: `${API_BASE_URL}/auth/email-verification/confirm`,
   ADDITIONAL_INFO: `${API_BASE_URL}/members/additional-info`,
   CHECK_NICKNAME: `${API_BASE_URL}/members/check-nickname`,
+  PROFILE: `${API_BASE_URL}/members/me`,
 };

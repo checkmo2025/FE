@@ -19,7 +19,15 @@ const CATEGORIES = [
   "기타",
 ];
 
-export default function CategorySelector() {
+interface Props {
+  selectedCategories?: string[]; // Enum string values from backend
+  onToggle?: (category: string) => void;
+}
+
+export default function CategorySelector({
+  selectedCategories = [],
+  onToggle,
+}: Props) {
   return (
     <div className="flex flex-col items-start gap-[28px] self-stretch">
       <div className="flex items-end gap-[9px] self-stretch">
@@ -32,18 +40,28 @@ export default function CategorySelector() {
         md:w-[386px] md:gap-y-[16px]
         xl:w-full xl:grid-cols-5"
       >
-        {CATEGORIES.map((cat) => (
-          <div
-            key={cat}
-            className="flex items-center justify-center gap-[8px] rounded-[400px] border border-Subbrown-3 bg-background px-[16px] cursor-pointer hover:bg-white
-              h-[36px] w-full
-              md:h-[44px] md:w-[122px]"
-          >
-            <span className="body_1_3 text-Gray-5 whitespace-nowrap">
-              {cat}
-            </span>
-          </div>
-        ))}
+        {CATEGORIES.map((cat) => {
+          const isSelected = selectedCategories.includes(cat);
+          return (
+            <div
+              key={cat}
+              onClick={() => onToggle?.(cat)}
+              className={`flex items-center justify-center gap-[8px] rounded-[400px] border px-[16px] cursor-pointer transition-colors
+                h-[36px] w-full md:h-[44px] md:w-[122px]
+                ${isSelected
+                  ? "border-primary-1 bg-primary-1"
+                  : "border-Subbrown-3 bg-background hover:bg-white"
+                }`}
+            >
+              <span
+                className={`body_1_3 whitespace-nowrap ${isSelected ? "text-white" : "text-Gray-5"
+                  }`}
+              >
+                {cat}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

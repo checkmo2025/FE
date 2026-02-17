@@ -40,4 +40,8 @@ export const authService = {
   additionalInfo: async (data: AdditionalInfo): Promise<ApiResponse> => {
     return await apiClient.post<ApiResponse>(AUTH_ENDPOINTS.ADDITIONAL_INFO, data);
   },
+
+  getProfile: async (): Promise<ApiResponse<User>> => {
+    return await apiClient.get<ApiResponse<User>>(AUTH_ENDPOINTS.PROFILE);
+  },
 };

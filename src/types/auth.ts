@@ -1,5 +1,9 @@
 export interface User {
   email: string;
+  nickname?: string;
+  description?: string;
+  profileImageUrl?: string;
+  categories?: string[];
   profileCompleted?: boolean;
 }
 
