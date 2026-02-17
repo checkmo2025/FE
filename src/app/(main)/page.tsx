@@ -10,9 +10,11 @@ import LoginModal from "@/components/base-ui/Login/LoginModal";
 import { DUMMY_STORIES } from "@/data/dummyStories";
 import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
 
+import { useAuthStore } from "@/store/useAuthStore";
+
 export default function HomePage() {
   const groups: { id: string; name: string }[] = [];
-  const [showLoginModal, setShowLoginModal] = useState(false);
+  const { isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
 
   // 사용자 더미 데이터
   const users = [
@@ -23,16 +25,8 @@ export default function HomePage() {
   ];
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 t:px-6">
-      {/* 임시 로그인 모달 테스트 버튼 */}
-      <button
-        onClick={() => setShowLoginModal(true)}
-        className="fixed z-50 px-6 py-3 text-white rounded-full shadow-lg bottom-10 right-10 bg-primary-1 subhead_4_1"
-      >
-        로그인 모달 열기
-      </button>
-
-      {showLoginModal && (
-        <LoginModal onClose={() => setShowLoginModal(false)} />
+      {isLoginModalOpen && (
+        <LoginModal onClose={() => closeLoginModal()} />
       )}
 
       {/* 모바일  */}

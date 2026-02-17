@@ -5,18 +5,35 @@ import JoinLayout from "@/components/base-ui/Join/JoinLayout";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
 import JoinInput from "@/components/base-ui/Join/JoinInput";
 import { useSignup } from "@/contexts/SignupContext";
+import { authService } from "@/services/authService";
 
 interface PasswordEntryProps {
   onNext: () => void;
 }
 
 const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
-  const { password, setPassword, confirmPassword, setConfirmPassword } = useSignup();
+  const { email, password, setPassword, confirmPassword, setConfirmPassword, showToast } = useSignup();
+  const [isLoading, setIsLoading] = React.useState(false);
 
   // 유효성 검사: 비밀번호가 입력되었고, 두 비밀번호가 일치하는지 확인
-  // 스펙상 "20자 이내" 제한
   const isMatch =
-    password.length > 0 && password.length <= 20 && password === confirmPassword;
+    password.length >= 6 && password.length <= 20 && password === confirmPassword;
+
+  const handleNext = async () => {
+    if (!isMatch || isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const response = await authService.signup({ email, password });
+      if (response.isSuccess) {
+        onNext();
+      }
+    } catch (error: any) {
+      showToast(error.message || "회원가입 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <JoinLayout title="비밀번호 입력">
@@ -47,11 +64,11 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
         </div>
 
         <JoinButton
-          onClick={onNext}
-          disabled={!isMatch}
+          onClick={handleNext}
+          disabled={!isMatch || isLoading}
           className="w-[270px] t:w-[526px]"
         >
-          다음
+          {isLoading ? "처리 중..." : "다음"}
         </JoinButton>
       </div>
     </JoinLayout>
