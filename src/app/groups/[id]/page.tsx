@@ -40,11 +40,12 @@ export default function AdminGroupHomePage() {
     .filter((n: number) => n >= 1 && n <= 15);
 
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true); 
 
   return (
     <main className="w-full">
       {/* 최대 1024, d에서만 px-10(40px) */}
-      <div className="mx-auto w-full max-w-[1024px] t:px-10">
+      <div className="t:mx-auto d:mx-0 w-full max-w-[1024px] t:px-3 d:px-0">
         {/* 1) 공지 (항상 최상단) */}
         <Link
           href={noticeUrl}
@@ -106,14 +107,16 @@ export default function AdminGroupHomePage() {
             {/* 3) 텍스트 + 4) 버튼 (같은 컬럼) */}
             <div className="min-w-0 flex-1 flex flex-col min-h-[300px] relative">
               {/* 운영진용 모임 관리 드롭다운 */}
-              <div className="absolute top-0 right-0">
-                <GroupAdminMenu groupId={Number(groupId)} />
-              </div>
+              {isAdmin && (
+                <div className="absolute top-0 right-0 z-10">
+                  <GroupAdminMenu groupId={Number(groupId)} />
+                </div>
+              )}
 
-              {/* chips */}
-              <div className="flex flex-wrap gap-3">
+              <div className={isAdmin ? "pr-[113px]" : ""}>
                 <ClubCategoryTags category={nums} />
               </div>
+
 
               <div className="mt-3 space-y-2">
                 <div className="flex items-start gap-3">
@@ -128,7 +131,6 @@ export default function AdminGroupHomePage() {
               </div>
 
               <div className="mt-[19px]">
-                <p className="body_1_3 text-Gray-5">설명</p>
                 <p className="body_1_3 text-Gray-5 mt-2 whitespace-pre-line wrap-break-word">
                   {DUMMY_CLUB_HOME.description ?? '설명이 없습니다.'}
                 </p>
@@ -180,12 +182,13 @@ export default function AdminGroupHomePage() {
 
             {/* 3) 내용 */}
             <div className="min-w-0 flex-1 relative">
-              {/* 운영진용 모임 관리 드롭다운 */}
-              <div className="absolute top-0 right-0">
-                <GroupAdminMenu groupId={Number(groupId)} />
-              </div>
+              {isAdmin && (
+                <div className="absolute top-0 right-0 z-10">
+                  <GroupAdminMenu groupId={Number(groupId)} />
+                </div>
+              )}
 
-              <div className="flex flex-wrap gap-3">
+              <div className={isAdmin ? "pr-[110px]" : ""}>
                 <ClubCategoryTags category={nums} />
               </div>
 
@@ -202,7 +205,6 @@ export default function AdminGroupHomePage() {
               </div>
 
               <div className="mt-[19px]">
-                <p className="body_1_3 text-Gray-5">설명</p>
                 <p className="body_1_3 text-Gray-5 mt-2 whitespace-pre-line wrap-break-word">
                   {DUMMY_CLUB_HOME.description ?? '설명이 없습니다.'}
                 </p>
