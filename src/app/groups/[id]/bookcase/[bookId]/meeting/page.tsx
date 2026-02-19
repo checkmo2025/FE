@@ -3,8 +3,9 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import FloatingFab from "@/components/base-ui/Float";
+import ChatTeamSelectModal, { ChatTeam } from "@/components/base-ui/Bookcase/ChatTeamSelectModal"
 
 type Team = {
   teamId: string;
@@ -19,8 +20,7 @@ type TeamDebateItem = {
   profileImageUrl?: string | null;
 };
 
-
-const CHECKED_BG = "#F7FEF3"; 
+const CHECKED_BG = "#F7FEF3";
 const DEFAULT_PROFILE = "/profile4.svg";
 
 const normalizeSrc = (src?: string | null) => {
@@ -40,7 +40,6 @@ const sortCheckedFirstStable = (
   list: TeamDebateItem[],
   checkedMap: Record<string, boolean>
 ) => {
-  // "현재 순서"를 기준으로 stable 정렬
   const baseIndex = new Map(list.map((x, i) => [String(x.id), i]));
   const next = [...list];
 
@@ -48,10 +47,7 @@ const sortCheckedFirstStable = (
     const ca = checkedMap[String(a.id)] ? 1 : 0;
     const cb = checkedMap[String(b.id)] ? 1 : 0;
 
-    // checked가 먼저
     if (cb !== ca) return cb - ca;
-
-    // 같은 그룹이면 기존 순서 유지
     return (baseIndex.get(String(a.id)) ?? 0) - (baseIndex.get(String(b.id)) ?? 0);
   });
 
@@ -126,6 +122,7 @@ export default function MeetingPage({
 }) {
   const { bookId } = params;
   const sp = useSearchParams();
+  const router = useRouter();
   const initialTeamName = sp.get("team"); // ?team=A조
 
   const [teams, setTeams] = useState<Team[]>([]);
@@ -134,10 +131,14 @@ export default function MeetingPage({
   const [items, setItems] = useState<TeamDebateItem[]>([]);
   const [checkedMap, setCheckedMap] = useState<Record<string, boolean>>({});
 
+  // ✅ 채팅 조 선택 모달 상태
+  const [isChatTeamModalOpen, setIsChatTeamModalOpen] = useState(false);
+
   const selectedTeam = useMemo(
     () => teams.find((t) => t.teamId === selectedTeamId) ?? null,
     [teams, selectedTeamId]
   );
+
   const selectedTeamName = selectedTeam?.teamName ?? "";
   const teamNames = useMemo(() => teams.map((t) => t.teamName), [teams]);
 
@@ -172,7 +173,6 @@ export default function MeetingPage({
     return () => {
       ignore = true;
     };
-    // initialTeamName으로 초기 선택 바뀔 수 있으니 포함
   }, [bookId, initialTeamName]);
 
   /** 2) 팀 선택 바뀌면 발제 로드 + 체크 초기화 */
@@ -210,6 +210,23 @@ export default function MeetingPage({
 
   const handleSortCheckedFirst = () => {
     setItems((prev) => sortCheckedFirstStable(prev, checkedMap));
+  };
+
+  /**
+   * 조 선택하면 "채팅 페이지"로 이동 (입장만)
+   * - chat은 "현재 경로 하위의 chat"으로 이동시키는 상대 경로
+   * - teamId/teamName을 쿼리로 넘겨서 다음 페이지에서 어떤 방인지 알게 함
+   */
+  const handleEnterChat = (team: ChatTeam) => {
+    setIsChatTeamModalOpen(false);
+
+    // 상대경로: 현재 페이지가 .../meeting 이면 .../meeting/chat 로 감
+    router.push(
+      `chat?teamId=${team.teamId}&teamName=${encodeURIComponent(team.teamName)}`
+    );
+
+    // ❗️만약 상대경로가 안 맞으면 절대경로로 바꿔야 함:
+    // router.push(`/groups/${params.groupId}/meeting/${bookId}/chat?teamId=${team.teamId}`);
   };
 
   return (
@@ -307,15 +324,12 @@ export default function MeetingPage({
                     "
                     style={isChecked ? { backgroundColor: CHECKED_BG } : undefined}
                   >
-                    {/* 모바일: grid로 2줄 구성 (위: 프로필+이름+체크 / 아래: 내용)
-                        t 이상: flex 한 줄 */}
                     <div
                       className="
                         grid grid-cols-[auto_1fr_auto] items-center
                         t:flex t:items-center t:gap-3
                       "
                     >
-                      {/* 프로필 + 이름: '한 덩어리' */}
                       <div className="flex shrink-0 items-center gap-3 t:min-w-[150px] d:min-w-[200px]">
                         <Image
                           src={profileSrc}
@@ -329,7 +343,6 @@ export default function MeetingPage({
                         </p>
                       </div>
 
-                      {/* t 이상에서만 내용이 같은 줄로 옴 */}
                       <p
                         className="
                           hidden t:block
@@ -343,7 +356,6 @@ export default function MeetingPage({
                         {item.content}
                       </p>
 
-                      {/* 체크 아이콘 */}
                       <button
                         type="button"
                         onClick={() => handleToggleCheck(id)}
@@ -359,7 +371,6 @@ export default function MeetingPage({
                       </button>
                     </div>
 
-                    {/* 모바일에서만: 내용이 아래로 내려감 (name 아래 라인) */}
                     <p
                       className="
                         mt-2
@@ -376,8 +387,6 @@ export default function MeetingPage({
                 );
               })}
             </div>
-
-
           </div>
         ) : (
           <div className="w-full py-10 text-center text-Gray-4 body_2_3">
@@ -385,10 +394,19 @@ export default function MeetingPage({
           </div>
         )}
       </div>
+
+      {/* Floating 버튼 누르면 "채팅 모달" */}
       <FloatingFab
-              iconSrc="/icons_chat.svg"
-              iconAlt="문의하기"
-            />
+        iconSrc="/icons_chat.svg"
+        iconAlt="채팅"
+        onClick={() => setIsChatTeamModalOpen(true)}
+      />
+
+      <ChatTeamSelectModal
+        isOpen={isChatTeamModalOpen}
+        teams={teams}
+        onClose={() => setIsChatTeamModalOpen(false)}
+      />
     </div>
   );
 }
