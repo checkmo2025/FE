@@ -2,6 +2,7 @@
 
 
 import BookcaseCard from "@/components/base-ui/Bookcase/BookcaseCard";
+import FloatingFab from "@/components/base-ui/Float";
 import { useParams, useRouter } from "next/navigation";
 
 
@@ -73,8 +74,15 @@ export default function BookcasePage() {
               />
             ))}
           </div>
+          
         </section>
       ))}
+
+      <FloatingFab
+        iconSrc="/icons_pencil.svg"
+        iconAlt="문의하기"
+        onClick={() => router.push(`/groups/${groupId}/admin/bookcase/new`)}
+      />
     </div>
   );
 }

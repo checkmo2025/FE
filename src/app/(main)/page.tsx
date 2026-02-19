@@ -26,7 +26,7 @@ export default function HomePage() {
       {/* 임시 로그인 모달 테스트 버튼 */}
       <button
         onClick={() => setShowLoginModal(true)}
-        className="fixed z-50 px-6 py-3 text-white rounded-full shadow-lg bottom-10 right-10 bg-primary-1 subhead_4_1"
+        className="fixed z-50 px-6 py-3 text-white rounded-full shadow-lg bottom-20 t:bottom-10 right-5 t:right-10 bg-primary-1 subhead_4_1"
       >
         로그인 모달 열기
       </button>

@@ -38,7 +38,7 @@ export default function TeamSection({ teamName, members }: Props) {
           type="button"
           onClick={handleGo}
           aria-label={`${teamName} 이동`}
-          className="relative h-[24px] w-[24px] shrink-0"
+          className="relative h-[24px] w-[24px] shrink-0 hover:brightness-0 cursor-pointer"
         >
           <Image src="/Arrow-Right2.svg" alt="" fill className="object-contain" />
         </button>
