@@ -22,11 +22,11 @@ export default function TeamFilter({ teams, selectedTeam, onSelect }: Props) {
           <button
             key={team}
             onClick={() => onSelect(team)}
-            className={`shrink-0 flex h-[36px] min-w-[83px] items-center justify-center rounded-[4px] border px-[10px] transition-colors body_2_2
+            className={`shrink-0 flex h-[36px] min-w-[83px] items-center justify-center rounded-[4px] border px-[10px] transition-colors body_2_2 hover:brightness-97 hover:-translate-y-[3px] cursor-pointer
               ${
                 isActive
                   ? "bg-primary-2 border-primary-2 text-White"
-                  : "bg-White border-Subbrown-4 text-Gray-7 hover:bg-Gray-1"
+                  : "bg-White border-Subbrown-4 text-Gray-7"
               }
             `}
           >

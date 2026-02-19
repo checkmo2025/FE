@@ -41,19 +41,21 @@ export default function ReviewList({ items, onClickMore }: Props) {
               {/* 왼쪽 덩어리: 프로필+이름 + 별점 + 내용 */}
               <div className="min-w-0">
                 <div className="flex items-center gap-3 min-w-0">
-                  <Image
-                    src={profileSrc}
-                    alt=""
-                    width={28}
-                    height={28}
-                    className="rounded-full object-cover w-[24px] h-[24px]"
-                  />
-                  <p className="text-Gray-7 body_1_2 truncate min-w-0">
-                    {item.name}
-                  </p>
+                  <div className="flex gap-3 items-center hover:brightness-95 cursor-pointer ">
+                    <Image
+                      src={profileSrc}
+                      alt=""
+                      width={28}
+                      height={28}
+                      className="rounded-full object-cover w-[24px] h-[24px]"
+                    />
+                    <p className="text-Gray-7 items-center body_1_2 truncate min-w-0">
+                      {item.name}
+                    </p>
+                  </div>
                   <StarRating
                     value={item.rating}
-                    className="shrink-0 ml-1 justify-self-start w-fit"
+                    className="ml-1 items-center"
                     starClassName="w-[16px] h-[16px]"
                   />
                 </div>
@@ -75,7 +77,7 @@ export default function ReviewList({ items, onClickMore }: Props) {
               <button
                 type="button"
                 onClick={() => onClickMore?.(item.id)}
-                className="relative w-6 h-6 shrink-0 justify-self-end self-center"
+                className="relative w-6 h-6 shrink-0 justify-self-end self-center hover:brightness-80 cursor-pointer"
                 aria-label="더보기"
               >
                 <Image
@@ -90,7 +92,7 @@ export default function ReviewList({ items, onClickMore }: Props) {
             {/* Tablet+ */}
             <div className="hidden t:flex t:items-center t:gap-3">
               {/* 프로필+이름 */}
-              <div className="flex items-center gap-3 min-w-0 t:min-w-[120px] d:min-w-[170px]">
+              <div className="flex items-center gap-3 min-w-0 t:min-w-[120px] d:min-w-[170px] hover:brightness-95 cursor-pointer">
                 <Image
                   src={profileSrc}
                   alt=""
@@ -127,7 +129,7 @@ export default function ReviewList({ items, onClickMore }: Props) {
               <button
                 type="button"
                 onClick={() => onClickMore?.(item.id)}
-                className="relative w-6 h-6 shrink-0"
+                className="relative w-6 h-6 shrink-0 hover:brightness-80 cursor-pointer"
                 aria-label="더보기"
               >
                 <Image

@@ -177,7 +177,7 @@ export default function SearchClubListItem({
                   'h-[28px] t:h-[40px] px-4 py-2 w-full',
                   'flex items-center justify-center',
                   'rounded-[8px]',
-                  'bg-primary-2 text-White',
+                  'bg-primary-2 text-White hover:brightness-90 cursor-pointer',
                   'body_2_2 t:body_1_2',
                   'mb-1',
                 ].join(' ')}
@@ -195,7 +195,7 @@ export default function SearchClubListItem({
                 'flex items-center justify-center gap-[10px]',
                 'rounded-[8px]',
                 'border border-primary-1',
-                'bg-background text-primary-3',
+                'bg-background text-primary-3 hover:brightness-95 cursor-pointer',
                 'body_2_2 t:body_1_2',
               ].join(' ')}
             >
@@ -212,7 +212,7 @@ export default function SearchClubListItem({
             onClick={() => onClickApply?.(club.clubId)}
             className={[
               'flex-1 h-[28px] rounded-[10px] body_2_1',
-              'bg-primary-2 text-White',
+              'bg-primary-2 text-White hover:brightness-90 cursor-pointer',
             ].join(' ')}
           >
             {isOpen ? '신청 닫기' : '가입신청하기'}
@@ -225,7 +225,7 @@ export default function SearchClubListItem({
           className={[
             club.applytype === 'No' ? 'flex-1' : 'w-full',
             'h-[28px] rounded-[10px] body_2_1',
-            'border border-primary-1 bg-background text-primary-3',
+            'border border-primary-1 bg-background text-primary-3 hover:brightness-95 cursor-pointer',
           ].join(' ')}
         >
           방문하기
@@ -247,8 +247,8 @@ export default function SearchClubListItem({
             disabled={!reason.trim()}
             onClick={() => onSubmitApply(club.clubId, reason)}
             className={[
-              'mt-4 w-full h-[44px] rounded-[10px] body_1_2',
-              reason.trim() ? 'bg-primary-2 hover:bg-primary-1 text-White' : 'bg-Gray-2 text-Gray-4',
+              'mt-4 w-full h-[44px] rounded-[10px] body_1_2 hover:brightness-95 cursor-pointer',
+              reason.trim() ? 'bg-primary-2 text-White' : 'bg-Gray-2 text-Gray-4',
             ].join(' ')}
           >
             가입신청하기

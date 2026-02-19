@@ -39,7 +39,7 @@ export default function MeetingInfo({
             onClick={onManageGroupClick}
             className="flex items-center gap-[8px] px-[8px] hover:bg-black/5 rounded transition-colors"
             >
-            <span className="underline text-Gray-4 body_1_2">조 관리하기</span>
+            <span className="text-Gray-4 body_1_2 cursor-pointer">조 관리하기</span>
             <div className="relative h-[24px] w-[24px]">
               <Image src="/Setting.svg" alt="설정" fill />
             </div>

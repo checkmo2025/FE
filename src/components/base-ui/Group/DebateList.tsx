@@ -38,7 +38,7 @@ export default function DebateList({ items, onClickMore }: Props) {
             <div className="grid grid-cols-[1fr_auto] items-start gap-x-3 t:hidden">
               {/* 왼쪽 덩어리 (프로필+이름 + 내용) */}
               <div className="min-w-0">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 hover:brightness-95 cursor-pointer">
                   <Image
                     src={profileSrc}
                     alt=""
@@ -68,7 +68,7 @@ export default function DebateList({ items, onClickMore }: Props) {
               <button
                 type="button"
                 onClick={() => onClickMore?.(item.id)}
-                className="relative w-6 h-6 shrink-0 justify-self-end self-center"
+                className="relative w-6 h-6 shrink-0 justify-self-end self-center hover:brightness-70 cursor-pointer"
                 aria-label="더보기"
               >
                 <Image
@@ -83,7 +83,7 @@ export default function DebateList({ items, onClickMore }: Props) {
             {/* Tablet+ */}
             <div className="hidden t:flex t:items-center t:gap-3">
               {/* 프로필+이름 */}
-              <div className="flex shrink-0 items-center gap-3 t:min-w-[150px] d:min-w-[200px]">
+              <div className="flex shrink-0 items-center gap-3 t:min-w-[150px] d:min-w-[200px] hover:brightness-95 cursor-pointer">
                 <Image
                   src={profileSrc}
                   alt=""
@@ -113,7 +113,7 @@ export default function DebateList({ items, onClickMore }: Props) {
               <button
                 type="button"
                 onClick={() => onClickMore?.(item.id)}
-                className="relative w-6 h-6 shrink-0"
+                className="relative w-6 h-6 shrink-0 hover:brightness-70 cursor-pointer"
                 aria-label="더보기"
               >
                 <Image

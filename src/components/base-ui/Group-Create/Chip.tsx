@@ -22,12 +22,12 @@ export default function Chip({ label, selected, onClick, disabled }: ChipProps) 
         "w-[90px] h-[32px] t:w-[150px] t:h-[48px]",
         "rounded-full",
         "body_1_3 t:subhead_4_1",
-        "bg-White border border-primary-2 t:border-2",
-        "hover:bg-Subbrown-4",
+        " border border-Subbrown-1 t:border-2",
+        "hover:brightness-98 hover:-translate-y-[1px] cursor-pointer",
         "disabled:text-Gray-4 disabled:border-Gray-4 disabled:hover:bg-White disabled:cursor-not-allowed",
         selected
-          ? "bg-primary-2 text-White border-primary-2 hover:bg-primary-1 hover:border-primary-1"
-          : "text-Gray-5"
+          ? "bg-Subbrown-1 text-White"
+          : "bg-White text-Gray-5"
       )}
     >
       {label}

@@ -56,7 +56,7 @@ export default function AdminGroupHomePage() {
             bg-White
             p-4
             cursor-pointer
-            hover:bg-background
+            hover:brightness-98 hover:-translate-y-[1px] cursor-pointer
             focus-visible:outline-none
             focus-visible:ring-2 focus-visible:ring-Subbrown-2
           "
@@ -90,7 +90,7 @@ export default function AdminGroupHomePage() {
               className="
                 relative shrink-0 overflow-hidden
                 d:w-[300px] d:h-[300px]
-                rounded-[12px]
+                rounded-[4px]
                 bg-Gray-1
               "
             >
@@ -144,7 +144,7 @@ export default function AdminGroupHomePage() {
                   bgColorVar="--Primary_1"
                   borderColorVar="--Primary_1"
                   textColorVar="--White"
-                  className="w-[300px] h-[44px] body_1"
+                  className="w-[300px] h-[44px] body_1 hover:brightness-90 hover:-translate-y-[1px] cursor-pointer"
                 />
                 <ButtonWithoutImg
                   text="Contact US"
@@ -152,7 +152,7 @@ export default function AdminGroupHomePage() {
                   bgColorVar="--Subbrown_4"
                   borderColorVar="--Subbrown_2"
                   textColorVar="--Primary_3"
-                  className="w-[300px] h-[44px] body_1"
+                  className="w-[300px] h-[44px] body_1 hover:brightness-95 hover:-translate-y-[1px] cursor-pointer"
                 />
               </div>
             </div>
@@ -168,7 +168,7 @@ export default function AdminGroupHomePage() {
                 relative shrink-0 overflow-hidden
                 w-[110px] h-[110px]
                 t:w-[300px] t:h-[300px]
-                rounded-[12px]
+                rounded-[4px]
                 bg-Gray-1
               "
             >
@@ -220,7 +220,7 @@ export default function AdminGroupHomePage() {
               bgColorVar="--Primary_1"
               borderColorVar="--Primary_1"
               textColorVar="--White"
-              className="w-full d:w-[300px] h-[44px] body_1"
+              className="w-full d:w-[300px] h-[44px] body_1 hover:brightness-90 hover:-translate-y-[1px] cursor-pointer"
             />
             <ButtonWithoutImg
               text="Contact US"
@@ -228,7 +228,7 @@ export default function AdminGroupHomePage() {
               bgColorVar="--Subbrown_4"
               borderColorVar="--Subbrown_2"
               textColorVar="--Primary_3"
-              className="w-full d:w-[300px] h-[44px] body_1"
+              className="w-full d:w-[300px] h-[44px] body_1 hover:brightness-95 hover:-translate-y-[1px] cursor-pointer"
             />
           </div>
         </div>
@@ -263,12 +263,12 @@ export default function AdminGroupHomePage() {
         >
           {/* 헤더: 타이틀 + X */}
           <div className="w-full flex items-center justify-between">
-            <p className="subhead_4_1 text-Gray-7">Contact Us</p>
+            <p className="subhead_4_1 text-Gray-7 ">Contact Us</p>
 
             <button
               type="button"
               onClick={() => setIsContactOpen(false)}
-              className="shrink-0"
+              className="shrink-0 hover:brightness-0 cursor-pointer hover:scale-[1.07]"
               aria-label="닫기"
             >
               {/* TODO: 실제 X 아이콘 파일명 맞춰서 교체 */}
