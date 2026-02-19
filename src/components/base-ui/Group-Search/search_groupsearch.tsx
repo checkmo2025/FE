@@ -105,7 +105,7 @@ export default function SearchGroupSearch({
             className="flex items-center gap-[4px]"
             aria-expanded={open}
           >
-            <span>{category}</span>
+            <span className='items-start min-w-[38px] t:min-w-[75px]'>{category}</span>
             <Image
               src={open ? '/ArrowTop.svg' : '/ArrowDown.svg'}
               alt="열기"
