@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Image from "next/image";
 import NoticeItem from "@/components/base-ui/Group/notice_item";
+import FloatingFab from "@/components/base-ui/Float";
 
 export default function GroupNoticePage() {
   const params = useParams();
@@ -168,19 +168,11 @@ export default function GroupNoticePage() {
 
       {/* 관리자일 때만 공지사항 작성 버튼 표시 */}
       {isAdmin && (
-        <button
-          onClick={handleAddNotice}
-          className="fixed bottom-21 right-4 t:bottom-8 t:right-8 z-[60] cursor-pointer hover:opacity-80 transition-opacity w-18 h-18 t:w-22 t:h-22"
-          aria-label="공지사항 작성"
-        >
-          <Image
-            src="/add_story.svg"
-            alt="공지사항 작성"
-            width={88}
-            height={88}
-            className="w-full h-full"
-          />
-        </button>
+        <FloatingFab
+                iconSrc="/icons_pencil.svg"
+                iconAlt="문의하기"
+                 onClick={handleAddNotice}
+              />
       )}
     </div>
   );

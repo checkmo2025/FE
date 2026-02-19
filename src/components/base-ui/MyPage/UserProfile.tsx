@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
 import { DUMMY_USER_PROFILE } from "@/constants/mocks/mypage";
+import FloatingFab from "../Float";
 
 const UserProfile = () => {
   const user = DUMMY_USER_PROFILE;
@@ -99,6 +100,10 @@ const UserProfile = () => {
             소식 문의하기
           </JoinButton>
         </div>
+        <FloatingFab
+                iconSrc="/icons_pencil.svg"
+                iconAlt="문의하기"
+              />
       </div>
     </div>
   );

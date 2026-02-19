@@ -4,6 +4,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import FloatingFab from "@/components/base-ui/Float";
 
 type Team = {
   teamId: string;
@@ -384,6 +385,10 @@ export default function MeetingPage({
           </div>
         )}
       </div>
+      <FloatingFab
+              iconSrc="/icons_chat.svg"
+              iconAlt="문의하기"
+            />
     </div>
   );
 }
