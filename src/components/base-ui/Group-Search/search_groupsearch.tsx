@@ -91,7 +91,7 @@ export default function SearchGroupSearch({
             'placeholder:text-Gray-3 text-Gray-7',
           ].join(' ')}
         />
-        <button type="submit" className="shrink-0">
+        <button type="submit" className="shrink-0 cursor-pointer">
           <Image src="/search.svg" alt="검색" width={24} height={24} />
         </button>
       </form>
@@ -105,7 +105,7 @@ export default function SearchGroupSearch({
             className="flex items-center gap-[4px]"
             aria-expanded={open}
           >
-            <span>{category}</span>
+            <span className='items-start min-w-[38px] t:min-w-[75px]'>{category}</span>
             <Image
               src={open ? '/ArrowTop.svg' : '/ArrowDown.svg'}
               alt="열기"
@@ -152,7 +152,7 @@ export default function SearchGroupSearch({
           <button
             type="button"
             onClick={() => setGroup(!group)}
-            className="flex items-center gap-2 t:gap-3"
+            className="flex items-center gap-2 t:gap-3 cursor-pointer"
             aria-pressed={group}
           >
             <Image
@@ -167,7 +167,7 @@ export default function SearchGroupSearch({
           <button
             type="button"
             onClick={() => setRegion(!region)}
-            className="flex items-center gap-2 t:gap-3"
+            className="flex items-center gap-2 t:gap-3 cursor-pointer"
             aria-pressed={region}
           >
             <Image

@@ -42,35 +42,39 @@ function StoryNewContent() {
 
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4">
-      {/* 책이야기 > 글 작성하기 */}
-      {/* 모바일: 전체 너비 선 */}
-      <div className="t:hidden w-screen -mx-4 border-b border-zinc-300">
-        <div className="px-4 h-[44px] flex gap-5 items-center">
-          <div className="body_1 text-Gray-3">전체</div>
-          <div className="relative w-[12px] h-[12px]">
-            <Image
-              src="/triangle.svg"
-              alt="next"
-              fill
-              className="object-contain"
-            />
+      {/* 책이야기 > 글 작성하기 - 모달 열리면 숨김 */}
+      {!isBookSelectModalOpen && (
+        <>
+          {/* 모바일: 전체 너비 선 */}
+          <div className="t:hidden w-screen -mx-4 border-b border-zinc-300">
+            <div className="px-4 h-[44px] flex gap-5 items-center">
+              <div className="body_1 text-Gray-3">전체</div>
+              <div className="relative w-[12px] h-[12px]">
+                <Image
+                  src="/triangle.svg"
+                  alt="next"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <div className="body_1 text-Gray-7">글 작성하기</div>
+            </div>
           </div>
-          <div className="body_1 text-Gray-7">글 작성하기</div>
-        </div>
-      </div>
-      {/* 태블릿/데스크탑: max-w 안에서 선 */}
-      <div className="hidden t:flex t:mt-6 h-[44px] gap-5 items-center border-b border-zinc-300">
-        <div className="d:subhead_4_1 text-Gray-3">전체</div>
-        <div className="relative w-[12px] h-[12px] d:w-[18px] d:h-[18px]">
-          <Image
-            src="/triangle.svg"
-            alt="next"
-            fill
-            className="object-contain"
-          />
-        </div>
-        <div className="d:subhead_4_1 text-Gray-7">글 작성하기</div>
-      </div>
+          {/* 태블릿/데스크탑: max-w 안에서 선 */}
+          <div className="hidden t:flex t:mt-6 h-[44px] gap-5 items-center border-b border-zinc-300">
+            <div className="d:subhead_4_1 text-Gray-3">전체</div>
+            <div className="relative w-[12px] h-[12px] d:w-[18px] d:h-[18px]">
+              <Image
+                src="/triangle.svg"
+                alt="next"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <div className="d:subhead_4_1 text-Gray-7">글 작성하기</div>
+          </div>
+        </>
+      )}
       {/* 메인 콘텐츠 영역 */}
       <div className="py-6 px-2.5 t:px-10">
         {/* 책 선택하기 박스 */}

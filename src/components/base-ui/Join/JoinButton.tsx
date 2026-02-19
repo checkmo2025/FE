@@ -18,17 +18,29 @@ const JoinButton: React.FC<JoinButtonProps> = ({
   const variants = {
     primary: disabled
       ? "bg-[#DADADA] text-[#8D8D8D] cursor-not-allowed"
-      : "bg-[#7B6154] text-[#FFF]",
+      : "bg-[#7B6154] text-[#FFF] hover:bg-[#7B6154] hover:text-[#FFF]",
     secondary: "bg-[#EAE5E2] text-[#5E4A40] border border-[#D2C5B6]",
   };
 
-  // className에 width 관련 클래스가 없으면 기본값 적용
-  const widthClass = className?.includes("w-") ? "" : "w-[526px]";
+  // Determine classes to avoid conflicts with className prop
+  const hasWidth = className?.includes("w-");
+  const hasHeight = className?.includes("h-");
+  const hasPx =
+    className?.includes("px-") ||
+    className?.includes("pl-") ||
+    className?.includes("pr-") ||
+    className?.includes("p-");
+  const hasPy =
+    className?.includes("py-") ||
+    className?.includes("pt-") ||
+    className?.includes("pb-") ||
+    className?.includes("p-");
+
   return (
     <button
-      className={`${baseStyle} ${widthClass} h-[48px] px-[16px] py-[12px] ${
-        variants[variant]
-      } ${className || ""}`}
+      className={`${baseStyle} ${!hasWidth ? "w-[526px]" : ""} ${!hasHeight ? "h-[48px]" : ""
+        } ${!hasPx ? "px-[16px]" : ""} ${!hasPy ? "py-[12px]" : ""} ${variants[variant]
+        } ${className || ""}`}
       disabled={disabled}
       {...props}
     >

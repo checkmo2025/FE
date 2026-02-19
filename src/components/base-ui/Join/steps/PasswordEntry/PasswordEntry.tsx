@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import JoinLayout from "@/components/base-ui/Join/JoinLayout";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
 import JoinInput from "@/components/base-ui/Join/JoinInput";
+import { useSignup } from "@/contexts/SignupContext";
 
 interface PasswordEntryProps {
   onNext: () => void;
 }
 
 const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const { password, setPassword, confirmPassword, setConfirmPassword } = useSignup();
 
   // 유효성 검사: 비밀번호가 입력되었고, 두 비밀번호가 일치하는지 확인
   // 스펙상 "20자 이내" 제한
@@ -26,6 +26,7 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
           {/* Password Input */}
           <JoinInput
             label="비밀번호"
+            description="비밀번호는 6-12자, 영어 최소 1자 이상, 특수문자 최소 1자 이상"
             type="password"
             placeholder="비밀번호"
             value={password}

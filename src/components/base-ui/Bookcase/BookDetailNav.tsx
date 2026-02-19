@@ -22,13 +22,12 @@ export default function BookDetailNav({ activeTab, onTabChange }: Props) {
             onClick={() => onTabChange(tab)}
             className={`
               flex w-full t:w-[115px] items-center justify-center gap-[10px] p-[10px] transition-colors
-              border-b-2 
-              /* [핵심 수정] mb-[-2px]: 부모의 border-b-2 위로 버튼의 border를 끌어내려 덮어씌움 */
+              border-b-2 hover:brightness-80 cursor-pointer
               mb-[-2px]
               ${
                 isActive
                   ? "border-primary-3 text-primary-3"
-                  : "border-Gray-3 text-Gray-3 hover:bg-gray-50"
+                  : "border-Gray-3 text-Gray-3"
               }
             `}
           >

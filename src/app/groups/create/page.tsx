@@ -222,7 +222,7 @@ export default function CreateClubWizardPreview() {
                         className={cx(
                           "flex justify-center items-center gap-[10px] h-[48px] px-4 py-3 rounded-[8px]",
                           "w-full t:w-[148px]",
-                          "bg-primary-1 hover:bg-primary-3 text-White",
+                          "bg-primary-1 text-White hover:brightness-90 hover:-translate-y-[1px] cursor-pointer",
                           "disabled:bg-Gray-2 disabled:hover:bg-Gray-2 disabled:cursor-not-allowed"
                         )}
                       >
@@ -282,9 +282,9 @@ export default function CreateClubWizardPreview() {
                       }}
                       className={cx(
                         "flex justify-center items-center gap-[10px] w-[200px] h-[36px] px-4 py-3 rounded-[8px] border body_1_3",
-                        "hover:opacity-90 active:opacity-80",
+                        "hover:brightness-98 hover:-translate-y-[1px] cursor-pointer",
                         profileMode === "default"
-                          ? "bg-primary-1 border-primary-1 text-White"
+                          ? "bg-primary-2 border-primary-2 text-White"
                           : "bg-Subbrown-4 border-Subbrown-3 text-primary-3"
                       )}
                     >
@@ -299,9 +299,9 @@ export default function CreateClubWizardPreview() {
                       }}
                       className={cx(
                         "flex justify-center items-center gap-[10px] w-[200px] h-[36px] px-4 py-3 rounded-[8px] border body_1_3",
-                        "hover:opacity-90 active:opacity-80",
+                        "hover:brightness-98 hover:-translate-y-[1px] cursor-pointer",
                         profileMode === "upload"
-                          ? "bg-primary-1 border-primary-1 text-White"
+                          ? "bg-primary-2 border-primary-1 text-White"
                           : "bg-Subbrown-4 border-Subbrown-3 text-primary-3"
                       )}
                     >
@@ -365,8 +365,9 @@ export default function CreateClubWizardPreview() {
                     onClick={onPrev}
                     className={cx(
                       "hidden t:flex justify-center items-center gap-[10px] w-[148px] h-[48px] px-4 py-3 rounded-[8px]",
-                      "bg-primary-1 hover:bg-primary-3 text-White",
+                      "bg-primary-1 text-White hover:brightness-90 hover:-translate-y-[1px] cursor-pointer",
                       "disabled:bg-Gray-2 disabled:hover:bg-Gray-2 disabled:cursor-not-allowed"
+                      
                     )}
                   >
                     이전
@@ -379,7 +380,7 @@ export default function CreateClubWizardPreview() {
                     className={cx(
                       "flex justify-center items-center gap-[10px] h-[48px] px-4 py-3 rounded-[8px]",
                       "w-full t:w-[148px]",
-                      "bg-primary-1 hover:bg-primary-3 text-White",
+                      "bg-primary-1 text-White hover:brightness-90 hover:-translate-y-[1px] cursor-pointer",
                       "disabled:bg-Gray-2 disabled:hover:bg-Gray-2 disabled:cursor-not-allowed"
                     )}
                   >
@@ -438,7 +439,7 @@ export default function CreateClubWizardPreview() {
                       onClick={onPrev}
                       className={cx(
                         "hidden t:flex justify-center items-center gap-[10px] w-[148px] h-[48px] px-4 py-3 rounded-[8px]",
-                        "bg-primary-1 hover:bg-primary-3 text-White",
+                        "bg-primary-1 text-White hover:brightness-90 hover:-translate-y-[1px] cursor-pointer",
                         "disabled:bg-Gray-2 disabled:hover:bg-Gray-2 disabled:cursor-not-allowed"
                       )}
                     >
@@ -446,18 +447,18 @@ export default function CreateClubWizardPreview() {
                     </button>
 
                     <button
-                      type="button"
-                      onClick={onNext}
-                      disabled={!canNext}
-                      className={cx(
-                        "flex justify-center items-center gap-[10px] h-[48px] px-4 py-3 rounded-[8px]",
-                        "w-full t:w-[148px]",
-                        "bg-primary-1 hover:bg-primary-3 text-White",
-                        "disabled:bg-Gray-2 disabled:hover:bg-Gray-2 disabled:cursor-not-allowed"
-                      )}
-                    >
-                      다음
-                    </button>
+                    type="button"
+                    onClick={onNext}
+                    disabled={!canNext}
+                    className={cx(
+                      "flex justify-center items-center gap-[10px] h-[48px] px-4 py-3 rounded-[8px]",
+                      "w-full t:w-[148px]",
+                      "bg-primary-1 text-White hover:brightness-90 hover:-translate-y-[1px] cursor-pointer",
+                      "disabled:bg-Gray-2 disabled:hover:bg-Gray-2 disabled:cursor-not-allowed"
+                    )}
+                  >
+                    다음
+                  </button>
                   </div>
                   </section>
           )}
@@ -522,7 +523,7 @@ export default function CreateClubWizardPreview() {
                             rounded-[8px]
                             bg-Gray-1
                             flex items-center justify-center
-                            hover:bg-Gray-2
+                            hover:brightness-97 hover:-translate-y-[1px] cursor-pointer
                             disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-Gray-1
                           "
                           title="삭제"
@@ -545,7 +546,7 @@ export default function CreateClubWizardPreview() {
                       w-full h-[56px] rounded-[8px]
                       bg-Gray-1
                       flex items-center justify-center
-                      hover:bg-Gray-2
+                      hover:brightness-97 hover:-translate-y-[1px] cursor-pointer
                     "
                     title="추가"
                   >
@@ -562,7 +563,7 @@ export default function CreateClubWizardPreview() {
                       onClick={onPrev}
                       className={cx(
                         "hidden t:flex justify-center items-center gap-[10px] w-[148px] h-[48px] px-4 py-3 rounded-[8px]",
-                        "bg-primary-1 hover:bg-primary-3 text-White",
+                        "bg-primary-1 text-White hover:brightness-90 hover:-translate-y-[1px] cursor-pointer",
                         "disabled:bg-Gray-2 disabled:hover:bg-Gray-2 disabled:cursor-not-allowed"
                       )}
                     >
@@ -576,7 +577,7 @@ export default function CreateClubWizardPreview() {
                       className={cx(
                         "flex justify-center items-center gap-[10px] h-[48px] px-4 py-3 rounded-[8px]",
                         "w-full t:w-[148px]",
-                        "bg-primary-1 hover:bg-primary-3 text-White",
+                        "bg-primary-1 text-White hover:brightness-90 hover:-translate-y-[1px] cursor-pointer",
                         "disabled:bg-Gray-2 disabled:hover:bg-Gray-2 disabled:cursor-not-allowed"
                       )}
                     >

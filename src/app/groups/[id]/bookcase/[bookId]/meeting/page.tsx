@@ -4,6 +4,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import FloatingFab from "@/components/base-ui/Float";
 
 type Team = {
   teamId: string;
@@ -213,7 +214,7 @@ export default function MeetingPage({
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-full max-w-[540px] px-5 t:px-0 py-6 flex flex-col gap-[16px]">
+      <div className="w-full max-w-[1040px] px-5 t:px-0 py-6 flex flex-col gap-[16px]">
         {/* TeamFilter */}
         <div className="w-full border-b border-Subbrown-4">
           <div
@@ -384,6 +385,10 @@ export default function MeetingPage({
           </div>
         )}
       </div>
+      <FloatingFab
+              iconSrc="/icons_chat.svg"
+              iconAlt="문의하기"
+            />
     </div>
   );
 }
