@@ -287,10 +287,10 @@ export default function MeetingPage({
               <button
                 type="button"
                 onClick={handleSortCheckedFirst}
-                className="flex items-center gap-2 text-Gray-5 body_2_3"
+                className="flex items-center gap-2 text-Gray-5 body_2_3 cursor-pointer hover:scale-[1.05]"
                 aria-label="정렬하기"
               >
-                <div className="relative w-4 h-4 t:w-5 t:h-5">
+                <div className="relative w-4 h-4 t:w-5 t:h-5 ">
                   <Image
                     src="/Swap.svg"
                     alt=""
@@ -359,7 +359,7 @@ export default function MeetingPage({
                       <button
                         type="button"
                         onClick={() => handleToggleCheck(id)}
-                        className="relative w-6 h-6 shrink-0 justify-self-end"
+                        className="relative w-6 h-6 shrink-0 justify-self-end cursor-pointer hover:scale-[1.05]"
                         aria-label="체크 토글"
                       >
                         <Image
@@ -400,6 +400,7 @@ export default function MeetingPage({
         iconSrc="/icons_chat.svg"
         iconAlt="채팅"
         onClick={() => setIsChatTeamModalOpen(true)}
+        className={`${isChatTeamModalOpen ? "mb-15 t:mb-0" : ""}`}
       />
 
       <ChatTeamSelectModal

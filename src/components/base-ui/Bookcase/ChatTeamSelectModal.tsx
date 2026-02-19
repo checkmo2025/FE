@@ -51,11 +51,10 @@ function useIsTabletUp() {
 
 type ViewMode = "select" | "chat";
 
-// ✅ 네 취향: 아이콘/버튼 hover
 const HOVER_ICON =
-  "cursor-pointer transition-[filter,transform] duration-150 ease-out hover:brightness-50 hover:scale-[1.05] active:scale-[0.98]";
+  "cursor-pointer transition-[filter,transform] duration-150 ease-out hover:brightness-50 ";
 const HOVER_SURFACE =
-  "cursor-pointer transition-[filter,transform] duration-150 ease-out hover:brightness-95 hover:scale-[1.02] active:scale-[0.99]";
+  "cursor-pointer transition-[filter,transform] duration-150 ease-out hover:brightness-95 ";
 const HOVER_INPUT_WRAPPER =
   "cursor-pointer transition-[filter] duration-150 ease-out hover:brightness-95";
 
@@ -304,7 +303,7 @@ export default function ChatTeamSelectModal({
             </div>
 
             {/* 입력창 */}
-            <div className="w-full">
+            <div className="w-full mb-15 t:mb-0">
               <div
                 className={[
                   "w-full flex items-center gap-2 rounded-[8px]",
