@@ -7,14 +7,14 @@ import BookDetailCard from "@/components/base-ui/Bookcase/BookDetailCard";
 import BookDetailNav, { Tab as TabKey } from "@/components/base-ui/Bookcase/BookDetailNav";
 import DebateSection from "./DebateSection";
 import ReviewSection from "./ReviewSection";
-
+import MeetingTabSection from "./MeetingTabSection";
 
 import {
   MOCK_BOOK_DETAIL,
   MOCK_DEBATE_TOPICS,
   MOCK_REVIEWS,
 } from "./dummy";
-import MeetingTabSection from "../MeetingTabSection";
+
 
 function isTabKey(v: string | null): v is TabKey {
   return v === "topic" || v === "review" || v === "meeting";
@@ -62,8 +62,9 @@ export default function AdminBookDetailPage() {
   };
 
   const handleManageTeams = () => {
-    // ✅ 여기 네 라우트에 맞게 바꿔라. "관리자일 때만 버튼 노출"은 MeetingTabSection에서 처리함.
-    router.push(`/groups/${groupId}/admin/bookcase/${meetingId}`);
+    router.push(
+      `/groups/${groupId}/admin/bookcase/${meetingId}?meetingName=${encodeURIComponent(MOCK_BOOK_DETAIL.title)}`
+    );
   };
 
   return (
