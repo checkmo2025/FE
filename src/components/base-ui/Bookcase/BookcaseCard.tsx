@@ -3,7 +3,7 @@
 import Image from "next/image";
 
 type Props = {
-  imageUrl?: string;
+  imageUrl: string;
   title: string;
   author: string;
   category: {
