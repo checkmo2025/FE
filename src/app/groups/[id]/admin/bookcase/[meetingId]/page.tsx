@@ -151,11 +151,11 @@ const handleDndEnd = ({ active, over }: DragEndEvent) => {
   try {
     if (!over) return;
 
-    const clubMemberId =
-      (active.data.current?.clubMemberId as number | undefined) ??
-      Number(String(active.id).replace("member-", ""));
+    const clubMemberId = active.data.current?.clubMemberId as number | undefined;
 
-    if (!clubMemberId) return;
+    if (clubMemberId === undefined) {
+      return;
+    }
 
     const overId = over.id.toString();
 
