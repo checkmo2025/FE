@@ -5,48 +5,38 @@ import ListSubscribeLarge from "@/components/base-ui/home/list_subscribe_large";
 import { useRouter } from "next/navigation";
 import FloatingFab from "@/components/base-ui/Float";
 import { useAuthStore } from "@/store/useAuthStore";
-import { storyService } from "@/services/storyService";
-import { memberService } from "@/services/memberService";
-import { BookStory } from "@/types/story";
-import { RecommendedMember } from "@/types/member";
+import { useInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
+import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
+import { useInView } from "react-intersection-observer";
 
 export default function StoriesPage() {
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
-  const [stories, setStories] = useState<BookStory[]>([]);
-  const [recommendedMembers, setRecommendedMembers] = useState<
-    RecommendedMember[]
-  >([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    data: storiesData,
+    isLoading: isLoadingStories,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteStoriesQuery();
+
+  const { data: membersData, isLoading: isLoadingMembers } = useRecommendedMembersQuery(isLoggedIn);
+
+  const { ref, inView } = useInView({
+    threshold: 0,
+  });
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const [storiesData, membersData] = await Promise.all([
-          storyService.getAllStories(),
-          isLoggedIn ? memberService.getRecommendedMembers() : Promise.resolve(undefined),
-        ]);
-
-        if (storiesData) {
-          setStories(storiesData.basicInfoList);
-        }
-        if (membersData) {
-          setRecommendedMembers(membersData.friends);
-        }
-      } catch (error) {
-        console.error("Error fetching stories page data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [isLoggedIn]);
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleCardClick = (id: number) => {
     router.push(`/stories/${id}`);
   };
+
+  const isLoading = isLoadingStories || (isLoggedIn && isLoadingMembers);
 
   if (isLoading) {
     return (
@@ -55,6 +45,9 @@ export default function StoriesPage() {
       </div>
     );
   }
+
+  const allStories = storiesData?.pages.flatMap((page) => page.basicInfoList) || [];
+  const recommendedMembers = membersData?.friends || [];
 
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4">
@@ -77,7 +70,7 @@ export default function StoriesPage() {
       <div>
         <div className="flex flex-wrap gap-5 mt-6 justify-center d:grid d:grid-cols-4 d:justify-items-center">
           {/* 첫 번째 줄 (처음 4개) */}
-          {stories.slice(0, 4).map((story) => (
+          {allStories.slice(0, 4).map((story) => (
             <div
               key={story.bookStoryId}
               onClick={() => handleCardClick(story.bookStoryId)}
@@ -106,7 +99,7 @@ export default function StoriesPage() {
           )}
 
           {/* 나머지 카드들 */}
-          {stories.slice(4).map((story) => (
+          {allStories.slice(4).map((story) => (
             <div
               key={story.bookStoryId}
               onClick={() => handleCardClick(story.bookStoryId)}
@@ -126,6 +119,17 @@ export default function StoriesPage() {
             </div>
           ))}
         </div>
+
+        {/* 무한 스크롤 옵저버 타겟 */}
+        {hasNextPage && (
+          <div ref={ref} className="w-full flex justify-center py-10">
+            {isFetchingNextPage ? (
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-2"></div>
+            ) : (
+              <div className="h-8"></div>
+            )}
+          </div>
+        )}
         {/* 글쓰기 버튼  */}
         <FloatingFab
           iconSrc="/icons_pencil.svg"

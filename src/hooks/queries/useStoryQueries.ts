@@ -1,0 +1,35 @@
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { storyService } from "@/services/storyService";
+
+export const storyKeys = {
+    all: ["stories"] as const,
+    list: () => [...storyKeys.all, "list"] as const,
+    detail: (id: number) => [...storyKeys.all, "detail", id] as const,
+};
+
+export const useStoriesQuery = () => {
+    return useQuery({
+        queryKey: storyKeys.list(),
+        queryFn: () => storyService.getAllStories(),
+    });
+};
+
+export const useStoryDetailQuery = (id: number) => {
+    return useQuery({
+        queryKey: storyKeys.detail(id),
+        queryFn: () => storyService.getStoryById(id),
+        enabled: !!id,
+    });
+};
+
+export const useInfiniteStoriesQuery = () => {
+    return useInfiniteQuery({
+        queryKey: storyKeys.list(),
+        queryFn: ({ pageParam }) => storyService.getAllStories(pageParam),
+        initialPageParam: undefined as number | undefined,
+        getNextPageParam: (lastPage) => {
+            if (!lastPage.hasNext) return undefined;
+            return lastPage.nextCursor;
+        },
+    });
+};

@@ -1,49 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import BookstoryDetail from "@/components/base-ui/BookStory/bookstory_detail";
 import StoryNavigation from "@/components/base-ui/BookStory/story_navigation";
 import CommentSection from "@/components/base-ui/Comment/comment_section";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { storyService } from "@/services/storyService";
-import { BookStoryDetail } from "@/types/story";
+import { useStoryDetailQuery } from "@/hooks/queries/useStoryQueries";
 
 export default function StoryDetailPage() {
   const params = useParams();
   const id = params?.id as string;
-  const [story, setStory] = useState<BookStoryDetail | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (!id) return;
-
-    let isMounted = true;
-    const fetchStory = async () => {
-      setIsLoading(true);
-      try {
-        const data = await storyService.getStoryById(Number(id));
-        if (isMounted) {
-          if (data) {
-            setStory(data);
-          } else {
-            setStory(null);
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch story detail:", error);
-        if (isMounted) setStory(null);
-      } finally {
-        if (isMounted) setIsLoading(false);
-      }
-    };
-
-    fetchStory();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [id]);
+  const { data: story, isLoading, isError } = useStoryDetailQuery(Number(id));
 
   if (isLoading) {
     return (
@@ -54,7 +21,7 @@ export default function StoryDetailPage() {
   }
 
   // 스토리가 없으면 404 UI
-  if (!story) {
+  if (!story || isError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <h2 className="text-2xl font-bold text-Gray-7 mb-4">404</h2>
