@@ -1,5 +1,9 @@
 export function formatTimeAgo(dateInput: Date | string): string {
-    const targetDate = new Date(dateInput);
+    let parsedInput = dateInput;
+    if (typeof dateInput === 'string') {
+        parsedInput = dateInput.replace(" ", "T");
+    }
+    const targetDate = new Date(parsedInput);
     const now = new Date();
 
     if (isNaN(targetDate.getTime())) {
