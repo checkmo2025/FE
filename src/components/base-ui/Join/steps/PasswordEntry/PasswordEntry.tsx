@@ -27,6 +27,9 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
     try {
       const response = await authService.signup({ email, password });
       if (response.isSuccess) {
+        // 회원가입 성공 직후 세션을 생성하기 위해 로그인 API 호출
+        // ProfileImage 단계에서 upload-url 및 additional-info API 호출 시 인증이 필요함
+        await authService.login({ email, password });
         onNext();
       }
     } catch (error: any) {

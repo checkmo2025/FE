@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api/client";
-import { AUTH_ENDPOINTS } from "@/lib/api/endpoints";
+import { AUTH_ENDPOINTS, API_BASE_URL } from "@/lib/api/endpoints";
 import { useAuthStore } from "@/store/useAuthStore";
 import {
   LoginForm,
@@ -48,7 +48,7 @@ export const authService = {
 
   getPresignedUrl: async (type: "PROFILE" | "CLUB" | "NOTICE", fileName: string, contentType: string): Promise<ApiResponse<{ presignedUrl: string; imageUrl: string }>> => {
     return await apiClient.post<ApiResponse<{ presignedUrl: string; imageUrl: string }>>(
-      `/api/image/${type}/upload-url`,
+      `${API_BASE_URL}/image/${type}/upload-url`,
       { originalFileName: fileName, contentType }
     );
   },
