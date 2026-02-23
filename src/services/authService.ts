@@ -48,7 +48,7 @@ export const authService = {
 
   getPresignedUrl: async (type: "PROFILE" | "CLUB" | "NOTICE", fileName: string, contentType: string): Promise<ApiResponse<{ presignedUrl: string; imageUrl: string }>> => {
     return await apiClient.post<ApiResponse<{ presignedUrl: string; imageUrl: string }>>(
-      `${API_BASE_URL}/image/${type}/upload-url`,
+      AUTH_ENDPOINTS.IMAGE_UPLOAD(type),
       { originalFileName: fileName, contentType }
     );
   },

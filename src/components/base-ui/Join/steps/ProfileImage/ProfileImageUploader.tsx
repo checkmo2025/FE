@@ -23,7 +23,7 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
       <div className="relative w-[148px] h-[141px]">
         <div className="w-[138px] h-[138px] rounded-full overflow-hidden bg-Subbrown-4">
           <Image
-            src={profileImage || "/default_profile_1.svg"}
+            src={profileImage || "/profile.svg"}
             alt="Profile"
             width={138}
             height={138}
