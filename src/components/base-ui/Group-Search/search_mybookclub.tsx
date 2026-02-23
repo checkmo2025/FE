@@ -75,7 +75,7 @@ export default function Mybookclub({ groups }: Props) {
             {displayGroups.map((group) => (
               <div
                 key={group.id}
-                className="flex w-full h-[36px] t:h-[52px] py-3 px-4 items-center rounded-lg bg-white hover:bg-background"
+                className="flex w-full h-[36px] t:h-[52px] py-3 px-4 items-center rounded-lg bg-white  hover:brightness-98 hover:-translate-y-[1px] cursor-pointer"
               >
                 <span className="text-Gray-7 body_1_2 t:subhead_4_1">
                   {group.name}
@@ -93,12 +93,12 @@ export default function Mybookclub({ groups }: Props) {
                 className="w-full rounded-[6px] bg-transparent text-[13px] flex items-center justify-center gap-[6px] text-Gray-3"
               >
                 {open ? (
-                  <div className="flex items-center justify-center gap-1">
+                  <div className="flex items-center justify-center gap-1 hover:brightness-98 cursor-pointer">
                     <span className="text-Gray-7 body_1_2">접기</span>
                     <Image src="/ArrowTop.svg" alt="" width={24} height={24} />
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center gap-1">
+                  <div className="flex items-center justify-center gap-1 hover:brightness-98  cursor-pointer">
                     <span className="text-Gray-7 body_1_2">전체보기</span>
                     <Image src="/ArrowDown.svg" alt="" width={24} height={24} />
                   </div>

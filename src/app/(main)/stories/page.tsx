@@ -1,9 +1,9 @@
 "use client";
 import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
 import ListSubscribeLarge from "@/components/base-ui/home/list_subscribe_large";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { DUMMY_STORIES } from "@/data/dummyStories";
+import FloatingFab from "@/components/base-ui/Float";
 
 // TODO: 실제 로그인 상태 여부는 나중에
 const isLoggedIn = false; // true: 로그인, false: 로그인X
@@ -76,21 +76,12 @@ export default function StoriesPage() {
             </div>
           ))}
         </div>
-
         {/* 글쓰기 버튼  */}
-        <button
-          type="button"
-          className="fixed bottom-21 right-4 t:bottom-8 t:right-8 z-[60] cursor-pointer hover:opacity-80 transition-opacity w-18 h-18 t:w-22 t:h-22"
-          onClick={() => router.push("/stories/new")}
-        >
-          <Image
-            src="/add_story.svg"
-            alt="글쓰기"
-            width={88}
-            height={88}
-            className="w-full h-full"
+        <FloatingFab
+            iconSrc="/icons_pencil.svg"
+            iconAlt="글쓰기"
+            onClick={() => router.push("/stories/new")}
           />
-        </button>
       </div>
     </div>
   );

@@ -17,6 +17,8 @@ export const DUMMY_CLUB_HOME_RESPONSE: ClubHomeResponse = {
       { code: 'COMPUTER_IT', description: '컴퓨터/IT' },
       { code: 'ESSAY', description: '에세이' },
       { code: 'HISTORY_CULTURE', description: '역사/문화' },
+      { code: 'COMPUTER_IT', description: '정치/외교/국방' },
+      { code: 'HISTORY_CULTURE', description: '어린이/청소년' },
     ],
     participantTypes: [
       { code: 'OFFLINE', description: '대면' },

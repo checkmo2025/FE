@@ -73,7 +73,7 @@ export default function LongtermChatInput({
       <button
         type="button"
         onClick={handleSend}
-        className="shrink-0 ml-5 w-6 h-6 relative"
+        className="shrink-0 ml-5 w-6 h-6 relative hover:brightness-70 cursor-pointer"
         aria-label="발제 전송"
       >
         <Image src={buttonIconSrc} alt="" fill className="object-contain" />

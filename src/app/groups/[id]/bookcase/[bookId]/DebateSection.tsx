@@ -56,7 +56,7 @@ export default function DebateSection({
         <button
           type="button"
           onClick={onToggleWriting}
-          className="relative w-6 h-6 shrink-0"
+          className="relative w-6 h-6 shrink-0 hover:brightness-50 cursor-pointer"
           aria-label="발제 작성 열기"
         >
           <Image src="/icon_plus_1.svg" alt="" fill className="object-contain" />
@@ -77,7 +77,7 @@ export default function DebateSection({
           "
         >
           {/* 프로필 + 이름 (가로) */}
-          <div className="flex shrink-0 items-center gap-3 t:min-w-[150px] d:min-w-[200px]">
+          <div className="flex shrink-0 items-center gap-3 t:min-w-[150px] d:min-w-[200px] hover:brightness-95 cursor-pointer">
             <Image
               src={profileSrc}
               alt=""

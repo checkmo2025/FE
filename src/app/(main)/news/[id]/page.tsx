@@ -1,3 +1,4 @@
+import FloatingFab from "@/components/base-ui/Float";
 import TodayRecommendedBooks from "@/components/base-ui/News/today_recommended_books";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -159,21 +160,10 @@ export default async function NewsDetailPage({ params }: Props) {
       <div className="w-screen -mx-4 my-8 border-b-4 border-Gray-1 mt-25"></div>
       <TodayRecommendedBooks books={DUMMY_BOOKS} className="mt-10" />
       
-      {/* 문의하기 */}
-      <button
-        type="button"
-        className="fixed bottom-[86px] right-6 t:bottom-8 t:right-8 z-[60] cursor-pointer hover:opacity-80 transition-opacity w-12 h-12 t:w-[88px] t:h-[88px]"
-        aria-label="문의하기"
-      >
-        <Image
-          src="/inquiry.svg"
-          alt="문의하기"
-          width={88}
-          height={88}
-          className="w-full h-full"
-          priority
-        />
-      </button>
+      <FloatingFab
+              iconSrc="/icons_calling.svg"
+              iconAlt="문의하기"
+      />
     </>
   );
 }

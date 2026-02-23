@@ -3,6 +3,7 @@ export type ClubCategoryCode =
   | 'COMPUTER_IT'
   | 'ESSAY'
   | 'HISTORY_CULTURE'
+  
   | string;
 
 export interface ClubCategory {

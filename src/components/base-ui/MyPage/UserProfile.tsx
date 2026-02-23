@@ -4,6 +4,7 @@ import Link from "next/link";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
 import { DUMMY_USER_PROFILE } from "@/constants/mocks/mypage";
 import { useAuthStore } from "@/store/useAuthStore";
+import FloatingFab from "../Float";
 
 const UserProfile = () => {
   const { user: authUser } = useAuthStore();
@@ -112,6 +113,10 @@ const UserProfile = () => {
             소식 문의하기
           </JoinButton>
         </div>
+        <FloatingFab
+          iconSrc="/icons_pencil.svg"
+          iconAlt="문의하기"
+        />
       </div>
     </div>
   );
