@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api/client";
-import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints";
+import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
 import { RecommendResponse } from "@/types/member";
 import { ApiResponse } from "@/types/auth";
 

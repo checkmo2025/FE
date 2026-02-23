@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api/client";
-import { STORY_ENDPOINTS } from "@/lib/api/endpoints";
+import { STORY_ENDPOINTS } from "@/lib/api/endpoints/bookstory";
 import { BookStoryListResponse } from "@/types/story";
 import { ApiResponse } from "@/types/auth";
 
