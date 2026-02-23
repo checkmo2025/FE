@@ -97,12 +97,13 @@ export default function StoriesPage() {
             </div>
           ))}
 
-          {/* 두 번째 줄: 비로그인 시 추천 영역 표시 (디자인에 따라 다를 수 있음) */}
-          {/* 유저 요청: "UI를 보면 중간에 추천 친구 해주는 것도 있어." */}
-          <ListSubscribeLarge
-            height="h-[380px]"
-            users={recommendedMembers}
-          />
+          {/* 두 번째 줄: 추천 멤버가 있을 경우에만 추천 영역 표시 */}
+          {recommendedMembers.length > 0 && (
+            <ListSubscribeLarge
+              height="h-[380px]"
+              users={recommendedMembers}
+            />
+          )}
 
           {/* 나머지 카드들 */}
           {stories.slice(4).map((story) => (

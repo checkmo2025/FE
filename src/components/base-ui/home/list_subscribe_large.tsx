@@ -83,9 +83,9 @@ export default function ListSubscribeLarge({
       <h3 className="subhead_2 text-Gray-7">사용자 추천</h3>
 
       <div className="mt-3 flex flex-col gap-3">
-        {users.map((u, idx) => (
+        {users.map((u) => (
           <ListSubscribeElementLarge
-            key={`${u.nickname}-${idx}`}
+            key={u.nickname}
             name={u.nickname}
             subscribingCount={u.subscribingCount}
             subscribersCount={u.subscribersCount}
