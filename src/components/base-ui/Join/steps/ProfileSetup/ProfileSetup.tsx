@@ -22,20 +22,32 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
     handleNameChange,
     handlePhoneChange,
     handleCheckDuplicate,
-    isValid,
+    validate,
   } = useProfileSetup();
   const { showToast } = useSignup();
   const nicknameRef = React.useRef<HTMLDivElement>(null);
 
+  const nameRef = React.useRef<HTMLDivElement>(null);
+  const phoneRef = React.useRef<HTMLDivElement>(null);
+  const introRef = React.useRef<HTMLDivElement>(null);
+
   const handleNextClick = () => {
-    if (!isNicknameChecked) {
-      showToast("닉네임 중복확인을 해주세요!");
-      nicknameRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    const { isValid, field } = validate();
+
+    if (!isValid) {
+      if (field === "nickname" || field === "isNicknameChecked") {
+        nicknameRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (field === "intro") {
+        introRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (field === "name") {
+        nameRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (field === "phone") {
+        phoneRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
       return;
     }
-    if (isValid) {
-      onNext?.();
-    }
+
+    onNext?.();
   };
 
   return (
@@ -83,7 +95,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
               </div>
             </div>
             {/* 한줄소개 */}
-            <div className="flex flex-col w-full gap-[12px]">
+            <div ref={introRef} className="flex flex-col w-full gap-[12px]">
               <span className="text-primary-1 font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px] t:text-[20px] t:leading-[135%] t:tracking-[-0.02px]">
                 소개
               </span>
@@ -99,7 +111,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
           {/* Group 2: Name & Phone */}
           <div className="flex flex-col gap-[36px]">
             {/* 이름 */}
-            <div className="flex flex-col w-full gap-[12px]">
+            <div ref={nameRef} className="flex flex-col w-full gap-[12px]">
               <span className="text-primary-1 font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px] t:text-[20px] t:leading-[135%] t:tracking-[-0.02px]">
                 이름
               </span>
@@ -112,7 +124,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
             </div>
 
             {/* 전화번호 */}
-            <div className="flex flex-col w-full gap-[12px]">
+            <div ref={phoneRef} className="flex flex-col w-full gap-[12px]">
               <span className="text-primary-1 font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px] t:text-[20px] t:leading-[135%] t:tracking-[-0.02px]">
                 전화번호
               </span>
@@ -127,7 +139,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
 
           <JoinButton
             onClick={handleNextClick}
-            disabled={nickname === "" || intro === "" || name === "" || phone === ""}
+            disabled={false}
             className="w-[272px] t:w-[526px]"
           >
             다음

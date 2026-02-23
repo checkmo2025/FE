@@ -11,8 +11,15 @@ import MyMeetingList from "@/components/base-ui/MyPage/MyMeetingList";
 import MyNotificationList from "@/components/base-ui/MyPage/MyNotificationList";
 import MyLibraryList from "@/components/base-ui/Profile/LibraryList";
 
+import { useAuthGuard } from "@/hooks/useAuthGuard";
+
 export default function MyPage() {
   const [activeTab, setActiveTab] = useState("stories");
+  const { isInitialized, isLoggedIn } = useAuthGuard();
+
+  if (!isInitialized || !isLoggedIn) {
+    return null; // 초기화 중이거나 리다이렉트 중에는 빈 화면
+  }
 
   return (
     <div className="flex flex-col items-center gap-[10px] md:gap-[24px] w-full min-h-screen bg-[#F9F7F6] pb-[100px]">
