@@ -1,23 +1,66 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import BookstoryDetail from "@/components/base-ui/BookStory/bookstory_detail";
 import StoryNavigation from "@/components/base-ui/BookStory/story_navigation";
 import CommentSection from "@/components/base-ui/Comment/comment_section";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { useParams } from "next/navigation";
 import { storyService } from "@/services/storyService";
+import { BookStoryDetail } from "@/types/story";
 
-type Props = {
-  params: Promise<{ id: string }>;
-};
+export default function StoryDetailPage() {
+  const params = useParams();
+  const id = params?.id as string;
+  const [story, setStory] = useState<BookStoryDetail | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-export default async function StoryDetailPage({ params }: Props) {
-  const { id } = await params;
+  useEffect(() => {
+    if (!id) return;
 
-  // API 서버에서 스토리 데이터 가져오기
-  const story = await storyService.getStoryById(Number(id));
+    let isMounted = true;
+    const fetchStory = async () => {
+      setIsLoading(true);
+      try {
+        const data = await storyService.getStoryById(Number(id));
+        if (isMounted) {
+          if (data) {
+            setStory(data);
+          } else {
+            setStory(null);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch story detail:", error);
+        if (isMounted) setStory(null);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
 
-  // 스토리가 없으면 404
+    fetchStory();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-2"></div>
+      </div>
+    );
+  }
+
+  // 스토리가 없으면 404 UI
   if (!story) {
-    notFound();
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <h2 className="text-2xl font-bold text-Gray-7 mb-4">404</h2>
+        <p className="text-Gray-5">해당 책 이야기를 찾을 수 없습니다.</p>
+      </div>
+    );
   }
 
   const prevId = story.prevBookStoryId !== 0 ? story.prevBookStoryId : null;
@@ -61,7 +104,7 @@ export default async function StoryDetailPage({ params }: Props) {
             imageUrl={story.bookInfo.imgUrl || ""}
             authorName={story.authorInfo.nickname}
             authorNickname={story.authorInfo.nickname}
-            authorId={story.authorInfo.nickname} // TODO: 실제 author ID로 변경 (현재 명세에 nickname만 있음)
+            authorId={story.authorInfo.nickname}
             bookTitle={story.bookInfo.title}
             bookAuthor={story.bookInfo.author}
             bookDetail={story.description}
