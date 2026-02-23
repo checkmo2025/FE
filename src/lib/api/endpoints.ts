@@ -1,5 +1,10 @@
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://api.checkmo.co.kr/api";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+if (!API_BASE_URL) {
+  console.warn(
+    "Warning: NEXT_PUBLIC_API_URL is not defined in environment variables."
+  );
+}
 
 export const AUTH_ENDPOINTS = {
   LOGIN: `${API_BASE_URL}/auth/login`,
