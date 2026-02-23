@@ -39,9 +39,9 @@ export default function GroupAdminMenu({ groupId }: GroupAdminMenuProps) {
       <button
         type="button"
         onClick={() => setMenuOpen(!menuOpen)}
-        className="flex items-center gap-2 cursor-pointer"
+        className="flex items-center gap-2 hover:brightness-50 cursor-pointer"
       >
-        <span className="body_1_3 text-Gray-5">모임 관리하기</span>
+        <span className="body_1_3 text-Gray-5 ">모임 관리하기</span>
         <Image
           src="/Setting.svg"
           alt="설정"

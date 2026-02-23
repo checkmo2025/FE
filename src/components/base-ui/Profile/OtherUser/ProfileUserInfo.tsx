@@ -88,7 +88,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
           </div>
 
           {/* 소개글 */}
-          <p className="w-full text-left break-keep text-Gray-4 body_2_3 t:body_1_2">
+          <p className="w-full text-left break-keep text-Gray-4 body_2_3 t:body_1_2 line-clamp-3 t:line-clamp-none">
             이제 다양한 책을 함께 읽고 서로의 생각을 나누는 특별한 시간을
             시작해보세요. 한 권의 책이 주는 작은 울림이 일상에 큰 변화를
             가져올지도 모릅니다.

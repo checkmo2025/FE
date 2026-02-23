@@ -3,6 +3,7 @@ import JoinLayout from "../../JoinLayout";
 import JoinButton from "../../JoinButton";
 import JoinInput from "../../JoinInput";
 import { useProfileSetup } from "./useProfileSetup";
+import { useSignup } from "@/contexts/SignupContext";
 
 interface ProfileSetupProps {
   onNext?: () => void;
@@ -12,6 +13,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
   const {
     nickname,
     isNicknameChecked,
+    isNicknameValid,
     intro,
     name,
     phone,
@@ -20,8 +22,33 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
     handleNameChange,
     handlePhoneChange,
     handleCheckDuplicate,
-    isValid,
+    validate,
   } = useProfileSetup();
+  const { showToast } = useSignup();
+  const nicknameRef = React.useRef<HTMLDivElement>(null);
+
+  const nameRef = React.useRef<HTMLDivElement>(null);
+  const phoneRef = React.useRef<HTMLDivElement>(null);
+  const introRef = React.useRef<HTMLDivElement>(null);
+
+  const handleNextClick = () => {
+    const { isValid, field } = validate();
+
+    if (!isValid) {
+      if (field === "nickname" || field === "isNicknameChecked") {
+        nicknameRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (field === "intro") {
+        introRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (field === "name") {
+        nameRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (field === "phone") {
+        phoneRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return;
+    }
+
+    onNext?.();
+  };
 
   return (
     <JoinLayout title="프로필 설정">
@@ -31,18 +58,17 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
           {/* Group 1: Nickname & Intro */}
           <div className="flex flex-col gap-[16px]">
             {/* 닉네임 섹션 */}
-            <div className="flex flex-col w-full gap-[12px]">
+            <div ref={nicknameRef} className="flex flex-col w-full gap-[12px]">
               <span className="text-primary-1 font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px] t:text-[20px] t:leading-[135%] t:tracking-[-0.02px]">
                 닉네임
               </span>
-              <div className="flex flex-row justify-between w-full gap-[8px]">
+              <div className="flex flex-row items-center justify-between w-full gap-[8px]">
                 <div className="w-[158px] t:flex-1">
                   {/* Mobile Input */}
                   <div className="block w-full t:hidden">
                     <JoinInput
                       value={nickname}
                       onChange={handleNicknameChange}
-                      disabled={isNicknameChecked}
                       placeholder="(최대 20자)"
                       className="h-[36px] py-0 border-Subbrown-4 placeholder-Gray-3 text-[14px] font-normal w-full bg-white"
                     />
@@ -52,7 +78,6 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
                     <JoinInput
                       value={nickname}
                       onChange={handleNicknameChange}
-                      disabled={isNicknameChecked}
                       placeholder="닉네임을 입력해주세요(최대 20글자)"
                       className="h-[44px] border-Subbrown-4 placeholder-Gray-3 text-[14px] font-normal w-full bg-white"
                     />
@@ -60,18 +85,17 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
                 </div>
                 <JoinButton
                   onClick={handleCheckDuplicate}
-                  variant={isNicknameChecked ? "primary" : "secondary"}
-                  className={`w-[106px] h-[36px] t:h-[44px] px-0 py-0 text-[14px] shrink-0 ${
-                    isNicknameChecked ? "font-medium" : "font-normal"
-                  }`}
+                  disabled={!isNicknameValid || isNicknameChecked}
+                  variant={isNicknameValid ? "primary" : "secondary"}
+                  className={`w-[106px] h-[36px] t:h-[44px] px-0 py-0 text-[14px] shrink-0 ${isNicknameChecked ? "font-medium" : "font-normal"
+                    }`}
                 >
-                  중복확인
+                  {isNicknameChecked ? "확인됨" : "중복확인"}
                 </JoinButton>
               </div>
-              
             </div>
-              {/* 한줄소개 */}
-            <div className="flex flex-col w-full gap-[12px]">
+            {/* 한줄소개 */}
+            <div ref={introRef} className="flex flex-col w-full gap-[12px]">
               <span className="text-primary-1 font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px] t:text-[20px] t:leading-[135%] t:tracking-[-0.02px]">
                 소개
               </span>
@@ -84,44 +108,43 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
             </div>
           </div>
 
-         {/* Group 2: Name & Phone */}
+          {/* Group 2: Name & Phone */}
           <div className="flex flex-col gap-[36px]">
             {/* 이름 */}
-            <div className="flex flex-col w-full gap-[12px]">
+            <div ref={nameRef} className="flex flex-col w-full gap-[12px]">
               <span className="text-primary-1 font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px] t:text-[20px] t:leading-[135%] t:tracking-[-0.02px]">
                 이름
               </span>
-          <JoinInput
-            value={name}
-            onChange={handleNameChange}
-              placeholder="이름을 입력해주세요"
+              <JoinInput
+                value={name}
+                onChange={handleNameChange}
+                placeholder="이름을 입력해주세요"
                 className="h-[36px] t:h-[44px] py-0 t:py-[12px] border-Subbrown-4 placeholder-Gray-3 text-[14px] font-normal bg-white"
               />
             </div>
 
             {/* 전화번호 */}
-            <div className="flex flex-col w-full gap-[12px]">
+            <div ref={phoneRef} className="flex flex-col w-full gap-[12px]">
               <span className="text-primary-1 font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px] t:text-[20px] t:leading-[135%] t:tracking-[-0.02px]">
                 전화번호
               </span>
               <JoinInput
+                value={phone}
+                onChange={handlePhoneChange}
+                placeholder="010-0000-0000"
+                className="h-[36px] t:h-[44px] py-0 t:py-[12px] border-Subbrown-4 placeholder-Gray-3 text-[14px] font-normal bg-white"
+              />
+            </div>
+          </div>
 
-            value={phone}
-            onChange={handlePhoneChange}
-            placeholder="010-0000-0000"
-    className="h-[36px] t:h-[44px] py-0 t:py-[12px] border-Subbrown-4 placeholder-Gray-3 text-[14px] font-normal bg-white"
-                  />
+          <JoinButton
+            onClick={handleNextClick}
+            disabled={false}
+            className="w-[272px] t:w-[526px]"
+          >
+            다음
+          </JoinButton>
         </div>
-      </div>
-
-        <JoinButton
-          onClick={onNext}
-          disabled={!isValid}
-          className="w-[272px] t:w-[526px]"
-        >
-          다음
-        </JoinButton>
-      </div>
       </div>
     </JoinLayout>
   );

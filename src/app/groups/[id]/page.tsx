@@ -40,11 +40,12 @@ export default function AdminGroupHomePage() {
     .filter((n: number) => n >= 1 && n <= 15);
 
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true); 
 
   return (
     <main className="w-full">
       {/* 최대 1024, d에서만 px-10(40px) */}
-      <div className="mx-auto w-full max-w-[1024px] t:px-10">
+      <div className="t:mx-auto d:mx-0 w-full max-w-[1024px] t:px-3 d:px-0">
         {/* 1) 공지 (항상 최상단) */}
         <Link
           href={noticeUrl}
@@ -55,7 +56,7 @@ export default function AdminGroupHomePage() {
             bg-White
             p-4
             cursor-pointer
-            hover:bg-background
+            hover:brightness-98 hover:-translate-y-[1px] cursor-pointer
             focus-visible:outline-none
             focus-visible:ring-2 focus-visible:ring-Subbrown-2
           "
@@ -89,7 +90,7 @@ export default function AdminGroupHomePage() {
               className="
                 relative shrink-0 overflow-hidden
                 d:w-[300px] d:h-[300px]
-                rounded-[12px]
+                rounded-[4px]
                 bg-Gray-1
               "
             >
@@ -106,14 +107,16 @@ export default function AdminGroupHomePage() {
             {/* 3) 텍스트 + 4) 버튼 (같은 컬럼) */}
             <div className="min-w-0 flex-1 flex flex-col min-h-[300px] relative">
               {/* 운영진용 모임 관리 드롭다운 */}
-              <div className="absolute top-0 right-0">
-                <GroupAdminMenu groupId={Number(groupId)} />
-              </div>
+              {isAdmin && (
+                <div className="absolute top-0 right-0 z-10">
+                  <GroupAdminMenu groupId={Number(groupId)} />
+                </div>
+              )}
 
-              {/* chips */}
-              <div className="flex flex-wrap gap-3">
+              <div className={isAdmin ? "pr-[113px]" : ""}>
                 <ClubCategoryTags category={nums} />
               </div>
+
 
               <div className="mt-3 space-y-2">
                 <div className="flex items-start gap-3">
@@ -128,7 +131,6 @@ export default function AdminGroupHomePage() {
               </div>
 
               <div className="mt-[19px]">
-                <p className="body_1_3 text-Gray-5">설명</p>
                 <p className="body_1_3 text-Gray-5 mt-2 whitespace-pre-line wrap-break-word">
                   {DUMMY_CLUB_HOME.description ?? '설명이 없습니다.'}
                 </p>
@@ -142,7 +144,7 @@ export default function AdminGroupHomePage() {
                   bgColorVar="--Primary_1"
                   borderColorVar="--Primary_1"
                   textColorVar="--White"
-                  className="w-[300px] h-[44px] body_1"
+                  className="w-[300px] h-[44px] body_1 hover:brightness-90 hover:-translate-y-[1px] cursor-pointer"
                 />
                 <ButtonWithoutImg
                   text="Contact US"
@@ -150,7 +152,7 @@ export default function AdminGroupHomePage() {
                   bgColorVar="--Subbrown_4"
                   borderColorVar="--Subbrown_2"
                   textColorVar="--Primary_3"
-                  className="w-[300px] h-[44px] body_1"
+                  className="w-[300px] h-[44px] body_1 hover:brightness-95 hover:-translate-y-[1px] cursor-pointer"
                 />
               </div>
             </div>
@@ -166,7 +168,7 @@ export default function AdminGroupHomePage() {
                 relative shrink-0 overflow-hidden
                 w-[110px] h-[110px]
                 t:w-[300px] t:h-[300px]
-                rounded-[12px]
+                rounded-[4px]
                 bg-Gray-1
               "
             >
@@ -180,12 +182,13 @@ export default function AdminGroupHomePage() {
 
             {/* 3) 내용 */}
             <div className="min-w-0 flex-1 relative">
-              {/* 운영진용 모임 관리 드롭다운 */}
-              <div className="absolute top-0 right-0">
-                <GroupAdminMenu groupId={Number(groupId)} />
-              </div>
+              {isAdmin && (
+                <div className="absolute top-0 right-0 z-10">
+                  <GroupAdminMenu groupId={Number(groupId)} />
+                </div>
+              )}
 
-              <div className="flex flex-wrap gap-3">
+              <div className={isAdmin ? "pr-[110px]" : ""}>
                 <ClubCategoryTags category={nums} />
               </div>
 
@@ -202,7 +205,6 @@ export default function AdminGroupHomePage() {
               </div>
 
               <div className="mt-[19px]">
-                <p className="body_1_3 text-Gray-5">설명</p>
                 <p className="body_1_3 text-Gray-5 mt-2 whitespace-pre-line wrap-break-word">
                   {DUMMY_CLUB_HOME.description ?? '설명이 없습니다.'}
                 </p>
@@ -218,7 +220,7 @@ export default function AdminGroupHomePage() {
               bgColorVar="--Primary_1"
               borderColorVar="--Primary_1"
               textColorVar="--White"
-              className="w-full d:w-[300px] h-[44px] body_1"
+              className="w-full d:w-[300px] h-[44px] body_1 hover:brightness-90 hover:-translate-y-[1px] cursor-pointer"
             />
             <ButtonWithoutImg
               text="Contact US"
@@ -226,7 +228,7 @@ export default function AdminGroupHomePage() {
               bgColorVar="--Subbrown_4"
               borderColorVar="--Subbrown_2"
               textColorVar="--Primary_3"
-              className="w-full d:w-[300px] h-[44px] body_1"
+              className="w-full d:w-[300px] h-[44px] body_1 hover:brightness-95 hover:-translate-y-[1px] cursor-pointer"
             />
           </div>
         </div>
@@ -261,12 +263,12 @@ export default function AdminGroupHomePage() {
         >
           {/* 헤더: 타이틀 + X */}
           <div className="w-full flex items-center justify-between">
-            <p className="subhead_4_1 text-Gray-7">Contact Us</p>
+            <p className="subhead_4_1 text-Gray-7 ">Contact Us</p>
 
             <button
               type="button"
               onClick={() => setIsContactOpen(false)}
-              className="shrink-0"
+              className="shrink-0 hover:brightness-0 cursor-pointer hover:scale-[1.07]"
               aria-label="닫기"
             >
               {/* TODO: 실제 X 아이콘 파일명 맞춰서 교체 */}

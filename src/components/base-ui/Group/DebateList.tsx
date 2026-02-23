@@ -11,7 +11,7 @@ export type DebateItem = {
 
 type Props = {
   items: DebateItem[];
-  onClickMore?: (id: DebateItem["id"]) => void; // 햄버거(⋮) 눌렀을 때
+  onClickMore?: (id: DebateItem["id"]) => void;
 };
 
 const DEFAULT_PROFILE = "/profile4.svg";
@@ -34,32 +34,71 @@ export default function DebateList({ items, onClickMore }: Props) {
               px-5 py-3
             "
           >
-            {/* 모바일: grid로 2줄 구성 (위: 프로필+이름+메뉴 / 아래: 내용)
-                t 이상: flex 한 줄 */}
-            <div
-              className="
-                grid grid-cols-[auto_1fr_auto] items-center
-                t:flex t:items-center t:gap-3
-              "
-            >
-              {/* 프로필 + 이름: '한 덩어리' */}
-            <div className="flex shrink-0 items-center gap-3 t:min-w-[150px] d:min-w-[200px]">
-              <Image
-                src={profileSrc}
-                alt=""
-                width={28}
-                height={28}
-                className="rounded-full object-cover w-[24px] h-[24px] t:w-[28px] t:h-[28px] d:w-[40px] d:h-[40px]"
-              />
-              <p className="text-Gray-7 body_1_2 d:subhead_4_1  truncate">
-                {item.name}
-              </p>
+            {/* Mobile */}
+            <div className="grid grid-cols-[1fr_auto] items-start gap-x-3 t:hidden">
+              {/* 왼쪽 덩어리 (프로필+이름 + 내용) */}
+              <div className="min-w-0">
+                <div className="flex items-center gap-3 hover:brightness-95 cursor-pointer">
+                  <Image
+                    src={profileSrc}
+                    alt=""
+                    width={28}
+                    height={28}
+                    className="rounded-full object-cover w-[24px] h-[24px]"
+                  />
+                  <p className="text-Gray-7 body_1_2 truncate min-w-0">
+                    {item.name}
+                  </p>
+                </div>
+
+                <p
+                  className="
+                    mt-2
+                    text-Gray-6
+                    body_2_3
+                    [font-feature-settings:'case'_on]
+                    break-words
+                  "
+                >
+                  {item.content}
+                </p>
+              </div>
+
+              {/* 햄버거 */}
+              <button
+                type="button"
+                onClick={() => onClickMore?.(item.id)}
+                className="relative w-6 h-6 shrink-0 justify-self-end self-center hover:brightness-70 cursor-pointer"
+                aria-label="더보기"
+              >
+                <Image
+                  src="/ant-design_more-outlined.svg"
+                  alt=""
+                  fill
+                  className="object-contain"
+                />
+              </button>
             </div>
 
-              {/* t 이상에서만 내용이 같은 줄로 옴 */}
+            {/* Tablet+ */}
+            <div className="hidden t:flex t:items-center t:gap-3">
+              {/* 프로필+이름 */}
+              <div className="flex shrink-0 items-center gap-3 t:min-w-[150px] d:min-w-[200px] hover:brightness-95 cursor-pointer">
+                <Image
+                  src={profileSrc}
+                  alt=""
+                  width={28}
+                  height={28}
+                  className="rounded-full object-cover w-[28px] h-[28px] d:w-[40px] d:h-[40px]"
+                />
+                <p className="text-Gray-7 body_1_2 d:subhead_4_1 truncate">
+                  {item.name}
+                </p>
+              </div>
+
+              {/* 내용 */}
               <p
                 className="
-                  hidden t:block
                   min-w-0 flex-1
                   text-Gray-6
                   body_2_3 d:body_1_2
@@ -70,30 +109,21 @@ export default function DebateList({ items, onClickMore }: Props) {
                 {item.content}
               </p>
 
-              {/* 햄버거 아이콘 (24x24) */}
+              {/* 햄버거 */}
               <button
                 type="button"
                 onClick={() => onClickMore?.(item.id)}
-                className="relative w-6 h-6 shrink-0 justify-self-end"
+                className="relative w-6 h-6 shrink-0 hover:brightness-70 cursor-pointer"
                 aria-label="더보기"
               >
-                <Image src="/ant-design_more-outlined.svg" alt="" fill className="object-contain" />
+                <Image
+                  src="/ant-design_more-outlined.svg"
+                  alt=""
+                  fill
+                  className="object-contain"
+                />
               </button>
             </div>
-
-            {/* 모바일에서만: 내용이 아래로 내려감 (name 아래 라인) */}
-            <p
-              className="
-                mt-2
-                t:hidden
-                text-Gray-6
-                body_2_3
-                [font-feature-settings:'case'_on]
-                break-words
-              "
-            >
-              {item.content}
-            </p>
           </div>
         );
       })}

@@ -86,8 +86,7 @@ export default function BookStoryCard({
 
       {/* 3. 제목 + 내용 */}
       <div
-        className="flex flex-col
-        px-[16px] md:px-4 md:pt-4"
+        className="flex flex-col px-[16px] md:px-4 md:pt-4"
       >
         {/* 제목 */}
         <p
@@ -103,8 +102,8 @@ export default function BookStoryCard({
         {/* 내용 */}
         <div
           className="text-Gray-5 overflow-hidden
-          /* 모바일: h-[76px], flex center, 12px */
-          flex flex-col justify-center h-[76px] text-center text-[12px] font-medium leading-[145%] tracking-[-0.012px] line-clamp-3
+          /* 모바일: mt-1, 12px */
+          mt-[4px] text-center text-[12px] font-medium leading-[145%] tracking-[-0.012px] line-clamp-2 md:line-clamp-3
           /* 데스크탑: h-16, block, body_1_3 */
           md:block md:h-16 md:pt-1 md:text-left md:body_1_3"
         >

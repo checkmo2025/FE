@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 import Header from "@/components/layout/Header";
 import SettingsSidebar from "@/components/base-ui/Settings/SettingsSidebar";
 import BottomNav from "@/components/layout/BottomNav";
@@ -7,6 +11,11 @@ export default function SettingsLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { isInitialized, isLoggedIn } = useAuthGuard();
+
+  if (!isInitialized || !isLoggedIn) {
+    return null;
+  }
   return (
     <main className="flex min-h-screen w-full flex-col items-center bg-background pb-[114px]">
       {/*  메인 컨텐츠 래퍼 */}

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import NewsList from "@/components/base-ui/News/news_list";
 import TodayRecommendedBooks from "@/components/base-ui/News/today_recommended_books";
+import FloatingFab from "@/components/base-ui/Float";
 
 const DUMMY_NEWS = [
   {
@@ -105,21 +106,11 @@ export default function NewsPage() {
       <div className="w-full my-8 border-b-4 border-Gray-1"></div>
 
       <TodayRecommendedBooks books={DUMMY_BOOKS} className="hidden d:flex" />
-      {/* 문의하기 */}
-      <button
-        type="button"
-        className="fixed bottom-21 right-4 t:bottom-8 t:right-8 z-[60] cursor-pointer hover:opacity-80 transition-opacity w-18 h-18 t:w-22 t:h-22"
-        aria-label="문의하기"
-      >
-        <Image
-          src="/inquiry.svg"
-          alt="문의하기"
-          width={88}
-          height={88}
-          className="w-full h-full"
-          priority
-        />
-      </button>
+
+      <FloatingFab
+        iconSrc="/icons_calling.svg"
+        iconAlt="문의하기"
+      />
     </div>
   );
 }

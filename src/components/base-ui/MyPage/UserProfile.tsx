@@ -1,13 +1,24 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
 import { DUMMY_USER_PROFILE } from "@/constants/mocks/mypage";
+import { useAuthStore } from "@/store/useAuthStore";
+import FloatingFab from "../Float";
 
 const UserProfile = () => {
-  const user = DUMMY_USER_PROFILE;
+  const { user: authUser } = useAuthStore();
+
+  // 서버 데이터가 있으면 사용하고, 없으면 더미 데이터 사용 (구독자 수 등은 현재 API에 없음)
+  const user = {
+    ...DUMMY_USER_PROFILE,
+    name: authUser?.nickname || authUser?.email || DUMMY_USER_PROFILE.name,
+    intro: authUser?.description || DUMMY_USER_PROFILE.intro,
+    profileImage: authUser?.profileImageUrl || DUMMY_USER_PROFILE.profileImage,
+  };
 
   return (
-    <div className="flex flex-col items-start w-full max-w-[1440px] gap-[24px] md:gap-[80px] px-[18px] md:px-[40px] lg:px-0">
+    <div className="flex flex-col items-start w-full max-w-[1440px] gap-[24px] md:gap-[80px] px-[18px] md:px-[40px] lg:px-0 mx-auto">
       {/* Inner Content (Center Aligned) */}
       <div className="flex flex-col items-start w-full max-w-[734px] gap-[24px] md:gap-[40px] mx-auto">
         {/* Profile Info Area */}
@@ -72,26 +83,29 @@ const UserProfile = () => {
                   />
                 </button>
                 {/* Settings Icon: Absolute on Mobile, Static on Tablet+ */}
-                <button className="absolute right-0 top-0 md:static flex items-center justify-center w-[24px] h-[24px]">
+                <Link
+                  href="/setting/profile"
+                  className="absolute right-0 top-0 md:static flex items-center justify-center w-[24px] h-[24px]"
+                >
                   <Image
                     src="/Setting_icon.svg"
                     alt="Settings"
                     width={24}
                     height={24}
                   />
-                </button>
+                </Link>
               </div>
             </div>
 
             {/* Introduction */}
-            <div className="flex flex-col items-start gap-[12px] w-full self-stretch text-[#8D8D8D] font-sans text-[14px] font-medium leading-[145%] line-clamp-3 md:line-clamp-none">
+            <div className="gap-[12px] w-full self-stretch text-[#8D8D8D] font-sans text-[14px] font-medium leading-[145%] line-clamp-3 md:line-clamp-none">
               {user.intro}
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-[12px] md:gap-[24px] self-stretch">
+        <div className="flex items-center justify-center md:justify-start gap-[12px] md:gap-[24px] self-stretch">
           <JoinButton className="w-[160px] h-[32px] md:w-[355px] md:h-[48px] p-[12px_16px] gap-[10px] rounded-[8px] bg-[#7B6154] text-[#FFF] font-sans text-[14px] font-semibold md:text-[18px] md:font-medium leading-[135%]">
             내 책 이야기 쓰기
           </JoinButton>
@@ -99,6 +113,10 @@ const UserProfile = () => {
             소식 문의하기
           </JoinButton>
         </div>
+        <FloatingFab
+          iconSrc="/icons_pencil.svg"
+          iconAlt="문의하기"
+        />
       </div>
     </div>
   );

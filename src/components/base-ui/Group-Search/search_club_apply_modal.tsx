@@ -81,7 +81,7 @@ export default function SearchClubApplyModal({
             'w-full max-w-[1040px]',
             'flex flex-col items-end gap-4',
             'p-[28px]',
-            'rounded-[12px] bg-White',
+            'rounded-[8px] bg-White',
             'shadow-lg',
           ].join(' ')}
         >
@@ -121,7 +121,7 @@ export default function SearchClubApplyModal({
 
             {/* 오른쪽 */}
             <div className="flex flex-col items-end gap-2">
-              <button type="button" onClick={onClose} className="shrink-0">
+              <button type="button" onClick={onClose} className="shrink-0 hover:brightness-90 cursor-pointer">
                 <Image src="/cancle_button.svg" alt="닫기" width={24} height={24} />
               </button>
 
@@ -168,9 +168,9 @@ export default function SearchClubApplyModal({
               type="button"
               onClick={() => onSubmit(club.clubId,reason)}
               className={[
-                'h-[40px] px-4 rounded-[8px]',
+                'w-[132px] h-[40px] px-4 rounded-[8px]',
                 'bg-primary-2 text-White border border-primary-2',
-                'Body_1_2',
+                'body_1_2 hover:brightness-90 cursor-pointer',
               ].join(' ')}
               disabled={reason.trim().length === 0}
             >

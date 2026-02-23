@@ -14,10 +14,10 @@ const MOCK_MEETINGS = [
 export default function MeetingList() {
   return (
     <div
-      className="flex w-full flex-col items-center
+      className="flex w-full max-w-[1048px] flex-col items-center
       gap-[12px]
-      t:w-[688px] t:items-start t:gap-[8px] 
-      d:w-[1048px]"
+      px-[18px] md:px-[40px] lg:px-0 mx-auto
+      md:items-start md:gap-[8px]"
     >
       {MOCK_MEETINGS.map((meeting) => (
         <MeetingCard key={meeting.id} title={meeting.title} />

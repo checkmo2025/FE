@@ -71,7 +71,7 @@ export default function Searchpage() {
             bgColorVar="--Primary_1"
             borderColorVar="--Primary_1"
             textColorVar="--White"
-            className=" flex-1 body_1"
+            className=" flex-1 body_1 hover:brightness-95 hover:-translate-y-[1px] cursor-pointer"
             onClick={() => router.push('/groups/create')}
           />                
         </div>
@@ -84,7 +84,7 @@ export default function Searchpage() {
             bgColorVar="--Primary_1"
             borderColorVar="--Primary_1"
             textColorVar="--White"
-            className="flex-1 subhead_4_1"
+            className="flex-1 subhead_4_1 hover:brightness-95 hover:-translate-y-[1px] cursor-pointer"
             onClick={() => router.push('/groups/create')}
           />
                     
@@ -112,7 +112,7 @@ export default function Searchpage() {
         </div>
 
         <div className="w-full">
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 ">
               {dummyClubs.map((club) => (
                 <SearchClubListItem
                   key={club.clubId}

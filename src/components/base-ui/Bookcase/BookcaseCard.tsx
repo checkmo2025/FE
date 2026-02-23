@@ -86,7 +86,7 @@ export default function BookcaseCard({
 
         {/* 액션 리스트 및 별점 */}
         <div className="flex flex-col items-start gap-[8px] self-stretch">
-          <div className="flex flex-col items-start self-stretch">
+          <div className="flex flex-col items-start self-stretch ">
             {[
               { label: "발제", onClick: onTopicClick },
               { label: "한줄평", onClick: onReviewClick },
@@ -97,7 +97,7 @@ export default function BookcaseCard({
                 <button
                   key={item.label}
                   onClick={item.onClick}
-                  className="flex items-center justify-between self-stretch border-b border-Subbrown-4 p-[4px] hover:bg-Gray-1 transition-colors"
+                  className="flex items-center justify-between self-stretch border-b border-Subbrown-4 p-[4px] hover:bg-Gray-1 transition-colors cursor-pointer"
                 >
                   <span className="body_2_2 text-Gray-7">{item.label}</span>
                   <div className="relative h-[24px] w-[24px]">

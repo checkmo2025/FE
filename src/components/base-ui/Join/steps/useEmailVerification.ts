@@ -1,24 +1,27 @@
-// c:\Users\shinwookKang\Desktop\CheckMo\FE\src\components\base-ui\Join\steps\useEmailVerification.tsx
-
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useSignup } from "@/contexts/SignupContext";
+import { authService } from "@/services/authService";
 
 export const useEmailVerification = () => {
-  const [email, setEmail] = useState("");
-  const [isEmailValid, setIsEmailValid] = useState(false);
-  const [timeLeft, setTimeLeft] = useState<number | null>(null);
-  const [verificationCode, setVerificationCode] = useState("");
-  const [isCodeValid, setIsCodeValid] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
+  const {
+    email,
+    setEmail,
+    verificationCode,
+    setVerificationCode,
+    isVerified,
+    setIsVerified,
+    timeLeft,
+    setTimeLeft,
+    showToast,
+  } = useSignup();
 
-  // Toast Animation State
-  const [showToast, setShowToast] = useState(false); // Controls mounting
-  const [isToastVisible, setIsToastVisible] = useState(false); // Controls opacity
+  const [isLoading, setIsLoading] = useState(false);
+
+  const isEmailValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+  const isCodeValid = verificationCode.length === 6;
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setEmail(value);
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    setIsEmailValid(emailRegex.test(value));
+    setEmail(e.target.value);
   };
 
   const handleVerificationCodeChange = (
@@ -27,20 +30,44 @@ export const useEmailVerification = () => {
     const value = e.target.value;
     if (/^\d*$/.test(value) && value.length <= 6) {
       setVerificationCode(value);
-      setIsCodeValid(value.length === 6);
     }
   };
 
-  const startTimer = () => {
-    if (isEmailValid) {
-      setTimeLeft(300);
+  const startTimer = async () => {
+    if (!isEmailValid || isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const response = await authService.verifyEmail(email);
+      if (response.isSuccess) {
+        showToast(response.result || "인증번호가 발송되었습니다.");
+        setTimeLeft(300);
+      } else {
+        showToast(response.message || "인증번호 발송에 실패했습니다.");
+      }
+    } catch (error: any) {
+      showToast(error.message || "인증번호 발송에 실패했습니다.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleVerify = () => {
-    if (isCodeValid) {
-      setIsVerified(true);
-      setShowToast(true);
+  const handleVerify = async () => {
+    if (!isCodeValid || isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const response = await authService.confirmEmail({ email, verificationCode });
+      if (response.isSuccess && response.result === true) {
+        setIsVerified(true);
+        showToast("인증이 완료되었습니다.");
+      } else {
+        showToast(response.message || "인증번호가 일치하지 않습니다.");
+      }
+    } catch (error: any) {
+      showToast(error.message || "인증 확인 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -53,29 +80,10 @@ export const useEmailVerification = () => {
   useEffect(() => {
     if (timeLeft === null || timeLeft === 0) return;
     const interval = setInterval(() => {
-      setTimeLeft((prev) => (prev !== null && prev > 0 ? prev - 1 : 0));
+      setTimeLeft(timeLeft > 0 ? timeLeft - 1 : 0);
     }, 1000);
     return () => clearInterval(interval);
-  }, [timeLeft]);
-
-  useEffect(() => {
-    if (showToast) {
-      // 1. Mount (showToast=true) -> Wait 10ms -> Fade In (isToastVisible=true)
-      const showTimer = setTimeout(() => setIsToastVisible(true), 10);
-
-      // 2. Wait 3000ms -> Fade Out (isToastVisible=false)
-      const hideTimer = setTimeout(() => setIsToastVisible(false), 3000);
-
-      // 3. Wait 3300ms (allow transition) -> Unmount (showToast=false)
-      const unmountTimer = setTimeout(() => setShowToast(false), 3300);
-
-      return () => {
-        clearTimeout(showTimer);
-        clearTimeout(hideTimer);
-        clearTimeout(unmountTimer);
-      };
-    }
-  }, [showToast]);
+  }, [timeLeft, setTimeLeft]);
 
   return {
     email,
@@ -88,8 +96,6 @@ export const useEmailVerification = () => {
     startTimer,
     isVerified,
     handleVerify,
-    showToast,
-    isToastVisible, // Now correctly exported
     formatTime,
   };
 };

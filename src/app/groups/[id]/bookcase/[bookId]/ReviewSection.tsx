@@ -70,7 +70,7 @@ export default function ReviewSection({
         <button
           type="button"
           onClick={onToggleWriting}
-          className="relative w-6 h-6 shrink-0"
+          className="relative w-6 h-6 shrink-0 hover:brightness-0 cursor-pointer"
           aria-label="한줄평 작성 열기"
         >
           <Image src="/icon_plus_1.svg" alt="" fill className="object-contain" />
@@ -86,14 +86,14 @@ export default function ReviewSection({
             bg-White
             px-5 py-3
             flex flex-col
-            t:gap-5
+            t:gap-3
             mb-[6px]
             t:flex-row t:items-center
           "
         >
           {/* (모바일) 프로필+이름 / 별점은 한 덩어리로 보이게 */}
           <div className="grid grid-cols-[auto_1fr] items-center gap-x-3 t:flex t:items-center t:gap-1 t:shrink-0">
-            <div className="flex shrink-0 items-center gap-3 t:min-w-[120px] d:min-w-[170px]">
+            <div className="flex shrink-0 items-center gap-3 t:min-w-[128px] d:min-w-[178px] hover:brightness-95 cursor-pointer">
               <Image
                 src={profileSrc}
                 alt=""
@@ -108,7 +108,7 @@ export default function ReviewSection({
               value={newRating}
               onChange={setNewRating}
               className="justify-self-start"
-              starClassName="w-[16px] h-[16px] t:w-[18px] t:h-[18px] d:w-[20px] d:h-[20px]"
+              starClassName="w-[16px] h-[16px] t:w-[18px] t:h-[18px] d:w-[20px] d:h-[20px] cursor-pointer"
             />
           </div>
 

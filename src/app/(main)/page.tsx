@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import BookStoryCard from "@/components/base-ui/BookStory/bookstory_card";
 import NewsBannerSlider from "@/components/base-ui/home/NewsBannerSlider";
 import HomeBookclub from "@/components/base-ui/home/home_bookclub";
@@ -10,38 +11,30 @@ import LoginModal from "@/components/base-ui/Login/LoginModal";
 import { DUMMY_STORIES } from "@/data/dummyStories";
 import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
 
+import { useAuthStore } from "@/store/useAuthStore";
+
 export default function HomePage() {
   const groups: { id: string; name: string }[] = [];
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  
+  const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
+
   // 사용자 더미 데이터
   const users = [
-    { id: '1', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-    { id: '2', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-    { id: '3', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-    { id: '4', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
+    { id: "1", name: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
+    { id: "2", name: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
+    { id: "3", name: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
+    { id: "4", name: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
   ];
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 t:px-6">
-      {/* 임시 로그인 모달 테스트 버튼 */}
-      <button
-        onClick={() => setShowLoginModal(true)}
-        className="fixed z-50 px-6 py-3 text-white rounded-full shadow-lg bottom-10 right-10 bg-primary-1 subhead_4_1"
-      >
-        로그인 모달 열기
-      </button>
-
-      {showLoginModal && (
-        <LoginModal onClose={() => setShowLoginModal(false)} />
+      {isLoginModalOpen && (
+        <LoginModal onClose={() => closeLoginModal()} />
       )}
 
       {/* 모바일  */}
       <div className="flex flex-col gap-6 t:hidden">
         {/* 소식 */}
         <section className="pt-6">
-          <h2 className="pb-4 body_1 leading-7 text-zinc-800">
-            소식
-          </h2>
+          <h2 className="pb-4 body_1 leading-7 text-zinc-800">소식</h2>
           <NewsBannerSlider />
         </section>
 
@@ -49,9 +42,7 @@ export default function HomePage() {
         <section className="w-full">
           <div className="flex gap-4">
             <div className="flex-1">
-              <h2 className="pb-2 body_1 leading-7 text-zinc-800">
-                독서모임
-              </h2>
+              <h2 className="pb-2 body_1 leading-7 text-zinc-800">독서모임</h2>
               <HomeBookclub groups={groups} />
             </div>
             <div className="flex-1">
@@ -65,7 +56,7 @@ export default function HomePage() {
                     name={u.name}
                     subscribingCount={u.subscribingCount}
                     subscribersCount={u.subscribersCount}
-                    onSubscribeClick={() => console.log('subscribe', u.id)}
+                    onSubscribeClick={() => console.log("subscribe", u.id)}
                   />
                 ))}
               </div>
@@ -151,17 +142,17 @@ export default function HomePage() {
         <div className="flex-1 pt-6 flex flex-col gap-6">
           {/* 소식 */}
           <section>
-          <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">
-            소식
-          </h2>
-          <NewsBannerSlider />
+            <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">
+              소식
+            </h2>
+            <NewsBannerSlider />
           </section>
 
           {/* 책 이야기 카드 */}
           <section>
             <div className="grid grid-cols-3 gap-5">
               {DUMMY_STORIES.slice(0, 3).map((story) => (
-            <BookStoryCard
+                <BookStoryCard
                   key={story.id}
                   authorName={story.authorName}
                   createdAt={story.createdAt}
@@ -171,12 +162,29 @@ export default function HomePage() {
                   likeCount={story.likeCount}
                   commentCount={story.commentCount}
                   subscribeText="구독"
-            />
+                />
               ))}
-          </div>
-        </section>
+            </div>
+          </section>
         </div>
       </div>
+
+      {/* 비로그인 시 플로팅 로그인 하기 버튼 */}
+      {!isLoggedIn && (
+        <button
+          onClick={() => openLoginModal()}
+          className="fixed bottom-21 right-4 t:bottom-8 t:right-8 z-[60] flex items-center justify-center w-auto h-[48px] px-6 bg-[#7B6154] text-white rounded-full shadow-lg hover:bg-[#5E4A40] transition-colors gap-2"
+        >
+          <Image
+            src="/after_home.svg"
+            alt=""
+            width={20}
+            height={20}
+            className="brightness-0 invert"
+          />
+          <span className="font-semibold">로그인 하기</span>
+        </button>
+      )}
     </div>
   );
 }

@@ -1,9 +1,9 @@
 "use client";
 import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
 import ListSubscribeLarge from "@/components/base-ui/home/list_subscribe_large";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { DUMMY_STORIES } from "@/data/dummyStories";
+import FloatingFab from "@/components/base-ui/Float";
 
 // TODO: 실제 로그인 상태 여부는 나중에
 const isLoggedIn = false; // true: 로그인, false: 로그인X
@@ -17,30 +17,30 @@ export default function StoriesPage() {
 
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4">
-      <div className="t:mt-8 h-[44px] d:h-[54px] flex gap-14 items-center border-b border-zinc-300">
-        <div className="text-center text-Gray-7 body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600">
+      <div className="t:mt-3 h-[44px] d:h-[54px] flex gap-14 items-center border-b border-zinc-300 overflow-x-auto scrollbar-hide">
+        <div className="text-center text-Gray-7 body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600 shrink-0">
           전체
         </div>
-        <div className="text-center text-Gray-3 body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600">
+        <div className="text-center text-Gray-3 body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600 shrink-0">
           구독중
         </div>
-        <div className="text-center text-Gray-3 body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600">
+        <div className="text-center text-Gray-3 body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600 shrink-0">
           긁적긁적
         </div>
-        <div className="text-center text-Gray-3 body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600">
+        <div className="text-center text-Gray-3 body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600 shrink-0">
           북적북적
         </div>
       </div>
 
       {/* 메인 콘텐츠 영역 */}
       <div>
-        <div className="grid grid-cols-1 t:grid-cols-2 d:grid-cols-4 gap-5 mt-6 justify-items-center">
+        <div className="flex flex-wrap gap-5 mt-6 justify-center d:grid d:grid-cols-4 d:justify-items-center">
           {/* 첫 번째 줄 */}
           {DUMMY_STORIES.slice(0, 4).map((story) => (
             <div
               key={story.id}
               onClick={() => handleCardClick(story.id)}
-              className="cursor-pointer"
+              className="cursor-pointer shrink-0"
             >
               <BookStoryCardLarge
                 authorName={story.authorName}
@@ -61,7 +61,7 @@ export default function StoriesPage() {
             <div
               key={story.id}
               onClick={() => handleCardClick(story.id)}
-              className="cursor-pointer"
+              className="cursor-pointer shrink-0"
             >
               <BookStoryCardLarge
                 authorName={story.authorName}
@@ -76,21 +76,12 @@ export default function StoriesPage() {
             </div>
           ))}
         </div>
-
         {/* 글쓰기 버튼  */}
-        <button
-          type="button"
-          className="fixed bottom-21 right-4 t:bottom-8 t:right-8 z-[60] cursor-pointer hover:opacity-80 transition-opacity w-18 h-18 t:w-22 t:h-22"
-          onClick={() => router.push("/stories/new")}
-        >
-          <Image
-            src="/add_story.svg"
-            alt="글쓰기"
-            width={88}
-            height={88}
-            className="w-full h-full"
+        <FloatingFab
+            iconSrc="/icons_pencil.svg"
+            iconAlt="글쓰기"
+            onClick={() => router.push("/stories/new")}
           />
-        </button>
       </div>
     </div>
   );

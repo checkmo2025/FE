@@ -10,18 +10,10 @@ type Props = {
 export default function MeetingCard({ title, showMoreIcon = false }: Props) {
   return (
     <div
-      className={`
-        flex w-full items-center justify-between rounded-[8px] bg-white border border-[#EAE5E2]
-        
-        /* Mobile/Default */
-        p-[20px]
-        
-        /* Tablet (md): h 80px, padding-left 32px, padding-vertical 24px */
-        md:h-[80px] md:px-[32px] md:py-[24px]
-      `}
+      className="flex w-full items-center justify-between rounded-[8px] bg-white border border-[#EAE5E2] px-[18px] py-[12px] md:p-[20px] gap-[12px]"
     >
       {/* 모임 제목 */}
-      <span className="truncate text-[24px] font-semibold leading-[135%] tracking-[-0.024px] text-[#5C5C5C]">
+      <span className="truncate text-[16px] md:text-[24px] font-medium md:font-semibold leading-[135%] tracking-[-0.024px] text-[#5C5C5C] flex-1">
         {title}
       </span>
 

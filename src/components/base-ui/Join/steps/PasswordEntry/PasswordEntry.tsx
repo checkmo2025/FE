@@ -1,22 +1,40 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import JoinLayout from "@/components/base-ui/Join/JoinLayout";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
 import JoinInput from "@/components/base-ui/Join/JoinInput";
+import { useSignup } from "@/contexts/SignupContext";
+import { authService } from "@/services/authService";
 
 interface PasswordEntryProps {
   onNext: () => void;
 }
 
 const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const { email, password, setPassword, confirmPassword, setConfirmPassword, showToast } = useSignup();
+  const [isLoading, setIsLoading] = React.useState(false);
 
-  // 유효성 검사: 비밀번호가 입력되었고, 두 비밀번호가 일치하는지 확인
-  // 스펙상 "20자 이내" 제한
+  // 유효성 검사: 6-12자, 영어 최소 1자, 특수문자 최소 1자 포함
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*[!@#$%^&*()_+={}\[\]:;"'<>,.?/-]).{6,12}$/;
   const isMatch =
-    password.length > 0 && password.length <= 20 && password === confirmPassword;
+    passwordRegex.test(password) && password === confirmPassword;
+
+  const handleNext = async () => {
+    if (!isMatch || isLoading) return;
+
+    setIsLoading(true);
+    try {
+      await authService.signup({ email, password });
+      await authService.login({ email, password });
+      onNext();
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "회원가입 중 오류가 발생했습니다.";
+      showToast(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <JoinLayout title="비밀번호 입력">
@@ -26,11 +44,12 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
           {/* Password Input */}
           <JoinInput
             label="비밀번호"
+            description="비밀번호는 6-12자, 영어 최소 1자 이상, 특수문자 최소 1자 이상"
             type="password"
             placeholder="비밀번호"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            maxLength={20}
+            maxLength={12}
             className="border-Subbrown-4 placeholder-Gray-3 bg-white"
           />
 
@@ -40,17 +59,17 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
             placeholder="비밀번호 확인"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            maxLength={20}
+            maxLength={12}
             className="border-Subbrown-4 placeholder-Gray-3 bg-white"
           />
         </div>
 
         <JoinButton
-          onClick={onNext}
-          disabled={!isMatch}
+          onClick={handleNext}
+          disabled={!isMatch || isLoading}
           className="w-[270px] t:w-[526px]"
         >
-          다음
+          {isLoading ? "처리 중..." : "다음"}
         </JoinButton>
       </div>
     </JoinLayout>

@@ -133,13 +133,13 @@ export default function CommentList({
                         }
                       }}
                       placeholder="답글 달기"
-                      className="flex-1 w-[240px] h-[36px] t:w-[850px] t:h-[56px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White Body_1_2 text-Gray-7 placeholder:text-Gray-3 outline-none"
+                      className="flex-1 min-w-0 h-[36px] t:h-[56px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White Body_1_2 text-Gray-7 placeholder:text-Gray-3 outline-none"
                       autoFocus
                     />
                     <button
                       type="button"
                       onClick={() => handleReplySubmit(comment.id)}
-                      className="px-auto t:px-6 py-auto t:py-3 w-[60px] h-[36px] t:w-[128px] t:h-[56px] border border-Subbrown-3 text-primary-3 rounded-lg bg-Subbrown-4 subhead_4_1 cursor-pointer"
+                      className="px-4 t:px-6 py-2 t:py-3 h-[36px] t:h-[56px] border border-Subbrown-3 text-primary-3 rounded-lg bg-Subbrown-4 subhead_4_1 cursor-pointer shrink-0"
                     >
                       입력
                     </button>
