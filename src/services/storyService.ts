@@ -23,7 +23,7 @@ export const storyService = {
     getStoryById: async (id: number): Promise<BookStoryDetail | undefined> => {
         try {
             const response = await apiClient.get<ApiResponse<BookStoryDetail>>(
-                `/api/book-stories/${id}`
+                `${STORY_ENDPOINTS.LIST}/${id}`
             );
             if (response.isSuccess) {
                 return response.result;
