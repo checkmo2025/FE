@@ -15,9 +15,10 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
   const { email, password, setPassword, confirmPassword, setConfirmPassword, showToast } = useSignup();
   const [isLoading, setIsLoading] = React.useState(false);
 
-  // 유효성 검사: 비밀번호가 입력되었고, 두 비밀번호가 일치하는지 확인
+  // 유효성 검사: 6-12자, 영어 최소 1자, 특수문자 최소 1자 포함
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*[!@#$%^&*()_+={}\[\]:;"'<>,.?/-]).{6,12}$/;
   const isMatch =
-    password.length >= 6 && password.length <= 20 && password === confirmPassword;
+    passwordRegex.test(password) && password === confirmPassword;
 
   const handleNext = async () => {
     if (!isMatch || isLoading) return;
@@ -48,7 +49,7 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
             placeholder="비밀번호"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            maxLength={20}
+            maxLength={12}
             className="border-Subbrown-4 placeholder-Gray-3 bg-white"
           />
 
@@ -58,7 +59,7 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
             placeholder="비밀번호 확인"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            maxLength={20}
+            maxLength={12}
             className="border-Subbrown-4 placeholder-Gray-3 bg-white"
           />
         </div>

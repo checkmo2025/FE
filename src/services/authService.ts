@@ -38,12 +38,33 @@ export const authService = {
     });
   },
 
-  additionalInfo: async (data: AdditionalInfo): Promise<ApiResponse> => {
-    return await apiClient.post<ApiResponse>(AUTH_ENDPOINTS.ADDITIONAL_INFO, data);
+  additionalInfo: async (data: AdditionalInfo): Promise<ApiResponse<unknown>> => {
+    return await apiClient.post<ApiResponse<unknown>>(AUTH_ENDPOINTS.ADDITIONAL_INFO, data);
   },
 
   getProfile: async (): Promise<ApiResponse<User>> => {
     return await apiClient.get<ApiResponse<User>>(AUTH_ENDPOINTS.PROFILE);
+  },
+
+  getPresignedUrl: async (type: "PROFILE" | "CLUB" | "NOTICE", fileName: string, contentType: string): Promise<ApiResponse<{ presignedUrl: string; imageUrl: string }>> => {
+    return await apiClient.post<ApiResponse<{ presignedUrl: string; imageUrl: string }>>(
+      `/api/image/${type}/upload-url`,
+      { originalFileName: fileName, contentType }
+    );
+  },
+
+  uploadToS3: async (presignedUrl: string, file: File): Promise<void> => {
+    const response = await fetch(presignedUrl, {
+      method: "PUT",
+      body: file,
+      headers: {
+        "Content-Type": file.type,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("S3 upload failed");
+    }
   },
 
   logout: async () => {

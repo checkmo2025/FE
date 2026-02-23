@@ -42,6 +42,8 @@ export const useEmailVerification = () => {
       if (response.isSuccess) {
         showToast(response.result || "인증번호가 발송되었습니다.");
         setTimeLeft(300);
+      } else {
+        showToast(response.message || "인증번호 발송에 실패했습니다.");
       }
     } catch (error: any) {
       showToast(error.message || "인증번호 발송에 실패했습니다.");
@@ -60,7 +62,7 @@ export const useEmailVerification = () => {
         setIsVerified(true);
         showToast("인증이 완료되었습니다.");
       } else {
-        showToast("인증번호가 일치하지 않습니다.");
+        showToast(response.message || "인증번호가 일치하지 않습니다.");
       }
     } catch (error: any) {
       showToast(error.message || "인증 확인 중 오류가 발생했습니다.");
