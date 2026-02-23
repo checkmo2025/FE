@@ -1,5 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import { AUTH_ENDPOINTS } from "@/lib/api/endpoints";
+import { useAuthStore } from "@/store/useAuthStore";
 import {
   LoginForm,
   LoginResponse,
@@ -44,4 +45,16 @@ export const authService = {
   getProfile: async (): Promise<ApiResponse<User>> => {
     return await apiClient.get<ApiResponse<User>>(AUTH_ENDPOINTS.PROFILE);
   },
+
+  logout: async () => {
+    try {
+      await apiClient.post(AUTH_ENDPOINTS.LOGOUT);
+    } catch (error) {
+      console.error("Backend logout failed:", error);
+    } finally {
+      // Best effort local cleanup
+      useAuthStore.getState().logout();
+    }
+  },
 };
+

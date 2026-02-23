@@ -93,7 +93,7 @@ export const useProfileImage = () => {
         name,
         phoneNumber,
         description,
-        imgUrl: imgUrl || "",
+        profileImageUrl: imgUrl || "",
         categories,
       });
 

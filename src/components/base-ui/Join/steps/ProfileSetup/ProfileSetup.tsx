@@ -22,7 +22,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
     handleNameChange,
     handlePhoneChange,
     handleCheckDuplicate,
-    isValid,
+    validate,
   } = useProfileSetup();
   const { showToast } = useSignup();
   const nicknameRef = React.useRef<HTMLDivElement>(null);
@@ -32,35 +32,22 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
   const introRef = React.useRef<HTMLDivElement>(null);
 
   const handleNextClick = () => {
-    if (nickname === "") {
-      showToast("닉네임을 입력해주세요!");
-      nicknameRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-    if (!isNicknameChecked) {
-      showToast("닉네임 중복확인을 해주세요!");
-      nicknameRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-    if (intro === "") {
-      showToast("소개를 입력해주세요!");
-      introRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-    if (name === "") {
-      showToast("이름을 입력해주세요!");
-      nameRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-    if (phone === "") {
-      showToast("전화번호를 입력해주세요!");
-      phoneRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    const { isValid, field } = validate();
+
+    if (!isValid) {
+      if (field === "nickname" || field === "isNicknameChecked") {
+        nicknameRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (field === "intro") {
+        introRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (field === "name") {
+        nameRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (field === "phone") {
+        phoneRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
       return;
     }
 
-    if (isValid) {
-      onNext?.();
-    }
+    onNext?.();
   };
 
   return (

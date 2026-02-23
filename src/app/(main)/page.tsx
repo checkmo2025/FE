@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import BookStoryCard from "@/components/base-ui/BookStory/bookstory_card";
 import NewsBannerSlider from "@/components/base-ui/home/NewsBannerSlider";
 import HomeBookclub from "@/components/base-ui/home/home_bookclub";
@@ -14,7 +15,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 
 export default function HomePage() {
   const groups: { id: string; name: string }[] = [];
-  const { isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
+  const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
 
   // 사용자 더미 데이터
   const users = [
@@ -167,6 +168,23 @@ export default function HomePage() {
           </section>
         </div>
       </div>
+
+      {/* 비로그인 시 플로팅 로그인 하기 버튼 */}
+      {!isLoggedIn && (
+        <button
+          onClick={() => openLoginModal()}
+          className="fixed bottom-21 right-4 t:bottom-8 t:right-8 z-[60] flex items-center justify-center w-auto h-[48px] px-6 bg-[#7B6154] text-white rounded-full shadow-lg hover:bg-[#5E4A40] transition-colors gap-2"
+        >
+          <Image
+            src="/after_home.svg"
+            alt=""
+            width={20}
+            height={20}
+            className="brightness-0 invert"
+          />
+          <span className="font-semibold">로그인 하기</span>
+        </button>
+      )}
     </div>
   );
 }

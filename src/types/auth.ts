@@ -34,7 +34,7 @@ export interface AdditionalInfo {
   name: string;
   phoneNumber: string;
   description: string;
-  imgUrl: string;
+  profileImageUrl: string;
   categories: string[];
 }
 
