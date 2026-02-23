@@ -54,6 +54,7 @@ export const useProfileImage = () => {
   } = useSignup();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const toggleInterest = (category: string) => {
     if (selectedInterests.includes(category)) {
@@ -70,6 +71,7 @@ export const useProfileImage = () => {
   const handleResetImage = () => {
     setProfileImage("/default_profile_1.svg");
     setIsProfileImageSet(true);
+    setSelectedFile(null);
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,6 +80,7 @@ export const useProfileImage = () => {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
       setIsProfileImageSet(true);
+      setSelectedFile(file);
     }
   };
 
@@ -86,6 +89,31 @@ export const useProfileImage = () => {
 
     setIsLoading(true);
     try {
+      let finalImageUrl = "";
+
+      // 1. If a new image is selected, upload to S3 using Presigned URL
+      if (selectedFile) {
+        const presignedResponse = await authService.getPresignedUrl(
+          "PROFILE",
+          selectedFile.name,
+          selectedFile.type
+        );
+
+        if (presignedResponse.isSuccess && presignedResponse.result) {
+          const { presignedUrl, imageUrl } = presignedResponse.result;
+          await authService.uploadToS3(presignedUrl, selectedFile);
+          finalImageUrl = imageUrl;
+        } else {
+          showToast(presignedResponse.message || "이미지 업로드 준비 중 오류가 발생했습니다.");
+          setIsLoading(false);
+          return;
+        }
+      } else if (imgUrl && !imgUrl.startsWith("blob:") && !imgUrl.includes("default_profile")) {
+        // Already uploaded URL (e.g. from previous attempt or social)
+        finalImageUrl = imgUrl;
+      }
+
+      // 2. Submit all info to additional-info endpoint
       const categories = selectedInterests.map((c: string) => CATEGORY_MAP[c] || c);
 
       const response = await authService.additionalInfo({
@@ -93,12 +121,14 @@ export const useProfileImage = () => {
         name,
         phoneNumber,
         description,
-        profileImageUrl: imgUrl || "",
+        profileImageUrl: finalImageUrl,
         categories,
       });
 
       if (response.isSuccess) {
         onSuccess?.();
+      } else {
+        showToast(response.message || "정보 저장 중 오류가 발생했습니다.");
       }
     } catch (error: any) {
       showToast(error.message || "정보 저장 중 오류가 발생했습니다.");

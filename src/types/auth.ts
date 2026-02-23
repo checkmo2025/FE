@@ -12,7 +12,7 @@ export interface LoginForm {
   password: string;
 }
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   isSuccess: boolean;
   code: string;
   message: string;

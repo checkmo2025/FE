@@ -2,21 +2,21 @@
 "use client";
 
 const CATEGORIES = [
-  "소설/시/희곡",
-  "에세이",
-  "인문학",
-  "경영/경제",
-  "자기계발",
-  "사회과학",
-  "역사",
-  "예술/대중문화",
-  "만화",
-  "장르소설",
-  "과학",
-  "어린이/청소년",
-  "여행",
-  "요리",
-  "기타",
+  { label: "소설/시/희곡", value: "FICTION_POETRY_DRAMA" },
+  { label: "에세이", value: "ESSAY" },
+  { label: "인문학", value: "HUMANITIES" },
+  { label: "경영/경제", value: "ECONOMY_MANAGEMENT" },
+  { label: "자기계발", value: "SELF_DEVELOPMENT" },
+  { label: "사회과학", value: "SOCIAL_SCIENCE" },
+  { label: "역사", value: "HISTORY_CULTURE" },
+  { label: "예술/대중문화", value: "ART_POP_CULTURE" },
+  { label: "만화", value: "COMIC" },
+  { label: "장르소설", value: "GENRE_FICTION" },
+  { label: "과학", value: "SCIENCE" },
+  { label: "어린이/청소년", value: "CHILDREN_BOOKS" },
+  { label: "여행", value: "TRAVEL" },
+  { label: "요리", value: "COOKING" },
+  { label: "기타", value: "OTHER" },
 ];
 
 interface Props {
@@ -41,11 +41,11 @@ export default function CategorySelector({
         xl:w-full xl:grid-cols-5"
       >
         {CATEGORIES.map((cat) => {
-          const isSelected = selectedCategories.includes(cat);
+          const isSelected = selectedCategories.includes(cat.value);
           return (
             <div
-              key={cat}
-              onClick={() => onToggle?.(cat)}
+              key={cat.value}
+              onClick={() => onToggle?.(cat.value)}
               className={`flex items-center justify-center gap-[8px] rounded-[400px] border px-[16px] cursor-pointer transition-colors
                 h-[36px] w-full md:h-[44px] md:w-[122px]
                 ${isSelected
@@ -57,7 +57,7 @@ export default function CategorySelector({
                 className={`body_1_3 whitespace-nowrap ${isSelected ? "text-white" : "text-Gray-5"
                   }`}
               >
-                {cat}
+                {cat.label}
               </span>
             </div>
           );
