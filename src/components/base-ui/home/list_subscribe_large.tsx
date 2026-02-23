@@ -54,28 +54,41 @@ function ListSubscribeElementLarge({
 
 type ListSubscribeLargeProps = {
   height?: string;
+  users?: Array<{
+    nickname: string;
+    profileImageUrl?: string;
+    subscribingCount?: number;
+    subscribersCount?: number;
+  }>;
 };
 
-export default function ListSubscribeLarge({ height = 'h-[380px]' }: ListSubscribeLargeProps) {
-  const users = [
-    { id: '1', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-    { id: '2', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-    { id: '3', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-    { id: '4', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
+export default function ListSubscribeLarge({
+  height = "h-[380px]",
+  users: propUsers,
+}: ListSubscribeLargeProps) {
+  // Use prop users if provided, otherwise fallback to default dummy data
+  const users = propUsers || [
+    { nickname: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
+    { nickname: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
+    { nickname: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
+    { nickname: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
   ];
 
   return (
-    <section className={`w-[336px] ${height} rounded-lg border-2 border-Subbrown-4 bg-stone-50 p-5`}>
+    <section
+      className={`w-[336px] ${height} rounded-lg border-2 border-Subbrown-4 bg-stone-50 p-5`}
+    >
       <h3 className="subhead_2 text-Gray-7">사용자 추천</h3>
 
       <div className="mt-3 flex flex-col gap-3">
-        {users.map((u) => (
+        {users.map((u, idx) => (
           <ListSubscribeElementLarge
-            key={u.id}
-            name={u.name}
-            subscribingCount={u.subscribingCount}
-            subscribersCount={u.subscribersCount}
-            onSubscribeClick={() => console.log('subscribe', u.id)}
+            key={`${u.nickname}-${idx}`}
+            name={u.nickname}
+            subscribingCount={u.subscribingCount || 0}
+            subscribersCount={u.subscribersCount || 0}
+            profileSrc={u.profileImageUrl}
+            onSubscribeClick={() => console.log("subscribe", u.nickname)}
           />
         ))}
       </div>

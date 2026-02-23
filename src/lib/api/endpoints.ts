@@ -11,3 +11,11 @@ export const AUTH_ENDPOINTS = {
   CHECK_NICKNAME: `${API_BASE_URL}/members/check-nickname`,
   PROFILE: `${API_BASE_URL}/members/me`,
 };
+
+export const STORY_ENDPOINTS = {
+  LIST: `${API_BASE_URL}/book-stories`,
+};
+
+export const MEMBER_ENDPOINTS = {
+  RECOMMEND: `${API_BASE_URL}/members/me/recommend`,
+};
