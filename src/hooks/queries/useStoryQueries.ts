@@ -25,10 +25,10 @@ export const useStoryDetailQuery = (id: number) => {
 export const useInfiniteStoriesQuery = () => {
     return useInfiniteQuery({
         queryKey: storyKeys.list(),
-        queryFn: ({ pageParam }) => storyService.getAllStories(pageParam),
-        initialPageParam: undefined as number | undefined,
+        queryFn: ({ pageParam }) => storyService.getAllStories(pageParam ?? undefined),
+        initialPageParam: null as number | null,
         getNextPageParam: (lastPage) => {
-            if (!lastPage.hasNext) return undefined;
+            if (!lastPage || !lastPage.hasNext) return undefined;
             return lastPage.nextCursor;
         },
     });
