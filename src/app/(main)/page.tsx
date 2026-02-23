@@ -11,40 +11,27 @@ import LoginModal from "@/components/base-ui/Login/LoginModal";
 import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
 
 import { useAuthStore } from "@/store/useAuthStore";
-import { memberService } from "@/services/memberService";
-import { storyService } from "@/services/storyService";
-import { BookStory } from "@/types/story";
-import { RecommendedMember } from "@/types/member";
+import { useStoriesQuery } from "@/hooks/queries/useStoryQueries";
+import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
 
 export default function HomePage() {
   const groups: { id: string; name: string }[] = [];
   const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
 
-  const [recommendedUsers, setRecommendedUsers] = useState<RecommendedMember[]>([]);
-  const [stories, setStories] = useState<BookStory[]>([]);
-  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
-  const [isLoadingStories, setIsLoadingStories] = useState(false);
+  const { data: storiesData, isLoading: isLoadingStories } = useStoriesQuery();
+  const { data: membersData, isLoading: isLoadingMembers } = useRecommendedMembersQuery(isLoggedIn);
 
-  useEffect(() => {
-    async function fetchData() {
-      if (isLoggedIn) {
-        setIsLoadingUsers(true);
-        const recommendRes = await memberService.getRecommendedMembers();
-        if (recommendRes && recommendRes.friends) {
-          setRecommendedUsers(recommendRes.friends);
-        }
-        setIsLoadingUsers(false);
-      }
+  const stories = storiesData?.basicInfoList || [];
+  const recommendedUsers = membersData?.friends || [];
+  const isLoading = isLoadingStories || (isLoggedIn && isLoadingMembers);
 
-      setIsLoadingStories(true);
-      const storiesRes = await storyService.getAllStories();
-      if (storiesRes && storiesRes.basicInfoList) {
-        setStories(storiesRes.basicInfoList);
-      }
-      setIsLoadingStories(false);
-    }
-    fetchData();
-  }, [isLoggedIn]);
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7B6154]"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 t:px-6">
