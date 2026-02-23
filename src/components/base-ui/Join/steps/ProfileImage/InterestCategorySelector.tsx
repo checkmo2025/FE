@@ -1,5 +1,5 @@
 import React from "react";
-import { INTEREST_CATEGORIES } from "./useProfileImage";
+import { CATEGORIES } from "@/constants/categories";
 
 interface InterestCategorySelectorProps {
   selectedInterests: string[];
@@ -27,19 +27,18 @@ const InterestCategorySelector: React.FC<InterestCategorySelectorProps> = ({
 
       {/* Grid for Mobile (3 cols), Flex for Desktop */}
       <div className="grid grid-cols-3 gap-2 w-full md:flex md:flex-wrap md:gap-[12px]">
-        {INTEREST_CATEGORIES.map((category) => {
-          const isSelected = selectedInterests.includes(category);
+        {CATEGORIES.map((cat) => {
+          const isSelected = selectedInterests.includes(cat.value);
           return (
             <button
-              key={category}
-              onClick={() => onToggle(category)}
-              className={`w-full md:w-[122px] h-[44px] flex justify-center items-center rounded-[400px] text-[14px] leading-[145%] tracking-[-0.014px] transition-colors ${
-                isSelected
+              key={cat.value}
+              onClick={() => onToggle(cat.value)}
+              className={`w-full md:w-[122px] h-[44px] flex justify-center items-center rounded-[400px] text-[14px] leading-[145%] tracking-[-0.014px] transition-colors ${isSelected
                   ? "bg-Subbrown-1 border border-Subbrown-3 text-White font-medium"
                   : "bg-background border border-Subbrown-3 text-Gray-5 font-normal"
-              }`}
+                }`}
             >
-              {category}
+              {cat.label}
             </button>
           );
         })}

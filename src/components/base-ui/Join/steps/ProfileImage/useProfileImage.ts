@@ -1,42 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSignup } from "@/contexts/SignupContext";
 import { authService } from "@/services/authService";
-
-export const INTEREST_CATEGORIES = [
-  "소설/시/희곡",
-  "에세이",
-  "인문학",
-  "사회과학",
-  "정치/외교/국방",
-  "경제/경영",
-  "자기계발",
-  "역사/문화",
-  "과학",
-  "컴퓨터/IT",
-  "예술/대중문화",
-  "여행",
-  "외국어",
-  "어린이/청소년",
-  "종교/철학",
-];
-
-const CATEGORY_MAP: Record<string, string> = {
-  "소설/시/희곡": "FICTION_POETRY_DRAMA",
-  "에세이": "ESSAY",
-  "인문학": "HUMANITIES",
-  "사회과학": "SOCIAL_SCIENCE",
-  "정치/외교/국방": "POLITICS_DIPLOMACY_DEFENSE",
-  "경제/경영": "ECONOMY_MANAGEMENT",
-  "자기계발": "SELF_DEVELOPMENT",
-  "역사/문화": "HISTORY_CULTURE",
-  "과학": "SCIENCE",
-  "컴퓨터/IT": "COMPUTER_IT",
-  "예술/대중문화": "ART_POP_CULTURE",
-  "여행": "TRAVEL",
-  "외국어": "FOREIGN_LANGUAGE",
-  "어린이/청소년": "CHILDREN_BOOKS",
-  "종교/철학": "RELIGION_PHILOSOPHY",
-};
+import { CATEGORY_MAP } from "@/constants/categories";
 
 export const useProfileImage = () => {
   const {
@@ -116,7 +81,7 @@ export const useProfileImage = () => {
       // 2. Submit all info to additional-info endpoint
       const categories = selectedInterests.map((c: string) => CATEGORY_MAP[c] || c);
 
-      const response = await authService.additionalInfo({
+      await authService.additionalInfo({
         nickname,
         name,
         phoneNumber,
@@ -125,11 +90,7 @@ export const useProfileImage = () => {
         categories,
       });
 
-      if (response.isSuccess) {
-        onSuccess?.();
-      } else {
-        showToast(response.message || "정보 저장 중 오류가 발생했습니다.");
-      }
+      onSuccess?.();
     } catch (error: any) {
       showToast(error.message || "정보 저장 중 오류가 발생했습니다.");
     } finally {
