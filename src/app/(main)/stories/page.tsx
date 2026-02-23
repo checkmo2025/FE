@@ -91,6 +91,7 @@ export default function StoriesPage() {
                 content={story.description}
                 likeCount={story.likes}
                 commentCount={story.commentCount}
+                coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText={story.authorInfo.following ? "구독중" : "구독"}
               />
             </div>
@@ -118,6 +119,7 @@ export default function StoriesPage() {
                 content={story.description}
                 likeCount={story.likes}
                 commentCount={story.commentCount}
+                coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText={story.authorInfo.following ? "구독중" : "구독"}
               />
             </div>

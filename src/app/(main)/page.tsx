@@ -98,6 +98,7 @@ export default function HomePage() {
                 content={story.description}
                 likeCount={story.likes}
                 commentCount={story.commentCount}
+                coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText="구독"
               />
             ))}
@@ -139,6 +140,7 @@ export default function HomePage() {
                 content={story.description}
                 likeCount={story.likes}
                 commentCount={story.commentCount}
+                coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText="구독"
               />
             ))}
@@ -182,6 +184,7 @@ export default function HomePage() {
                   content={story.description}
                   likeCount={story.likes}
                   commentCount={story.commentCount}
+                  coverImgSrc={story.bookInfo.imgUrl}
                   subscribeText="구독"
                 />
               ))}
