@@ -4,6 +4,7 @@ import { storyService } from "@/services/storyService";
 export const storyKeys = {
     all: ["stories"] as const,
     list: () => [...storyKeys.all, "list"] as const,
+    infiniteList: () => [...storyKeys.all, "infiniteList"] as const,
     detail: (id: number) => [...storyKeys.all, "detail", id] as const,
 };
 
@@ -24,7 +25,7 @@ export const useStoryDetailQuery = (id: number) => {
 
 export const useInfiniteStoriesQuery = () => {
     return useInfiniteQuery({
-        queryKey: storyKeys.list(),
+        queryKey: storyKeys.infiniteList(),
         queryFn: ({ pageParam }) => storyService.getAllStories(pageParam ?? undefined),
         initialPageParam: null as number | null,
         getNextPageParam: (lastPage) => {
