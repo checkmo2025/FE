@@ -11,28 +11,11 @@ import MyMeetingList from "@/components/base-ui/MyPage/MyMeetingList";
 import MyNotificationList from "@/components/base-ui/MyPage/MyNotificationList";
 import MyLibraryList from "@/components/base-ui/Profile/LibraryList";
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useAuthStore } from "@/store/useAuthStore";
-import toast from "react-hot-toast";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 export default function MyPage() {
   const [activeTab, setActiveTab] = useState("stories");
-  const { isLoggedIn, isInitialized, openLoginModal } = useAuthStore();
-  const router = useRouter();
-  const toastShownRef = React.useRef(false);
-
-  useEffect(() => {
-    // 초기화가 끝났을 때만 로그인 여부를 체크하여 리다이렉트합니다.
-    if (isInitialized && !isLoggedIn) {
-      if (!toastShownRef.current) {
-        toast.error("로그인이 필요한 서비스입니다.");
-        toastShownRef.current = true;
-      }
-      openLoginModal();
-      router.push("/");
-    }
-  }, [isInitialized, isLoggedIn, router, openLoginModal]);
+  const { isInitialized, isLoggedIn } = useAuthGuard();
 
   if (!isInitialized || !isLoggedIn) {
     return null; // 초기화 중이거나 리다이렉트 중에는 빈 화면

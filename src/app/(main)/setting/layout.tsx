@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 import Header from "@/components/layout/Header";
 import SettingsSidebar from "@/components/base-ui/Settings/SettingsSidebar";
 import BottomNav from "@/components/layout/BottomNav";
@@ -13,20 +11,7 @@ export default function SettingsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isLoggedIn, isInitialized, openLoginModal } = useAuthStore();
-  const router = useRouter();
-  const toastShownRef = useRef(false);
-
-  useEffect(() => {
-    if (isInitialized && !isLoggedIn) {
-      if (!toastShownRef.current) {
-        toast.error("로그인이 필요한 서비스입니다.");
-        toastShownRef.current = true;
-      }
-      openLoginModal();
-      router.push("/");
-    }
-  }, [isLoggedIn, isInitialized, router, openLoginModal]);
+  const { isInitialized, isLoggedIn } = useAuthGuard();
 
   if (!isInitialized || !isLoggedIn) {
     return null;
