@@ -13,9 +13,8 @@ import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_la
 import { useAuthStore } from "@/store/useAuthStore";
 import { memberService } from "@/services/memberService";
 import { storyService } from "@/services/storyService";
-import { RecommendedMember } from "@/types/member";
 import { BookStory } from "@/types/story";
-import { formatTimeAgo } from "@/utils/time";
+import { RecommendedMember } from "@/types/member";
 
 export default function HomePage() {
   const groups: { id: string; name: string }[] = [];
@@ -93,7 +92,7 @@ export default function HomePage() {
               <BookStoryCardLarge
                 key={story.bookStoryId}
                 authorName={story.authorInfo.nickname}
-                createdAt={formatTimeAgo(new Date(story.createdAt))}
+                createdAt={story.createdAt}
                 viewCount={story.viewCount}
                 title={story.bookStoryTitle}
                 content={story.description}
@@ -134,7 +133,7 @@ export default function HomePage() {
               <BookStoryCard
                 key={story.bookStoryId}
                 authorName={story.authorInfo.nickname}
-                createdAt={formatTimeAgo(new Date(story.createdAt))}
+                createdAt={story.createdAt}
                 viewCount={story.viewCount}
                 title={story.bookStoryTitle}
                 content={story.description}
@@ -177,7 +176,7 @@ export default function HomePage() {
                 <BookStoryCard
                   key={story.bookStoryId}
                   authorName={story.authorInfo.nickname}
-                  createdAt={formatTimeAgo(new Date(story.createdAt))}
+                  createdAt={story.createdAt}
                   viewCount={story.viewCount}
                   title={story.bookStoryTitle}
                   content={story.description}

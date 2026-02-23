@@ -86,11 +86,11 @@ export default function StoriesPage() {
               <BookStoryCardLarge
                 authorName={story.authorInfo.nickname}
                 createdAt={story.createdAt}
-                viewCount={0} // API에 viewCount가 없는 경우 0으로 처리하거나 다른 필드 사용
+                viewCount={story.viewCount}
                 title={story.bookStoryTitle}
                 content={story.description}
                 likeCount={story.likes}
-                commentCount={0} // API에 commentCount가 없는 경우 고려
+                commentCount={story.commentCount}
                 subscribeText={story.authorInfo.following ? "구독중" : "구독"}
               />
             </div>
@@ -113,11 +113,11 @@ export default function StoriesPage() {
               <BookStoryCardLarge
                 authorName={story.authorInfo.nickname}
                 createdAt={story.createdAt}
-                viewCount={0}
+                viewCount={story.viewCount}
                 title={story.bookStoryTitle}
                 content={story.description}
                 likeCount={story.likes}
-                commentCount={0}
+                commentCount={story.commentCount}
                 subscribeText={story.authorInfo.following ? "구독중" : "구독"}
               />
             </div>
