@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import BookStoryCard from "@/components/base-ui/BookStory/bookstory_card";
 import NewsBannerSlider from "@/components/base-ui/home/NewsBannerSlider";
@@ -8,22 +8,45 @@ import HomeBookclub from "@/components/base-ui/home/home_bookclub";
 import ListSubscribeLarge from "@/components/base-ui/home/list_subscribe_large";
 import ListSubscribeElement from "@/components/base-ui/home/list_subscribe_element";
 import LoginModal from "@/components/base-ui/Login/LoginModal";
-import { DUMMY_STORIES } from "@/data/dummyStories";
 import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
 
 import { useAuthStore } from "@/store/useAuthStore";
+import { memberService } from "@/services/memberService";
+import { storyService } from "@/services/storyService";
+import { RecommendedMember } from "@/types/member";
+import { BookStory } from "@/types/story";
+import { formatTimeAgo } from "@/utils/time";
 
 export default function HomePage() {
   const groups: { id: string; name: string }[] = [];
   const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
 
-  // 사용자 더미 데이터
-  const users = [
-    { id: "1", name: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
-    { id: "2", name: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
-    { id: "3", name: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
-    { id: "4", name: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
-  ];
+  const [recommendedUsers, setRecommendedUsers] = useState<RecommendedMember[]>([]);
+  const [stories, setStories] = useState<BookStory[]>([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [isLoadingStories, setIsLoadingStories] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      if (isLoggedIn) {
+        setIsLoadingUsers(true);
+        const recommendRes = await memberService.getRecommendedMembers();
+        if (recommendRes && recommendRes.friends) {
+          setRecommendedUsers(recommendRes.friends);
+        }
+        setIsLoadingUsers(false);
+      }
+
+      setIsLoadingStories(true);
+      const storiesRes = await storyService.getAllStories();
+      if (storiesRes && storiesRes.basicInfoList) {
+        setStories(storiesRes.basicInfoList);
+      }
+      setIsLoadingStories(false);
+    }
+    fetchData();
+  }, [isLoggedIn]);
+
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 t:px-6">
       {isLoginModalOpen && (
@@ -50,13 +73,14 @@ export default function HomePage() {
                 사용자 추천
               </h2>
               <div className="flex flex-col gap-3">
-                {users.slice(0, 3).map((u) => (
+                {recommendedUsers.slice(0, 3).map((u, idx) => (
                   <ListSubscribeElement
-                    key={u.id}
-                    name={u.name}
-                    subscribingCount={u.subscribingCount}
-                    subscribersCount={u.subscribersCount}
-                    onSubscribeClick={() => console.log("subscribe", u.id)}
+                    key={u.nickname + idx}
+                    name={u.nickname}
+                    profileSrc={u.profileImageUrl}
+                    subscribingCount={0}
+                    subscribersCount={0}
+                    onSubscribeClick={() => console.log("subscribe", u.nickname)}
                   />
                 ))}
               </div>
@@ -67,16 +91,16 @@ export default function HomePage() {
         {/* 책 이야기 카드 */}
         <section className="pt-6">
           <div className="flex flex-col gap-5 items-center">
-            {DUMMY_STORIES.slice(0, 3).map((story) => (
+            {stories.slice(0, 3).map((story) => (
               <BookStoryCardLarge
-                key={story.id}
-                authorName={story.authorName}
-                createdAt={story.createdAt}
-                viewCount={story.viewCount}
-                title={story.title}
-                content={story.content}
-                likeCount={story.likeCount}
-                commentCount={story.commentCount}
+                key={story.bookStoryId}
+                authorName={story.authorInfo.nickname}
+                createdAt={formatTimeAgo(new Date(story.createdAt))}
+                viewCount={0}
+                title={story.bookStoryTitle}
+                content={story.description}
+                likeCount={story.likes}
+                commentCount={story.comments}
                 subscribeText="구독"
               />
             ))}
@@ -101,23 +125,23 @@ export default function HomePage() {
           </h2>
           <div className="flex gap-6 justify-center">
             <HomeBookclub groups={groups} />
-            <ListSubscribeLarge height="h-[424px]" />
+            <ListSubscribeLarge height="h-[424px]" users={recommendedUsers} />
           </div>
         </section>
 
         {/* 책 이야기 카드 */}
         <section className="pt-6">
           <div className="flex flex-wrap gap-5 justify-center">
-            {DUMMY_STORIES.slice(0, 4).map((story) => (
+            {stories.slice(0, 4).map((story) => (
               <BookStoryCard
-                key={story.id}
-                authorName={story.authorName}
-                createdAt={story.createdAt}
-                viewCount={story.viewCount}
-                title={story.title}
-                content={story.content}
-                likeCount={story.likeCount}
-                commentCount={story.commentCount}
+                key={story.bookStoryId}
+                authorName={story.authorInfo.nickname}
+                createdAt={formatTimeAgo(new Date(story.createdAt))}
+                viewCount={0}
+                title={story.bookStoryTitle}
+                content={story.description}
+                likeCount={story.likes}
+                commentCount={story.comments}
                 subscribeText="구독"
               />
             ))}
@@ -134,7 +158,7 @@ export default function HomePage() {
           </h2>
           <HomeBookclub groups={groups} />
           <div className="pt-6">
-            <ListSubscribeLarge height="h-[380px]" />
+            <ListSubscribeLarge height="h-[380px]" users={recommendedUsers} />
           </div>
         </section>
 
@@ -151,16 +175,16 @@ export default function HomePage() {
           {/* 책 이야기 카드 */}
           <section>
             <div className="grid grid-cols-3 gap-5">
-              {DUMMY_STORIES.slice(0, 3).map((story) => (
+              {stories.slice(0, 3).map((story) => (
                 <BookStoryCard
-                  key={story.id}
-                  authorName={story.authorName}
-                  createdAt={story.createdAt}
-                  viewCount={story.viewCount}
-                  title={story.title}
-                  content={story.content}
-                  likeCount={story.likeCount}
-                  commentCount={story.commentCount}
+                  key={story.bookStoryId}
+                  authorName={story.authorInfo.nickname}
+                  createdAt={formatTimeAgo(new Date(story.createdAt))}
+                  viewCount={0}
+                  title={story.bookStoryTitle}
+                  content={story.description}
+                  likeCount={story.likes}
+                  commentCount={story.comments}
                   subscribeText="구독"
                 />
               ))}
