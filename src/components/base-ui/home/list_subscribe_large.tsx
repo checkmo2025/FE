@@ -4,8 +4,8 @@ import Image from 'next/image';
 
 type ListSubscribeElementLargeProps = {
   name: string;
-  subscribingCount: number;
-  subscribersCount: number;
+  subscribingCount?: number;
+  subscribersCount?: number;
   profileSrc?: string;
   onSubscribeClick?: () => void;
   buttonText?: string;
@@ -35,9 +35,11 @@ function ListSubscribeElementLarge({
       <div className="flex flex-row flex-1 min-w-0 gap-[8px] items-center">
         <div className="flex flex-col min-w-0 flex-1">
           <p className="text-Gray-7 body_1 truncate">{name}</p>
-          <p className="body_2_3 text-Gray-3">
-            구독중 {subscribingCount} 구독자 {subscribersCount}
-          </p>
+          {subscribingCount !== undefined && subscribersCount !== undefined && (
+            <p className="body_2_3 text-Gray-3">
+              구독중 {subscribingCount} 구독자 {subscribersCount}
+            </p>
+          )}
         </div>
 
         <button
@@ -85,8 +87,8 @@ export default function ListSubscribeLarge({
           <ListSubscribeElementLarge
             key={`${u.nickname}-${idx}`}
             name={u.nickname}
-            subscribingCount={u.subscribingCount || 0}
-            subscribersCount={u.subscribersCount || 0}
+            subscribingCount={u.subscribingCount}
+            subscribersCount={u.subscribersCount}
             profileSrc={u.profileImageUrl}
             onSubscribeClick={() => console.log("subscribe", u.nickname)}
           />

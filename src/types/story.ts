@@ -14,7 +14,8 @@ export interface BookStory {
     bookStoryTitle: string;
     description: string;
     likes: number;
-    comments: number;
+    commentCount: number;
+    viewCount: number;
     likedByMe: boolean;
     createdAt: string;
     writtenByMe: boolean;

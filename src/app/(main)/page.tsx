@@ -78,8 +78,6 @@ export default function HomePage() {
                     key={u.nickname + idx}
                     name={u.nickname}
                     profileSrc={u.profileImageUrl}
-                    subscribingCount={0}
-                    subscribersCount={0}
                     onSubscribeClick={() => console.log("subscribe", u.nickname)}
                   />
                 ))}
@@ -96,11 +94,11 @@ export default function HomePage() {
                 key={story.bookStoryId}
                 authorName={story.authorInfo.nickname}
                 createdAt={formatTimeAgo(new Date(story.createdAt))}
-                viewCount={0}
+                viewCount={story.viewCount}
                 title={story.bookStoryTitle}
                 content={story.description}
                 likeCount={story.likes}
-                commentCount={story.comments}
+                commentCount={story.commentCount}
                 subscribeText="구독"
               />
             ))}
@@ -137,11 +135,11 @@ export default function HomePage() {
                 key={story.bookStoryId}
                 authorName={story.authorInfo.nickname}
                 createdAt={formatTimeAgo(new Date(story.createdAt))}
-                viewCount={0}
+                viewCount={story.viewCount}
                 title={story.bookStoryTitle}
                 content={story.description}
                 likeCount={story.likes}
-                commentCount={story.comments}
+                commentCount={story.commentCount}
                 subscribeText="구독"
               />
             ))}
@@ -180,11 +178,11 @@ export default function HomePage() {
                   key={story.bookStoryId}
                   authorName={story.authorInfo.nickname}
                   createdAt={formatTimeAgo(new Date(story.createdAt))}
-                  viewCount={0}
+                  viewCount={story.viewCount}
                   title={story.bookStoryTitle}
                   content={story.description}
                   likeCount={story.likes}
-                  commentCount={story.comments}
+                  commentCount={story.commentCount}
                   subscribeText="구독"
                 />
               ))}
