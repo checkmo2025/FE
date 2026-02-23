@@ -34,7 +34,7 @@ export const useProfileImage = () => {
   };
 
   const handleResetImage = () => {
-    setProfileImage("/default_profile_1.svg");
+    setProfileImage("/profile.svg");
     setIsProfileImageSet(true);
     setSelectedFile(null);
   };
@@ -73,8 +73,8 @@ export const useProfileImage = () => {
           setIsLoading(false);
           return;
         }
-      } else if (imgUrl && !imgUrl.startsWith("blob:") && !imgUrl.includes("default_profile")) {
-        // Already uploaded URL (e.g. from previous attempt or social)
+      } else if (imgUrl && !imgUrl.startsWith("blob:")) {
+        // Includes uploaded S3 URL or default image path (e.g. /profile.svg)
         finalImageUrl = imgUrl;
       }
 
@@ -91,8 +91,9 @@ export const useProfileImage = () => {
       });
 
       onSuccess?.();
-    } catch (error: any) {
-      showToast(error.message || "정보 저장 중 오류가 발생했습니다.");
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "정보 저장 중 오류가 발생했습니다.";
+      showToast(errorMessage);
     } finally {
       setIsLoading(false);
     }
