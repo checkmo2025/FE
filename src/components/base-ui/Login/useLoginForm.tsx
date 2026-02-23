@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/useAuthStore";
 import { LoginForm } from "@/types/auth";
 import { authService } from "@/services/authService";
-import { ApiError } from "@/lib/api/ApiError";
+import { ApiError } from "@/lib/api/errors";
 
 export default function useLoginForm(onSuccess?: () => void) {
   const router = useRouter();
