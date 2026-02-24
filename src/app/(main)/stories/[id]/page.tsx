@@ -89,7 +89,11 @@ export default function StoryDetailPage() {
         </div>
         {/* 댓글 */}
         <div className="border-t-2 border-Gray-1 w-full max-w-[1040px] mx-auto px-5 mt-10 pt-6 pb-10">
-          <CommentSection storyId={story.bookStoryId} />
+          <CommentSection
+            storyId={story.bookStoryId}
+            initialComments={story.comments}
+            storyAuthorNickname={story.authorInfo.nickname}
+          />
         </div>
       </div>
     </div>
