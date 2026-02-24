@@ -4,6 +4,7 @@ import BookstoryDetail from "@/components/base-ui/BookStory/bookstory_detail";
 import StoryNavigation from "@/components/base-ui/BookStory/story_navigation";
 import CommentSection from "@/components/base-ui/Comment/comment_section";
 import Image from "next/image";
+import { isValidUrl } from "@/utils/url";
 import { useParams } from "next/navigation";
 import { useStoryDetailQuery } from "@/hooks/queries/useStoryQueries";
 
@@ -32,6 +33,7 @@ export default function StoryDetailPage() {
 
   const prevId = story.prevBookStoryId !== 0 ? story.prevBookStoryId : null;
   const nextId = story.nextBookStoryId !== 0 ? story.nextBookStoryId : null;
+
 
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4">
@@ -68,10 +70,11 @@ export default function StoryDetailPage() {
       <div>
         <StoryNavigation currentId={story.bookStoryId} prevId={prevId} nextId={nextId}>
           <BookstoryDetail
-            imageUrl={story.bookInfo.imgUrl || ""}
+            imageUrl={isValidUrl(story.bookInfo.imgUrl) ? story.bookInfo.imgUrl : "/book_example.svg"}
             authorName={story.authorInfo.nickname}
             authorNickname={story.authorInfo.nickname}
             authorId={story.authorInfo.nickname}
+            profileImgSrc={isValidUrl(story.authorInfo.profileImageUrl) ? story.authorInfo.profileImageUrl : "/profile2.svg"}
             bookTitle={story.bookInfo.title}
             bookAuthor={story.bookInfo.author}
             bookDetail={story.description}
@@ -89,7 +92,11 @@ export default function StoryDetailPage() {
         </div>
         {/* 댓글 */}
         <div className="border-t-2 border-Gray-1 w-full max-w-[1040px] mx-auto px-5 mt-10 pt-6 pb-10">
-          <CommentSection storyId={story.bookStoryId} />
+          <CommentSection
+            storyId={story.bookStoryId}
+            initialComments={story.comments}
+            storyAuthorNickname={story.authorInfo.nickname}
+          />
         </div>
       </div>
     </div>
