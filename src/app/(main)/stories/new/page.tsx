@@ -7,6 +7,7 @@ import BookstoryText from "@/components/base-ui/BookStory/bookstory_text";
 import BookstoryChoosebook from "@/components/base-ui/BookStory/bookstory_choosebook";
 import BookSelectModal from "@/components/layout/BookSelectModal";
 import { useBookDetailQuery } from "@/hooks/queries/useBookQueries";
+import { useCreateBookStoryMutation } from "@/hooks/queries/useStoryQueries";
 
 function StoryNewContent() {
   const router = useRouter();
@@ -17,15 +18,46 @@ function StoryNewContent() {
   const [isBookSelectModalOpen, setIsBookSelectModalOpen] = useState(false);
 
   const { data: selectedBook } = useBookDetailQuery(isbn || "");
+  const createStoryMutation = useCreateBookStoryMutation();
 
   const handleCancel = () => {
     router.back();
   };
 
   const handleSubmit = () => {
-    // TODO: 실제 저장 로직 구현
-    console.log("저장:", { title, detail });
-    router.push("/stories");
+    if (!selectedBook) {
+      alert("책을 선택해 주세요.");
+      return;
+    }
+    if (!title.trim()) {
+      alert("제목을 입력해 주세요.");
+      return;
+    }
+    if (!detail.trim()) {
+      alert("내용을 입력해 주세요.");
+      return;
+    }
+
+    createStoryMutation.mutate({
+      bookInfo: {
+        isbn: selectedBook.isbn,
+        title: selectedBook.title,
+        author: selectedBook.author,
+        imgUrl: selectedBook.imgUrl,
+        publisher: selectedBook.publisher,
+        description: selectedBook.description,
+      },
+      title,
+      description: detail,
+    }, {
+      onSuccess: () => {
+        router.push("/stories");
+      },
+      onError: (error) => {
+        console.error("스토리 등록 실패:", error);
+        alert("스토리 등록에 실패했습니다. 다시 시도해 주세요.");
+      }
+    });
   };
 
   const handleBookSelect = (selectedIsbn: string) => {
@@ -110,16 +142,18 @@ function StoryNewContent() {
             <button
               type="button"
               onClick={handleCancel}
-              className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors"
+              disabled={createStoryMutation.isPending}
+              className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors disabled:opacity-50"
             >
               임시저장
             </button>
             <button
               type="button"
               onClick={handleSubmit}
-              className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:opacity-90 transition-opacity"
+              disabled={createStoryMutation.isPending}
+              className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:opacity-90 transition-opacity disabled:opacity-50"
             >
-              등록
+              {createStoryMutation.isPending ? "등록 중..." : "등록"}
             </button>
           </div>
         </div>

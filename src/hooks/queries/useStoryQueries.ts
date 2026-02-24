@@ -1,5 +1,6 @@
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { storyService } from "@/services/storyService";
+import { CreateBookStoryRequest } from "@/types/story";
 
 export const storyKeys = {
     all: ["stories"] as const,
@@ -31,6 +32,16 @@ export const useInfiniteStoriesQuery = () => {
         getNextPageParam: (lastPage) => {
             if (!lastPage || !lastPage.hasNext) return undefined;
             return lastPage.nextCursor;
+        },
+    });
+};
+
+export const useCreateBookStoryMutation = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data: CreateBookStoryRequest) => storyService.createBookStory(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: storyKeys.all });
         },
     });
 };
