@@ -11,6 +11,12 @@ type CommentSectionProps = {
   storyAuthorNickname?: string;
 };
 
+// URL 유효성 검사 (Swagger 기본값 "string" 또는 빈 값 처리)
+const isValidUrl = (url: string | null | undefined) => {
+  if (!url || url === "string" || url.trim() === "") return false;
+  return url.startsWith("/") || url.startsWith("http");
+};
+
 export default function CommentSection({
   storyId,
   initialComments = [],
@@ -21,7 +27,9 @@ export default function CommentSection({
     return apiComments.map((c) => ({
       id: c.commentId,
       authorName: c.authorInfo.nickname,
-      profileImgSrc: c.authorInfo.profileImageUrl || "/profile2.svg",
+      profileImgSrc: isValidUrl(c.authorInfo.profileImageUrl)
+        ? c.authorInfo.profileImageUrl
+        : "/profile2.svg",
       content: c.content,
       createdAt: c.createdAt,
       isAuthor: c.authorInfo.nickname === storyAuthorNickname,

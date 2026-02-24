@@ -33,6 +33,12 @@ export default function StoryDetailPage() {
   const prevId = story.prevBookStoryId !== 0 ? story.prevBookStoryId : null;
   const nextId = story.nextBookStoryId !== 0 ? story.nextBookStoryId : null;
 
+  // URL 유효성 검사 (Swagger 기본값 "string" 또는 빈 값 처리)
+  const isValidUrl = (url: string | null | undefined) => {
+    if (!url || url === "string" || url.trim() === "") return false;
+    return url.startsWith("/") || url.startsWith("http");
+  };
+
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4">
       {/* 책이야기 > 상세보기 */}
@@ -68,11 +74,11 @@ export default function StoryDetailPage() {
       <div>
         <StoryNavigation currentId={story.bookStoryId} prevId={prevId} nextId={nextId}>
           <BookstoryDetail
-            imageUrl={story.bookInfo.imgUrl || ""}
+            imageUrl={isValidUrl(story.bookInfo.imgUrl) ? story.bookInfo.imgUrl : "/book_example.svg"}
             authorName={story.authorInfo.nickname}
             authorNickname={story.authorInfo.nickname}
             authorId={story.authorInfo.nickname}
-            profileImgSrc={story.authorInfo.profileImageUrl || "/profile2.svg"}
+            profileImgSrc={isValidUrl(story.authorInfo.profileImageUrl) ? story.authorInfo.profileImageUrl : "/profile2.svg"}
             bookTitle={story.bookInfo.title}
             bookAuthor={story.bookInfo.author}
             bookDetail={story.description}
