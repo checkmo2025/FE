@@ -7,7 +7,7 @@ import BookstoryText from "@/components/base-ui/BookStory/bookstory_text";
 import BookstoryChoosebook from "@/components/base-ui/BookStory/bookstory_choosebook";
 import BookSelectModal from "@/components/layout/BookSelectModal";
 import { useBookDetailQuery } from "@/hooks/queries/useBookQueries";
-import { useCreateBookStoryMutation } from "@/hooks/queries/useStoryQueries";
+import { useCreateBookStoryMutation } from "@/hooks/mutations/useStoryMutations";
 
 function StoryNewContent() {
   const router = useRouter();
