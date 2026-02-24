@@ -22,3 +22,25 @@ export const useCreateCommentMutation = (bookStoryId: number) => {
         },
     });
 };
+
+export const useUpdateCommentMutation = (bookStoryId: number) => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (args: { commentId: number; content: string }) =>
+            storyService.updateComment(bookStoryId, args.commentId, { content: args.content }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: storyKeys.detail(bookStoryId) });
+        },
+    });
+};
+
+export const useDeleteCommentMutation = (bookStoryId: number) => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (commentId: number) =>
+            storyService.deleteComment(bookStoryId, commentId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: storyKeys.detail(bookStoryId) });
+        },
+    });
+};

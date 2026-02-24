@@ -40,4 +40,24 @@ export const storyService = {
         );
         return response.result!;
     },
+    updateComment: async (
+        bookStoryId: number,
+        commentId: number,
+        data: { content: string }
+    ): Promise<number> => {
+        const response = await apiClient.patch<ApiResponse<number>>(
+            `${STORY_ENDPOINTS.LIST}/${bookStoryId}/comments/${commentId}`,
+            data
+        );
+        return response.result!;
+    },
+    deleteComment: async (
+        bookStoryId: number,
+        commentId: number
+    ): Promise<null> => {
+        const response = await apiClient.delete<ApiResponse<null>>(
+            `${STORY_ENDPOINTS.LIST}/${bookStoryId}/comments/${commentId}`
+        );
+        return response.result!;
+    },
 };

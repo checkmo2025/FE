@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import CommentList, { Comment } from "./comment_list";
 import { CommentInfo } from "@/types/story";
 import { isValidUrl } from "@/utils/url";
-import { useCreateCommentMutation } from "@/hooks/mutations/useStoryMutations";
+import {
+  useCreateCommentMutation,
+  useUpdateCommentMutation,
+  useDeleteCommentMutation
+} from "@/hooks/mutations/useStoryMutations";
 import { toast } from "react-hot-toast";
 
 // 어떤 글의 댓글인지 구분
@@ -21,6 +25,8 @@ export default function CommentSection({
   storyAuthorNickname
 }: CommentSectionProps) {
   const createCommentMutation = useCreateCommentMutation(storyId);
+  const updateCommentMutation = useUpdateCommentMutation(storyId);
+  const deleteCommentMutation = useDeleteCommentMutation(storyId);
 
   // API 데이터를 UI용 Comment 형식으로 변환 및 계층 구조화
   const mapApiToUiComments = (apiComments: CommentInfo[]): Comment[] => {
@@ -100,12 +106,30 @@ export default function CommentSection({
   };
 
   const handleEditComment = (id: number, content: string) => {
-    // TODO: 댓글 수정 API 연동
+    updateCommentMutation.mutate(
+      { commentId: id, content },
+      {
+        onSuccess: () => {
+          toast.success("댓글이 수정되었습니다.");
+        },
+        onError: () => {
+          toast.error("댓글 수정에 실패했습니다.");
+        }
+      }
+    );
   };
 
   const handleDeleteComment = (id: number) => {
-    // TODO: 댓글 삭제 API 연동
-    setComments(comments.filter((c) => c.id !== id));
+    if (confirm("댓글을 삭제하시겠습니까?")) {
+      deleteCommentMutation.mutate(id, {
+        onSuccess: () => {
+          toast.success("댓글이 삭제되었습니다.");
+        },
+        onError: () => {
+          toast.error("댓글 삭제에 실패했습니다.");
+        }
+      });
+    }
   };
 
   const handleReportComment = (id: number) => {
