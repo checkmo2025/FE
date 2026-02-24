@@ -6,25 +6,17 @@ import Image from "next/image";
 import BookstoryText from "@/components/base-ui/BookStory/bookstory_text";
 import BookstoryChoosebook from "@/components/base-ui/BookStory/bookstory_choosebook";
 import BookSelectModal from "@/components/layout/BookSelectModal";
+import { useBookDetailQuery } from "@/hooks/queries/useBookQueries";
 
 function StoryNewContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const bookId = searchParams.get("bookId");
+  const isbn = searchParams.get("isbn");
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
   const [isBookSelectModalOpen, setIsBookSelectModalOpen] = useState(false);
 
-  // 더미 데이터 
-  const selectedBook = bookId
-    ? {
-        id: Number(bookId),
-        imgUrl: "/booksample.svg",
-        title: "어린 왕자",
-        author: "김개미, 연수",
-        detail: "최대 500(넘어가면...으로)",
-      }
-    : null;
+  const { data: selectedBook } = useBookDetailQuery(isbn || "");
 
   const handleCancel = () => {
     router.back();
@@ -36,8 +28,8 @@ function StoryNewContent() {
     router.push("/stories");
   };
 
-  const handleBookSelect = (selectedBookId: number) => {
-    router.push(`/stories/new?bookId=${selectedBookId}`);
+  const handleBookSelect = (selectedIsbn: string) => {
+    router.push(`/stories/new?isbn=${selectedIsbn}`);
   };
 
   return (
@@ -84,7 +76,7 @@ function StoryNewContent() {
               bookUrl={selectedBook.imgUrl}
               bookName={selectedBook.title}
               author={selectedBook.author}
-              bookDetail={selectedBook.detail}
+              bookDetail={selectedBook.description}
               onButtonClick={() => {
                 setIsBookSelectModalOpen(true);
               }}

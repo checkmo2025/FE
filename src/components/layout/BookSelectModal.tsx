@@ -1,14 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useInfiniteBookSearchQuery } from "@/hooks/queries/useBookQueries";
+import { useDebounce } from "@/hooks/useDebounce";
 import SearchBookResult from "@/components/base-ui/Search/search_bookresult";
+import { useInView } from "react-intersection-observer";
+import { Book } from "@/types/book";
 
 type BookSelectModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (bookId: number) => void;
+  onSelect: (isbn: string) => void;
 };
 
 export default function BookSelectModal({
@@ -16,41 +20,32 @@ export default function BookSelectModal({
   onClose,
   onSelect,
 }: BookSelectModalProps) {
-  const router = useRouter();
-  const [likedResults, setLikedResults] = useState<Record<number, boolean>>({});
+  const [likedResults, setLikedResults] = useState<Record<string, boolean>>({});
   const [searchValue, setSearchValue] = useState("");
+  const debouncedSearchValue = useDebounce(searchValue, 500);
 
-  // 더미 데이터
-  const searchResults = [
-    {
-      id: 1,
-      imgUrl: "/booksample.svg",
-      title: "어린 왕자",
-      author: "김개미, 연수",
-      detail: "최대 500(넘어가면...으로)",
-    },
-    {
-      id: 2,
-      imgUrl: "/booksample.svg",
-      title: "어린 왕자",
-      author: "김개미, 연수",
-      detail: "최대 500(넘어가면...으로)",
-    },
-    {
-      id: 3,
-      imgUrl: "/booksample.svg",
-      title: "어린 왕자",
-      author: "김개미, 연수",
-      detail: "최대 500(넘어가면...으로)",
-    },
-  ];
+  const {
+    data: searchData,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteBookSearchQuery(debouncedSearchValue);
+
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const searchResults = useMemo(() => {
+    return searchData?.pages.flatMap((page) => page.detailInfoList) || [];
+  }, [searchData]);
 
   const handleSearch = () => {
-    if (searchValue.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchValue.trim())}`);
-      setSearchValue("");
-      onClose();
-    }
+    // 실시간 검색으로 대체
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -136,33 +131,48 @@ export default function BookSelectModal({
 
         {/* 검색 결과 */}
         <div className="py-2 t:px-6 t:py-4 overflow-y-auto flex-1">
-          <p className="text-Gray-4 subhead_4_1 mb-4 t:mb-14 px-5">
-            총 <span className="text-primary-3">{searchResults.length}개</span>
-            의 검색결과가 있습니다.
-          </p>
-          <div className="flex flex-col gap-4">
-            {searchResults.map((result) => (
-              <SearchBookResult
-                key={result.id}
-                imgUrl={result.imgUrl}
-                title={result.title}
-                author={result.author}
-                detail={result.detail}
-                liked={likedResults[result.id] || false}
-                onLikeChange={(liked) =>
-                  setLikedResults((prev) => ({ ...prev, [result.id]: liked }))
-                }
-                onPencilClick={() => {
-                  onSelect(result.id);
-                  onClose();
-                }}
-                onCardClick={() => {
-                  onSelect(result.id);
-                  onClose();
-                }}
-              />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center py-10">
+              <p className="text-Gray-4 body_1">검색 중...</p>
+            </div>
+          ) : (
+            <>
+              <p className="text-Gray-4 subhead_4_1 mb-4 t:mb-14 px-5">
+                총 <span className="text-primary-3">{searchResults.length}개</span>
+                의 검색결과가 있습니다.
+              </p>
+              <div className="flex flex-col gap-4">
+                {searchResults.map((result: Book) => (
+                  <SearchBookResult
+                    key={result.isbn}
+                    imgUrl={result.imgUrl}
+                    title={result.title}
+                    author={result.author}
+                    detail={result.description}
+                    liked={likedResults[result.isbn] || false}
+                    onLikeChange={(liked) =>
+                      setLikedResults((prev) => ({ ...prev, [result.isbn]: liked }))
+                    }
+                    onPencilClick={() => {
+                      onSelect(result.isbn);
+                      onClose();
+                    }}
+                    onCardClick={() => {
+                      onSelect(result.isbn);
+                      onClose();
+                    }}
+                  />
+                ))}
+              </div>
+
+              {/* 무한 스크롤 로딩 트리거 */}
+              <div ref={ref} className="h-10 flex items-center justify-center mt-4 mb-4">
+                {isFetchingNextPage && (
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-3"></div>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

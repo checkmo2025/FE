@@ -5,6 +5,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import BookSelectModal from '@/components/layout/BookSelectModal';
 import BookstoryChoosebook from '@/components/base-ui/BookStory/bookstory_choosebook';
+import { useBookDetailQuery } from '@/hooks/queries/useBookQueries';
 import { useHeaderTitle } from '@/contexts/HeaderTitleContext';
 
 const TAGS = [
@@ -36,7 +37,7 @@ export default function NewBookshelfPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const groupId = params.id as string;
-  const bookId = searchParams.get('bookId');
+  const isbn = searchParams.get('isbn');
   const { setCustomTitle } = useHeaderTitle();
 
   // 모바일 헤더 타이틀 설정
@@ -45,16 +46,7 @@ export default function NewBookshelfPage() {
     return () => setCustomTitle(null);
   }, [setCustomTitle]);
 
-  // 더미 데이터
-  const selectedBook = bookId
-    ? {
-        id: Number(bookId),
-        imgUrl: '/booksample.svg',
-        title: '어린 왕자',
-        author: '김개미, 연수',
-        detail: '최대 500(넘어가면...으로)',
-      }
-    : null;
+  const { data: selectedBook } = useBookDetailQuery(isbn || '');
 
   const [generation, setGeneration] = useState('1');
   const [isGenerationOpen, setIsGenerationOpen] = useState(false);
@@ -93,8 +85,8 @@ export default function NewBookshelfPage() {
     );
   };
 
-  const handleBookSelect = (selectedBookId: number) => {
-    router.push(`/groups/${groupId}/admin/bookcase/new?bookId=${selectedBookId}`);
+  const handleBookSelect = (selectedIsbn: string) => {
+    router.push(`/groups/${groupId}/admin/bookcase/new?isbn=${selectedIsbn}`);
   };
 
   const handleBack = () => {
@@ -131,7 +123,7 @@ export default function NewBookshelfPage() {
                   bookUrl={selectedBook.imgUrl}
                   bookName={selectedBook.title}
                   author={selectedBook.author}
-                  bookDetail={selectedBook.detail}
+                  bookDetail={selectedBook.description}
                   onButtonClick={() => setIsBookSelectModalOpen(true)}
                 />
               ) : (
@@ -175,11 +167,10 @@ export default function NewBookshelfPage() {
                           setGeneration(num.toString());
                           setIsGenerationOpen(false);
                         }}
-                        className={`w-22 h-8 px-3 text-left subhead_4_1 cursor-pointer ${
-                          generation === num.toString()
-                            ? 'bg-Subbrown-4 text-Gray-7'
-                            : 'bg-White text-Gray-7 hover:bg-Subbrown-4'
-                        }`}
+                        className={`w-22 h-8 px-3 text-left subhead_4_1 cursor-pointer ${generation === num.toString()
+                          ? 'bg-Subbrown-4 text-Gray-7'
+                          : 'bg-White text-Gray-7 hover:bg-Subbrown-4'
+                          }`}
                       >
                         {num}
                       </button>
@@ -200,11 +191,10 @@ export default function NewBookshelfPage() {
                       key={index}
                       type="button"
                       onClick={() => handleTagToggle(index)}
-                      className={`h-10 px-4 py-1 rounded-[8px] body_2_2 cursor-pointer transition-colors ${
-                        isSelected
-                          ? `${getTagBgColor(index)} text-White`
-                          : 'bg-transparent text-Gray-4 border border-Gray-2'
-                      }`}
+                      className={`h-10 px-4 py-1 rounded-[8px] body_2_2 cursor-pointer transition-colors ${isSelected
+                        ? `${getTagBgColor(index)} text-White`
+                        : 'bg-transparent text-Gray-4 border border-Gray-2'
+                        }`}
                     >
                       {label}
                     </button>
