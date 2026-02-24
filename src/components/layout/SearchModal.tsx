@@ -5,8 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Search_BookCoverCard from "@/components/base-ui/Search/search_recommendbook";
-import { useBookSearchQuery, useRecommendedBooksQuery } from "@/hooks/queries/useBookQueries";
+import { useInfiniteBookSearchQuery, useRecommendedBooksQuery } from "@/hooks/queries/useBookQueries";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useInView } from "react-intersection-observer";
+import { Book } from "@/types/book";
 
 type SearchModalProps = {
   isOpen: boolean;
@@ -20,7 +22,25 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const [searchValue, setSearchValue] = useState("");
   const debouncedSearchValue = useDebounce(searchValue, 300);
 
-  const { data: searchResults, isLoading: isSearching } = useBookSearchQuery(debouncedSearchValue);
+  const {
+    data: searchData,
+    isLoading: isSearching,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteBookSearchQuery(debouncedSearchValue);
+
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const searchResults = useMemo(() => {
+    return searchData?.pages.flatMap((page) => page.detailInfoList) || [];
+  }, [searchData]);
 
   const { data: recommendedData, isLoading: isLoadingRecommended } = useRecommendedBooksQuery();
 
@@ -28,7 +48,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     return (recommendedData?.detailInfoList || []).slice(0, 4);
   }, [recommendedData]);
 
-  const booksToDisplay = searchResults?.detailInfoList.slice(0, 10) || [];
+  const booksToDisplay = searchResults;
 
   const handleSearch = () => {
     if (searchValue.trim()) {
@@ -142,7 +162,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 <div className="py-4 text-center text-white/60 body_1">검색 중...</div>
               ) : booksToDisplay.length > 0 ? (
                 <div className="flex flex-col gap-2 py-2 max-h-[520px] overflow-y-auto scrollbar-hide">
-                  {booksToDisplay.map((book) => (
+                  {booksToDisplay.map((book: Book) => (
                     <div
                       key={book.isbn}
                       onClick={() => {
@@ -165,6 +185,12 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                       </div>
                     </div>
                   ))}
+                  {/* 무한 스크롤 로딩 트리거 */}
+                  <div ref={ref} className="h-10 flex items-center justify-center mt-2">
+                    {isFetchingNextPage && (
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white/60"></div>
+                    )}
+                  </div>
                 </div>
               ) : (
                 debouncedSearchValue && <div className="py-4 text-center text-white/60 body_1">검색 결과가 없습니다.</div>
