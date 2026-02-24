@@ -200,11 +200,10 @@ export default function CommentItem({
       ) : (
         /* 수정 모드 */
         <div className="flex flex-col gap-2 mt-2">
-          <input
-            type="text"
+          <textarea
             value={editContent}
             onChange={(e) => setEditContent(e.target.value)}
-            className="w-full min-h-[48px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White Body_1_2 text-Gray-7 outline-none focus:border-primary-3"
+            className="w-full min-h-[80px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White Body_1_2 text-Gray-7 outline-none focus:border-primary-3 resize-none whitespace-pre-wrap"
             autoFocus
           />
           <div className="flex justify-end gap-2">

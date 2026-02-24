@@ -10,6 +10,7 @@ import {
   useDeleteCommentMutation
 } from "@/hooks/mutations/useStoryMutations";
 import { toast } from "react-hot-toast";
+import ConfirmModal from "@/components/common/ConfirmModal";
 
 // 어떤 글의 댓글인지 구분
 type CommentSectionProps = {
@@ -69,6 +70,8 @@ export default function CommentSection({
   };
 
   const [comments, setComments] = useState<Comment[]>(() => mapApiToUiComments(initialComments));
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState<number | null>(null);
 
   // 데이터가 변경되면 상태 업데이트
   useEffect(() => {
@@ -120,16 +123,24 @@ export default function CommentSection({
   };
 
   const handleDeleteComment = (id: number) => {
-    if (confirm("댓글을 삭제하시겠습니까?")) {
-      deleteCommentMutation.mutate(id, {
-        onSuccess: () => {
-          toast.success("댓글이 삭제되었습니다.");
-        },
-        onError: () => {
-          toast.error("댓글 삭제에 실패했습니다.");
-        }
-      });
-    }
+    setCommentToDelete(id);
+    setIsConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (commentToDelete === null) return;
+    deleteCommentMutation.mutate(commentToDelete, {
+      onSuccess: () => {
+        toast.success("댓글이 삭제되었습니다.");
+        setIsConfirmOpen(false);
+        setCommentToDelete(null);
+      },
+      onError: () => {
+        toast.error("댓글 삭제에 실패했습니다.");
+        setIsConfirmOpen(false);
+        setCommentToDelete(null);
+      }
+    });
   };
 
   const handleReportComment = (id: number) => {
@@ -139,14 +150,25 @@ export default function CommentSection({
   };
 
   return (
-    <CommentList
-      comments={comments}
-      onAddComment={handleAddComment}
-      onAddReply={handleAddReply}
-      onEditComment={handleEditComment}
-      onDeleteComment={handleDeleteComment}
-      onReportComment={handleReportComment}
-    />
+    <>
+      <CommentList
+        comments={comments}
+        onAddComment={handleAddComment}
+        onAddReply={handleAddReply}
+        onEditComment={handleEditComment}
+        onDeleteComment={handleDeleteComment}
+        onReportComment={handleReportComment}
+      />
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        message="댓글을 삭제하시겠습니까?"
+        onConfirm={confirmDelete}
+        onCancel={() => {
+          setIsConfirmOpen(false);
+          setCommentToDelete(null);
+        }}
+      />
+    </>
   );
 }
 
