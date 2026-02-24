@@ -28,7 +28,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     return (recommendedData?.detailInfoList || []).slice(0, 4);
   }, [recommendedData]);
 
-  const booksToDisplay = searchResults?.detailInfoList.slice(0, 4) || [];
+  const booksToDisplay = searchResults?.detailInfoList.slice(0, 10) || [];
 
   const handleSearch = () => {
     if (searchValue.trim()) {
@@ -141,7 +141,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
               {isSearching ? (
                 <div className="py-4 text-center text-white/60 body_1">검색 중...</div>
               ) : booksToDisplay.length > 0 ? (
-                <div className="flex flex-col gap-2 py-2">
+                <div className="flex flex-col gap-2 py-2 max-h-[520px] overflow-y-auto scrollbar-hide">
                   {booksToDisplay.map((book) => (
                     <div
                       key={book.isbn}
@@ -173,49 +173,53 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
           </div>
         )}
 
-        {/* 오늘의 추천 책 */}
-        <div className="mx-auto w-full max-w-[1440px] px-4 py-4 t:px-6 d:px-4 t:py-5 mt-2">
-          <div className="w-full t:w-[683px] d:w-[1400px] t:mx-auto">
-            <h3 className="text-white subhead_1 mb-6">오늘의 추천 책</h3>
-            <div className="flex gap-2 t:gap-4 d:gap-6 justify-center min-h-[200px]">
-              {isLoadingRecommended ? (
-                <div className="flex items-center justify-center w-full text-white/60">추천 도서를 불러오는 중...</div>
-              ) : recommendedBooks.length > 0 ? (
-                recommendedBooks.map((book, index) => (
-                  <div key={book.isbn} className={`shrink-0 ${index === 3 ? 'hidden d:block' : ''}`}>
-                    <Search_BookCoverCard
-                      imgUrl={book.imgUrl}
-                      title={book.title}
-                      author={book.author}
-                      liked={likedBooks[book.isbn] || false}
-                      onLikeChange={(liked) =>
-                        setLikedBooks((prev) => ({ ...prev, [book.isbn]: liked }))
-                      }
+        {/* 오늘의 추천 책 - 검색어가 없을 때만 표시 */}
+        {!searchValue.trim() && (
+          <>
+            <div className="mx-auto w-full max-w-[1440px] px-4 py-4 t:px-6 d:px-4 t:py-5 mt-2">
+              <div className="w-full t:w-[683px] d:w-[1400px] t:mx-auto">
+                <h3 className="text-white subhead_1 mb-6">오늘의 추천 책</h3>
+                <div className="flex gap-2 t:gap-4 d:gap-6 justify-center min-h-[200px]">
+                  {isLoadingRecommended ? (
+                    <div className="flex items-center justify-center w-full text-white/60">추천 도서를 불러오는 중...</div>
+                  ) : recommendedBooks.length > 0 ? (
+                    recommendedBooks.map((book, index) => (
+                      <div key={book.isbn} className={`shrink-0 ${index === 3 ? 'hidden d:block' : ''}`}>
+                        <Search_BookCoverCard
+                          imgUrl={book.imgUrl}
+                          title={book.title}
+                          author={book.author}
+                          liked={likedBooks[book.isbn] || false}
+                          onLikeChange={(liked) =>
+                            setLikedBooks((prev) => ({ ...prev, [book.isbn]: liked }))
+                          }
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex items-center justify-center w-full text-white/60">추천 도서가 없습니다.</div>
+                  )}
+                </div>
+              </div>
+              <div className="flex justify-end mt-4 w-full t:w-[683px] d:w-[1400px] t:mx-auto">
+                <Link
+                  href="#"
+                  className="flex items-center gap-1 text-white body_1_2 t:subhead_4_1 hover:opacity-80 border-b border-white"
+                >
+                  <span>알라딘 랭킹 더 보러가기</span>
+                  <div className="relative w-6 h-6">
+                    <Image
+                      src="/to_aladin.svg"
+                      alt="알라딘"
+                      fill
+                      className="object-contain"
                     />
                   </div>
-                ))
-              ) : (
-                <div className="flex items-center justify-center w-full text-white/60">추천 도서가 없습니다.</div>
-              )}
-            </div>
-          </div>
-          <div className="flex justify-end mt-4 w-full t:w-[683px] d:w-[1400px] t:mx-auto">
-            <Link
-              href="#"
-              className="flex items-center gap-1 text-white body_1_2 t:subhead_4_1 hover:opacity-80 border-b border-white"
-            >
-              <span>알라딘 랭킹 더 보러가기</span>
-              <div className="relative w-6 h-6">
-                <Image
-                  src="/to_aladin.svg"
-                  alt="알라딘"
-                  fill
-                  className="object-contain"
-                />
+                </Link>
               </div>
-            </Link>
-          </div>
-        </div>
+            </div>
+          </>
+        )}
       </div>
     </>
   );
