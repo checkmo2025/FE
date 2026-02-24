@@ -5,6 +5,7 @@ export const bookKeys = {
     all: ["books"] as const,
     search: (title: string) => [...bookKeys.all, "search", title] as const,
     infiniteSearch: (title: string) => [...bookKeys.all, "infiniteSearch", title] as const,
+    recommend: () => [...bookKeys.all, "recommend"] as const,
 };
 
 export const useBookSearchQuery = (keyword: string) => {
@@ -25,5 +26,13 @@ export const useInfiniteBookSearchQuery = (keyword: string) => {
             if (!lastPage || !lastPage.hasNext) return undefined;
             return lastPage.currentPage + 1;
         },
+    });
+};
+
+export const useRecommendedBooksQuery = () => {
+    return useQuery({
+        queryKey: bookKeys.recommend(),
+        queryFn: () => bookService.getRecommendedBooks(),
+        staleTime: 1000 * 60 * 60, // 1 hour (recommended books don't change often)
     });
 };

@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Search_BookCoverCard from "@/components/base-ui/Search/search_recommendbook";
-import { useBookSearchQuery } from "@/hooks/queries/useBookQueries";
+import { useBookSearchQuery, useRecommendedBooksQuery } from "@/hooks/queries/useBookQueries";
 import { useDebounce } from "@/hooks/useDebounce";
 
 type SearchModalProps = {
@@ -22,13 +22,11 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
   const { data: searchResults, isLoading: isSearching } = useBookSearchQuery(debouncedSearchValue);
 
-  // 더미 추천 책 데이터
-  const recommendedBooks = [
-    { id: 1, imgUrl: "/booksample.svg", title: "책 제목", author: "작가작가작가" },
-    { id: 2, imgUrl: "/booksample.svg", title: "책 제목", author: "작가작가작가" },
-    { id: 3, imgUrl: "/booksample.svg", title: "책 제목", author: "작가작가작가" },
-    { id: 4, imgUrl: "/booksample.svg", title: "책 제목", author: "작가작가작가" },
-  ];
+  const { data: recommendedData, isLoading: isLoadingRecommended } = useRecommendedBooksQuery();
+
+  const recommendedBooks = useMemo(() => {
+    return (recommendedData?.detailInfoList || []).slice(0, 4);
+  }, [recommendedData]);
 
   const booksToDisplay = searchResults?.detailInfoList.slice(0, 4) || [];
 
@@ -179,20 +177,26 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
         <div className="mx-auto w-full max-w-[1440px] px-4 py-4 t:px-6 d:px-4 t:py-5 mt-2">
           <div className="w-full t:w-[683px] d:w-[1400px] t:mx-auto">
             <h3 className="text-white subhead_1 mb-6">오늘의 추천 책</h3>
-            <div className="flex gap-2 t:gap-4 d:gap-6 justify-center">
-              {recommendedBooks.slice(0, 4).map((book, index) => (
-                <div key={book.id} className={`shrink-0 ${index === 3 ? 'hidden d:block' : ''}`}>
-                  <Search_BookCoverCard
-                    imgUrl={book.imgUrl}
-                    title={book.title}
-                    author={book.author}
-                    liked={likedBooks[book.id.toString()] || false}
-                    onLikeChange={(liked) =>
-                      setLikedBooks((prev) => ({ ...prev, [book.id.toString()]: liked }))
-                    }
-                  />
-                </div>
-              ))}
+            <div className="flex gap-2 t:gap-4 d:gap-6 justify-center min-h-[200px]">
+              {isLoadingRecommended ? (
+                <div className="flex items-center justify-center w-full text-white/60">추천 도서를 불러오는 중...</div>
+              ) : recommendedBooks.length > 0 ? (
+                recommendedBooks.map((book, index) => (
+                  <div key={book.isbn} className={`shrink-0 ${index === 3 ? 'hidden d:block' : ''}`}>
+                    <Search_BookCoverCard
+                      imgUrl={book.imgUrl}
+                      title={book.title}
+                      author={book.author}
+                      liked={likedBooks[book.isbn] || false}
+                      onLikeChange={(liked) =>
+                        setLikedBooks((prev) => ({ ...prev, [book.isbn]: liked }))
+                      }
+                    />
+                  </div>
+                ))
+              ) : (
+                <div className="flex items-center justify-center w-full text-white/60">추천 도서가 없습니다.</div>
+              )}
             </div>
           </div>
           <div className="flex justify-end mt-4 w-full t:w-[683px] d:w-[1400px] t:mx-auto">

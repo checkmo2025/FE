@@ -16,4 +16,10 @@ export const bookService = {
         );
         return response.result!;
     },
+    getRecommendedBooks: async (): Promise<BookSearchResponse> => {
+        const response = await apiClient.get<ApiResponse<BookSearchResponse>>(
+            BOOK_ENDPOINTS.RECOMMEND
+        );
+        return response.result!;
+    },
 };
