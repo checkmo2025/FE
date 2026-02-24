@@ -146,7 +146,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     <div
                       key={book.isbn}
                       onClick={() => {
-                        router.push(`/search?q=${encodeURIComponent(book.title)}`);
+                        router.push(`/books/${book.isbn}`);
                         onClose();
                       }}
                       className="flex items-center gap-4 p-3 hover:bg-white/10 cursor-pointer rounded-lg transition-colors"
@@ -193,6 +193,10 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                           onLikeChange={(liked) =>
                             setLikedBooks((prev) => ({ ...prev, [book.isbn]: liked }))
                           }
+                          onCardClick={() => {
+                            router.push(`/books/${book.isbn}`);
+                            onClose();
+                          }}
                         />
                       </div>
                     ))

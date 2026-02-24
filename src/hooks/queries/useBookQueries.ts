@@ -6,6 +6,7 @@ export const bookKeys = {
     search: (title: string) => [...bookKeys.all, "search", title] as const,
     infiniteSearch: (title: string) => [...bookKeys.all, "infiniteSearch", title] as const,
     recommend: () => [...bookKeys.all, "recommend"] as const,
+    detail: (isbn: string) => [...bookKeys.all, "detail", isbn] as const,
 };
 
 export const useBookSearchQuery = (keyword: string) => {
@@ -34,5 +35,13 @@ export const useRecommendedBooksQuery = () => {
         queryKey: bookKeys.recommend(),
         queryFn: () => bookService.getRecommendedBooks(),
         staleTime: 1000 * 60 * 60, // 1 hour (recommended books don't change often)
+    });
+};
+
+export const useBookDetailQuery = (isbn: string) => {
+    return useQuery({
+        queryKey: bookKeys.detail(isbn),
+        queryFn: () => bookService.getBookDetail(isbn),
+        enabled: !!isbn,
     });
 };
