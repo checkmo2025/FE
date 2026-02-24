@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Search_BookCoverCard from "@/components/base-ui/Search/search_recommendbook";
+import { useBookSearchQuery } from "@/hooks/queries/useBookQueries";
+import { useDebounce } from "@/hooks/useDebounce";
 
 type SearchModalProps = {
   isOpen: boolean;
@@ -16,6 +18,9 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const [topOffset, setTopOffset] = useState(0);
   const [likedBooks, setLikedBooks] = useState<Record<number, boolean>>({});
   const [searchValue, setSearchValue] = useState("");
+  const debouncedSearchValue = useDebounce(searchValue, 300);
+
+  const { data: searchResults, isLoading: isSearching } = useBookSearchQuery(debouncedSearchValue);
 
   // 더미 추천 책 데이터
   const recommendedBooks = [
@@ -24,6 +29,8 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     { id: 3, imgUrl: "/booksample.svg", title: "책 제목", author: "작가작가작가" },
     { id: 4, imgUrl: "/booksample.svg", title: "책 제목", author: "작가작가작가" },
   ];
+
+  const booksToDisplay = searchResults?.books.slice(0, 4) || [];
 
   const handleSearch = () => {
     if (searchValue.trim()) {
@@ -80,93 +87,132 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
         onClick={onClose}
         style={{ top: `${topOffset}px` }}
       />
-      
+
       {/* 모달 */}
       <div
         className="fixed left-0 right-0 z-50 bg-primary-1 border-b border-white/20 animate-slide-down"
         style={{ top: `${topOffset}px` }}
       >
-      <div className="mx-auto w-full max-w-[1440px] px-4 py-3 t:py-4">
-        <div className="w-full t:w-[683px] d:w-[1400px] t:mx-auto flex items-center gap-3">
-          <div className="relative w-7 h-7 t:w-8 t:h-8 d:w-12 d:h-12 shrink-0 mr-5 t:mr-7.5">
-            <Image
-              src="/thick_search.svg"
-              alt="검색"
-              fill
-              className="object-contain "
-            />
-          </div>
-          <div className="relative flex-1 flex items-center h-full overflow-hidden">
-            <input
-              type="text"
-              placeholder="책 제목, 작가 이름을 검색해보세요"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="w-full h-full bg-transparent text-white subhead_4 t:subhead_1 d:headline_3 placeholder:subbrown_3 focus:outline-none pr-10"
-              autoFocus
-            />
-            {searchValue && (
-              <button
-                onClick={() => setSearchValue("")}
-                className="absolute right-2.5 flex items-center justify-center shrink-0 z-10 w-4 h-4 t:w-6 t:h-6 d:w-7 d:h-7"
-                aria-label="검색어 지우기"
-              >
-                <Image
-                  src="/dark_close.svg"
-                  alt="지우기"
-                  width={28}
-                  height={28}
-                  className="object-contain w-full h-full"
-                />
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-auto w-full max-w-[1440px] px-4">
-        <div className="w-full t:w-[683px] d:w-[1400px] t:mx-auto border-b-2 border-background"></div>
-      </div>
-
-      {/* 오늘의 추천 책 */}
-      <div className="mx-auto w-full max-w-[1440px] px-4 py-4 t:px-6 d:px-4 t:py-5 mt-2">
-        <div className="w-full t:w-[683px] d:w-[1400px] t:mx-auto">
-          <h3 className="text-white subhead_1 mb-6">오늘의 추천 책</h3>
-          <div className="flex gap-2 t:gap-4 d:gap-6 justify-center">
-            {recommendedBooks.slice(0, 4).map((book, index) => (
-              <div key={book.id} className={`shrink-0 ${index === 3 ? 'hidden d:block' : ''}`}>
-                <Search_BookCoverCard
-                  imgUrl={book.imgUrl}
-                  title={book.title}
-                  author={book.author}
-                  liked={likedBooks[book.id] || false}
-                  onLikeChange={(liked) =>
-                    setLikedBooks((prev) => ({ ...prev, [book.id]: liked }))
-                  }
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="flex justify-end mt-4 w-full t:w-[683px] d:w-[1400px] t:mx-auto">
-          <Link
-            href="#"
-            className="flex items-center gap-1 text-white body_1_2 t:subhead_4_1 hover:opacity-80 border-b border-white"
-          >
-            <span>알라딘 랭킹 더 보러가기</span>
-            <div className="relative w-6 h-6">
+        <div className="mx-auto w-full max-w-[1440px] px-4 py-3 t:py-4">
+          <div className="w-full t:w-[683px] d:w-[1400px] t:mx-auto flex items-center gap-3">
+            <div className="relative w-7 h-7 t:w-8 t:h-8 d:w-12 d:h-12 shrink-0 mr-5 t:mr-7.5">
               <Image
-                src="/to_aladin.svg"
-                alt="알라딘"
+                src="/thick_search.svg"
+                alt="검색"
                 fill
-                className="object-contain"
+                className="object-contain "
               />
             </div>
-          </Link>
+            <div className="relative flex-1 flex items-center h-full overflow-hidden">
+              <input
+                type="text"
+                placeholder="책 제목, 작가 이름을 검색해보세요"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="w-full h-full bg-transparent text-white subhead_4 t:subhead_1 d:headline_3 placeholder:subbrown_3 focus:outline-none pr-10"
+                autoFocus
+              />
+              {searchValue && (
+                <button
+                  onClick={() => setSearchValue("")}
+                  className="absolute right-2.5 flex items-center justify-center shrink-0 z-10 w-4 h-4 t:w-6 t:h-6 d:w-7 d:h-7"
+                  aria-label="검색어 지우기"
+                >
+                  <Image
+                    src="/dark_close.svg"
+                    alt="지우기"
+                    width={28}
+                    height={28}
+                    className="object-contain w-full h-full"
+                  />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="mx-auto w-full max-w-[1440px] px-4">
+          <div className="w-full t:w-[683px] d:w-[1400px] t:mx-auto border-b-2 border-background"></div>
+        </div>
+
+        {/* 실시간 검색 결과 리스트 */}
+        {searchValue.trim() !== "" && (
+          <div className="mx-auto w-full max-w-[1440px] px-4 py-2 t:px-6 d:px-4">
+            <div className="w-full t:w-[683px] d:w-[1400px] t:mx-auto bg-primary-1/50 rounded-b-lg">
+              {isSearching ? (
+                <div className="py-4 text-center text-white/60 body_1">검색 중...</div>
+              ) : booksToDisplay.length > 0 ? (
+                <div className="flex flex-col gap-2 py-2">
+                  {booksToDisplay.map((book) => (
+                    <div
+                      key={book.bookId}
+                      onClick={() => {
+                        router.push(`/search?q=${encodeURIComponent(book.title)}`);
+                        onClose();
+                      }}
+                      className="flex items-center gap-4 p-3 hover:bg-white/10 cursor-pointer rounded-lg transition-colors"
+                    >
+                      <div className="relative w-10 h-14 shrink-0">
+                        <Image
+                          src={book.imgUrl || "/booksample.svg"}
+                          alt={book.title}
+                          fill
+                          className="object-cover rounded-sm"
+                        />
+                      </div>
+                      <div className="flex flex-col overflow-hidden">
+                        <span className="text-white subhead_4 truncate">{book.title}</span>
+                        <span className="text-white/60 body_2 truncate">{book.author}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                debouncedSearchValue && <div className="py-4 text-center text-white/60 body_1">검색 결과가 없습니다.</div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* 오늘의 추천 책 */}
+        <div className="mx-auto w-full max-w-[1440px] px-4 py-4 t:px-6 d:px-4 t:py-5 mt-2">
+          <div className="w-full t:w-[683px] d:w-[1400px] t:mx-auto">
+            <h3 className="text-white subhead_1 mb-6">오늘의 추천 책</h3>
+            <div className="flex gap-2 t:gap-4 d:gap-6 justify-center">
+              {recommendedBooks.slice(0, 4).map((book, index) => (
+                <div key={book.id} className={`shrink-0 ${index === 3 ? 'hidden d:block' : ''}`}>
+                  <Search_BookCoverCard
+                    imgUrl={book.imgUrl}
+                    title={book.title}
+                    author={book.author}
+                    liked={likedBooks[book.id] || false}
+                    onLikeChange={(liked) =>
+                      setLikedBooks((prev) => ({ ...prev, [book.id]: liked }))
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-end mt-4 w-full t:w-[683px] d:w-[1400px] t:mx-auto">
+            <Link
+              href="#"
+              className="flex items-center gap-1 text-white body_1_2 t:subhead_4_1 hover:opacity-80 border-b border-white"
+            >
+              <span>알라딘 랭킹 더 보러가기</span>
+              <div className="relative w-6 h-6">
+                <Image
+                  src="/to_aladin.svg"
+                  alt="알라딘"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 }
