@@ -4,13 +4,13 @@ import { ApiResponse } from "@/types/auth";
 import { BookSearchResponse } from "@/types/book";
 
 export const bookService = {
-    searchBooks: async (title: string, cursorId?: number): Promise<BookSearchResponse> => {
+    searchBooks: async (keyword: string, page: number = 1): Promise<BookSearchResponse> => {
         const response = await apiClient.get<ApiResponse<BookSearchResponse>>(
             BOOK_ENDPOINTS.SEARCH,
             {
                 params: {
-                    title,
-                    cursorId
+                    keyword,
+                    page
                 },
             }
         );

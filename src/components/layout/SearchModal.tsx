@@ -16,7 +16,7 @@ type SearchModalProps = {
 export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const router = useRouter();
   const [topOffset, setTopOffset] = useState(0);
-  const [likedBooks, setLikedBooks] = useState<Record<number, boolean>>({});
+  const [likedBooks, setLikedBooks] = useState<Record<string, boolean>>({});
   const [searchValue, setSearchValue] = useState("");
   const debouncedSearchValue = useDebounce(searchValue, 300);
 
@@ -30,7 +30,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     { id: 4, imgUrl: "/booksample.svg", title: "책 제목", author: "작가작가작가" },
   ];
 
-  const booksToDisplay = searchResults?.books.slice(0, 4) || [];
+  const booksToDisplay = searchResults?.detailInfoList.slice(0, 4) || [];
 
   const handleSearch = () => {
     if (searchValue.trim()) {
@@ -146,7 +146,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 <div className="flex flex-col gap-2 py-2">
                   {booksToDisplay.map((book) => (
                     <div
-                      key={book.bookId}
+                      key={book.isbn}
                       onClick={() => {
                         router.push(`/search?q=${encodeURIComponent(book.title)}`);
                         onClose();
@@ -186,9 +186,9 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     imgUrl={book.imgUrl}
                     title={book.title}
                     author={book.author}
-                    liked={likedBooks[book.id] || false}
+                    liked={likedBooks[book.id.toString()] || false}
                     onLikeChange={(liked) =>
-                      setLikedBooks((prev) => ({ ...prev, [book.id]: liked }))
+                      setLikedBooks((prev) => ({ ...prev, [book.id.toString()]: liked }))
                     }
                   />
                 </div>

@@ -1,14 +1,15 @@
 export interface Book {
-    bookId: string;
+    isbn: string;
     title: string;
     author: string;
     imgUrl: string;
+    publisher: string;
     description: string;
+    link: string;
 }
 
 export interface BookSearchResponse {
-    books: Book[];
+    detailInfoList: Book[];
     hasNext: boolean;
-    nextCursor: number | null;
-    pageSize: number;
+    currentPage: number;
 }

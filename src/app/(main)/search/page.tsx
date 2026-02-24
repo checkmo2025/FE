@@ -12,7 +12,7 @@ function SearchContent() {
   const router = useRouter();
   const query = searchParams.get("q") || "";
   const [searchValue, setSearchValue] = useState(query);
-  const [likedResults, setLikedResults] = useState<Record<number, boolean>>({});
+  const [likedResults, setLikedResults] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     setSearchValue(query);
@@ -47,7 +47,7 @@ function SearchContent() {
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const searchResults = useMemo(() => {
-    return searchData?.pages.flatMap((page) => page.books) || [];
+    return searchData?.pages.flatMap((page) => page.detailInfoList) || [];
   }, [searchData]);
 
   const totalResults = useMemo(() => {
@@ -108,20 +108,20 @@ function SearchContent() {
           <div className="flex flex-col gap-4 justify-center items-center">
             {searchResults.map((result) => (
               <SearchBookResult
-                key={result.bookId}
+                key={result.isbn}
                 imgUrl={result.imgUrl}
                 title={result.title}
                 author={result.author}
                 detail={result.description}
-                liked={likedResults[Number(result.bookId)] || false}
+                liked={likedResults[result.isbn] || false}
                 onLikeChange={(liked) =>
-                  setLikedResults((prev) => ({ ...prev, [Number(result.bookId)]: liked }))
+                  setLikedResults((prev) => ({ ...prev, [result.isbn]: liked }))
                 }
                 onPencilClick={() => {
-                  router.push(`/books/${result.bookId}`); //필요한지 확인 필요
+                  router.push(`/books/${result.isbn}`); //필요한지 확인 필요
                 }}
                 onCardClick={() => {
-                  router.push(`/books/${result.bookId}`);
+                  router.push(`/books/${result.isbn}`);
                 }}
               />
             ))}
