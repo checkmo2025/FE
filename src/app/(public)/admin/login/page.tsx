@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#f7f3f0] flex items-center justify-center px-4">
+    <main className="min-h-screen bg-[#F9F7F6] flex items-center justify-center px-4">
       <section className="w-[429px] text-center">
 
         <div className="flex flex-col items-center">
