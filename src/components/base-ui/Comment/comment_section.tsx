@@ -22,9 +22,9 @@ export default function CommentSection({
 }: CommentSectionProps) {
   const createCommentMutation = useCreateCommentMutation(storyId);
 
-  // API 데이터를 UI용 Comment 형식으로 변환
+  // API 데이터를 UI용 Comment 형식으로 변환 및 계층 구조화
   const mapApiToUiComments = (apiComments: CommentInfo[]): Comment[] => {
-    return apiComments.map((c) => ({
+    const flatComments: Comment[] = apiComments.map((c) => ({
       id: c.commentId,
       authorName: c.authorInfo.nickname,
       profileImgSrc: isValidUrl(c.authorInfo.profileImageUrl)
@@ -34,7 +34,32 @@ export default function CommentSection({
       createdAt: c.createdAt,
       isAuthor: c.authorInfo.nickname === storyAuthorNickname,
       isMine: c.writtenByMe,
+      replies: [],
     }));
+
+    const rootComments: Comment[] = [];
+    const commentMap = new Map<number, Comment>();
+
+    flatComments.forEach(c => commentMap.set(c.id, c));
+
+    apiComments.forEach((c, index) => {
+      const uiComment = flatComments[index];
+      if (c.parentCommentId && commentMap.has(c.parentCommentId)) {
+        commentMap.get(c.parentCommentId)!.replies!.push(uiComment);
+      } else {
+        rootComments.push(uiComment);
+      }
+    });
+
+    // 최상위 댓글 최신순(내림차순) 정렬
+    rootComments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    // 대댓글은 등록순(오름차순) 유지 (일반적인 UI 패턴)
+    rootComments.forEach(c => {
+      c.replies?.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    });
+
+    return rootComments;
   };
 
   const [comments, setComments] = useState<Comment[]>(() => mapApiToUiComments(initialComments));

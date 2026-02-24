@@ -49,7 +49,9 @@ export interface CommentInfo {
     createdAt: string;
     writtenByMe: boolean;
     deleted: boolean;
+    parentCommentId?: number | null;
 }
+
 
 export interface BookStoryDetail {
     bookStoryId: number;
