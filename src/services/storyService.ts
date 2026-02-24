@@ -26,4 +26,18 @@ export const storyService = {
         );
         return response.result!;
     },
+    createComment: async (
+        bookStoryId: number,
+        data: { content: string },
+        parentCommentId?: number
+    ): Promise<number> => {
+        const response = await apiClient.post<ApiResponse<number>>(
+            `${STORY_ENDPOINTS.LIST}/${bookStoryId}/comments`,
+            data,
+            {
+                params: { parentCommentId }
+            }
+        );
+        return response.result!;
+    },
 };

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import CommentList, { Comment } from "./comment_list";
 import { CommentInfo } from "@/types/story";
 import { isValidUrl } from "@/utils/url";
+import { useCreateCommentMutation } from "@/hooks/mutations/useStoryMutations";
+import { toast } from "react-hot-toast";
 
 // 어떤 글의 댓글인지 구분
 type CommentSectionProps = {
@@ -18,6 +20,8 @@ export default function CommentSection({
   initialComments = [],
   storyAuthorNickname
 }: CommentSectionProps) {
+  const createCommentMutation = useCreateCommentMutation(storyId);
+
   // API 데이터를 UI용 Comment 형식으로 변환
   const mapApiToUiComments = (apiComments: CommentInfo[]): Comment[] => {
     return apiComments.map((c) => ({
@@ -40,58 +44,49 @@ export default function CommentSection({
     setComments(mapApiToUiComments(initialComments));
   }, [initialComments, storyAuthorNickname]);
 
+  // 댓글 추가
   const handleAddComment = (content: string) => {
-    const newComment: Comment = {
-      id: Date.now(),
-      authorName: "유빈", // TODO: 실제 로그인 유저 정보 연동 필요
-      profileImgSrc: "/profile2.svg",
-      content,
-      createdAt: new Date().toISOString(),
-      isAuthor: false,
-      isMine: true,
-    };
-    setComments([newComment, ...comments]);
+    createCommentMutation.mutate(
+      { content },
+      {
+        onSuccess: () => {
+          toast.success("댓글이 등록되었습니다.");
+        },
+        onError: () => {
+          toast.error("댓글 등록에 실패했습니다.");
+        }
+      }
+    );
   };
 
+  // 답글 추가
   const handleAddReply = (parentId: number, content: string) => {
-    // 새 답글 생성
-    const newReply: Comment = {
-      id: Date.now(),
-      authorName: "유빈",
-      profileImgSrc: "/profile2.svg",
-      content,
-      createdAt: new Date().toISOString(),
-      isAuthor: false,
-      isMine: true,
-    };
-
-    // 원래 댓글 찾아서 replies 배열에 답글 추가
-    setComments((prevComments) => {
-      return prevComments.map((comment) => {
-        if (comment.id === parentId) {
-          // 원래 댓글의 replies 배열에 새 답글 추가
-          return {
-            ...comment,
-            replies: [...(comment.replies || []), newReply],
-          };
+    createCommentMutation.mutate(
+      { content, parentCommentId: parentId },
+      {
+        onSuccess: () => {
+          toast.success("답글이 등록되었습니다.");
+        },
+        onError: () => {
+          toast.error("답글 등록에 실패했습니다.");
         }
-        return comment;
-      });
-    });
+      }
+    );
   };
 
   const handleEditComment = (id: number, content: string) => {
-
+    // TODO: 댓글 수정 API 연동
   };
 
   const handleDeleteComment = (id: number) => {
+    // TODO: 댓글 삭제 API 연동
     setComments(comments.filter((c) => c.id !== id));
   };
 
   const handleReportComment = (id: number) => {
-    // 신고 API 연동
+    // TODO: 댓글 신고 API 연동
     console.log("댓글 신고:", id);
-    alert("신고가 접수되었습니다.");
+    toast.success("신고가 접수되었습니다.");
   };
 
   return (

@@ -11,3 +11,14 @@ export const useCreateBookStoryMutation = () => {
         },
     });
 };
+
+export const useCreateCommentMutation = (bookStoryId: number) => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (args: { content: string; parentCommentId?: number }) =>
+            storyService.createComment(bookStoryId, { content: args.content }, args.parentCommentId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: storyKeys.detail(bookStoryId) });
+        },
+    });
+};
