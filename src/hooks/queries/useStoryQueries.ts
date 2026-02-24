@@ -1,5 +1,6 @@
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { storyService } from "@/services/storyService";
+export type { CreateBookStoryRequest } from "@/types/story";
 
 export const storyKeys = {
     all: ["stories"] as const,
