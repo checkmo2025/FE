@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import CommentList, { Comment } from "./comment_list";
 import { CommentInfo } from "@/types/story";
+import { isValidUrl } from "@/utils/url";
 
 // 어떤 글의 댓글인지 구분
 type CommentSectionProps = {
@@ -11,11 +12,6 @@ type CommentSectionProps = {
   storyAuthorNickname?: string;
 };
 
-// URL 유효성 검사 (Swagger 기본값 "string" 또는 빈 값 처리)
-const isValidUrl = (url: string | null | undefined) => {
-  if (!url || url === "string" || url.trim() === "") return false;
-  return url.startsWith("/") || url.startsWith("http");
-};
 
 export default function CommentSection({
   storyId,

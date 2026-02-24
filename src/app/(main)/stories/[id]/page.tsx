@@ -4,6 +4,7 @@ import BookstoryDetail from "@/components/base-ui/BookStory/bookstory_detail";
 import StoryNavigation from "@/components/base-ui/BookStory/story_navigation";
 import CommentSection from "@/components/base-ui/Comment/comment_section";
 import Image from "next/image";
+import { isValidUrl } from "@/utils/url";
 import { useParams } from "next/navigation";
 import { useStoryDetailQuery } from "@/hooks/queries/useStoryQueries";
 
@@ -33,11 +34,6 @@ export default function StoryDetailPage() {
   const prevId = story.prevBookStoryId !== 0 ? story.prevBookStoryId : null;
   const nextId = story.nextBookStoryId !== 0 ? story.nextBookStoryId : null;
 
-  // URL 유효성 검사 (Swagger 기본값 "string" 또는 빈 값 처리)
-  const isValidUrl = (url: string | null | undefined) => {
-    if (!url || url === "string" || url.trim() === "") return false;
-    return url.startsWith("/") || url.startsWith("http");
-  };
 
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4">
