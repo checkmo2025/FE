@@ -4,8 +4,8 @@ import Image from 'next/image';
 
 type ListSubscribeElementLargeProps = {
   name: string;
-  subscribingCount: number;
-  subscribersCount: number;
+  subscribingCount?: number;
+  subscribersCount?: number;
   profileSrc?: string;
   onSubscribeClick?: () => void;
   buttonText?: string;
@@ -35,9 +35,11 @@ function ListSubscribeElementLarge({
       <div className="flex flex-row flex-1 min-w-0 gap-[8px] items-center">
         <div className="flex flex-col min-w-0 flex-1">
           <p className="text-Gray-7 body_1 truncate">{name}</p>
-          <p className="body_2_3 text-Gray-3">
-            구독중 {subscribingCount} 구독자 {subscribersCount}
-          </p>
+          {subscribingCount !== undefined && subscribersCount !== undefined && (
+            <p className="body_2_3 text-Gray-3">
+              구독중 {subscribingCount} 구독자 {subscribersCount}
+            </p>
+          )}
         </div>
 
         <button
@@ -54,28 +56,41 @@ function ListSubscribeElementLarge({
 
 type ListSubscribeLargeProps = {
   height?: string;
+  users?: Array<{
+    nickname: string;
+    profileImageUrl?: string;
+    subscribingCount?: number;
+    subscribersCount?: number;
+  }>;
 };
 
-export default function ListSubscribeLarge({ height = 'h-[380px]' }: ListSubscribeLargeProps) {
-  const users = [
-    { id: '1', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-    { id: '2', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-    { id: '3', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-    { id: '4', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
+export default function ListSubscribeLarge({
+  height = "h-[380px]",
+  users: propUsers,
+}: ListSubscribeLargeProps) {
+  // Use prop users if provided, otherwise fallback to default dummy data
+  const users = propUsers || [
+    { nickname: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
+    { nickname: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
+    { nickname: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
+    { nickname: "hy_0716", subscribingCount: 17, subscribersCount: 32 },
   ];
 
   return (
-    <section className={`w-[336px] ${height} rounded-lg border-2 border-Subbrown-4 bg-stone-50 p-5`}>
+    <section
+      className={`w-[336px] ${height} rounded-lg border-2 border-Subbrown-4 bg-stone-50 p-5`}
+    >
       <h3 className="subhead_2 text-Gray-7">사용자 추천</h3>
 
       <div className="mt-3 flex flex-col gap-3">
         {users.map((u) => (
           <ListSubscribeElementLarge
-            key={u.id}
-            name={u.name}
+            key={u.nickname}
+            name={u.nickname}
             subscribingCount={u.subscribingCount}
             subscribersCount={u.subscribersCount}
-            onSubscribeClick={() => console.log('subscribe', u.id)}
+            profileSrc={u.profileImageUrl}
+            onSubscribeClick={() => console.log("subscribe", u.nickname)}
           />
         ))}
       </div>
