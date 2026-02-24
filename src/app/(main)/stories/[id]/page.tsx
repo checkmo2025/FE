@@ -72,6 +72,7 @@ export default function StoryDetailPage() {
             authorName={story.authorInfo.nickname}
             authorNickname={story.authorInfo.nickname}
             authorId={story.authorInfo.nickname}
+            profileImgSrc={story.authorInfo.profileImageUrl || "/profile2.svg"}
             bookTitle={story.bookInfo.title}
             bookAuthor={story.bookInfo.author}
             bookDetail={story.description}

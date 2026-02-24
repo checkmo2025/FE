@@ -21,7 +21,7 @@ export default function CommentSection({
     return apiComments.map((c) => ({
       id: c.commentId,
       authorName: c.authorInfo.nickname,
-      profileImgSrc: c.authorInfo.profileImageUrl,
+      profileImgSrc: c.authorInfo.profileImageUrl || "/profile2.svg",
       content: c.content,
       createdAt: c.createdAt,
       isAuthor: c.authorInfo.nickname === storyAuthorNickname,
