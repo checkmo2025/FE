@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { NotificationBasicInfo } from "@/types/notification";
 import { formatTimeAgo } from "@/utils/time";
+import { useReadNotificationMutation } from "@/hooks/mutations/useNotificationMutations";
 
 interface MyNotificationItemProps {
   notification: NotificationBasicInfo;
@@ -30,8 +31,19 @@ const getNotificationText = (notification: NotificationBasicInfo): string => {
 };
 
 const MyNotificationItem = ({ notification }: MyNotificationItemProps) => {
+  const { mutate: readNotification } = useReadNotificationMutation();
+
+  const handleClick = () => {
+    if (!notification.read) {
+      readNotification(notification.notificationId);
+    }
+  };
+
   return (
-    <div className="flex w-full p-[12px_20px] md:p-[28px_20px] justify-between items-center rounded-[8px] bg-white border border-[#EAE5E2] gap-[12px]">
+    <div
+      onClick={handleClick}
+      className="flex w-full p-[12px_20px] md:p-[28px_20px] justify-between items-center rounded-[8px] bg-white border border-[#EAE5E2] gap-[12px] cursor-pointer hover:bg-gray-50 transition-colors"
+    >
       <div className="flex items-center gap-[12px] flex-1 min-w-0">
         {!notification.read && (
           <Image

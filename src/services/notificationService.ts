@@ -29,4 +29,12 @@ export const notificationService = {
         );
         return response.result!;
     },
+    readNotification: async (notificationId: number): Promise<void> => {
+        const response = await apiClient.post<ApiResponse<number>>(
+            NOTIFICATION_ENDPOINTS.READ_NOTIFICATION(notificationId)
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "Failed to mark notification as read");
+        }
+    },
 };

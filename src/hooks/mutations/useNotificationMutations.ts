@@ -20,3 +20,14 @@ export const useToggleNotificationMutation = () => {
         },
     });
 };
+
+export const useReadNotificationMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (notificationId: number) => notificationService.readNotification(notificationId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: notificationKeys.infiniteList() });
+        },
+    });
+};
