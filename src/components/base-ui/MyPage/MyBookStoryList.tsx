@@ -39,18 +39,18 @@ const MyBookStoryList = () => {
       )}
 
       <div className="grid grid-cols-2 min-[540px]:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-[20px] md:gap-[12px] lg:gap-[20px] w-fit">
-        {stories.map((story, index) => (
+        {stories.map((story) => (
           <BookStoryCard
-            key={story?.bookStoryId || index}
-            authorName={story?.authorInfo?.nickname || "Unknown"}
-            createdAt={story?.createdAt || ""}
-            viewCount={story?.viewCount || 0}
-            title={story?.bookStoryTitle || ""}
-            content={story?.description || ""}
-            likeCount={story?.likes || 0}
-            commentCount={story?.commentCount || 0}
-            coverImgSrc={story?.bookInfo?.imgUrl || "/bookstorycard.svg"}
-            profileImgSrc={story?.authorInfo?.profileImageUrl || "/profile2.svg"}
+            key={story.bookStoryId}
+            authorName={story.authorInfo.nickname}
+            createdAt={story.createdAt}
+            viewCount={story.viewCount}
+            title={story.bookStoryTitle}
+            content={story.description}
+            likeCount={story.likes}
+            commentCount={story.commentCount}
+            coverImgSrc={story.bookInfo.imgUrl}
+            profileImgSrc={story.authorInfo.profileImageUrl}
             hideSubscribeButton={true}
           />
         ))}
