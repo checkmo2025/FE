@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -53,8 +54,11 @@ export default function CreateClubWizardPreview() {
   // Step 2
   const [profileMode, setProfileMode] = useState<"default" | "upload">("default");
   const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
-  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null); 
-  const [visibility, setVisibility] = useState<"공개" | "비공개" | null>(null);
+  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+
+  // ✅ 서버에 그대로 보내는 값: open(boolean)
+  const [open, setOpen] = useState<boolean | null>(null);
+
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   // Step 3
@@ -71,25 +75,32 @@ export default function CreateClubWizardPreview() {
   const createClub = useCreateClubMutation();
 
   const canNext = useMemo(() => {
-    if (step === 1) return Boolean(clubName.trim() && clubDescription.trim() && nameCheck === "available");
+    if (step === 1)
+      return Boolean(clubName.trim() && clubDescription.trim() && nameCheck === "available");
 
     if (step === 2) {
-      // 공개/비공개는 필수
-      if (!visibility) return false;
+      // ✅ 공개/비공개는 필수
+      if (open === null) return false;
+
       // 업로드 모드면 업로드 완료(=profileImageUrl 확보)까지 기다리게
       if (profileMode === "upload") return Boolean(profileImageUrl) && !uploadImage.isPending;
+
+      // 기본 프로필 모드는 그냥 통과
       return true;
     }
 
-    if (step === 3) return selectedCategories.length > 0 && selectedParticipants.length > 0 && activityArea.trim();
+    if (step === 3)
+      return selectedCategories.length > 0 && selectedParticipants.length > 0 && activityArea.trim().length > 0;
+
     if (step === 4) return true;
+
     return false;
   }, [
     step,
     clubName,
     clubDescription,
     nameCheck,
-    visibility,
+    open,
     profileMode,
     profileImageUrl,
     uploadImage.isPending,
@@ -119,13 +130,13 @@ export default function CreateClubWizardPreview() {
         setNameCheck("available");
         toast.success("사용 가능한 모임 이름입니다.");
       }
-    } catch (e) {
+    } catch {
       setNameCheck("idle");
       toast.error("이름 중복 확인 실패");
     }
   };
 
-  // 이미지 선택: 미리보기 + presigned 업로드 + imageUrl 저장
+  // 이미지 선택: 미리보기 + 업로드 + imageUrl 저장
   const pickImage = async (file: File) => {
     // 로컬 미리보기
     const reader = new FileReader();
@@ -134,13 +145,14 @@ export default function CreateClubWizardPreview() {
 
     try {
       const imageUrl = await uploadImage.mutateAsync(file);
-
       setProfileImageUrl(imageUrl);
       toast.success("프로필 이미지 업로드 완료");
-    } catch (e) {
-
+    } catch {
       setProfileImageUrl(null);
       toast.error("이미지 업로드 실패");
+
+      // ✅ 같은 파일 다시 선택 가능하게 input 초기화
+      if (fileRef.current) fileRef.current.value = "";
     }
   };
 
@@ -154,9 +166,7 @@ export default function CreateClubWizardPreview() {
     setLinks((prev) => prev.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
   };
 
-  const addLinkRow = () => {
-    setLinks((prev) => [...prev, { label: "", url: "" }]);
-  };
+  const addLinkRow = () => setLinks((prev) => [...prev, { label: "", url: "" }]);
 
   const removeLinkRow = (idx: number) => {
     setLinks((prev) => prev.filter((_, i) => i !== idx));
@@ -164,6 +174,12 @@ export default function CreateClubWizardPreview() {
 
   // 모임 생성 (최종)
   const onSubmitCreateClub = async () => {
+    // 안전장치: Step2 open 미선택이면 막기
+    if (open === null) {
+      toast.error("공개/비공개를 선택해주세요.");
+      return;
+    }
+
     try {
       const category = mapBookCategoriesToCodes(selectedCategories);
       const participantTypes: ParticipantType[] = selectedParticipants.map(
@@ -182,23 +198,23 @@ export default function CreateClubWizardPreview() {
         category,
         participantTypes,
         links: linksPayload,
-        open: visibility === "공개",
+        open: open === true, // ✅ boolean 확정
       };
 
-
+      // ✅ 규칙대로면 service에서 res.result(string)만 반환해야 함
       const msg = await createClub.mutateAsync(payload);
+      toast.success(msg.result);
 
-      toast.success(typeof msg === "string" ? msg : msg?.result ?? "성공");
       router.push("/groups");
-    } catch (e) {
+    } catch {
       toast.error("모임 생성 실패");
     }
   };
 
   return (
-    <div className="min-h-screen max-w-[1440px] mx-auto ">
+    <div className="min-h-screen max-w-[1440px] mx-auto">
       {/* breadcrumb */}
-      <div className="flex gap-5 px-[10px] py-3 border-b border-Gray-2 t:mx-4 ">
+      <div className="flex gap-5 px-[10px] py-3 border-b border-Gray-2 t:mx-4">
         <Link href="/groups" className="shrink-0">
           <p className="body_1 t:subhead_4_1 cursor-pointer">모임</p>
         </Link>
@@ -208,7 +224,7 @@ export default function CreateClubWizardPreview() {
         <p className="body_1 t:subhead_4_1">새 모임 생성</p>
       </div>
 
-      <div className="w-full max-w-[1040px] mx-auto px-6 t:px-10 pt-6 pb-16 ">
+      <div className="w-full max-w-[1040px] mx-auto px-6 t:px-10 pt-6 pb-16">
         {/* step dots */}
         <div className="mb-7">
           <div className="flex items-center gap-6">
@@ -219,7 +235,7 @@ export default function CreateClubWizardPreview() {
           </div>
         </div>
 
-        <main className="">
+        <main>
           {/* STEP 1 */}
           {step === 1 && (
             <section>
@@ -233,7 +249,7 @@ export default function CreateClubWizardPreview() {
                     setNameCheck("idle");
                   }}
                   placeholder="독서 모임 이름을 입력해주세요."
-                  className="w-full h-[44px] t:h-[56px] rounded-[8px] border border-[#EAE5E2] p-4 outline-none  bg-white  body_1_3 t:subhead_4_1"
+                  className="w-full h-[44px] t:h-[56px] rounded-[8px] border border-[#EAE5E2] p-4 outline-none bg-white body_1_3 t:subhead_4_1"
                 />
 
                 <button
@@ -274,7 +290,7 @@ export default function CreateClubWizardPreview() {
                 )}
               </div>
 
-              <h2 className="mt-[56px] subhead_1 subhead_4_1 t:subhead_1">모임의 소개글을 입력해주세요!</h2>
+              <h2 className="mt-[56px] subhead_4_1 t:subhead_1">모임의 소개글을 입력해주세요!</h2>
               <textarea
                 value={clubDescription}
                 onChange={(e) => {
@@ -354,6 +370,7 @@ export default function CreateClubWizardPreview() {
                       setSelectedImageUrl(null);
                       setProfileImageUrl(null);
                       setProfileMode("default");
+                      if (fileRef.current) fileRef.current.value = "";
                     }}
                     className={cx(
                       "flex justify-center items-center gap-[10px] w-[200px] h-[36px] px-4 py-3 rounded-[8px] border body_1_3",
@@ -402,7 +419,7 @@ export default function CreateClubWizardPreview() {
                       {uploadImage.isPending
                         ? "업로드 중..."
                         : profileImageUrl
-                        ? "업로드 완료"
+                        ? ""
                         : "업로드 실패 시 다시 시도"}
                     </p>
                   )}
@@ -412,13 +429,31 @@ export default function CreateClubWizardPreview() {
               <h2 className="mt-7 subhead_4_1 t:subhead_1 text-Gray-7">모임의 공개여부를 알려주세요!</h2>
 
               <div className="mt-4 flex flex-col gap-3 text-Gray-7">
-                <button type="button" onClick={() => setVisibility("공개")} className="flex items-center gap-3 cursor-pointer select-none text-left">
-                  <Image src={visibility === "공개" ? "/CheckBox_Yes.svg" : "/CheckBox_No.svg"} alt="" width={24} height={24} />
+                <button
+                  type="button"
+                  onClick={() => setOpen(true)}
+                  className="flex items-center gap-3 cursor-pointer select-none text-left"
+                >
+                  <Image
+                    src={open === true ? "/CheckBox_Yes.svg" : "/CheckBox_No.svg"}
+                    alt=""
+                    width={24}
+                    height={24}
+                  />
                   <span className="subhead_4_1">공개</span>
                 </button>
 
-                <button type="button" onClick={() => setVisibility("비공개")} className="flex items-center gap-3 cursor-pointer select-none text-left">
-                  <Image src={visibility === "비공개" ? "/CheckBox_Yes.svg" : "/CheckBox_No.svg"} alt="" width={24} height={24} />
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-3 cursor-pointer select-none text-left"
+                >
+                  <Image
+                    src={open === false ? "/CheckBox_Yes.svg" : "/CheckBox_No.svg"}
+                    alt=""
+                    width={24}
+                    height={24}
+                  />
                   <span className="subhead_4_1">비공개</span>
                 </button>
               </div>
@@ -530,7 +565,7 @@ export default function CreateClubWizardPreview() {
             <section>
               <h2 className="subhead_4_1 t:subhead_1 mb-4">SNS나 링크 연동이 있다면 해주세요! (선택)</h2>
 
-              <div className="">
+              <div>
                 {links.map((it, idx) => (
                   <div key={idx} className="flex flex-col gap-4 py-3 t:flex-row t:items-center">
                     <input
