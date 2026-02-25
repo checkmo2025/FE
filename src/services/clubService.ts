@@ -1,8 +1,14 @@
-// src/services/clubService.ts
 import { apiClient } from "@/lib/api/client";
+
+// 신욱
+import { CLUB_ENDPOINTS } from "@/lib/api/endpoints/club";
+import type { MyClubListResponse } from "@/types/club";
+import type { ApiResponse as AuthApiResponse } from "@/types/auth";
+
+// 기현
 import { CLUBS } from "@/lib/api/endpoints/Clubs";
 import type { ApiResponse } from "@/lib/api/types";
-import { CreateClubRequest } from "@/types/groups/clubCreate";
+import type { CreateClubRequest } from "@/types/groups/clubCreate";
 import type {
   ClubJoinRequest,
   ClubJoinResponse,
@@ -13,49 +19,56 @@ import type {
 } from "@/types/groups/clubsearch";
 
 export const clubService = {
-  // GET /api/clubs/check-name?clubName=...
-  // result: boolean (보통 true=중복, false=사용가능)
-  checkNameDuplicate: (clubName: string) =>
-    apiClient.get<ApiResponse<boolean>>(CLUBS.checkName, {
-      params: { clubName },
-    }),
 
-  // POST /api/clubs
-  createClub: (payload: CreateClubRequest) =>
-    apiClient.post<ApiResponse<string>>(CLUBS.create, payload),
+  getMyClubs: async (): Promise<MyClubListResponse> => {
+    const response = await apiClient.get<AuthApiResponse<MyClubListResponse>>(
+      CLUB_ENDPOINTS.MY_CLUBS
+    );
+    return response.result!;
+  },
 
 
-  getMyClubs: async () => {
+  getMyClubsV2: async () => {
     const res = await apiClient.get<MyClubsResponse>(CLUBS.myClubs);
     return res.result;
   },
 
-  getRecommendations: async () => {
-    const res = await apiClient.get<RecommendationsResponse>(
-      CLUBS.recommendations
-    );
+  // GET /api/clubs/check-name?clubName=...
+  checkNameDuplicate: async (clubName: string) => {
+    const res = await apiClient.get<ApiResponse<boolean>>(CLUBS.checkName, {
+      params: { clubName },
+    });
     return res.result;
   },
 
+  // POST /api/clubs
+  createClub: async (payload: CreateClubRequest) => {
+    const res = await apiClient.post<ApiResponse<string>>(CLUBS.create, payload);
+    return res.result;
+  },
+
+  // GET /api/clubs/recommendations
+  getRecommendations: async () => {
+    const res = await apiClient.get<RecommendationsResponse>(CLUBS.recommendations);
+    return res.result;
+  },
+
+  // GET /api/clubs/search
   searchClubs: async (params: ClubSearchParams) => {
-  const cleaned: any = { ...params };
-  if (cleaned.cursorId == null) delete cleaned.cursorId;
-  if (typeof cleaned.keyword === "string" && cleaned.keyword.trim() === "") {
-    delete cleaned.keyword;
-  }
-  if (cleaned.inputFilter == null) delete cleaned.inputFilter;
+    const cleaned: any = { ...params };
+    if (cleaned.cursorId == null) delete cleaned.cursorId;
+    if (typeof cleaned.keyword === "string" && cleaned.keyword.trim() === "") delete cleaned.keyword;
+    if (cleaned.inputFilter == null) delete cleaned.inputFilter;
 
-  const res = await apiClient.get<ClubSearchResponse>(CLUBS.search, {
-    params: cleaned,
-  });
-  return res.result;
-},
+    const res = await apiClient.get<ClubSearchResponse>(CLUBS.search, {
+      params: cleaned,
+    });
+    return res.result;
+  },
 
+  // POST /api/clubs/{clubId}/join
   joinClub: async (clubId: number, body: ClubJoinRequest) => {
-    const res = await apiClient.post<ClubJoinResponse>(
-      CLUBS.join(clubId),
-      body
-    );
+    const res = await apiClient.post<ClubJoinResponse>(CLUBS.join(clubId), body);
     return res.result;
   },
 };

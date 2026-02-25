@@ -23,7 +23,7 @@ export const clubQueryKeys = {
 export function useMyClubsQuery() {
   return useQuery<MyClubsResult>({
     queryKey: clubQueryKeys.myClubs,
-    queryFn: clubService.getMyClubs,
+    queryFn: clubService.getMyClubsV2,
   });
 }
 
