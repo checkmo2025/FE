@@ -1,67 +1,57 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
-import Image from "next/image";
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
-type BookStoryRow = {
+import AdminSearchHeader from "@/components/layout/AdminSearchHeader";
+
+type NewsRow = {
   id: number;
   title: string;
   authorEmail: string;
-  bookTitle: string;
+  createdAt: string;
   postedAt: string;
-  status: "등록" | "임시저장";
 };
 
-export default function BookStoriesPage() {
+export default function NewsPage() {
+  const router = useRouter();
+
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
 
+  const handleKeywordChange = (v: string) => {
+    setKeyword(v);
+    setPage(1);
+  };
+
   // 더미 데이터 (테스트용) - 100개 생성
-  const stories: BookStoryRow[] = useMemo(() => {
+  const newsList: NewsRow[] = useMemo(() => {
     const base = [
-      {
-        title: "삶을 바꾸는 문장들",
-        authorEmail: "yh9839@naver.com",
-        bookTitle: "어린 왕자",
-      },
-      {
-        title: "끝까지 읽게 되는 이유",
-        authorEmail: "minsu@test.com",
-        bookTitle: "데미안",
-      },
-      {
-        title: "마음이 가벼워지는 독서",
-        authorEmail: "jieun@test.com",
-        bookTitle: "미움받을 용기",
-      },
-      {
-        title: "기록하는 독서 습관",
-        authorEmail: "seoyeon@test.com",
-        bookTitle: "아토믹 해빗",
-      },
-      {
-        title: "다시 시작하는 용기",
-        authorEmail: "daeun@test.com",
-        bookTitle: "나미야 잡화점의 기적",
-      },
+      { title: "서비스 업데이트 안내", authorEmail: "yh9839@naver.com" },
+      { title: "이벤트 오픈 공지", authorEmail: "minsu@test.com" },
+      { title: "점검 일정 안내", authorEmail: "jieun@test.com" },
+      { title: "신규 기능 출시", authorEmail: "seoyeon@test.com" },
+      { title: "운영 정책 변경", authorEmail: "daeun@test.com" },
     ];
 
-    const toDate = (i: number) => {
+    const toDate = (i: number, offsetDays = 0) => {
       const y = i % 2 === 0 ? 2025 : 2026;
       const m = y === 2025 ? 10 + (i % 3) : 1 + (i % 2);
-      const d = 1 + (i % 28);
+      const d = 1 + ((i + offsetDays) % 28);
       return `${y}.${String(m).padStart(2, "0")}.${String(d).padStart(2, "0")}`;
     };
 
     return Array.from({ length: 100 }).map((_, i) => {
       const b = base[i % base.length];
+      const start = toDate(i, 0);
+      const end = toDate(i, 7);
+
       return {
         id: 100 + i,
         title: `${b.title} ${i + 1}`,
         authorEmail: b.authorEmail,
-        bookTitle: b.bookTitle,
-        postedAt: toDate(i),
-        status: i % 4 === 0 ? "임시저장" : "등록",
+        createdAt: toDate(i, 0),
+        postedAt: `${start} - ${end}`,
       };
     });
   }, []);
@@ -70,29 +60,23 @@ export default function BookStoriesPage() {
 
   const filtered = useMemo(() => {
     const q = keyword.trim().toLowerCase();
-    if (!q) return stories;
+    if (!q) return newsList;
 
-    return stories.filter((s) => {
+    return newsList.filter((n) => {
       return (
-        String(s.id).includes(q) ||
-        s.title.toLowerCase().includes(q) ||
-        s.authorEmail.toLowerCase().includes(q) ||
-        s.bookTitle.toLowerCase().includes(q) ||
-        s.status.toLowerCase().includes(q)
+        String(n.id).includes(q) ||
+        n.title.toLowerCase().includes(q) ||
+        n.authorEmail.toLowerCase().includes(q)
       );
     });
-  }, [stories, keyword]);
+  }, [newsList, keyword]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-
-  useEffect(() => {
-    setPage(1);
-  }, [keyword]);
 
   const pageItems = useMemo(() => {
     const start = (page - 1) * pageSize;
     return filtered.slice(start, start + pageSize);
-  }, [filtered, page]);
+  }, [filtered, page, pageSize]);
 
   const handleSearch = () => {
     console.log("검색:", keyword);
@@ -118,26 +102,23 @@ export default function BookStoriesPage() {
   return (
     <div className="w-full flex justify-center">
       <div className="w-[1040px] pt-6 pb-10">
-        <h1 className="mb-[20px] text-[#2C2C2C] text-[22px] font-semibold leading-[135%] tracking-[-0.022px]">
-          책 이야기 관리
-        </h1>
-
-        <div className="relative mb-6 w-full">
-          <input
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            placeholder="검색 하기 (책이야기 제목)"
-            className="w-[1040px] h-[56px] rounded-[8px] border border-[#EAE5E2] bg-white pl-4 pr-14"
-          />
-          <button
-            onClick={handleSearch}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded hover:bg-gray-100"
-            aria-label="검색"
-          >
-            <Image src="/search.svg" alt="검색" width={24} height={24} />
-          </button>
-        </div>
+        <AdminSearchHeader
+          title="소식 관리"
+          keyword={keyword}
+          onKeywordChange={handleKeywordChange}
+          onSearch={handleSearch}
+          placeholder="검색 하기 (소식 제목)"
+          inputWidthClassName="w-[1040px]"
+          rightAddon={
+            <button
+              type="button"
+              onClick={() => router.push("/admin/news/new")}
+              className="flex-shrink-0 flex w-[187px] h-[48px] px-[16px] py-[12px] items-center justify-center gap-[10px] rounded-[8px] bg-[#7B6154] text-white text-[14px] font-semibold hover:opacity-90"
+            >
+              소식 등록
+            </button>
+          }
+        />
 
         {/* 라인형 테이블 */}
         <div className="w-full">
@@ -145,34 +126,31 @@ export default function BookStoriesPage() {
             <colgroup>
               <col className="w-[112px]" />
               <col className="w-[200px]" />
-              <col className="w-[246px]" />
               <col className="w-[180px]" />
-              <col className="w-[112px]" />
-              <col className="w-[72px]" />
+              <col className="w-[180px]" />
+              <col className="w-[251px]" />
               <col className="w-[112px]" />
             </colgroup>
 
             <thead>
               <tr className="border-b border-[#D2C5B6]">
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">책이야기 ID</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">책이야기 제목</th>
+                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">소식 ID</th>
+                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">소식 제목</th>
                 <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">등록자 이메일</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">책 제목</th>
+                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">등록 일자</th>
                 <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">게시날짜</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">등록여부</th>
                 <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">상세보기</th>
               </tr>
             </thead>
 
             <tbody>
-              {pageItems.map((s) => (
-                <tr key={s.id} className="h-[48px] border-b border-[#EAE5E2] font-medium">
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{s.id}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C] truncate">{s.title}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C] truncate">{s.authorEmail}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C] truncate">{s.bookTitle}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{s.postedAt}</td>
-                  <td className="py-0 text-[14px] text-[#2C2C2C] text-center">{s.status}</td>
+              {pageItems.map((n) => (
+                <tr key={n.id} className="h-[48px] border-b border-[#EAE5E2] font-medium">
+                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{n.id}</td>
+                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C] truncate">{n.title}</td>
+                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C] truncate">{n.authorEmail}</td>
+                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{n.createdAt}</td>
+                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{n.postedAt}</td>
                   <td className="pl-[12px] py-0">
                     <button className="text-[14px] text-[#2C2C2C] underline underline-offset-2">
                       상세보기

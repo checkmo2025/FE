@@ -1,28 +1,54 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
-import Image from "next/image";
+import { useMemo, useState } from "react";
+import AdminSearchHeader from "@/components/layout/AdminSearchHeader";
 
-type GroupRow = {
+type BookStoryRow = {
   id: number;
-  name: string;
-  ownerEmail: string;
-  createdAt: string;
-  memberCount: number;
+  title: string;
+  authorEmail: string;
+  bookTitle: string;
+  postedAt: string;
+  status: "등록" | "임시저장";
 };
 
-export default function GroupsPage() {
+export default function BookStoriesPage() {
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
 
-  // 더미 데이터 (테스트용) - 100개 모임 생성
-  const groups: GroupRow[] = useMemo(() => {
+  const handleKeywordChange = (v: string) => {
+    setKeyword(v);
+    setPage(1);
+  };
+
+  // 더미 데이터 (테스트용) - 100개 생성
+  const stories: BookStoryRow[] = useMemo(() => {
     const base = [
-      { name: "러닝 크루", ownerEmail: "run@club.com" },
-      { name: "독서 모임", ownerEmail: "book@club.com" },
-      { name: "헬스 메이트", ownerEmail: "gym@club.com" },
-      { name: "맛집 탐방", ownerEmail: "foodie@club.com" },
-      { name: "여행 동행", ownerEmail: "trip@club.com" },
+      {
+        title: "삶을 바꾸는 문장들",
+        authorEmail: "yh9839@naver.com",
+        bookTitle: "어린 왕자",
+      },
+      {
+        title: "끝까지 읽게 되는 이유",
+        authorEmail: "minsu@test.com",
+        bookTitle: "데미안",
+      },
+      {
+        title: "마음이 가벼워지는 독서",
+        authorEmail: "jieun@test.com",
+        bookTitle: "미움받을 용기",
+      },
+      {
+        title: "기록하는 독서 습관",
+        authorEmail: "seoyeon@test.com",
+        bookTitle: "아토믹 해빗",
+      },
+      {
+        title: "다시 시작하는 용기",
+        authorEmail: "daeun@test.com",
+        bookTitle: "나미야 잡화점의 기적",
+      },
     ];
 
     const toDate = (i: number) => {
@@ -36,10 +62,11 @@ export default function GroupsPage() {
       const b = base[i % base.length];
       return {
         id: 100 + i,
-        name: `${b.name} ${i + 1}`,
-        ownerEmail: b.ownerEmail,
-        createdAt: toDate(i),
-        memberCount: 5 + (i % 97), // 5~101
+        title: `${b.title} ${i + 1}`,
+        authorEmail: b.authorEmail,
+        bookTitle: b.bookTitle,
+        postedAt: toDate(i),
+        status: i % 4 === 0 ? "임시저장" : "등록",
       };
     });
   }, []);
@@ -48,27 +75,25 @@ export default function GroupsPage() {
 
   const filtered = useMemo(() => {
     const q = keyword.trim().toLowerCase();
-    if (!q) return groups;
-    return groups.filter((g) => {
+    if (!q) return stories;
+
+    return stories.filter((s) => {
       return (
-        String(g.id).includes(q) ||
-        g.name.toLowerCase().includes(q) ||
-        g.ownerEmail.toLowerCase().includes(q)
-    );
+        String(s.id).includes(q) ||
+        s.title.toLowerCase().includes(q) ||
+        s.authorEmail.toLowerCase().includes(q) ||
+        s.bookTitle.toLowerCase().includes(q) ||
+        s.status.toLowerCase().includes(q)
+      );
     });
-  }, [groups, keyword]);
+  }, [stories, keyword]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-
-  // 검색어 바뀌면 1페이지로
-  useEffect(() => {
-    setPage(1);
-  }, [keyword]);
 
   const pageItems = useMemo(() => {
     const start = (page - 1) * pageSize;
     return filtered.slice(start, start + pageSize);
-  }, [filtered, page]);
+  }, [filtered, page, pageSize]);
 
   const handleSearch = () => {
     console.log("검색:", keyword);
@@ -84,7 +109,6 @@ export default function GroupsPage() {
     const max = 5;
     let start = Math.max(1, page - Math.floor(max / 2));
     let end = start + max - 1;
-
     if (end > totalPages) {
       end = totalPages;
       start = Math.max(1, end - max + 1);
@@ -95,58 +119,49 @@ export default function GroupsPage() {
   return (
     <div className="w-full flex justify-center">
       <div className="w-[1040px] pt-6 pb-10">
-        <h1 className="mb-[20px] text-[#2C2C2C] text-[22px] font-semibold leading-[135%] tracking-[-0.022px]">
-          모임 관리
-        </h1>
-
-        <div className="relative mb-6 w-full">
-          <input
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            placeholder="검색 하기 (모임 명)"
-            className="w-[1040px] h-[56px] rounded-[8px] border border-[#EAE5E2] bg-white pl-4 pr-14"
-          />
-          <button
-            onClick={handleSearch}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded hover:bg-gray-100"
-            aria-label="검색"
-          >
-            <Image src="/search.svg" alt="검색" width={24} height={24} />
-          </button>
-        </div>
+        <AdminSearchHeader
+          title="책 이야기 관리"
+          keyword={keyword}
+          onKeywordChange={handleKeywordChange}
+          onSearch={handleSearch}
+          placeholder="검색 하기 (책이야기 제목)"
+          inputWidthClassName="w-[1040px]"
+        />
 
         {/* 라인형 테이블 */}
         <div className="w-full">
           <table className="w-[1040px] table-fixed">
             <colgroup>
               <col className="w-[112px]" />
-              <col className="w-[240px]" /> 
-              <col className="w-[279px]" />
+              <col className="w-[200px]" />
+              <col className="w-[246px]" />
               <col className="w-[180px]" />
               <col className="w-[112px]" />
+              <col className="w-[72px]" />
               <col className="w-[112px]" />
             </colgroup>
 
             <thead>
               <tr className="border-b border-[#D2C5B6]">
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">모임 ID</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">이름</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">개설자 이메일</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">생성 일자</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">가입자 수</th>
+                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">책이야기 ID</th>
+                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">책이야기 제목</th>
+                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">등록자 이메일</th>
+                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">책 제목</th>
+                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">게시날짜</th>
+                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">등록여부</th>
                 <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">상세보기</th>
               </tr>
             </thead>
 
             <tbody>
-              {pageItems.map((g) => (
-                <tr key={g.id} className="h-[48px] border-b border-[#EAE5E2] font-medium">
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{g.id}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C] truncate">{g.name}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C] truncate">{g.ownerEmail}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{g.createdAt}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{g.memberCount}</td>
+              {pageItems.map((s) => (
+                <tr key={s.id} className="h-[48px] border-b border-[#EAE5E2] font-medium">
+                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{s.id}</td>
+                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C] truncate">{s.title}</td>
+                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C] truncate">{s.authorEmail}</td>
+                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C] truncate">{s.bookTitle}</td>
+                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{s.postedAt}</td>
+                  <td className="py-0 text-[14px] text-[#2C2C2C] text-center">{s.status}</td>
                   <td className="pl-[12px] py-0">
                     <button className="text-[14px] text-[#2C2C2C] underline underline-offset-2">
                       상세보기
@@ -184,7 +199,7 @@ export default function GroupsPage() {
                 key={p}
                 onClick={() => goTo(p)}
                 className={`cursor-pointer ${
-                  p === page ? "text-[#2C2C2C]" : "text-[#8D8D8D]"
+                  p === page ? "text-[#2C2C2C]" : "text-[#8B8B8D]"
                 }`}
               >
                 {p}

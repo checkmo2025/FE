@@ -12,13 +12,11 @@ const ADMIN_NAV = [
   { label: "소식 관리", href: "/admin/news" },
 ];
 
-// 관리자: 현재 경로에 맞는 타이틀
 const getAdminPageTitle = (pathname: string) => {
-  if (pathname.startsWith("/admin/users")) return "회원 관리";
-  if (pathname.startsWith("/admin/groups")) return "모임 관리";
-  if (pathname.startsWith("/admin/stories")) return "책 이야기 관리";
-  if (pathname.startsWith("/admin/news")) return "소식 관리";
-  return "관리자";
+  const item = ADMIN_NAV.find((n) =>
+    pathname === n.href || pathname.startsWith(n.href + "/")
+  );
+  return item?.label ?? "관리자";
 };
 
 export default function AdminHeader() {
@@ -29,6 +27,7 @@ export default function AdminHeader() {
     <header className="w-full bg-primary-1">
       <div className="mx-auto w-full max-w-[1440px] px-4 py-3 t:px-6 t:py-3.5 d:px-5">
         <div className="relative flex items-center justify-between w-full">
+
           {/* 로고 + 메뉴 */}
           <div className="flex items-center t:gap-2.5 d:gap-8">
             <Link
@@ -49,7 +48,8 @@ export default function AdminHeader() {
             <nav className="items-center hidden t:flex t:pl-[30px] d:pl-0">
               {ADMIN_NAV.map((item) => {
                 const active =
-                  pathname === item.href || pathname.startsWith(item.href + "/");
+                  pathname === item.href ||
+                  pathname.startsWith(item.href + "/");
 
                 return (
                   <NavItem
@@ -84,6 +84,7 @@ export default function AdminHeader() {
               />
             </Link>
           </div>
+
         </div>
       </div>
     </header>
