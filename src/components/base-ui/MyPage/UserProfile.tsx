@@ -1,12 +1,14 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
 import { DUMMY_USER_PROFILE } from "@/constants/mocks/mypage";
 import { useAuthStore } from "@/store/useAuthStore";
 import FloatingFab from "../Float";
 
 const UserProfile = () => {
+  const router = useRouter();
   const { user: authUser } = useAuthStore();
 
   // 서버 데이터가 있으면 사용하고, 없으면 더미 데이터 사용 (구독자 수 등은 현재 API에 없음)
@@ -104,18 +106,21 @@ const UserProfile = () => {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex items-center justify-center md:justify-start gap-[12px] md:gap-[24px] self-stretch">
-          <JoinButton className="w-[160px] h-[32px] md:w-[355px] md:h-[48px] p-[12px_16px] gap-[10px] rounded-[8px] bg-[#7B6154] text-[#FFF] font-sans text-[14px] font-semibold md:text-[18px] md:font-medium leading-[135%]">
+          <JoinButton
+            onClick={() => router.push("/stories/new")}
+            className="w-[160px] h-[32px] md:w-[355px] md:h-[48px] p-[12px_16px] gap-[10px] rounded-[8px] bg-[#7B6154] hover:bg-[#6A5246] transition-colors text-[#FFF] font-sans text-[14px] font-semibold md:text-[18px] md:font-medium leading-[135%]"
+          >
             내 책 이야기 쓰기
           </JoinButton>
-          <JoinButton className="w-[160px] h-[32px] md:w-[355px] md:h-[48px] p-[12px_16px] gap-[10px] rounded-[8px] bg-[#7B6154] text-[#FFF] font-sans text-[14px] font-semibold md:text-[18px] md:font-medium leading-[135%]">
+          <JoinButton className="w-[160px] h-[32px] md:w-[355px] md:h-[48px] p-[12px_16px] gap-[10px] rounded-[8px] bg-[#7B6154] hover:bg-[#6A5246] transition-colors text-[#FFF] font-sans text-[14px] font-semibold md:text-[18px] md:font-medium leading-[135%]">
             소식 문의하기
           </JoinButton>
         </div>
         <FloatingFab
           iconSrc="/icons_pencil.svg"
-          iconAlt="문의하기"
+          iconAlt="글쓰기"
+          onClick={() => router.push("/stories/new")}
         />
       </div>
     </div>
