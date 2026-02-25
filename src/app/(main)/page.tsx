@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import BookStoryCard from "@/components/base-ui/BookStory/bookstory_card";
 import NewsBannerSlider from "@/components/base-ui/home/NewsBannerSlider";
@@ -16,6 +17,7 @@ import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
 import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 
 export default function HomePage() {
+  const router = useRouter();
   const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
 
   const { data: storiesData, isLoading: isLoadingStories } = useStoriesQuery();
@@ -109,6 +111,7 @@ export default function HomePage() {
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText="구독"
                 hideSubscribeButton={story.writtenByMe}
+                onClick={() => router.push(`/stories/${story.bookStoryId}`)}
               />
             ))}
           </div>
@@ -155,6 +158,7 @@ export default function HomePage() {
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText="구독"
                 hideSubscribeButton={story.writtenByMe}
+                onClick={() => router.push(`/stories/${story.bookStoryId}`)}
               />
             ))}
           </div>
@@ -203,6 +207,7 @@ export default function HomePage() {
                   coverImgSrc={story.bookInfo.imgUrl}
                   subscribeText="구독"
                   hideSubscribeButton={story.writtenByMe}
+                  onClick={() => router.push(`/stories/${story.bookStoryId}`)}
                 />
               ))}
             </div>
