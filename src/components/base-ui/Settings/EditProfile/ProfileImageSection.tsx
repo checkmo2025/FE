@@ -3,7 +3,17 @@
 
 import Image from "next/image";
 
-export default function ProfileImageSection() {
+interface Props {
+  nickname?: string;
+  intro?: string;
+  profileImageUrl?: string;
+}
+
+export default function ProfileImageSection({
+  nickname,
+  intro,
+  profileImageUrl,
+}: Props) {
   return (
     <div className="flex flex-col items-start gap-[32px] self-stretch">
       {/* 이미지 및 정보 영역 */}
@@ -17,7 +27,7 @@ export default function ProfileImageSection() {
           h-[100px] w-[100px] xl:h-[138px] xl:w-[138px]"
         >
           <Image
-            src="/profile.svg"
+            src={profileImageUrl || "/profile.svg"}
             alt="프로필 이미지"
             fill
             className="object-cover rounded-full"
@@ -31,16 +41,16 @@ export default function ProfileImageSection() {
         >
           <div className="flex w-full flex-col items-start gap-[8px]">
             {/* 닉네임 */}
-            <span className="self-stretch subhead_1 text-Gray-7">_hy_0716</span>
+            <span className="self-stretch subhead_1 text-Gray-7">
+              {nickname || "Loading..."}
+            </span>
             {/* 소개글 */}
             <p
               className="text-Gray-4 self-stretch break-keep
               text-[12px] font-medium leading-[145%] tracking-[-0.012px]
               xl:body_1_2"
             >
-              이제 다양한 책을 함께 읽고 서로의 생각을 나누는 특별한 시간을
-              시작해보세요. 한 권의 책이 주는 작은 울림이 일상에 큰 변화를
-              가져올지도 모릅니다.
+              {intro || "자기소개를 입력해주세요."}
             </p>
           </div>
         </div>

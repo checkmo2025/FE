@@ -44,6 +44,8 @@ export default function CommentItem({
   onReport,
 }: CommentItemProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(content);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // 바깥 클릭 시 메뉴 닫기
@@ -57,7 +59,19 @@ export default function CommentItem({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 댓글 본체 (프로필 + 이름 + 내용 + 날짜 + 메뉴)
+  const handleSaveEdit = () => {
+    if (editContent.trim() && editContent !== content) {
+      onEdit?.(id, editContent);
+    }
+    setIsEditing(false);
+  };
+
+  const handleCancelEdit = () => {
+    setEditContent(content);
+    setIsEditing(false);
+  };
+
+  // 댓글 본체 (프로필 + 이름 + 작성자 + 날짜 + 내용 + 메뉴)
   const commentBody = (
     <div className="flex flex-col gap-2 flex-1">
       {/* 상단: 프로필 + 이름 + 작성자 + 날짜 */}
@@ -82,106 +96,134 @@ export default function CommentItem({
       </div>
 
       {/* 댓글 내용 + 메뉴 (같은 줄) */}
-      <div className="flex items-start justify-between gap-2">
-        <p className="Body_1_2 text-Gray-5 flex-1">{content}</p>
-        {/* 메뉴 버튼 */}
-        <div className="relative shrink-0" ref={menuRef}>
-          <button
-            type="button"
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="p-1 cursor-pointer"
-          >
-            <Image src="/menu_dots.svg" alt="메뉴" width={20} height={20} />
-          </button>
+      {!isEditing ? (
+        <div className="flex items-start justify-between gap-2">
+          <p className="Body_1_2 text-Gray-5 flex-1 whitespace-pre-wrap">{content}</p>
+          {/* 메뉴 버튼 */}
+          <div className="relative shrink-0" ref={menuRef}>
+            <button
+              type="button"
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="p-1 cursor-pointer"
+            >
+              <Image src="/menu_dots.svg" alt="메뉴" width={20} height={20} />
+            </button>
 
-          {/* 드롭다운 메뉴 */}
-          {menuOpen && (
-            <div className="absolute right-0 top-full mt-1 w-[137px] rounded-lg bg-White shadow-lg z-10 overflow-hidden">
-              {/* 답글달기 - onReply가 있을 때만 표시 */}
-              {!isReply && onReply && (
-                <>
+            {/* 드롭다운 메뉴 */}
+            {menuOpen && (
+              <div className="absolute right-0 top-full mt-1 w-[137px] rounded-lg bg-White shadow-lg z-10 overflow-hidden">
+                {/* 답글달기 - onReply가 있을 때만 표시 */}
+                {!isReply && onReply && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onReply(id);
+                        setMenuOpen(false);
+                      }}
+                      className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+                    >
+                      <Image src="/reply2.svg" alt="답글" width={24} height={24} />
+                      답글달기
+                    </button>
+                    <div className="mx-2 border-b border-Subbrown-4" />
+                  </>
+                )}
+                {/* 내 댓글일 때: 수정, 삭제 */}
+                {isMine ? (
+                  <>
+                    {onDelete && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onDelete(id);
+                          setMenuOpen(false);
+                        }}
+                        className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+                      >
+                        <Image
+                          src="/delete.svg"
+                          alt="삭제"
+                          width={24}
+                          height={24}
+                        />
+                        삭제하기
+                      </button>
+                    )}
+                    {onEdit && onDelete && (
+                      <div className="mx-2 border-b border-Subbrown-4" />
+                    )}
+                    {onEdit && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsEditing(true);
+                          setMenuOpen(false);
+                        }}
+                        className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+                      >
+                        <Image
+                          src="/edit2.svg"
+                          alt="수정"
+                          width={24}
+                          height={24}
+                        />
+                        수정하기
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  /* 남의 댓글일 때 */
                   <button
                     type="button"
                     onClick={() => {
-                      onReply(id);
+                      if (!isAdminView) {
+                        onReport?.(id);
+                      }
                       setMenuOpen(false);
                     }}
                     className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
                   >
-                    <Image src="/reply2.svg" alt="답글" width={24} height={24} />
-                    답글달기
+                    <Image
+                      src={isAdminView ? "/Hide.svg" : "/report.svg"}
+                      alt={isAdminView ? "가리기" : "신고"}
+                      width={24}
+                      height={24}
+                    />
+                    {isAdminView ? "가리기" : "신고하기"}
                   </button>
-                  <div className="mx-2 border-b border-Subbrown-4" />
-                </>
-              )}
-              {/* 내 댓글일 때: 수정, 삭제 */}
-              {isMine ? (
-                <>
-                  {onDelete && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onDelete(id);
-                        setMenuOpen(false);
-                      }}
-                      className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
-                    >
-                      <Image
-                        src="/delete.svg"
-                        alt="삭제"
-                        width={24}
-                        height={24}
-                      />
-                      삭제하기
-                    </button>
-                  )}
-                  {onEdit && onDelete && (
-                    <div className="mx-2 border-b border-Subbrown-4" />
-                  )}
-                  {onEdit && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onEdit(id, content);
-                        setMenuOpen(false);
-                      }}
-                      className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
-                    >
-                      <Image
-                        src="/edit2.svg"
-                        alt="수정"
-                        width={24}
-                        height={24}
-                      />
-                      수정하기
-                    </button>
-                  )}
-                </>
-              ) : (
-                /* 남의 댓글일 때 */
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (!isAdminView) {
-                      onReport?.(id);
-                    }
-                    setMenuOpen(false);
-                  }}
-                  className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
-                >
-                  <Image
-                    src={isAdminView ? "/Hide.svg" : "/report.svg"}
-                    alt={isAdminView ? "가리기" : "신고"}
-                    width={24}
-                    height={24}
-                  />
-                  {isAdminView ? "가리기" : "신고하기"}
-                </button>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      ) : (
+        /* 수정 모드 */
+        <div className="flex flex-col gap-2 mt-2">
+          <textarea
+            value={editContent}
+            onChange={(e) => setEditContent(e.target.value)}
+            className="w-full min-h-[80px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White Body_1_2 text-Gray-7 outline-none focus:border-primary-3 resize-none whitespace-pre-wrap"
+            autoFocus
+          />
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={handleCancelEdit}
+              className="px-4 py-2 rounded-lg bg-Gray-2 text-Gray-6 subhead_4_1"
+            >
+              취소
+            </button>
+            <button
+              type="button"
+              onClick={handleSaveEdit}
+              className="px-4 py-2 rounded-lg bg-primary-3 text-White subhead_4_1"
+            >
+              저장
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 

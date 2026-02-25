@@ -1,19 +1,53 @@
 "use client";
+import { useEffect, useState } from "react";
 import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
 import ListSubscribeLarge from "@/components/base-ui/home/list_subscribe_large";
 import { useRouter } from "next/navigation";
-import { DUMMY_STORIES } from "@/data/dummyStories";
 import FloatingFab from "@/components/base-ui/Float";
-
-// TODO: 실제 로그인 상태 여부는 나중에
-const isLoggedIn = false; // true: 로그인, false: 로그인X
+import { useAuthStore } from "@/store/useAuthStore";
+import { useInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
+import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
+import { useInView } from "react-intersection-observer";
 
 export default function StoriesPage() {
   const router = useRouter();
+  const { isLoggedIn } = useAuthStore();
+  const {
+    data: storiesData,
+    isLoading: isLoadingStories,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteStoriesQuery();
+
+  const { data: membersData, isLoading: isLoadingMembers } = useRecommendedMembersQuery(isLoggedIn);
+
+  const { ref, inView } = useInView({
+    threshold: 0,
+  });
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleCardClick = (id: number) => {
     router.push(`/stories/${id}`);
   };
+
+  const isLoading = isLoadingStories || (isLoggedIn && isLoadingMembers);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7B6154]"></div>
+      </div>
+    );
+  }
+
+  const allStories = storiesData?.pages.flatMap((page) => page.basicInfoList) || [];
+  const recommendedMembers = membersData?.friends || [];
 
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4">
@@ -35,53 +69,73 @@ export default function StoriesPage() {
       {/* 메인 콘텐츠 영역 */}
       <div>
         <div className="flex flex-wrap gap-5 mt-6 justify-center d:grid d:grid-cols-4 d:justify-items-center">
-          {/* 첫 번째 줄 */}
-          {DUMMY_STORIES.slice(0, 4).map((story) => (
+          {/* 첫 번째 줄 (처음 4개) */}
+          {allStories.slice(0, 4).map((story) => (
             <div
-              key={story.id}
-              onClick={() => handleCardClick(story.id)}
+              key={story.bookStoryId}
+              onClick={() => handleCardClick(story.bookStoryId)}
               className="cursor-pointer shrink-0"
             >
               <BookStoryCardLarge
-                authorName={story.authorName}
+                authorName={story.authorInfo.nickname}
                 createdAt={story.createdAt}
                 viewCount={story.viewCount}
-                title={story.title}
-                content={story.content}
-                likeCount={story.likeCount}
+                title={story.bookStoryTitle}
+                content={story.description}
+                likeCount={story.likes}
                 commentCount={story.commentCount}
-                subscribeText="구독"
+                coverImgSrc={story.bookInfo.imgUrl}
+                subscribeText={story.authorInfo.following ? "구독중" : "구독"}
               />
             </div>
           ))}
 
-          {/* 두 번째 줄: 비로그인 시 사용자 추천 + 카드 3개, 로그인 시 카드 4개 */}
-          {!isLoggedIn && <ListSubscribeLarge height="h-[380px]" />}
-          {DUMMY_STORIES.slice(4, isLoggedIn ? 8 : 7).map((story) => (
+          {/* 두 번째 줄: 추천 멤버가 있을 경우에만 추천 영역 표시 */}
+          {recommendedMembers.length > 0 && (
+            <ListSubscribeLarge
+              height="h-[380px]"
+              users={recommendedMembers}
+            />
+          )}
+
+          {/* 나머지 카드들 */}
+          {allStories.slice(4).map((story) => (
             <div
-              key={story.id}
-              onClick={() => handleCardClick(story.id)}
+              key={story.bookStoryId}
+              onClick={() => handleCardClick(story.bookStoryId)}
               className="cursor-pointer shrink-0"
             >
               <BookStoryCardLarge
-                authorName={story.authorName}
+                authorName={story.authorInfo.nickname}
                 createdAt={story.createdAt}
                 viewCount={story.viewCount}
-                title={story.title}
-                content={story.content}
-                likeCount={story.likeCount}
+                title={story.bookStoryTitle}
+                content={story.description}
+                likeCount={story.likes}
                 commentCount={story.commentCount}
-                subscribeText="구독"
+                coverImgSrc={story.bookInfo.imgUrl}
+                subscribeText={story.authorInfo.following ? "구독중" : "구독"}
               />
             </div>
           ))}
         </div>
+
+        {/* 무한 스크롤 옵저버 타겟 */}
+        {hasNextPage && (
+          <div ref={ref} className="w-full flex justify-center py-10">
+            {isFetchingNextPage ? (
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-2"></div>
+            ) : (
+              <div className="h-8"></div>
+            )}
+          </div>
+        )}
         {/* 글쓰기 버튼  */}
         <FloatingFab
-            iconSrc="/icons_pencil.svg"
-            iconAlt="글쓰기"
-            onClick={() => router.push("/stories/new")}
-          />
+          iconSrc="/icons_pencil.svg"
+          iconAlt="글쓰기"
+          onClick={() => router.push("/stories/new")}
+        />
       </div>
     </div>
   );
