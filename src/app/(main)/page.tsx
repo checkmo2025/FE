@@ -122,6 +122,7 @@ export default function HomePage() {
               <BookStoryCard
                 key={story.bookStoryId}
                 authorName={story.authorInfo.nickname}
+                profileImgSrc={story.authorInfo.profileImageUrl}
                 createdAt={story.createdAt}
                 viewCount={story.viewCount}
                 title={story.bookStoryTitle}
