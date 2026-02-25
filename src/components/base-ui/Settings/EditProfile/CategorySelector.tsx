@@ -1,23 +1,7 @@
 // src/components/base-ui/Settings/EditProfile/CategorySelector.tsx
 "use client";
 
-const CATEGORIES = [
-  { label: "소설/시/희곡", value: "FICTION_POETRY_DRAMA" },
-  { label: "에세이", value: "ESSAY" },
-  { label: "인문학", value: "HUMANITIES" },
-  { label: "경영/경제", value: "ECONOMY_MANAGEMENT" },
-  { label: "자기계발", value: "SELF_DEVELOPMENT" },
-  { label: "사회과학", value: "SOCIAL_SCIENCE" },
-  { label: "역사", value: "HISTORY_CULTURE" },
-  { label: "예술/대중문화", value: "ART_POP_CULTURE" },
-  { label: "만화", value: "COMIC" },
-  { label: "장르소설", value: "GENRE_FICTION" },
-  { label: "과학", value: "SCIENCE" },
-  { label: "어린이/청소년", value: "CHILDREN_BOOKS" },
-  { label: "여행", value: "TRAVEL" },
-  { label: "요리", value: "COOKING" },
-  { label: "기타", value: "OTHER" },
-];
+import { CATEGORIES } from "@/constants/categories";
 
 interface Props {
   selectedCategories?: string[]; // Enum string values from backend
