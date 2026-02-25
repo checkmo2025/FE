@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import { NOTIFICATION_ENDPOINTS } from "@/lib/api/endpoints/notification";
-import { NotificationSettings, NotificationSettingType } from "@/types/notification";
+import { NotificationSettings, NotificationSettingType, NotificationListResponse } from "@/types/notification";
 import { ApiResponse } from "@/types/auth";
 
 export const notificationService = {
@@ -16,6 +16,25 @@ export const notificationService = {
         );
         if (!response.isSuccess) {
             throw new Error(response.message || "Failed to update notification setting");
+        }
+    },
+    getNotifications: async (cursorId?: number): Promise<NotificationListResponse> => {
+        const url = new URL(NOTIFICATION_ENDPOINTS.GET_NOTIFICATIONS);
+        if (cursorId) {
+            url.searchParams.append("cursorId", cursorId.toString());
+        }
+
+        const response = await apiClient.get<ApiResponse<NotificationListResponse>>(
+            url.toString()
+        );
+        return response.result!;
+    },
+    readNotification: async (notificationId: number): Promise<void> => {
+        const response = await apiClient.patch<ApiResponse<number>>(
+            NOTIFICATION_ENDPOINTS.READ_NOTIFICATION(notificationId)
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "Failed to mark notification as read");
         }
     },
 };

@@ -18,3 +18,10 @@ export interface UpdatePasswordRequest {
     newPassword?: string;
     confirmPassword?: string;
 }
+
+export interface ProfileResponse {
+    nickname: string;
+    description: string;
+    profileImageUrl: string;
+    categories: string[];
+}
