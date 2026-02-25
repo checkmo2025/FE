@@ -87,6 +87,7 @@ export default function StoriesPage() {
                 commentCount={story.commentCount}
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText={story.authorInfo.following ? "구독중" : "구독"}
+                hideSubscribeButton={story.writtenByMe}
               />
             </div>
           ))}
@@ -117,6 +118,7 @@ export default function StoriesPage() {
                 commentCount={story.commentCount}
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText={story.authorInfo.following ? "구독중" : "구독"}
+                hideSubscribeButton={story.writtenByMe}
               />
             </div>
           ))}
