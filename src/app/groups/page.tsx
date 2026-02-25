@@ -156,7 +156,7 @@ export default function Searchpage() {
     fetchNextPage,
     refetch: refetchSearch,
   } = useInfiniteClubSearchQuery(
-    appliedParams ?? { search: undefined, inputFilter: null, outputFilter: "ALL" },
+    appliedParams ?? { keyword: undefined, inputFilter: null, outputFilter: "ALL" },
     isSearchMode
   );
 
