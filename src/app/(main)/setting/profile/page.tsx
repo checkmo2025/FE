@@ -17,12 +17,19 @@ export default function ProfileEditPage() {
     user?.categories || []
   );
 
+  // Profile Image Upload States
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(
+    user?.profileImageUrl || null
+  );
+
   useEffect(() => {
     if (user) {
       setNickname(user.nickname || "");
       setIntro(user.description || "");
       setName(user.nickname || "");
       setSelectedCategories(user.categories || []);
+      setPreviewImage(user.profileImageUrl || null);
     }
   }, [user]);
 
@@ -36,6 +43,23 @@ export default function ProfileEditPage() {
     );
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfileImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleResetImage = () => {
+    setProfileImageFile(null);
+    setPreviewImage(null); // or set to default image URL if needed
+  };
+
   const handleSave = () => {
     console.log("Saving profile changes:", {
       nickname,
@@ -43,6 +67,7 @@ export default function ProfileEditPage() {
       name,
       phone,
       selectedCategories,
+      profileImageFile,
     });
     // TODO: Connect to backend API for profile update
     toast.success("프로필 정보가 저장되었습니다.");
@@ -67,7 +92,9 @@ export default function ProfileEditPage() {
         <ProfileImageSection
           nickname={nickname}
           intro={intro}
-          profileImageUrl={user?.profileImageUrl}
+          previewImage={previewImage}
+          onUpload={handleImageUpload}
+          onReset={handleResetImage}
         />
 
         {/* 닉네임 */}
