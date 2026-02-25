@@ -157,7 +157,7 @@ export default function HomePage() {
       </div>
 
       {/* 데스크톱 */}
-      <div className="hidden d:flex flex-row gap-6 justify-center items-center">
+      <div className="hidden d:flex flex-row gap-6 justify-center items-start">
         {/* 독서모임 + 사용자 추천 */}
         <section className="w-[332px] pt-6 shrink-0">
           <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">
