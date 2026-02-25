@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
-import { RecommendResponse, UpdateProfileRequest } from "@/types/member";
+import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest } from "@/types/member";
 import { ApiResponse } from "@/types/auth";
 
 export const memberService = {
@@ -17,6 +17,15 @@ export const memberService = {
         );
         if (!response.isSuccess) {
             throw new Error(response.message || "Failed to update profile");
+        }
+    },
+    updatePassword: async (data: UpdatePasswordRequest): Promise<void> => {
+        const response = await apiClient.patch<ApiResponse<unknown>>(
+            MEMBER_ENDPOINTS.UPDATE_PASSWORD,
+            data
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "Failed to update password");
         }
     },
 };

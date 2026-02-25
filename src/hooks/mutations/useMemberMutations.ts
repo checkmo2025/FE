@@ -52,3 +52,16 @@ export const useUpdateProfileMutation = () => {
         },
     });
 };
+
+import { UpdatePasswordRequest } from "@/types/member";
+
+export const useUpdatePasswordMutation = () => {
+    return useMutation({
+        mutationFn: async (payload: UpdatePasswordRequest) => {
+            await memberService.updatePassword(payload);
+        },
+        onError: (error: any) => {
+            console.error("Failed to update password:", error);
+        },
+    });
+};

@@ -3,12 +3,16 @@ type Props = {
   label: string;
   placeholder: string;
   type?: "text" | "password";
+  value?: string;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 };
 
 export default function SettingsInputGroup({
   label,
   placeholder,
   type = "text",
+  value,
+  onChange,
 }: Props) {
   return (
     <div className="flex w-full flex-col items-start gap-[12px] self-stretch">
@@ -21,6 +25,8 @@ export default function SettingsInputGroup({
           type={type}
           className="w-full bg-transparent outline-none body_1_3 text-Gray-7 placeholder:text-Gray-3"
           placeholder={placeholder}
+          value={value}
+          onChange={onChange}
         />
       </div>
     </div>

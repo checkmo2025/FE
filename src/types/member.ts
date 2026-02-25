@@ -12,3 +12,9 @@ export interface UpdateProfileRequest {
     categories: string[];
     imgUrl?: string;
 }
+
+export interface UpdatePasswordRequest {
+    currentPassword?: string;
+    newPassword?: string;
+    confirmPassword?: string;
+}
