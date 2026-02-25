@@ -5,7 +5,6 @@ import { useAuthStore } from "@/store/useAuthStore";
 import toast from "react-hot-toast";
 
 interface UpdateProfilePayload {
-    nickname: string;
     description: string;
     categories: string[];
     profileImageFile: File | null;
@@ -17,7 +16,7 @@ export const useUpdateProfileMutation = () => {
 
     return useMutation({
         mutationFn: async (payload: UpdateProfilePayload) => {
-            let profileImageUrl = payload.currentProfileImageUrl || undefined;
+            let imgUrl = payload.currentProfileImageUrl || undefined;
 
             // 1. Image Upload (If file is selected)
             if (payload.profileImageFile) {
@@ -30,18 +29,17 @@ export const useUpdateProfileMutation = () => {
                 await authService.uploadToS3(presignedRes.result!.presignedUrl, payload.profileImageFile);
 
                 // Use the returned image URL for update
-                profileImageUrl = presignedRes.result!.imageUrl;
+                imgUrl = presignedRes.result!.imageUrl;
             } else if (payload.currentProfileImageUrl && payload.currentProfileImageUrl.startsWith("blob:")) {
                 // In case blob URL leaked without file, though shouldn't happen, clear it
-                profileImageUrl = undefined;
+                imgUrl = undefined;
             }
 
             // 2. Update Profile Information
             await memberService.updateProfile({
-                nickname: payload.nickname,
                 description: payload.description,
                 categories: payload.categories,
-                profileImageUrl: profileImageUrl || "", // Backend might expect empty string for default
+                imgUrl: imgUrl || "", // Backend might expect empty string for default
             });
         },
         onSuccess: () => {

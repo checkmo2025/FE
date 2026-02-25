@@ -119,7 +119,6 @@ export default function ProfileEditPage() {
     }
 
     updateProfile({
-      nickname,
       description: intro.slice(0, 20),
       categories: selectedCategories,
       profileImageFile,
