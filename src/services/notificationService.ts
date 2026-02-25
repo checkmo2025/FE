@@ -30,7 +30,7 @@ export const notificationService = {
         return response.result!;
     },
     readNotification: async (notificationId: number): Promise<void> => {
-        const response = await apiClient.post<ApiResponse<number>>(
+        const response = await apiClient.patch<ApiResponse<number>>(
             NOTIFICATION_ENDPOINTS.READ_NOTIFICATION(notificationId)
         );
         if (!response.isSuccess) {
