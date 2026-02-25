@@ -37,7 +37,11 @@ export default function MyNewsPage() {
         <div className="flex flex-col gap-[8px]">
           {isLoading && <p className="text-Gray-4 text-center py-4">로딩 중...</p>}
 
-          {!isLoading && newsList.length === 0 && (
+          {!isLoading && isError && (
+            <p className="text-red-500 text-center py-4">소식을 불러오는 데 실패했습니다.</p>
+          )}
+
+          {!isLoading && !isError && newsList.length === 0 && (
             <p className="text-Gray-4 text-center py-4">등록된 소식이 없습니다.</p>
           )}
 

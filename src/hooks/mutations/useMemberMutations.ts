@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { memberService } from "@/services/memberService";
 import { authService } from "@/services/authService";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface UpdateProfilePayload {
     description: string;
@@ -40,10 +41,16 @@ export const useUpdateProfileMutation = () => {
                 imgUrl: imgUrl || "", // Backend might expect empty string for default
             });
         },
-        onSuccess: () => {
-            // Refresh the page to reload user data into auth store properly based on top level layout
-            window.location.reload();
+        onSuccess: async () => {
             queryClient.invalidateQueries({ queryKey: ["member", "me"] });
+            // Fetch the updated profile and sync it to the global auth store so the Header updates
+            const response = await authService.getProfile();
+            if (response.isSuccess && response.result) {
+                useAuthStore.getState().login({
+                    ...response.result,
+                    email: response.result.email || "",
+                });
+            }
         },
         onError: (error: any) => {
             console.error("Failed to update profile:", error);

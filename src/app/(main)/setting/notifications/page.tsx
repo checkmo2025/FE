@@ -70,10 +70,8 @@ export default function NotificationPage() {
                 disabled={isPending}
               />
               <NotificationItem
-                title="모임 댓글/답글 알림"
-                description="작성한 게시글에 대한 댓글 및 답글 알림 수신"
-                // There isn't a single clear match for this string in standard setting schema besides what Swagger provided. 
-                // Currently matching clubMeetingCreated here based on structure, although naming implies 'meeting/gathering'.
+                title="모임 일정 생성 알림"
+                description="참여 중인 모임의 새로운 일정(모임) 생성 알림 수신"
                 isChecked={settings?.clubMeetingCreated}
                 onToggle={() => handleToggle("CLUB_MEETING_CREATED")}
                 disabled={isPending}
