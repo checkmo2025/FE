@@ -109,11 +109,11 @@ const UserProfile = () => {
         <div className="flex items-center justify-center md:justify-start gap-[12px] md:gap-[24px] self-stretch">
           <JoinButton
             onClick={() => router.push("/stories/new")}
-            className="w-[160px] h-[32px] md:w-[355px] md:h-[48px] p-[12px_16px] gap-[10px] rounded-[8px] bg-[#7B6154] hover:bg-[#6A5246] transition-colors text-[#FFF] font-sans text-[14px] font-semibold md:text-[18px] md:font-medium leading-[135%]"
+            className="w-[160px] h-[32px] md:w-[355px] md:h-[48px] p-[12px_16px] gap-[10px] rounded-[8px] font-sans text-[14px] font-semibold md:text-[18px] md:font-medium leading-[135%]"
           >
             내 책 이야기 쓰기
           </JoinButton>
-          <JoinButton className="w-[160px] h-[32px] md:w-[355px] md:h-[48px] p-[12px_16px] gap-[10px] rounded-[8px] bg-[#7B6154] hover:bg-[#6A5246] transition-colors text-[#FFF] font-sans text-[14px] font-semibold md:text-[18px] md:font-medium leading-[135%]">
+          <JoinButton className="w-[160px] h-[32px] md:w-[355px] md:h-[48px] p-[12px_16px] gap-[10px] rounded-[8px] font-sans text-[14px] font-semibold md:text-[18px] md:font-medium leading-[135%]">
             소식 문의하기
           </JoinButton>
         </div>
