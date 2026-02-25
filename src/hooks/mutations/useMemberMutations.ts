@@ -9,6 +9,7 @@ interface UpdateProfilePayload {
     description: string;
     categories: string[];
     profileImageFile: File | null;
+    currentProfileImageUrl: string | null;
 }
 
 export const useUpdateProfileMutation = () => {
@@ -16,7 +17,7 @@ export const useUpdateProfileMutation = () => {
 
     return useMutation({
         mutationFn: async (payload: UpdateProfilePayload) => {
-            let profileImageUrl = undefined;
+            let profileImageUrl = payload.currentProfileImageUrl || undefined;
 
             // 1. Image Upload (If file is selected)
             if (payload.profileImageFile) {
@@ -30,6 +31,9 @@ export const useUpdateProfileMutation = () => {
 
                 // Use the returned image URL for update
                 profileImageUrl = presignedRes.result!.imageUrl;
+            } else if (payload.currentProfileImageUrl && payload.currentProfileImageUrl.startsWith("blob:")) {
+                // In case blob URL leaked without file, though shouldn't happen, clear it
+                profileImageUrl = undefined;
             }
 
             // 2. Update Profile Information
@@ -37,7 +41,7 @@ export const useUpdateProfileMutation = () => {
                 nickname: payload.nickname,
                 description: payload.description,
                 categories: payload.categories,
-                profileImageUrl,
+                profileImageUrl: profileImageUrl || "", // Backend might expect empty string for default
             });
         },
         onSuccess: () => {

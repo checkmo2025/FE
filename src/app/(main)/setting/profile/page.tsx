@@ -120,9 +120,10 @@ export default function ProfileEditPage() {
 
     updateProfile({
       nickname,
-      description: intro,
+      description: intro.slice(0, 20),
       categories: selectedCategories,
       profileImageFile,
+      currentProfileImageUrl: previewImage,
     }, {
       onSuccess: () => {
         toast.success("프로필 정보가 저장되었습니다.");
@@ -186,6 +187,7 @@ export default function ProfileEditPage() {
               value={intro}
               onChange={(e) => setIntro(e.target.value)}
               placeholder="20자 이내로 작성해주세요"
+              maxLength={20}
             />
           </div>
         </div>
