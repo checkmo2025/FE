@@ -4,19 +4,19 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
 import { DUMMY_USER_PROFILE } from "@/constants/mocks/mypage";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useProfileQuery } from "@/hooks/queries/useMemberQueries";
 import FloatingFab from "../Float";
 
 const UserProfile = () => {
   const router = useRouter();
-  const { user: authUser } = useAuthStore();
+  const { data: profileData, isLoading, isError } = useProfileQuery();
 
   // 서버 데이터가 있으면 사용하고, 없으면 더미 데이터 사용 (구독자 수 등은 현재 API에 없음)
   const user = {
     ...DUMMY_USER_PROFILE,
-    name: authUser?.nickname || authUser?.email || DUMMY_USER_PROFILE.name,
-    intro: authUser?.description || DUMMY_USER_PROFILE.intro,
-    profileImage: authUser?.profileImageUrl || DUMMY_USER_PROFILE.profileImage,
+    name: profileData?.nickname || DUMMY_USER_PROFILE.name,
+    intro: profileData?.description || DUMMY_USER_PROFILE.intro,
+    profileImage: profileData?.profileImageUrl || DUMMY_USER_PROFILE.profileImage,
   };
 
   return (

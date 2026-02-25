@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
-import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest } from "@/types/member";
+import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse } from "@/types/member";
 import { ApiResponse } from "@/types/auth";
 
 export const memberService = {
@@ -27,5 +27,11 @@ export const memberService = {
         if (!response.isSuccess) {
             throw new Error(response.message || "Failed to update password");
         }
+    },
+    getProfile: async (): Promise<ProfileResponse> => {
+        const response = await apiClient.get<ApiResponse<ProfileResponse>>(
+            MEMBER_ENDPOINTS.GET_PROFILE
+        );
+        return response.result!;
     },
 };
