@@ -24,6 +24,8 @@ export default function HomePage() {
   const stories = storiesData?.basicInfoList || [];
   // 멤버 데이터가 없으면 빈 배열
   const recommendedUsers = membersData?.friends || [];
+
+  // isLoading 멤버 변수는 로그인 되어있을 때만 실제 로딩 상태를 반영해야 함
   const isLoading = isLoadingStories || (isLoggedIn && isLoadingMembers);
 
   if (isLoading) {
