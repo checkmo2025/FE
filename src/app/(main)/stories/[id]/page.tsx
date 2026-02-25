@@ -81,6 +81,7 @@ export default function StoryDetailPage() {
             createdAt={story.createdAt}
             viewCount={story.viewCount}
             likeCount={story.likes}
+            hideSubscribeButton={story.writtenByMe}
           />
         </StoryNavigation>
         {/* 책이야기 글 본문 */}
