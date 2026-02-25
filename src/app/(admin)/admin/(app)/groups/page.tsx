@@ -93,6 +93,9 @@ export default function GroupsPage() {
     return Array.from({ length: end - start + 1 }).map((_, idx) => start + idx);
   }, [page, totalPages]);
 
+  const isFirst = page === 1;
+  const isLast = page === totalPages;
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-[1040px] pt-6 pb-10">
@@ -110,7 +113,7 @@ export default function GroupsPage() {
           <table className="w-[1040px] table-fixed">
             <colgroup>
               <col className="w-[112px]" />
-              <col className="w-[240px]" /> 
+              <col className="w-[240px]" />
               <col className="w-[279px]" />
               <col className="w-[180px]" />
               <col className="w-[112px]" />
@@ -118,26 +121,29 @@ export default function GroupsPage() {
             </colgroup>
 
             <thead>
-              <tr className="border-b border-[#D2C5B6]">
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">모임 ID</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">이름</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">개설자 이메일</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">생성 일자</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">가입자 수</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">상세보기</th>
+              <tr className="border-b border-Subbrown-3">
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">모임 ID</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">이름</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">개설자 이메일</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">생성 일자</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">가입자 수</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">상세보기</th>
               </tr>
             </thead>
 
             <tbody>
               {pageItems.map((g) => (
-                <tr key={g.id} className="h-[48px] border-b border-[#EAE5E2] font-medium">
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{g.id}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C] truncate">{g.name}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C] truncate">{g.ownerEmail}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{g.createdAt}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{g.memberCount}</td>
+                <tr
+                  key={g.id}
+                  className="h-[48px] border-b border-Subbrown-4 body_1_2"
+                >
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{g.id}</td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{g.name}</td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{g.ownerEmail}</td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{g.createdAt}</td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{g.memberCount}</td>
                   <td className="pl-[12px] py-0">
-                    <button className="text-[14px] text-[#2C2C2C] underline underline-offset-2">
+                    <button className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70">
                       상세보기
                     </button>
                   </td>
@@ -147,20 +153,21 @@ export default function GroupsPage() {
           </table>
 
           {/* 페이지네이션 */}
-          <div className="mt-6 flex items-center justify-center gap-4 text-[12px] leading-[145%] tracking-[-0.012px]">
+          <div className="mt-6 flex items-center justify-center gap-4 body_2_2">
             <button
               onClick={() => goTo(page - 1)}
-              disabled={page === 1}
+              disabled={isFirst}
               className={`flex items-center ${
-                page === 1
+                isFirst
                   ? "cursor-default opacity-30"
                   : "cursor-pointer hover:opacity-70"
               }`}
+              aria-label="이전 페이지"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M15 18L9 12L15 6"
-                  stroke={page === 1 ? "#8D8D8D" : "#2C2C2C"}
+                  stroke={isFirst ? "var(--Gray_4)" : "var(--Gray_7)"}
                   strokeWidth="1"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -173,8 +180,8 @@ export default function GroupsPage() {
                 key={p}
                 onClick={() => goTo(p)}
                 className={`cursor-pointer ${
-                  p === page ? "text-[#2C2C2C]" : "text-[#8D8D8D]"
-                }`}
+                  p === page ? "text-Gray-7" : "text-Gray-4"
+                } hover:opacity-70`}
               >
                 {p}
               </button>
@@ -182,17 +189,18 @@ export default function GroupsPage() {
 
             <button
               onClick={() => goTo(page + 1)}
-              disabled={page === totalPages}
+              disabled={isLast}
               className={`flex items-center ${
-                page === totalPages
+                isLast
                   ? "cursor-default opacity-30"
                   : "cursor-pointer hover:opacity-70"
               }`}
+              aria-label="다음 페이지"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M9 6L15 12L9 18"
-                  stroke={page === totalPages ? "#8D8D8D" : "#2C2C2C"}
+                  stroke={isLast ? "var(--Gray_4)" : "var(--Gray_7)"}
                   strokeWidth="1"
                   strokeLinecap="round"
                   strokeLinejoin="round"

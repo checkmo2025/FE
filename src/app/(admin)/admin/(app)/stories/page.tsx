@@ -116,6 +116,9 @@ export default function BookStoriesPage() {
     return Array.from({ length: end - start + 1 }).map((_, idx) => start + idx);
   }, [page, totalPages]);
 
+  const isFirst = page === 1;
+  const isLast = page === totalPages;
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-[1040px] pt-6 pb-10">
@@ -142,28 +145,31 @@ export default function BookStoriesPage() {
             </colgroup>
 
             <thead>
-              <tr className="border-b border-[#D2C5B6]">
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">책이야기 ID</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">책이야기 제목</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">등록자 이메일</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">책 제목</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">게시날짜</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">등록여부</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">상세보기</th>
+              <tr className="border-b border-Subbrown-3">
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">책이야기 ID</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">책이야기 제목</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">등록자 이메일</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">책 제목</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">게시날짜</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">등록여부</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">상세보기</th>
               </tr>
             </thead>
 
             <tbody>
               {pageItems.map((s) => (
-                <tr key={s.id} className="h-[48px] border-b border-[#EAE5E2] font-medium">
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{s.id}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C] truncate">{s.title}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C] truncate">{s.authorEmail}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C] truncate">{s.bookTitle}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{s.postedAt}</td>
-                  <td className="py-0 text-[14px] text-[#2C2C2C] text-center">{s.status}</td>
+                <tr
+                  key={s.id}
+                  className="h-[48px] border-b border-Subbrown-4 body_1_2"
+                >
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{s.id}</td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{s.title}</td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{s.authorEmail}</td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{s.bookTitle}</td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{s.postedAt}</td>
+                  <td className="py-0 body_1_2 text-Gray-7 text-center">{s.status}</td>
                   <td className="pl-[12px] py-0">
-                    <button className="text-[14px] text-[#2C2C2C] underline underline-offset-2">
+                    <button className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70">
                       상세보기
                     </button>
                   </td>
@@ -173,20 +179,21 @@ export default function BookStoriesPage() {
           </table>
 
           {/* 페이지네이션 */}
-          <div className="mt-6 flex items-center justify-center gap-4 text-[12px] leading-[145%] tracking-[-0.012px]">
+          <div className="mt-6 flex items-center justify-center gap-4 body_2_2">
             <button
               onClick={() => goTo(page - 1)}
-              disabled={page === 1}
+              disabled={isFirst}
               className={`flex items-center ${
-                page === 1
+                isFirst
                   ? "cursor-default opacity-30"
                   : "cursor-pointer hover:opacity-70"
               }`}
+              aria-label="이전 페이지"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M15 18L9 12L15 6"
-                  stroke={page === 1 ? "#8D8D8D" : "#2C2C2C"}
+                  stroke={isFirst ? "var(--Gray_4)" : "var(--Gray_7)"}
                   strokeWidth="1"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -199,8 +206,8 @@ export default function BookStoriesPage() {
                 key={p}
                 onClick={() => goTo(p)}
                 className={`cursor-pointer ${
-                  p === page ? "text-[#2C2C2C]" : "text-[#8B8B8D]"
-                }`}
+                  p === page ? "text-Gray-7" : "text-Gray-4"
+                } hover:opacity-70`}
               >
                 {p}
               </button>
@@ -208,17 +215,18 @@ export default function BookStoriesPage() {
 
             <button
               onClick={() => goTo(page + 1)}
-              disabled={page === totalPages}
+              disabled={isLast}
               className={`flex items-center ${
-                page === totalPages
+                isLast
                   ? "cursor-default opacity-30"
                   : "cursor-pointer hover:opacity-70"
               }`}
+              aria-label="다음 페이지"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M9 6L15 12L9 18"
-                  stroke={page === totalPages ? "#8D8D8D" : "#2C2C2C"}
+                  stroke={isLast ? "var(--Gray_4)" : "var(--Gray_7)"}
                   strokeWidth="1"
                   strokeLinecap="round"
                   strokeLinejoin="round"

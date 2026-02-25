@@ -82,6 +82,9 @@ export default function UsersPage() {
     return Array.from({ length: end - start + 1 }).map((_, idx) => start + idx);
   }, [page, totalPages]);
 
+  const isFirst = page === 1;
+  const isLast = page === totalPages;
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-[1040px] pt-6 pb-10">
@@ -106,24 +109,27 @@ export default function UsersPage() {
             </colgroup>
 
             <thead>
-              <tr className="border-b border-[#D2C5B6]">
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">ID</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">이름</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">이메일</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">전화번호</th>
-                <th className="py-3 pl-[12px] text-left text-[14px] font-medium text-[#8B8B8B]">상세보기</th>
+              <tr className="border-b border-Subbrown-3">
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">ID</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">이름</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">이메일</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">전화번호</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">상세보기</th>
               </tr>
             </thead>
 
             <tbody>
               {pageItems.map((u) => (
-                <tr key={u.id} className="h-[48px] border-b border-[#EAE5E2] font-medium">
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{u.id}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{u.name}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{u.email}</td>
-                  <td className="pl-[12px] py-0 text-[14px] text-[#2C2C2C]">{u.phone}</td>
+                <tr
+                  key={u.id}
+                  className="h-[48px] border-b border-Subbrown-4 body_1_2"
+                >
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{u.id}</td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{u.name}</td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{u.email}</td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{u.phone}</td>
                   <td className="pl-[12px] py-0">
-                    <button className="text-[14px] text-[#2C2C2C] underline underline-offset-2">
+                    <button className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70">
                       상세보기
                     </button>
                   </td>
@@ -133,20 +139,21 @@ export default function UsersPage() {
           </table>
 
           {/* 페이지네이션 */}
-          <div className="mt-6 flex items-center justify-center gap-4 text-[12px] leading-[145%] tracking-[-0.012px]">
+          <div className="mt-6 flex items-center justify-center gap-4 body_2_2">
             <button
               onClick={() => goTo(page - 1)}
-              disabled={page === 1}
+              disabled={isFirst}
               className={`flex items-center ${
-                page === 1
+                isFirst
                   ? "cursor-default opacity-30"
                   : "cursor-pointer hover:opacity-70"
               }`}
+              aria-label="이전 페이지"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M15 18L9 12L15 6"
-                  stroke={page === 1 ? "#8D8D8D" : "#2C2C2C"}
+                  stroke={isFirst ? "var(--Gray_4)" : "var(--Gray_7)"}
                   strokeWidth="1"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -159,8 +166,8 @@ export default function UsersPage() {
                 key={p}
                 onClick={() => goTo(p)}
                 className={`cursor-pointer ${
-                  p === page ? "text-[#2C2C2C]" : "text-[#8D8D8D]"
-                }`}
+                  p === page ? "text-Gray-7" : "text-Gray-4"
+                } hover:opacity-70`}
               >
                 {p}
               </button>
@@ -168,17 +175,18 @@ export default function UsersPage() {
 
             <button
               onClick={() => goTo(page + 1)}
-              disabled={page === totalPages}
+              disabled={isLast}
               className={`flex items-center ${
-                page === totalPages
+                isLast
                   ? "cursor-default opacity-30"
                   : "cursor-pointer hover:opacity-70"
               }`}
+              aria-label="다음 페이지"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M9 6L15 12L9 18"
-                  stroke={page === totalPages ? "#8D8D8D" : "#2C2C2C"}
+                  stroke={isLast ? "var(--Gray_4)" : "var(--Gray_7)"}
                   strokeWidth="1"
                   strokeLinecap="round"
                   strokeLinejoin="round"
