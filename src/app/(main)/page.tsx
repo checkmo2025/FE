@@ -13,13 +13,19 @@ import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_la
 import { useAuthStore } from "@/store/useAuthStore";
 import { useStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
+import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 
 export default function HomePage() {
-  const groups: { id: string; name: string }[] = [];
   const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
 
   const { data: storiesData, isLoading: isLoadingStories } = useStoriesQuery();
   const { data: membersData, isLoading: isLoadingMembers, isError: isErrorMembers } = useRecommendedMembersQuery(isLoggedIn);
+  const { data: myClubsData } = useMyClubsQuery();
+
+  const groups = myClubsData?.clubList.map((club) => ({
+    id: String(club.clubId),
+    name: club.clubName,
+  })) || [];
 
   const stories = storiesData?.basicInfoList || [];
   // 멤버 데이터가 없으면 빈 배열
@@ -157,7 +163,7 @@ export default function HomePage() {
       </div>
 
       {/* 데스크톱 */}
-      <div className="hidden d:flex flex-row gap-6 justify-center items-start">
+      <div className="hidden d:flex flex-row gap-6 justify-center items-center">
         {/* 독서모임 + 사용자 추천 */}
         <section className="w-[332px] pt-6 shrink-0">
           <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">
