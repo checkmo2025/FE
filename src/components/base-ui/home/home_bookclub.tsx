@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
-export type GroupSummary = { id: string; name: string };
+import { MyClubInfo } from '@/types/club';
 
 type Props = {
-  groups: GroupSummary[];
+  groups: MyClubInfo[];
 };
 
 export default function HomeBookclub({ groups }: Props) {
@@ -43,10 +43,10 @@ export default function HomeBookclub({ groups }: Props) {
         >
           {displayGroups.map((group) => (
             <div
-              key={group.id}
+              key={group.clubId}
               className="flex w-full t:w-[288px] h-[52px] py-3 px-4 items-center rounded-lg bg-white"
             >
-              <span className="text-Gray-7 h-6 subhead_4_1 truncate">{group.name}</span>
+              <span className="text-Gray-7 h-6 subhead_4_1 truncate">{group.clubName}</span>
             </div>
           ))}
         </div>

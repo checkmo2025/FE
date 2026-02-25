@@ -22,10 +22,7 @@ export default function HomePage() {
   const { data: membersData, isLoading: isLoadingMembers, isError: isErrorMembers } = useRecommendedMembersQuery(isLoggedIn);
   const { data: myClubsData } = useMyClubsQuery();
 
-  const groups = myClubsData?.clubList.map((club) => ({
-    id: String(club.clubId),
-    name: club.clubName,
-  })) || [];
+  const groups = myClubsData?.clubList || [];
 
   const stories = storiesData?.basicInfoList || [];
   // 멤버 데이터가 없으면 빈 배열
