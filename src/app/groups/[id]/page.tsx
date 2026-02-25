@@ -140,7 +140,7 @@ export default function AdminGroupHomePage() {
               <div className="mt-auto pt-6 flex gap-3">
                 <ButtonWithoutImg
                   text="이번 모임 바로가기"
-                  onClick={() => router.push(joinUrl)}
+                  onClick={() => router.push(`${Number(groupId)}/notice/4`)}
                   bgColorVar="--Primary_1"
                   borderColorVar="--Primary_1"
                   textColorVar="--White"
