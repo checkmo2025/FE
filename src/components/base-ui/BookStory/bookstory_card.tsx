@@ -14,6 +14,7 @@ type Props = {
   commentCount?: number;
   onSubscribeClick?: () => void;
   subscribeText?: string;
+  hideSubscribeButton?: boolean;
 };
 
 import { formatTimeAgo } from "@/utils/time";
@@ -30,6 +31,7 @@ export default function BookStoryCard({
   commentCount = 1,
   onSubscribeClick,
   subscribeText = "구독",
+  hideSubscribeButton = false,
 }: Props) {
   return (
     <div
@@ -56,13 +58,15 @@ export default function BookStoryCard({
             {formatTimeAgo(createdAt)} 조회수 {viewCount}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={onSubscribeClick}
-          className="h-8 rounded-lg bg-primary-2 px-[17px] body_2_1 text-White whitespace-nowrap"
-        >
-          {subscribeText}
-        </button>
+        {!hideSubscribeButton && (
+          <button
+            type="button"
+            onClick={onSubscribeClick}
+            className="h-8 rounded-lg bg-primary-2 px-[17px] body_2_1 text-White whitespace-nowrap"
+          >
+            {subscribeText}
+          </button>
+        )}
       </div>
 
       {/* 2. 책 이미지 (모바일: flex-1 / 데스크탑: h-36) */}

@@ -2,17 +2,17 @@
 
 import React from "react";
 import Image from "next/image";
-import { MyPageMeeting } from "@/types/mypage";
+import { MyClubInfo } from "@/types/club";
 
 interface MyMeetingCardProps {
-  meeting: MyPageMeeting;
+  club: MyClubInfo;
 }
 
-const MyMeetingCard = ({ meeting }: MyMeetingCardProps) => {
+const MyMeetingCard = ({ club }: MyMeetingCardProps) => {
   return (
     <div className="flex w-full px-[18px] py-[12px] md:p-[20px] justify-between items-center rounded-[8px] bg-white border border-[#EAE5E2] gap-[12px]">
       <span className="text-[#5C5C5C] font-sans text-[16px] md:text-[24px] font-medium md:font-semibold leading-[135%] tracking-[-0.024px] truncate flex-1">
-        {meeting.title}
+        {club.clubName}
       </span>
       <button type="button" className="flex items-center justify-center shrink-0">
         <Image

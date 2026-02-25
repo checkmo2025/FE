@@ -18,8 +18,8 @@ const JoinButton: React.FC<JoinButtonProps> = ({
   const variants = {
     primary: disabled
       ? "bg-[#DADADA] text-[#8D8D8D] cursor-not-allowed"
-      : "bg-[#7B6154] text-[#FFF] hover:bg-[#7B6154] hover:text-[#FFF]",
-    secondary: "bg-[#EAE5E2] text-[#5E4A40] border border-[#D2C5B6]",
+      : "bg-[#7B6154] text-[#FFF] hover:bg-[#6A5246] hover:text-[#FFF] cursor-pointer",
+    secondary: "bg-[#EAE5E2] text-[#5E4A40] border border-[#D2C5B6] hover:bg-[#D2C5B6] cursor-pointer",
   };
 
   // Determine classes to avoid conflicts with className prop

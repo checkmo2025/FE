@@ -72,3 +72,4 @@ export const clubService = {
     return res.result;
   },
 };
+

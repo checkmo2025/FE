@@ -7,6 +7,7 @@ import { NavItem } from "./NavItem";
 import { useState } from "react";
 import SearchModal from "./SearchModal";
 import { useHeaderTitle } from "@/contexts/HeaderTitleContext";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const NAV = [
   { label: "책모 홈", href: "/" },
@@ -28,6 +29,7 @@ export default function Header() {
   const pathname = usePathname();
   const defaultTitle = getPageTitle(pathname);
   const { customTitle } = useHeaderTitle();
+  const { user } = useAuthStore();
   const pageTitle = customTitle || defaultTitle;
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   return (
@@ -111,10 +113,10 @@ export default function Header() {
               className="relative hidden w-6 h-6 t:block"
             >
               <Image
-                src="/profile.svg"
+                src={user?.profileImageUrl || "/profile.svg"}
                 alt="프로필"
                 fill
-                className="object-contain"
+                className={`object-cover ${user?.profileImageUrl ? "rounded-full" : "object-contain"}`}
                 priority
               />
             </Link>
