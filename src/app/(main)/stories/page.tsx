@@ -78,6 +78,7 @@ export default function StoriesPage() {
             >
               <BookStoryCardLarge
                 authorName={story.authorInfo.nickname}
+                profileImgSrc={story.authorInfo.profileImageUrl}
                 createdAt={story.createdAt}
                 viewCount={story.viewCount}
                 title={story.bookStoryTitle}
@@ -107,6 +108,7 @@ export default function StoriesPage() {
             >
               <BookStoryCardLarge
                 authorName={story.authorInfo.nickname}
+                profileImgSrc={story.authorInfo.profileImageUrl}
                 createdAt={story.createdAt}
                 viewCount={story.viewCount}
                 title={story.bookStoryTitle}
