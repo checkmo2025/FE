@@ -108,6 +108,7 @@ export default function HomePage() {
                 commentCount={story.commentCount}
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText="구독"
+                hideSubscribeButton={story.writtenByMe}
               />
             ))}
           </div>
@@ -153,6 +154,7 @@ export default function HomePage() {
                 commentCount={story.commentCount}
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText="구독"
+                hideSubscribeButton={story.writtenByMe}
               />
             ))}
           </div>
@@ -200,6 +202,7 @@ export default function HomePage() {
                   commentCount={story.commentCount}
                   coverImgSrc={story.bookInfo.imgUrl}
                   subscribeText="구독"
+                  hideSubscribeButton={story.writtenByMe}
                 />
               ))}
             </div>

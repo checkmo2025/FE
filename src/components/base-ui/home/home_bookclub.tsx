@@ -30,7 +30,6 @@ export default function HomeBookclub({ groups }: Props) {
       {count === 0 && (
         <div className="flex flex-col items-center justify-center h-full">
           <img src="logo2.svg" alt="로고" className="mx-auto mb-4" />
-          <p className="text-Gray-3 text-[13px]">가입된 모임이 없습니다.</p>
         </div>
       )}
 
