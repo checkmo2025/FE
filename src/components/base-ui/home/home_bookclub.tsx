@@ -10,23 +10,13 @@ type Props = {
 };
 
 export default function HomeBookclub({ groups }: Props) {
-  // UI 확인을 위한 임시 목 데이터 (데이터가 없을 때만 표시)
-  const displayData = groups && groups.length > 0 ? groups : [
-    { clubId: 101, clubName: "책 읽는 새벽 모임 (MOCK)" },
-    { clubId: 102, clubName: "현대 소설 탐구 생활 (MOCK)" },
-    { clubId: 103, clubName: "경제/경영 베스트셀러 (MOCK)" },
-    { clubId: 104, clubName: "SF/판타지 덕후 모임 (MOCK)" },
-    { clubId: 105, clubName: "철학하는 금요일 (MOCK)" },
-    { clubId: 106, clubName: "미술관 가는 사람들 (MOCK)" },
-  ];
-
-  const count = displayData.length;
+  const count = groups.length;
   const isMany = count >= 5;
 
   const [open, setOpen] = useState(false);
 
   // 접힘: 6개만 / 펼침: 전체
-  const displayGroups = isMany && !open ? displayData.slice(0, 6) : displayData;
+  const displayGroups = isMany && !open ? groups.slice(0, 6) : groups;
 
   return (
     <aside
@@ -36,10 +26,11 @@ export default function HomeBookclub({ groups }: Props) {
         open ? 'h-[215px] t:h-[814px]' : 'h-[215px] t:h-[424px]',
       ].join(' ')}
     >
-      {/* 0개 - 실제 데이터와 목 데이터 둘 다 없을 때만 (그럴 일은 거의 없겠지만) */}
+      {/* 0개 */}
       {count === 0 && (
-        <div className="">
-          <img src="logo2.svg" alt="로고" className="mx-auto mb-4 t:mt-[118px]" />
+        <div className="flex flex-col items-center justify-center h-full">
+          <img src="logo2.svg" alt="로고" className="mx-auto mb-4" />
+          <p className="text-Gray-3 text-[13px]">가입된 모임이 없습니다.</p>
         </div>
       )}
 
