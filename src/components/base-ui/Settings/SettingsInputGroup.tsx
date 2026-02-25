@@ -19,6 +19,7 @@ export default function SettingsInputGroup({
       {/* 라벨: body_1_2, Primary_3 */}
       <label className="self-stretch body_1_2 text-primary-3">{label}</label>
 
+      {/* 인풋 컨테이너: h 52px, border Subbrown_4 */}
       <div className="flex h-[52px] w-full items-center gap-[10px] rounded-[8px] border border-Subbrown-4 bg-White px-[16px] py-[12px]">
         <input
           type={type}

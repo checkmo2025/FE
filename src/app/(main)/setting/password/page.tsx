@@ -68,7 +68,7 @@ export default function PasswordChangePage() {
           <div className="flex flex-col items-start gap-[8px] self-stretch w-full">
             <SettingsInputGroup
               label="새 비밀번호"
-              placeholder="영문, 특수기호 포함 6~12자"
+              placeholder="새 비밀번호를 입력해주세요"
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -77,7 +77,7 @@ export default function PasswordChangePage() {
             <div className={inputContainerClass}>
               <input
                 type="password"
-                className="w-full bg-transparent outline-none text-[12px] font-normal leading-[145%] tracking-[-0.012px] md:body_1_3 text-Gray-7 placeholder:text-Gray-3"
+                className="w-full bg-transparent outline-none body_1_3 text-Gray-7 placeholder:text-Gray-3"
                 placeholder="비밀번호 확인"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}

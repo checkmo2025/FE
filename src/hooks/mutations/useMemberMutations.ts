@@ -1,8 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { memberService } from "@/services/memberService";
 import { authService } from "@/services/authService";
-import { useAuthStore } from "@/store/useAuthStore";
-import toast from "react-hot-toast";
 
 interface UpdateProfilePayload {
     description: string;
