@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 import { MyClubInfo } from '@/types/club';
 
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export default function HomeBookclub({ groups }: Props) {
+  const router = useRouter();
   const count = groups.length;
   const isMany = count >= 5;
 
@@ -91,8 +93,9 @@ export default function HomeBookclub({ groups }: Props) {
 
             <button
               type="button"
+              onClick={() => router.push('/groups/create')}
               className="w-full h-[32px] t:h-[48px] py-3 rounded-[6px] bg-[#6B5448] text-white
-                        text-[13px] flex items-center justify-center gap-2"
+                        text-[13px] flex items-center justify-center gap-2 cursor-pointer"
             >
               <Image
                 src="/icon_plus.svg"
