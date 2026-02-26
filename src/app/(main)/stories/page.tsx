@@ -7,11 +7,14 @@ import FloatingFab from "@/components/base-ui/Float";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
+import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 import { useInView } from "react-intersection-observer";
 
 export default function StoriesPage() {
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
   const {
     data: storiesData,
     isLoading: isLoadingStories,
@@ -21,7 +24,7 @@ export default function StoriesPage() {
   } = useInfiniteStoriesQuery();
 
   const { data: membersData, isLoading: isLoadingMembers } = useRecommendedMembersQuery(isLoggedIn);
-
+  const { data: myClubsData, isLoading: isLoadingClubs } = useMyClubsQuery();
   const { ref, inView } = useInView({
     threshold: 0,
   });
@@ -36,7 +39,7 @@ export default function StoriesPage() {
     router.push(`/stories/${id}`);
   };
 
-  const isLoading = isLoadingStories || (isLoggedIn && isLoadingMembers);
+  const isLoading = isLoadingStories || (isLoggedIn && isLoadingMembers) || isLoadingClubs;
 
   if (isLoading) {
     return (
@@ -49,21 +52,35 @@ export default function StoriesPage() {
   const allStories = storiesData?.pages.flatMap((page) => page.basicInfoList) || [];
   const recommendedMembers = membersData?.friends || [];
 
+  const getCategoryClassName = (categoryId: string) => {
+    return `text-center body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600 shrink-0 ${selectedCategory === categoryId ? "text-Gray-7 font-semibold" : "text-Gray-3"
+      }`;
+  };
+
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4">
       <div className="t:mt-3 h-[44px] d:h-[54px] flex gap-14 items-center border-b border-zinc-300 overflow-x-auto scrollbar-hide">
-        <div className="text-center text-Gray-7 body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600 shrink-0">
+        <div
+          onClick={() => setSelectedCategory("all")}
+          className={getCategoryClassName("all")}
+        >
           전체
         </div>
-        <div className="text-center text-Gray-3 body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600 shrink-0">
+        <div
+          onClick={() => setSelectedCategory("following")}
+          className={getCategoryClassName("following")}
+        >
           구독중
         </div>
-        <div className="text-center text-Gray-3 body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600 shrink-0">
-          긁적긁적
-        </div>
-        <div className="text-center text-Gray-3 body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600 shrink-0">
-          북적북적
-        </div>
+        {myClubsData?.clubList.map((club) => (
+          <div
+            key={club.clubId}
+            onClick={() => setSelectedCategory(club.clubId.toString())}
+            className={getCategoryClassName(club.clubId.toString())}
+          >
+            {club.clubName}
+          </div>
+        ))}
       </div>
 
       {/* 메인 콘텐츠 영역 */}
@@ -87,6 +104,7 @@ export default function StoriesPage() {
                 commentCount={story.commentCount}
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText={story.authorInfo.following ? "구독중" : "구독"}
+                hideSubscribeButton={story.writtenByMe}
               />
             </div>
           ))}
@@ -117,6 +135,7 @@ export default function StoriesPage() {
                 commentCount={story.commentCount}
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText={story.authorInfo.following ? "구독중" : "구독"}
+                hideSubscribeButton={story.writtenByMe}
               />
             </div>
           ))}

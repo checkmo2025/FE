@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import BookStoryCard from "@/components/base-ui/BookStory/bookstory_card";
 import NewsBannerSlider from "@/components/base-ui/home/NewsBannerSlider";
@@ -13,16 +14,23 @@ import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_la
 import { useAuthStore } from "@/store/useAuthStore";
 import { useStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
+import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 
 export default function HomePage() {
-  const groups: { id: string; name: string }[] = [];
+  const router = useRouter();
   const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
 
   const { data: storiesData, isLoading: isLoadingStories } = useStoriesQuery();
-  const { data: membersData, isLoading: isLoadingMembers } = useRecommendedMembersQuery(isLoggedIn);
+  const { data: membersData, isLoading: isLoadingMembers, isError: isErrorMembers } = useRecommendedMembersQuery(isLoggedIn);
+  const { data: myClubsData } = useMyClubsQuery();
+
+  const groups = myClubsData?.clubList || [];
 
   const stories = storiesData?.basicInfoList || [];
+  // 멤버 데이터가 없으면 빈 배열
   const recommendedUsers = membersData?.friends || [];
+
+  // isLoading 멤버 변수는 로그인 되어있을 때만 실제 로딩 상태를 반영해야 함
   const isLoading = isLoadingStories || (isLoggedIn && isLoadingMembers);
 
   if (isLoading) {
@@ -54,21 +62,35 @@ export default function HomePage() {
               <h2 className="pb-2 body_1 leading-7 text-zinc-800">독서모임</h2>
               <HomeBookclub groups={groups} />
             </div>
-            <div className="flex-1">
-              <h2 className="pb-2 body_1 leading-7 text-zinc-800">
-                사용자 추천
-              </h2>
-              <div className="flex flex-col gap-3">
-                {recommendedUsers.slice(0, 3).map((u, idx) => (
-                  <ListSubscribeElement
-                    key={u.nickname + idx}
-                    name={u.nickname}
-                    profileSrc={u.profileImageUrl}
-                    onSubscribeClick={() => console.log("subscribe", u.nickname)}
-                  />
-                ))}
+            {/* 사용자 추천: 로그인한 회원에게만 노출 */}
+            {isLoggedIn && (
+              <div className="flex-1">
+                <h2 className="pb-2 body_1 leading-7 text-zinc-800">
+                  사용자 추천
+                </h2>
+                <div className="flex flex-col gap-3">
+                  {isErrorMembers && (
+                    <div className="flex flex-1 items-center justify-center py-4">
+                      <p className="text-Gray-4 text-[14px]">추천 목록을 불러오지 못했어요.</p>
+                    </div>
+                  )}
+                  {!isErrorMembers && recommendedUsers.length === 0 && (
+                    <div className="flex flex-1 items-center justify-center py-4">
+                      <p className="text-Gray-4 text-[14px]">사용자 추천이 없습니다.</p>
+                    </div>
+                  )}
+                  {!isErrorMembers && recommendedUsers.length > 0 &&
+                    recommendedUsers.slice(0, 3).map((u) => (
+                      <ListSubscribeElement
+                        key={u.nickname}
+                        name={u.nickname}
+                        profileSrc={u.profileImageUrl}
+                        onSubscribeClick={() => console.log("subscribe", u.nickname)}
+                      />
+                    ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </section>
 
@@ -88,6 +110,8 @@ export default function HomePage() {
                 commentCount={story.commentCount}
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText="구독"
+                hideSubscribeButton={story.writtenByMe}
+                onClick={() => router.push(`/stories/${story.bookStoryId}`)}
               />
             ))}
           </div>
@@ -111,7 +135,9 @@ export default function HomePage() {
           </h2>
           <div className="flex gap-6 justify-center">
             <HomeBookclub groups={groups} />
-            <ListSubscribeLarge height="h-[424px]" users={recommendedUsers} />
+            {isLoggedIn && (
+              <ListSubscribeLarge height="h-[424px]" users={recommendedUsers} isError={isErrorMembers} />
+            )}
           </div>
         </section>
 
@@ -131,6 +157,8 @@ export default function HomePage() {
                 commentCount={story.commentCount}
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText="구독"
+                hideSubscribeButton={story.writtenByMe}
+                onClick={() => router.push(`/stories/${story.bookStoryId}`)}
               />
             ))}
           </div>
@@ -145,9 +173,11 @@ export default function HomePage() {
             독서모임
           </h2>
           <HomeBookclub groups={groups} />
-          <div className="pt-6">
-            <ListSubscribeLarge height="h-[380px]" users={recommendedUsers} />
-          </div>
+          {isLoggedIn && (
+            <div className="pt-6">
+              <ListSubscribeLarge height="h-[380px]" users={recommendedUsers} isError={isErrorMembers} />
+            </div>
+          )}
         </section>
 
         {/* 소식 + 책 이야기 */}
@@ -176,6 +206,8 @@ export default function HomePage() {
                   commentCount={story.commentCount}
                   coverImgSrc={story.bookInfo.imgUrl}
                   subscribeText="구독"
+                  hideSubscribeButton={story.writtenByMe}
+                  onClick={() => router.push(`/stories/${story.bookStoryId}`)}
                 />
               ))}
             </div>
