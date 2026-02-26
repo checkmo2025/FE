@@ -80,9 +80,9 @@ export default function HomePage() {
                     </div>
                   )}
                   {!isErrorMembers && recommendedUsers.length > 0 &&
-                    recommendedUsers.slice(0, 3).map((u, idx) => (
+                    recommendedUsers.slice(0, 3).map((u) => (
                       <ListSubscribeElement
-                        key={u.nickname + idx}
+                        key={u.nickname}
                         name={u.nickname}
                         profileSrc={u.profileImageUrl}
                         onSubscribeClick={() => console.log("subscribe", u.nickname)}

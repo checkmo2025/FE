@@ -52,20 +52,23 @@ export default function StoriesPage() {
   const allStories = storiesData?.pages.flatMap((page) => page.basicInfoList) || [];
   const recommendedMembers = membersData?.friends || [];
 
+  const getCategoryClassName = (categoryId: string) => {
+    return `text-center body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600 shrink-0 ${selectedCategory === categoryId ? "text-Gray-7 font-semibold" : "text-Gray-3"
+      }`;
+  };
+
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4">
       <div className="t:mt-3 h-[44px] d:h-[54px] flex gap-14 items-center border-b border-zinc-300 overflow-x-auto scrollbar-hide">
         <div
           onClick={() => setSelectedCategory("all")}
-          className={`text-center body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600 shrink-0 ${selectedCategory === "all" ? "text-Gray-7 font-semibold" : "text-Gray-3"
-            }`}
+          className={getCategoryClassName("all")}
         >
           전체
         </div>
         <div
           onClick={() => setSelectedCategory("following")}
-          className={`text-center body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600 shrink-0 ${selectedCategory === "following" ? "text-Gray-7 font-semibold" : "text-Gray-3"
-            }`}
+          className={getCategoryClassName("following")}
         >
           구독중
         </div>
@@ -73,8 +76,7 @@ export default function StoriesPage() {
           <div
             key={club.clubId}
             onClick={() => setSelectedCategory(club.clubId.toString())}
-            className={`text-center body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600 shrink-0 ${selectedCategory === club.clubId.toString() ? "text-Gray-7 font-semibold" : "text-Gray-3"
-              }`}
+            className={getCategoryClassName(club.clubId.toString())}
           >
             {club.clubName}
           </div>

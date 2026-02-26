@@ -89,9 +89,9 @@ export default function ListSubscribeLarge({
           </div>
         )}
         {!isError && users.length > 0 &&
-          users.map((u, idx) => (
+          users.map((u) => (
             <ListSubscribeElementLarge
-              key={u.nickname + idx}
+              key={u.nickname}
               name={u.nickname}
               subscribingCount={u.subscribingCount}
               subscribersCount={u.subscribersCount}
