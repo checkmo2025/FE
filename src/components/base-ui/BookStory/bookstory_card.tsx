@@ -15,6 +15,7 @@ type Props = {
   onSubscribeClick?: () => void;
   subscribeText?: string;
   hideSubscribeButton?: boolean;
+  onClick?: () => void;
 };
 
 import { formatTimeAgo } from "@/utils/time";
@@ -32,10 +33,12 @@ export default function BookStoryCard({
   onSubscribeClick,
   subscribeText = "구독",
   hideSubscribeButton = false,
+  onClick,
 }: Props) {
   return (
     <div
-      className="flex flex-col overflow-hidden rounded-lg border-2 border-Subbrown-4 bg-White hover:border-primary-2 transition-colors
+      onClick={onClick}
+      className="flex flex-col overflow-hidden rounded-lg border-2 border-Subbrown-4 bg-White hover:border-primary-2 transition-colors cursor-pointer
       /* 모바일: 161px x 243px */
       w-[161px] h-[243px]
       /* 데스크탑(md 이상): 336px x 380px */
@@ -61,7 +64,10 @@ export default function BookStoryCard({
         {!hideSubscribeButton && (
           <button
             type="button"
-            onClick={onSubscribeClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSubscribeClick?.();
+            }}
             className="h-8 rounded-lg bg-primary-2 px-[17px] body_2_1 text-White whitespace-nowrap"
           >
             {subscribeText}

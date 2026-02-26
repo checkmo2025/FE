@@ -15,6 +15,7 @@ type Props = {
   onSubscribeClick?: () => void;
   subscribeText?: string;
   onClick?: () => void;
+  hideSubscribeButton?: boolean;
 };
 
 import { formatTimeAgo } from "@/utils/time";
@@ -32,6 +33,7 @@ export default function BookStoryCardLarge({
   onSubscribeClick,
   subscribeText = "구독",
   onClick,
+  hideSubscribeButton = false,
 }: Props) {
   return (
     <div
@@ -56,16 +58,18 @@ export default function BookStoryCardLarge({
             {formatTimeAgo(createdAt)} 조회수 {viewCount}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onSubscribeClick?.();
-          }}
-          className="h-8 rounded-lg bg-primary-2 px-[17px] body_2_1 text-White whitespace-nowrap"
-        >
-          {subscribeText}
-        </button>
+        {!hideSubscribeButton && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSubscribeClick?.();
+            }}
+            className="h-8 rounded-lg bg-primary-2 px-[17px] body_2_1 text-White whitespace-nowrap"
+          >
+            {subscribeText}
+          </button>
+        )}
       </div>
 
       {/* 책 이미지 */}
