@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Search_BookCoverCard from "@/components/base-ui/Search/search_recommendbook";
+import BookCoverCard from "@/components/base-ui/Book/BookCoverCard";
 import { useInfiniteBookSearchQuery, useRecommendedBooksQuery } from "@/hooks/queries/useBookQueries";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useInView } from "react-intersection-observer";
@@ -211,7 +211,8 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                   ) : recommendedBooks.length > 0 ? (
                     recommendedBooks.map((book, index) => (
                       <div key={book.isbn} className={`shrink-0 ${index === 3 ? 'hidden d:block' : ''}`}>
-                        <Search_BookCoverCard
+                        <BookCoverCard
+                          variant="search"
                           imgUrl={book.imgUrl}
                           title={book.title}
                           author={book.author}

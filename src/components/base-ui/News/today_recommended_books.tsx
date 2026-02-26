@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import BookCoverCard from "./recommendbook_element";
+import BookCoverCard from "@/components/base-ui/Book/BookCoverCard";
 
 type Book = {
   id: string | number;
