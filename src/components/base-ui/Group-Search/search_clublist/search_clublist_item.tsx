@@ -95,13 +95,15 @@ export default function SearchClubListItem({
       <div className="flex justify-between">
         {/* Left - Tablet */}
         <div className="hidden t:flex flex-1 items-start gap-6 min-w-0">
-          <Image
-            src={imgSrc}
-            alt="모임 이미지"
-            width={148}
-            height={148}
-            className="shrink-0 rounded-[8px] object-cover"
-          />
+          <div className="relative shrink-0 w-[148px] h-[148px] rounded-[8px] overflow-hidden">
+            <Image
+              src={imgSrc}
+              alt="모임 이미지"
+              fill
+              sizes="148px"
+              className="object-cover"
+            />
+          </div>
           <div className="min-w-0">
             <div className="min-w-0">
               <p className="subhead_2 text-Gray-7 truncate">{club.name}</p>
@@ -131,13 +133,15 @@ export default function SearchClubListItem({
           </div>
 
           <div className="mt-5 flex items-start gap-4">
-            <Image
-              src={imgSrc}
-              alt="모임 이미지"
-              width={72}
-              height={72}
-              className="shrink-0 rounded-[8px] object-cover"
-            />
+            <div className="relative shrink-0 w-[148px] h-[148px] rounded-[8px] overflow-hidden">
+                <Image
+                  src={imgSrc}
+                  alt="모임 이미지"
+                  fill
+                  sizes="148px"
+                  className="object-cover"
+                />
+            </div>
             <div className="flex flex-col gap-1 min-w-0">
               <p className="body_2_2 text-Gray-4">
                 모임 대상 : <span className="text-Gray-7">{participantText || "-"}</span>
