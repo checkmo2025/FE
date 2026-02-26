@@ -3,14 +3,8 @@ import { apiClient } from "@/lib/api/client";
 import { CLUBS } from "@/lib/api/endpoints/Clubs";
 import type { ApiResponse } from "@/lib/api/types";
 import { CreateClubRequest } from "@/types/groups/clubCreate";
-import type 
-  ClubJoinRequest,
-  ClubJoinResponse,
-  ClubSearchParams,
-  ClubSearchResponse,
-  MyClubsResponse,
-  RecommendationsResponse,
-} from "@/types/groups/clubsearch";
+import { ClubJoinRequest, ClubJoinResponse, ClubSearchParams, ClubSearchResponse, MyClubsResponse, RecommendationsResponse } from "@/types/groups/clubsearch";
+
 
 export const clubService = {
   // GET /api/clubs/check-name?clubName=...
