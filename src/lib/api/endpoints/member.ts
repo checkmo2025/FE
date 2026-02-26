@@ -5,4 +5,5 @@ export const MEMBER_ENDPOINTS = {
     RECOMMEND: `${API_BASE_URL}/members/me/recommend`,
     UPDATE_PROFILE: `${API_BASE_URL}/members/me`,
     UPDATE_PASSWORD: `${API_BASE_URL}/members/me/update-password`,
+    FOLLOW: (nickname: string) => `${API_BASE_URL}/members/${nickname}/following`,
 };

@@ -61,14 +61,17 @@ type ListSubscribeLargeProps = {
     profileImageUrl?: string;
     subscribingCount?: number;
     subscribersCount?: number;
+    isFollowing?: boolean;
   }>;
   isError?: boolean;
+  onSubscribeClick?: (nickname: string, isFollowing: boolean) => void;
 };
 
 export default function ListSubscribeLarge({
   height = "h-[380px]",
   users = [],
   isError = false,
+  onSubscribeClick,
 }: ListSubscribeLargeProps) {
 
   return (
@@ -96,7 +99,8 @@ export default function ListSubscribeLarge({
               subscribingCount={u.subscribingCount}
               subscribersCount={u.subscribersCount}
               profileSrc={u.profileImageUrl}
-              onSubscribeClick={() => console.log("subscribe", u.nickname)}
+              buttonText={u.isFollowing ? "구독 중" : "구독"}
+              onSubscribeClick={() => onSubscribeClick?.(u.nickname, u.isFollowing || false)}
             />
           ))}
       </div>

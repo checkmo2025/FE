@@ -8,12 +8,14 @@ import { isValidUrl } from "@/utils/url";
 import { useParams } from "next/navigation";
 import { useStoryDetailQuery } from "@/hooks/queries/useStoryQueries";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
+import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 
 export default function StoryDetailPage() {
   const params = useParams();
   const id = params?.id as string;
   const { data: story, isLoading, isError } = useStoryDetailQuery(Number(id));
   const { mutate: toggleLike } = useToggleStoryLikeMutation();
+  const { mutate: toggleFollow } = useToggleFollowMutation();
 
   if (isLoading) {
     return (
@@ -85,6 +87,8 @@ export default function StoryDetailPage() {
             likeCount={story.likes}
             likedByMe={story.likedByMe}
             onLikeClick={() => toggleLike(story.bookStoryId)}
+            subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+            onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
             hideSubscribeButton={story.writtenByMe}
           />
         </StoryNavigation>

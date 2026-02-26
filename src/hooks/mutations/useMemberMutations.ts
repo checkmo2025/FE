@@ -59,6 +59,8 @@ export const useUpdateProfileMutation = () => {
 };
 
 import { UpdatePasswordRequest } from "@/types/member";
+import { storyKeys } from "@/hooks/queries/useStoryQueries";
+import { memberKeys } from "@/hooks/queries/useMemberQueries";
 
 export const useUpdatePasswordMutation = () => {
     return useMutation({
@@ -67,6 +69,29 @@ export const useUpdatePasswordMutation = () => {
         },
         onError: (error: any) => {
             console.error("Failed to update password:", error);
+        },
+    });
+};
+
+export const useToggleFollowMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ nickname, isFollowing }: { nickname: string; isFollowing: boolean }) => {
+            if (isFollowing) {
+                await memberService.unfollowMember(nickname);
+            } else {
+                await memberService.followMember(nickname);
+            }
+        },
+        onSuccess: () => {
+            // Invalidate stories to update "Following" status on cards
+            queryClient.invalidateQueries({ queryKey: storyKeys.all });
+            // Invalidate recommended members
+            queryClient.invalidateQueries({ queryKey: memberKeys.recommended() });
+        },
+        onError: (error: any) => {
+            console.error("Failed to toggle follow:", error);
         },
     });
 };

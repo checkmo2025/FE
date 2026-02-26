@@ -10,11 +10,13 @@ import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
 import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 import { useInView } from "react-intersection-observer";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
+import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 
 export default function StoriesPage() {
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
   const { mutate: toggleLike } = useToggleStoryLikeMutation();
+  const { mutate: toggleFollow } = useToggleFollowMutation();
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const {
@@ -106,7 +108,8 @@ export default function StoriesPage() {
                 commentCount={story.commentCount}
                 likedByMe={story.likedByMe}
                 coverImgSrc={story.bookInfo.imgUrl}
-                subscribeText={story.authorInfo.following ? "구독중" : "구독"}
+                subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+                onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
                 hideSubscribeButton={story.writtenByMe}
                 onClick={() => handleCardClick(story.bookStoryId)}
                 onLikeClick={() => toggleLike(story.bookStoryId)}
@@ -119,6 +122,7 @@ export default function StoriesPage() {
             <ListSubscribeLarge
               height="h-[380px]"
               users={recommendedMembers}
+              onSubscribeClick={(nickname, isFollowing) => toggleFollow({ nickname, isFollowing })}
             />
           )}
 
@@ -140,7 +144,8 @@ export default function StoriesPage() {
                 commentCount={story.commentCount}
                 likedByMe={story.likedByMe}
                 coverImgSrc={story.bookInfo.imgUrl}
-                subscribeText={story.authorInfo.following ? "구독중" : "구독"}
+                subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+                onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
                 hideSubscribeButton={story.writtenByMe}
                 onClick={() => handleCardClick(story.bookStoryId)}
                 onLikeClick={() => toggleLike(story.bookStoryId)}
