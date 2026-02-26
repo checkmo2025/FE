@@ -1,4 +1,5 @@
-import { Category, ParticipantType } from "@/app/groups/page";
+import { Category, ParticipantType } from "@/types/groups/groups";
+
 
 
 /** UI 카테고리 → API participantType (전체는 필터 없음이라 null) */
