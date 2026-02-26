@@ -39,9 +39,9 @@ export default function HomeBookclub({ groups }: Props) {
       {count > 0 && (
         <div
           className={[
-            'flex flex-col gap-2',
-            open ? 'flex-1 overflow-y-auto pr-1' : '',
-          ].join(' ')}
+            "flex flex-col gap-2",
+            open ? "flex-1 overflow-y-auto no-scrollbar" : "",
+          ].join(" ")}
         >
           {displayGroups.map((group) => (
             <div

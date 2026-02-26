@@ -69,7 +69,7 @@ export default function Mybookclub({ groups, isLoading = false }: Props) {
           <div
             className={[
               "grid grid-cols-1 t:grid-cols-2 d:grid-cols-1 flex-col gap-2",
-              open && showToggle ? "overflow-y-auto pr-1" : "",
+              open && showToggle ? "overflow-y-auto pr-1 no-scrollbar" : "",
             ].join(" ")}
           >
             {displayGroups.map((group) => (
