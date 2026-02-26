@@ -12,14 +12,12 @@ export default function AdminLoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (isDisabled) return;
-
     setToastMsg("토스트 테스트");
   };
 
   return (
-    <main className="min-h-screen bg-[#F9F7F6] flex items-center justify-center px-4">
+    <main className="min-h-screen bg-background flex items-center justify-center px-4">
       <section className="w-[429px] text-center">
 
         <div className="flex flex-col items-center">
@@ -27,7 +25,7 @@ export default function AdminLoginPage() {
             <LoginLogo />
           </div>
 
-          <div className="mt-[24px] text-[24px] font-semibold text-[#6b4f44]">
+          <div className="mt-[24px] subhead_1 text-primary-1">
             관리자 로그인
           </div>
         </div>
@@ -40,9 +38,9 @@ export default function AdminLoginPage() {
               w-full h-[44px]
               px-[16px]
               rounded-[8px]
-              border border-[#EAE5E2]
-              bg-white
-              text-sm outline-none
+              border border-Subbrown-4
+              bg-White
+              body_1_3 outline-none
             "
             placeholder="아이디"
           />
@@ -55,9 +53,9 @@ export default function AdminLoginPage() {
               w-full h-[44px]
               px-[16px]
               rounded-[8px]
-              border border-[#EAE5E2]
-              bg-white
-              text-sm outline-none
+              border border-Subbrown-4
+              bg-White
+              body_1_3 outline-none
             "
             placeholder="비밀번호"
             type="password"
@@ -70,27 +68,24 @@ export default function AdminLoginPage() {
               mt-[32px]
               w-full h-[44px]
               rounded-[8px]
-              text-sm font-semibold
+              body_1_1
               ${
                 isDisabled
-                  ? "bg-[#DADADA] text-[#9E9E9E] cursor-not-allowed"
-                  : "bg-[#7B6154] text-white"
+                  ? "bg-Gray-2 text-Gray-4 cursor-not-allowed"
+                  : "bg-primary-1 text-White"
               }
             `}
           >
             로그인
           </button>
-
         </form>
 
-        {/* Toast */}
         {toastMsg && (
           <Toast
             message={toastMsg}
             onClose={() => setToastMsg(null)}
           />
         )}
-
       </section>
     </main>
   );
