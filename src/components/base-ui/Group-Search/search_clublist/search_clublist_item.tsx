@@ -4,7 +4,7 @@ import Image from "next/image";
 import React from "react";
 import ClubCategoryTags from "./search_club_category_tags";
 import type { ApplyType, ParticipantType } from "@/types/groups/groups";
-
+import type { ClubCategoryDTO } from "@/types/groups/clubsearch";
 const DEFAULT_CLUB_IMG = "/ClubDefaultImg.svg";
 
 // participantTypes 한글 매핑
@@ -26,13 +26,12 @@ const APPLY_META: Record<
   Yes: { label: "가입 됨", icon: "/BrownCheck.svg", labelClass: "text-primary-3" },
 };
 
-// ✅ UI 컴포넌트 계약 타입은 UI 쪽에 둔다
 export type ClubSummary = {
   reason: string;
   clubId: number;
   name: string;
   profileImageUrl?: string | null;
-  category: number[];
+  category: ClubCategoryDTO[]; 
   public: boolean;
   applytype: ApplyType;
   region: string;
