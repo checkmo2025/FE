@@ -103,7 +103,7 @@ export default function BookStoryCardLarge({
             e.stopPropagation();
             onLikeClick?.(e);
           }}
-          className="flex items-center justify-center gap-2 pt-1 cursor-pointer hover:bg-gray-50 transition-colors rounded-sm"
+          className="flex items-center justify-center gap-2 pt-1 cursor-pointer hover:bg-gray-100 transition-colors rounded-full px-2 h-10"
         >
           <Image src={heartIcon} alt="좋아요" width={24} height={24} />
           <span className={`body_1_2 ${likedByMe ? 'text-primary-2' : 'text-Gray-4'}`}>좋아요 {likeCount}</span>

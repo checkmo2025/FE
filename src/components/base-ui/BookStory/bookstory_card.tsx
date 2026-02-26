@@ -124,7 +124,7 @@ export default function BookStoryCard({
             e.stopPropagation();
             onLikeClick?.(e);
           }}
-          className="flex flex-1 items-center justify-center gap-[6px] border-r-2 border-Gray-2 h-[32px] hover:bg-gray-50 transition-colors"
+          className="flex flex-1 items-center justify-center gap-[6px] border-r-2 border-Gray-2 h-[32px] hover:bg-gray-100 transition-colors"
         >
           <Image src={heartIcon} alt="좋아요" width={20} height={20} />
           <span className={`text-[12px] font-medium ${likedByMe ? 'text-primary-2' : 'text-Gray-4'}`}>
@@ -146,7 +146,7 @@ export default function BookStoryCard({
             e.stopPropagation();
             onLikeClick?.(e);
           }}
-          className="flex items-center justify-center gap-2 pt-1 cursor-pointer hover:bg-gray-50 transition-colors rounded-sm"
+          className="flex items-center justify-center gap-2 pt-1 cursor-pointer hover:bg-gray-100 transition-colors rounded-full px-2 h-10"
         >
           <Image src={heartIcon} alt="좋아요" width={24} height={24} />
           <span className={`body_1_2 ${likedByMe ? 'text-primary-2' : 'text-Gray-4'}`}>좋아요 {likeCount}</span>

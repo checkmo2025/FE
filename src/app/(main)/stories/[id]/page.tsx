@@ -7,11 +7,13 @@ import Image from "next/image";
 import { isValidUrl } from "@/utils/url";
 import { useParams } from "next/navigation";
 import { useStoryDetailQuery } from "@/hooks/queries/useStoryQueries";
+import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 
 export default function StoryDetailPage() {
   const params = useParams();
   const id = params?.id as string;
   const { data: story, isLoading, isError } = useStoryDetailQuery(Number(id));
+  const { mutate: toggleLike } = useToggleStoryLikeMutation();
 
   if (isLoading) {
     return (
@@ -81,6 +83,8 @@ export default function StoryDetailPage() {
             createdAt={story.createdAt}
             viewCount={story.viewCount}
             likeCount={story.likes}
+            likedByMe={story.likedByMe}
+            onLikeClick={() => toggleLike(story.bookStoryId)}
             hideSubscribeButton={story.writtenByMe}
           />
         </StoryNavigation>

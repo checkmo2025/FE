@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import BookStoryCard from "@/components/base-ui/BookStory/bookstory_card";
 import { useMyInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useInView } from "react-intersection-observer";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 
 const MyBookStoryList = () => {
+  const router = useRouter();
   const {
     data,
     fetchNextPage,
@@ -57,6 +59,7 @@ const MyBookStoryList = () => {
             profileImgSrc={story.authorInfo.profileImageUrl}
             hideSubscribeButton={true}
             onLikeClick={() => toggleLike(story.bookStoryId)}
+            onClick={() => router.push(`/stories/${story.bookStoryId}`)}
           />
         ))}
       </div>
