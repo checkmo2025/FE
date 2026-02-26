@@ -88,6 +88,7 @@ export default function StoryDetailPage() {
             likedByMe={story.likedByMe}
             onLikeClick={() => toggleLike(story.bookStoryId)}
             subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+            isFollowing={story.authorInfo.following}
             onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
             hideSubscribeButton={story.writtenByMe}
           />

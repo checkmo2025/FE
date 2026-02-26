@@ -13,6 +13,7 @@ type BookstoryDetailProps = {
 
   profileImgSrc?: string; // 기본: "/profile.svg"
   subscribeText?: string; // 기본: "구독"
+  isFollowing?: boolean;
   onSubscribeClick?: () => void;
 
   bookTitle: string;
@@ -52,6 +53,7 @@ export default function BookstoryDetail({
   authorId,
   profileImgSrc = "/profile2.svg",
   subscribeText = "구독",
+  isFollowing = false,
   onSubscribeClick,
   bookTitle,
   bookAuthor,
@@ -113,7 +115,10 @@ export default function BookstoryDetail({
           <button
             type="button"
             onClick={onSubscribeClick}
-            className="flex px-4 py-1.5 justify-center items-center rounded-lg bg-primary-2 text-White text-[12px] font-medium shrink-0"
+            className={`flex px-4 py-1.5 justify-center items-center rounded-lg text-White text-[12px] font-medium shrink-0 transition-colors ${isFollowing
+                ? "bg-Subbrown-4 text-primary-3"
+                : "bg-primary-2 text-White"
+              }`}
           >
             {subscribeText}
           </button>
@@ -275,7 +280,10 @@ export default function BookstoryDetail({
             <button
               type="button"
               onClick={onSubscribeClick}
-              className="flex px-[17px] py-[8px]  justify-center items-center rounded-lg bg-primary-2 text-White body_2_1 shrink-0 whitespace-nowrap cursor-pointer"
+              className={`flex px-[17px] py-[8px] justify-center items-center rounded-lg bg-primary-2 text-White body_2_1 shrink-0 whitespace-nowrap cursor-pointer transition-colors ${isFollowing
+                  ? "bg-Subbrown-4 text-primary-3"
+                  : "bg-primary-2 text-White"
+                }`}
             >
               {subscribeText}
             </button>

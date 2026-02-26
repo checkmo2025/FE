@@ -109,6 +109,7 @@ export default function StoriesPage() {
                 likedByMe={story.likedByMe}
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+                isFollowing={story.authorInfo.following}
                 onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
                 hideSubscribeButton={story.writtenByMe}
                 onClick={() => handleCardClick(story.bookStoryId)}
@@ -145,6 +146,7 @@ export default function StoriesPage() {
                 likedByMe={story.likedByMe}
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+                isFollowing={story.authorInfo.following}
                 onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
                 hideSubscribeButton={story.writtenByMe}
                 onClick={() => handleCardClick(story.bookStoryId)}

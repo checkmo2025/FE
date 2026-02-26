@@ -1,6 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { storyService } from "@/services/storyService";
 import { CreateBookStoryRequest, storyKeys } from "@/hooks/queries/useStoryQueries";
+import { toast } from "react-hot-toast";
+
+// Throttle map to prevent spam clicking (per bookStoryId)
+const likeThrottleMap: Record<number, number> = {};
 
 export const useCreateBookStoryMutation = () => {
     const queryClient = useQueryClient();
@@ -49,7 +53,18 @@ export const useToggleStoryLikeMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (bookStoryId: number) => storyService.toggleLikeStory(bookStoryId),
+        mutationFn: async (bookStoryId: number) => {
+            const now = Date.now();
+            const lastTime = likeThrottleMap[bookStoryId] || 0;
+
+            // Throttle: 500ms
+            if (now - lastTime < 500) {
+                return;
+            }
+            likeThrottleMap[bookStoryId] = now;
+
+            return storyService.toggleLikeStory(bookStoryId);
+        },
         onMutate: async (bookStoryId) => {
             // Cancel any outgoing refetches
             await queryClient.cancelQueries({ queryKey: storyKeys.all });
@@ -150,6 +165,9 @@ export const useToggleStoryLikeMutation = () => {
             };
         },
         onError: (err, bookStoryId, context) => {
+            console.error("Failed to toggle like:", err);
+            toast.error("좋아요 상태 업데이트에 실패했습니다.");
+
             if (context?.previousInfiniteStories) {
                 queryClient.setQueryData(storyKeys.infiniteList(), context.previousInfiniteStories);
             }

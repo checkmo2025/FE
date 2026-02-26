@@ -61,6 +61,10 @@ export const useUpdateProfileMutation = () => {
 import { UpdatePasswordRequest } from "@/types/member";
 import { storyKeys } from "@/hooks/queries/useStoryQueries";
 import { memberKeys } from "@/hooks/queries/useMemberQueries";
+import { toast } from "react-hot-toast";
+
+// Throttle map to prevent spam clicking (per nickname)
+const followThrottleMap: Record<string, number> = {};
 
 export const useUpdatePasswordMutation = () => {
     return useMutation({
@@ -78,20 +82,100 @@ export const useToggleFollowMutation = () => {
 
     return useMutation({
         mutationFn: async ({ nickname, isFollowing }: { nickname: string; isFollowing: boolean }) => {
+            const now = Date.now();
+            const lastTime = followThrottleMap[nickname] || 0;
+
+            // Throttle: 500ms
+            if (now - lastTime < 500) {
+                return; // Ignore rapid clicks
+            }
+            followThrottleMap[nickname] = now;
+
             if (isFollowing) {
                 await memberService.unfollowMember(nickname);
             } else {
                 await memberService.followMember(nickname);
             }
         },
-        onSuccess: () => {
-            // Invalidate stories to update "Following" status on cards
-            queryClient.invalidateQueries({ queryKey: storyKeys.all });
-            // Invalidate recommended members
-            queryClient.invalidateQueries({ queryKey: memberKeys.recommended() });
+        onMutate: async ({ nickname, isFollowing }) => {
+            // Cancel outgoing refetches
+            await queryClient.cancelQueries({ queryKey: storyKeys.all });
+            await queryClient.cancelQueries({ queryKey: memberKeys.recommended() });
+
+            // Snapshot previous values
+            const previousRecommendations = queryClient.getQueryData(memberKeys.recommended());
+            const previousInfiniteStories = queryClient.getQueryData(storyKeys.infiniteList());
+            const previousStories = queryClient.getQueryData(storyKeys.list());
+
+            // 1. Optimistically update recommendations
+            if (previousRecommendations) {
+                queryClient.setQueryData(memberKeys.recommended(), (old: any) => {
+                    if (!old || !old.friends) return old;
+                    return {
+                        ...old,
+                        friends: old.friends.map((member: any) =>
+                            member.nickname === nickname
+                                ? { ...member, isFollowing: !isFollowing }
+                                : member
+                        )
+                    };
+                });
+            }
+
+            // 2. Optimistically update infinite stories
+            if (previousInfiniteStories) {
+                queryClient.setQueryData(storyKeys.infiniteList(), (old: any) => {
+                    if (!old || !old.pages) return old;
+                    return {
+                        ...old,
+                        pages: old.pages.map((page: any) => ({
+                            ...page,
+                            basicInfoList: page.basicInfoList.map((story: any) =>
+                                story.authorInfo.nickname === nickname
+                                    ? { ...story, authorInfo: { ...story.authorInfo, following: !isFollowing } }
+                                    : story
+                            )
+                        }))
+                    };
+                });
+            }
+
+            // 3. Optimistically update stories list
+            if (previousStories) {
+                queryClient.setQueryData(storyKeys.list(), (old: any) => {
+                    if (!old || !old.basicInfoList) return old;
+                    return {
+                        ...old,
+                        basicInfoList: old.basicInfoList.map((story: any) =>
+                            story.authorInfo.nickname === nickname
+                                ? { ...story, authorInfo: { ...story.authorInfo, following: !isFollowing } }
+                                : story
+                        )
+                    };
+                });
+            }
+
+            return { previousRecommendations, previousInfiniteStories, previousStories };
         },
-        onError: (error: any) => {
+        onError: (error: any, _variables, context) => {
             console.error("Failed to toggle follow:", error);
+            toast.error("팔로우 상태 업데이트에 실패했습니다.");
+
+            // Rollback
+            if (context?.previousRecommendations) {
+                queryClient.setQueryData(memberKeys.recommended(), context.previousRecommendations);
+            }
+            if (context?.previousInfiniteStories) {
+                queryClient.setQueryData(storyKeys.infiniteList(), context.previousInfiniteStories);
+            }
+            if (context?.previousStories) {
+                queryClient.setQueryData(storyKeys.list(), context.previousStories);
+            }
+        },
+        onSettled: () => {
+            // Refetch to sync with server
+            queryClient.invalidateQueries({ queryKey: storyKeys.all });
+            queryClient.invalidateQueries({ queryKey: memberKeys.recommended() });
         },
     });
 };

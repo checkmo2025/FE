@@ -18,6 +18,7 @@ type Props = {
   onSubscribeClick?: () => void;
   onLikeClick?: (e: React.MouseEvent) => void;
   subscribeText?: string;
+  isFollowing?: boolean;
   hideSubscribeButton?: boolean;
   onClick?: () => void;
 };
@@ -37,6 +38,7 @@ export default function BookStoryCard({
   onSubscribeClick,
   onLikeClick,
   subscribeText = "구독",
+  isFollowing = false,
   hideSubscribeButton = false,
   onClick,
 }: Props) {
@@ -75,7 +77,10 @@ export default function BookStoryCard({
               e.stopPropagation();
               onSubscribeClick?.();
             }}
-            className="h-8 rounded-lg bg-primary-2 px-[17px] body_2_1 text-White whitespace-nowrap"
+            className={`h-8 rounded-lg px-[17px] body_2_1 whitespace-nowrap transition-colors ${isFollowing
+                ? "bg-Subbrown-4 text-primary-3"
+                : "bg-primary-2 text-White"
+              }`}
           >
             {subscribeText}
           </button>
