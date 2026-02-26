@@ -205,8 +205,7 @@ export default function AdminApplicantPage() {
           clubId,
           clubMemberId,
           body: {
-            command: 'REJECT',
-            status: 'MEMBER'
+            command: 'REJECT'
           },
         });
       } else {
@@ -215,7 +214,6 @@ export default function AdminApplicantPage() {
           clubMemberId,
           body: {
             command: 'APPROVE',
-            status: 'MEMBER'
           },
         });
       }
