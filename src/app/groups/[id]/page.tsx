@@ -1,54 +1,125 @@
-﻿'use client';
+﻿"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter, useParams } from 'next/navigation';
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter, useParams } from "next/navigation";
+import { useMemo, useState } from "react";
+import toast from "react-hot-toast";
 
-import { useState } from 'react';
+import ClubCategoryTags from "@/components/base-ui/Group-Search/search_clublist/search_club_category_tags";
+import ButtonWithoutImg from "@/components/base-ui/button_without_img";
+import GroupAdminMenu from "@/components/base-ui/Group/group_admin_menu";
 
+import { useClubhomeQueries } from "@/hooks/queries/useClubhomeQueries";
 
-import ClubCategoryTags from '@/components/base-ui/Group-Search/search_clublist/search_club_category_tags';
-import { BOOK_CATEGORIES } from '@/types/groups/groups';
-import ButtonWithoutImg from '@/components/base-ui/button_without_img';
-import type { ClubModalLink } from '@/types/groups/grouphome';
-import { DUMMY_CLUB_HOME } from './dummy';
-import GroupAdminMenu from '@/components/base-ui/Group/group_admin_menu';
+const DEFAULT_CLUB_IMG = "/ClubDefaultImg.svg";
 
-
-const DEFAULT_CLUB_IMG = '/ClubDefaultImg.svg';
-
-export default function AdminGroupHomePage() {
+export default function GroupDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const groupId = params.id as string;
+  const groupId = Number(params.id);
 
-  const noticeText = DUMMY_CLUB_HOME.recentNotice?.title ?? '공지사항이 없습니다.';
-  const noticeUrl = DUMMY_CLUB_HOME.recentNotice?.url ?? '/groups';
+  const { meQuery, homeQuery, latestNoticeQuery, nextMeetingQuery } = useClubhomeQueries(groupId);
 
-  const imgSrc = DUMMY_CLUB_HOME.profileImageUrl ?? DEFAULT_CLUB_IMG;
-  const clubName = DUMMY_CLUB_HOME.name;
+  const isLoading =
+    meQuery.isLoading || homeQuery.isLoading || latestNoticeQuery.isLoading || nextMeetingQuery.isLoading;
 
-  const joinUrl = DUMMY_CLUB_HOME.links?.joinUrl ?? '/groups';
-  const contactUrl = DUMMY_CLUB_HOME.links?.contactUrl ?? '/contact';
-
-  const participantText = DUMMY_CLUB_HOME.participantTypes
-    .map((p: { description: string }) => p.description)
-    .join(', ');
-
-  const nums = DUMMY_CLUB_HOME.category
-    .map((c: { description: string }) => BOOK_CATEGORIES.indexOf(c.description as never) + 1)
-    .filter((n: number) => n >= 1 && n <= 15);
+  const isError = meQuery.isError || homeQuery.isError;
 
   const [isContactOpen, setIsContactOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(true); 
+
+  if (!Number.isFinite(groupId) || groupId <= 0) {
+    return (
+      <main className="w-full">
+        <div className="t:mx-auto d:mx-0 w-full max-w-[1024px] t:px-3 d:px-0">
+          잘못된 모임 ID
+        </div>
+      </main>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <main className="w-full">
+        <div className="t:mx-auto d:mx-0 w-full max-w-[1024px] t:px-3 d:px-0">
+          <div className="py-10 body_1_2 text-Gray-5">불러오는 중...</div>
+        </div>
+      </main>
+    );
+  }
+
+  if (isError) {
+    return (
+      <main className="w-full">
+        <div className="t:mx-auto d:mx-0 w-full max-w-[1024px] t:px-3 d:px-0">
+          <div className="py-10 body_1_2 text-Red">모임 정보를 불러오지 못했습니다.</div>
+        </div>
+      </main>
+    );
+  }
+
+  const me = meQuery.data!;
+  const home = homeQuery.data!;
+  const latestNotice = latestNoticeQuery.data; // null/undefined 가능
+  const nextMeeting = nextMeetingQuery.data; // null/undefined 가능
+
+  const isAdmin = me.staff === true;
+
+  const noticeText = latestNotice?.title ?? "공지사항이 없습니다.";
+  const hasNotice = Boolean(latestNotice?.id);
+  const noticeUrl = `/groups/${groupId}/notice`;
+
+  const imgSrc = home.profileImageUrl || DEFAULT_CLUB_IMG;
+  const clubName = home.name;
+
+  const participantText = (home.participantTypes ?? []).map((p) => p.description).join(", ");
+
+  const joinUrl = nextMeeting?.redirectUrl ?? null;
+
+  // home.links는 [{link,label}] 형식이라 기존 UI의 contactUrl/modalLinks랑 1:1 매칭이 없음
+  // UI 깨지지 않게: 링크 목록을 contact 모달에 그냥 뿌리는 방식으로 연결
+  const modalLinks = useMemo(() => {
+    const list = home.links ?? [];
+    return list
+      .map((x, idx) => ({
+        id: `${idx}`,
+        url: x.link,
+        label: x.label,
+      }))
+      .filter((x) => (x.url ?? "").trim().length > 0);
+  }, [home.links]);
+
+  const onClickJoin = () => {
+    if (!joinUrl) {
+      toast.error("다음 정기모임이 없습니다.");
+      return;
+    }
+    router.push(joinUrl);
+  };
 
   return (
     <main className="w-full">
-      {/* 최대 1024, d에서만 px-10(40px) */}
+      {/* ✅ 원래 UI 그대로: max 1024, t px-3, d px-0 */}
       <div className="t:mx-auto d:mx-0 w-full max-w-[1024px] t:px-3 d:px-0">
-        {/* 1) 공지 (항상 최상단) */}
-        <Link
-          href={noticeUrl}
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => {
+            if (!hasNotice) {
+              toast.error("공지사항이 없습니다.");
+              return;
+            }
+            router.push(`/groups/${groupId}/notice`);
+          }}
+          onKeyDown={(e) => {
+            if (e.key !== "Enter" && e.key !== " ") return;
+            e.preventDefault();
+            if (!hasNotice) {
+              toast.error("공지사항이 없습니다.");
+              return;
+            }
+            router.push(`/groups/${groupId}/notice`);
+          }}
           className="
             block w-full
             rounded-[8px]
@@ -56,14 +127,13 @@ export default function AdminGroupHomePage() {
             bg-White
             p-4
             cursor-pointer
-            hover:brightness-98 hover:-translate-y-[1px] cursor-pointer
+            hover:brightness-98 hover:-translate-y-[1px]
             focus-visible:outline-none
             focus-visible:ring-2 focus-visible:ring-Subbrown-2
           "
-          aria-label="공지사항으로 이동"
+          aria-label="공지사항"
         >
           <div className="flex items-center gap-3">
-            {/* 종 박스 */}
             <div
               className="
                 shrink-0
@@ -76,14 +146,13 @@ export default function AdminGroupHomePage() {
               <Image src="/Notification3.svg" alt="공지" width={16} height={16} className="object-contain" />
             </div>
 
-            {/* 공지 텍스트 */}
             <p className="body_1_2 text-Gray-5 min-w-0 truncate">{noticeText}</p>
           </div>
-        </Link>
+        </div>
+
         {/* 본문 */}
         <div className="mt-4">
-        
-        {/* Desktop (d): 이미지 | (텍스트 + 버튼은 같은 컬럼, 버튼은 글 하단) */}
+          {/* ✅ Desktop (d): 원래 2컬럼 구조 그대로 */}
           <div className="hidden d:flex items-stretch gap-6">
             {/* 2) 이미지 */}
             <div
@@ -94,14 +163,7 @@ export default function AdminGroupHomePage() {
                 bg-Gray-1
               "
             >
-              <Image
-                src={imgSrc}
-                alt={`${clubName} 프로필 이미지`}
-                fill
-                className="object-cover"
-                sizes="300px"
-                priority
-              />
+              <Image src={imgSrc} alt={`${clubName} 프로필 이미지`} fill className="object-cover" sizes="300px" priority />
             </div>
 
             {/* 3) 텍스트 + 4) 버튼 (같은 컬럼) */}
@@ -114,25 +176,25 @@ export default function AdminGroupHomePage() {
               )}
 
               <div className={isAdmin ? "pr-[113px]" : ""}>
-                <ClubCategoryTags category={nums} />
+                {/* ✅ category는 DTO 그대로(라벨 보여주기) */}
+                <ClubCategoryTags category={home.category ?? []} />
               </div>
-
 
               <div className="mt-3 space-y-2">
                 <div className="flex items-start gap-3">
                   <p className="body_1_3 text-Gray-5 shrink-0">모임 대상</p>
-                  <p className="body_1_3 text-Gray-7 min-w-0 wrap-break-word">{participantText}</p>
+                  <p className="body_1_3 text-Gray-7 min-w-0 wrap-break-word">{participantText || "-"}</p>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <p className="body_1_3 text-Gray-5 shrink-0">활동 지역</p>
-                  <p className="body_1_3 text-Gray-7 min-w-0 wrap-break-word">{DUMMY_CLUB_HOME.region ?? '-'}</p>
+                  <p className="body_1_3 text-Gray-7 min-w-0 wrap-break-word">{home.region ?? "-"}</p>
                 </div>
               </div>
 
               <div className="mt-[19px]">
                 <p className="body_1_3 text-Gray-5 mt-2 whitespace-pre-line wrap-break-word">
-                  {DUMMY_CLUB_HOME.description ?? '설명이 없습니다.'}
+                  {home.description ?? "설명이 없습니다."}
                 </p>
               </div>
 
@@ -140,15 +202,23 @@ export default function AdminGroupHomePage() {
               <div className="mt-auto pt-6 flex gap-3">
                 <ButtonWithoutImg
                   text="이번 모임 바로가기"
-                  onClick={() => router.push(`${Number(groupId)}/notice/4`)}
+                  onClick={onClickJoin}
                   bgColorVar="--Primary_1"
                   borderColorVar="--Primary_1"
                   textColorVar="--White"
                   className="w-[300px] h-[44px] body_1 hover:brightness-90 hover:-translate-y-[1px] cursor-pointer"
                 />
+
+                {/* 링크가 있으면 Contact 활성, 없으면 toast */}
                 <ButtonWithoutImg
                   text="Contact US"
-                  onClick={() => setIsContactOpen(true)}
+                  onClick={() => {
+                    if (modalLinks.length === 0) {
+                      toast.error("연락처/링크 정보가 없습니다.");
+                      return;
+                    }
+                    setIsContactOpen(true);
+                  }}
                   bgColorVar="--Subbrown_4"
                   borderColorVar="--Subbrown_2"
                   textColorVar="--Primary_3"
@@ -158,166 +228,145 @@ export default function AdminGroupHomePage() {
             </div>
           </div>
 
-
-        <div className="flex flex-col gap-6 d:hidden">
-
-          <div className="flex flex-col gap-4 t:flex-row t:items-start t:gap-6">
-            {/* 2) 이미지 */}
-            <div
-              className="
-                relative shrink-0 overflow-hidden
-                w-[110px] h-[110px]
-                t:w-[300px] t:h-[300px]
-                rounded-[4px]
-                bg-Gray-1
-              "
-            >
-              <Image
-                src={imgSrc}
-                alt={`${clubName} 프로필 이미지`}
-                fill
-                priority
-              />
-            </div>
-
-            {/* 3) 내용 */}
-            <div className="min-w-0 flex-1 relative">
-              {isAdmin && (
-                <div className="absolute top-0 right-0 z-10">
-                  <GroupAdminMenu groupId={Number(groupId)} />
-                </div>
-              )}
-
-              <div className={isAdmin ? "pr-[110px]" : ""}>
-                <ClubCategoryTags category={nums} />
-              </div>
-
-              <div className="mt-3 space-y-2">
-                <div className="flex items-start gap-3">
-                  <p className="body_1_3 text-Gray-5 shrink-0">모임 대상</p>
-                  <p className="body_1_3 text-Gray-7 min-w-0 wrap-break-word">{participantText}</p>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <p className="body_1_3 text-Gray-5 shrink-0">활동 지역</p>
-                  <p className="body_1_3 text-Gray-7 min-w-0 wrap-break-word">{DUMMY_CLUB_HOME.region ?? '-'}</p>
-                </div>
-              </div>
-
-              <div className="mt-[19px]">
-                <p className="body_1_3 text-Gray-5 mt-2 whitespace-pre-line wrap-break-word">
-                  {DUMMY_CLUB_HOME.description ?? '설명이 없습니다.'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/*  버튼 태블릿/모바일 (전체 하단) */}
-          <div className="w-full flex flex-col t:flex-row gap-3">
-            <ButtonWithoutImg
-              text="이번 모임 바로가기"
-              onClick={() => router.push(joinUrl)}
-              bgColorVar="--Primary_1"
-              borderColorVar="--Primary_1"
-              textColorVar="--White"
-              className="w-full d:w-[300px] h-[44px] body_1 hover:brightness-90 hover:-translate-y-[1px] cursor-pointer"
-            />
-            <ButtonWithoutImg
-              text="Contact US"
-              onClick={() => setIsContactOpen(true)}
-              bgColorVar="--Subbrown_4"
-              borderColorVar="--Subbrown_2"
-              textColorVar="--Primary_3"
-              className="w-full d:w-[300px] h-[44px] body_1 hover:brightness-95 hover:-translate-y-[1px] cursor-pointer"
-            />
-          </div>
-        </div>
-    </div>
-    </div>
-
-    {/* Contact Modal */}
-    {isContactOpen && (
-      <div
-        className="
-          fixed inset-0 z-50
-          flex items-center justify-center
-          bg-black/30
-          px-4
-        "
-        onClick={() => setIsContactOpen(false)}
-        role="dialog"
-        aria-modal="true"
-      >
-        {/* 모달 박스 (바깥 클릭 닫힘 방지) */}
-        <div
-          className="
-            w-full
-            max-w-[500px]
-            rounded-[8px]
-            bg-background
-            px-[20px] py-[24px]
-            flex flex-col items-start gap-6
-            max-t:w-[339px]
-          "
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* 헤더: 타이틀 + X */}
-          <div className="w-full flex items-center justify-between">
-            <p className="subhead_4_1 text-Gray-7 ">Contact Us</p>
-
-            <button
-              type="button"
-              onClick={() => setIsContactOpen(false)}
-              className="shrink-0 hover:brightness-0 cursor-pointer hover:scale-[1.07]"
-              aria-label="닫기"
-            >
-              {/* TODO: 실제 X 아이콘 파일명 맞춰서 교체 */}
-              <Image
-                src="/icon_minus_1.svg"
-                alt=""
-                width={24}
-                height={24}
-                className="object-contain"
-              />
-            </button>
-          </div>
-
-          {/* 리스트 */}
-          <div className="w-full rounded-[8px] overflow-hidden items-center">
-            {(DUMMY_CLUB_HOME.modalLinks ?? []).map((item: ClubModalLink) => (
-              <a
-                key={item.id}
-                href={/^(https?:\/\/|\/)/.test(item.url) ? item.url : '#'}
-                rel="noreferrer"
+          {/* ✅ Mobile/Tablet: 원래 구조 그대로 */}
+          <div className="flex flex-col gap-6 d:hidden">
+            <div className="flex flex-col gap-4 t:flex-row t:items-start t:gap-6">
+              {/* 2) 이미지 */}
+              <div
                 className="
-                  w-full
-                  flex items-center gap-2
-                  px-5 py-[10px]
-                  border-b border-Subbrown-4
-                  last:border-b-0
-                  hover:bg-Subbrown-4/40
+                  relative shrink-0 overflow-hidden
+                  w-[110px] h-[110px]
+                  t:w-[300px] t:h-[300px]
+                  rounded-[4px]
+                  bg-Gray-1
                 "
               >
-                {/* TODO: 실제 링크 아이콘 파일명 맞춰서 교체 */}
-                <Image
-                  src="/link.svg"
-                  alt=""
-                  width={24}
-                  height={24}
-                  className="object-contain shrink-0"
-                />
+                <Image src={imgSrc} alt={`${clubName} 프로필 이미지`} fill priority className="object-cover" />
+              </div>
 
-                {/* 내부 글씨: 모바일만 body_2_3, 그 외 body_1_3 */}
-                <p className="text-Gray-5 body_2_3 t:body_1_3">
-                  {item.url}
-                </p>
-              </a>
-            ))}
+              {/* 3) 내용 */}
+              <div className="min-w-0 flex-1 relative">
+                {isAdmin && (
+                  <div className="absolute top-0 right-0 z-10">
+                    <GroupAdminMenu groupId={Number(groupId)} />
+                  </div>
+                )}
+
+                <div className={isAdmin ? "pr-[110px]" : ""}>
+                  <ClubCategoryTags category={home.category ?? []} />
+                </div>
+
+                <div className="mt-3 space-y-2">
+                  <div className="flex items-start gap-3">
+                    <p className="body_1_3 text-Gray-5 shrink-0">모임 대상</p>
+                    <p className="body_1_3 text-Gray-7 min-w-0 wrap-break-word">{participantText || "-"}</p>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <p className="body_1_3 text-Gray-5 shrink-0">활동 지역</p>
+                    <p className="body_1_3 text-Gray-7 min-w-0 wrap-break-word">{home.region ?? "-"}</p>
+                  </div>
+                </div>
+
+                <div className="mt-[19px]">
+                  <p className="body_1_3 text-Gray-5 mt-2 whitespace-pre-line wrap-break-word">
+                    {home.description ?? "설명이 없습니다."}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* 버튼 태블릿/모바일 (전체 하단) */}
+            <div className="w-full flex flex-col t:flex-row gap-3">
+              <ButtonWithoutImg
+                text="이번 모임 바로가기"
+                onClick={onClickJoin}
+                bgColorVar="--Primary_1"
+                borderColorVar="--Primary_1"
+                textColorVar="--White"
+                className="w-full d:w-[300px] h-[44px] body_1 hover:brightness-90 hover:-translate-y-[1px] cursor-pointer"
+              />
+
+              <ButtonWithoutImg
+                text="Contact US"
+                onClick={() => {
+                  if (modalLinks.length === 0) {
+                    toast.error("연락처/링크 정보가 없습니다.");
+                    return;
+                  }
+                  setIsContactOpen(true);
+                }}
+                bgColorVar="--Subbrown_4"
+                borderColorVar="--Subbrown_2"
+                textColorVar="--Primary_3"
+                className="w-full d:w-[300px] h-[44px] body_1 hover:brightness-95 hover:-translate-y-[1px] cursor-pointer"
+              />
+            </div>
           </div>
         </div>
       </div>
-    )}
 
+      {/* Contact Modal (원래 UI 그대로, 데이터만 home.links로 채움) */}
+      {isContactOpen && (
+        <div
+          className="
+            fixed inset-0 z-50
+            flex items-center justify-center
+            bg-black/30
+            px-4
+          "
+          onClick={() => setIsContactOpen(false)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="
+              w-full
+              max-w-[500px]
+              rounded-[8px]
+              bg-background
+              px-[20px] py-[24px]
+              flex flex-col items-start gap-6
+              max-t:w-[339px]
+            "
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-full flex items-center justify-between">
+              <p className="subhead_4_1 text-Gray-7 ">Contact Us</p>
+
+              <button
+                type="button"
+                onClick={() => setIsContactOpen(false)}
+                className="shrink-0 hover:brightness-0 cursor-pointer hover:scale-[1.07]"
+                aria-label="닫기"
+              >
+                <Image src="/icon_minus_1.svg" alt="" width={24} height={24} className="object-contain" />
+              </button>
+            </div>
+
+            <div className="w-full rounded-[8px] overflow-hidden items-center">
+              {modalLinks.map((item) => (
+                <a
+                  key={item.id}
+                  href={/^(https?:\/\/|\/)/.test(item.url) ? item.url : "#"}
+                  rel="noreferrer"
+                  className="
+                    w-full
+                    flex items-center gap-2
+                    px-5 py-[10px]
+                    border-b border-Subbrown-4
+                    last:border-b-0
+                    hover:bg-Subbrown-4/40
+                  "
+                >
+                  <Image src="/link.svg" alt="" width={24} height={24} className="object-contain shrink-0" />
+                  <p className="text-Gray-5 body_2_3 t:body_1_3">{item.label ? `${item.label} · ${item.url}` : item.url}</p>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
