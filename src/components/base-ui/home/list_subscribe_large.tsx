@@ -4,8 +4,8 @@ import Image from 'next/image';
 
 type ListSubscribeElementLargeProps = {
   name: string;
-  subscribingCount: number;
-  subscribersCount: number;
+  subscribingCount?: number;
+  subscribersCount?: number;
   profileSrc?: string;
   onSubscribeClick?: () => void;
   buttonText?: string;
@@ -35,9 +35,11 @@ function ListSubscribeElementLarge({
       <div className="flex flex-row flex-1 min-w-0 gap-[8px] items-center">
         <div className="flex flex-col min-w-0 flex-1">
           <p className="text-Gray-7 body_1 truncate">{name}</p>
-          <p className="body_2_3 text-Gray-3">
-            구독중 {subscribingCount} 구독자 {subscribersCount}
-          </p>
+          {subscribingCount !== undefined && subscribersCount !== undefined && (
+            <p className="body_2_3 text-Gray-3">
+              구독중 {subscribingCount} 구독자 {subscribersCount}
+            </p>
+          )}
         </div>
 
         <button
@@ -54,30 +56,49 @@ function ListSubscribeElementLarge({
 
 type ListSubscribeLargeProps = {
   height?: string;
+  users?: Array<{
+    nickname: string;
+    profileImageUrl?: string;
+    subscribingCount?: number;
+    subscribersCount?: number;
+  }>;
+  isError?: boolean;
 };
 
-export default function ListSubscribeLarge({ height = 'h-[380px]' }: ListSubscribeLargeProps) {
-  const users = [
-    { id: '1', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-    { id: '2', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-    { id: '3', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-    { id: '4', name: 'hy_0716', subscribingCount: 17, subscribersCount: 32 },
-  ];
+export default function ListSubscribeLarge({
+  height = "h-[380px]",
+  users = [],
+  isError = false,
+}: ListSubscribeLargeProps) {
 
   return (
-    <section className={`w-[336px] ${height} rounded-lg border-2 border-Subbrown-4 bg-stone-50 p-5`}>
+    <section
+      className={`w-[336px] ${height} rounded-lg border-2 border-Subbrown-4 bg-stone-50 p-5`}
+    >
       <h3 className="subhead_2 text-Gray-7">사용자 추천</h3>
 
-      <div className="mt-3 flex flex-col gap-3">
-        {users.map((u) => (
-          <ListSubscribeElementLarge
-            key={u.id}
-            name={u.name}
-            subscribingCount={u.subscribingCount}
-            subscribersCount={u.subscribersCount}
-            onSubscribeClick={() => console.log('subscribe', u.id)}
-          />
-        ))}
+      <div className="mt-3 flex flex-col gap-3 h-full">
+        {isError && (
+          <div className="flex flex-1 items-center justify-center pt-10">
+            <p className="text-Gray-4 text-[14px] text-center">추천 목록을 불러오지 못했어요.</p>
+          </div>
+        )}
+        {!isError && users.length === 0 && (
+          <div className="flex flex-1 items-center justify-center pt-10">
+            <p className="text-Gray-4 text-[14px] text-center">사용자 추천이 없습니다.</p>
+          </div>
+        )}
+        {!isError && users.length > 0 &&
+          users.map((u) => (
+            <ListSubscribeElementLarge
+              key={u.nickname}
+              name={u.nickname}
+              subscribingCount={u.subscribingCount}
+              subscribersCount={u.subscribersCount}
+              profileSrc={u.profileImageUrl}
+              onSubscribeClick={() => console.log("subscribe", u.nickname)}
+            />
+          ))}
       </div>
     </section>
   );

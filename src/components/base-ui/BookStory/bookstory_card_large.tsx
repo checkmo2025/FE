@@ -15,21 +15,10 @@ type Props = {
   onSubscribeClick?: () => void;
   subscribeText?: string;
   onClick?: () => void;
+  hideSubscribeButton?: boolean;
 };
 
-function timeAgo(iso: string) {
-  const diff = Date.now() - new Date(iso).getTime();
-  const minutes = Math.floor(diff / 60000);
-
-  if (minutes < 1) return "방금";
-  if (minutes < 60) return `${minutes}분 전`;
-
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}시간 전`;
-
-  const days = Math.floor(hours / 24);
-  return `${days}일 전`;
-}
+import { formatTimeAgo } from "@/utils/time";
 
 export default function BookStoryCardLarge({
   authorName,
@@ -44,6 +33,7 @@ export default function BookStoryCardLarge({
   onSubscribeClick,
   subscribeText = "구독",
   onClick,
+  hideSubscribeButton = false,
 }: Props) {
   return (
     <div
@@ -65,19 +55,21 @@ export default function BookStoryCardLarge({
         <div className="flex-1 min-w-0">
           <p className="truncate body_1 text-Gray-7">{authorName}</p>
           <p className="truncate body_2_3 text-Gray-3">
-            {timeAgo(createdAt)} 조회수 {viewCount}
+            {formatTimeAgo(createdAt)} 조회수 {viewCount}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onSubscribeClick?.();
-          }}
-          className="h-8 rounded-lg bg-primary-2 px-[17px] body_2_1 text-White whitespace-nowrap"
-        >
-          {subscribeText}
-        </button>
+        {!hideSubscribeButton && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSubscribeClick?.();
+            }}
+            className="h-8 rounded-lg bg-primary-2 px-[17px] body_2_1 text-White whitespace-nowrap"
+          >
+            {subscribeText}
+          </button>
+        )}
       </div>
 
       {/* 책 이미지 */}

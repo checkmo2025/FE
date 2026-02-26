@@ -4,6 +4,8 @@ import Image from "next/image";
 import NewsList from "@/components/base-ui/News/news_list";
 import TodayRecommendedBooks from "@/components/base-ui/News/today_recommended_books";
 import FloatingFab from "@/components/base-ui/Float";
+import { useRecommendedBooksQuery } from "@/hooks/queries/useBookQueries";
+import { useMemo } from "react";
 
 const DUMMY_NEWS = [
   {
@@ -40,34 +42,18 @@ const DUMMY_NEWS = [
   },
 ];
 
-const DUMMY_BOOKS = [
-  {
-    id: 1,
-    imgUrl: "/booksample.svg",
-    title: "책 제목",
-    author: "작가작가작가",
-  },
-  {
-    id: 2,
-    imgUrl: "/booksample.svg",
-    title: "책 제목",
-    author: "작가작가작가",
-  },
-  {
-    id: 3,
-    imgUrl: "/booksample.svg",
-    title: "책 제목",
-    author: "작가작가작가",
-  },
-  {
-    id: 4,
-    imgUrl: "/booksample.svg",
-    title: "책 제목",
-    author: "작가작가작가",
-  },
-];
-
 export default function NewsPage() {
+  const { data: recommendedData, isLoading: isLoadingRecommended } = useRecommendedBooksQuery();
+
+  const recommendedBooks = useMemo(() => {
+    return (recommendedData?.detailInfoList || []).map((book) => ({
+      id: book.isbn,
+      imgUrl: book.imgUrl,
+      title: book.title,
+      author: book.author,
+    }));
+  }, [recommendedData]);
+
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 overflow-x-hidden scrollbar-hide">
       <div className="flex justify-center items-center mt-7 mb-3 t:mb-6">
@@ -87,7 +73,9 @@ export default function NewsPage() {
       </div>
 
       {/* 오늘의 추천 */}
-      <TodayRecommendedBooks books={DUMMY_BOOKS} className="d:hidden" />
+      {!isLoadingRecommended && recommendedBooks.length > 0 && (
+        <TodayRecommendedBooks books={recommendedBooks} className="d:hidden" />
+      )}
 
       {/* 뉴스 리스트 */}
       <div className="flex flex-col gap-4 items-center w-full max-w-[1040px] mx-auto">
@@ -105,7 +93,9 @@ export default function NewsPage() {
 
       <div className="w-full my-8 border-b-4 border-Gray-1"></div>
 
-      <TodayRecommendedBooks books={DUMMY_BOOKS} className="hidden d:flex" />
+      {!isLoadingRecommended && recommendedBooks.length > 0 && (
+        <TodayRecommendedBooks books={recommendedBooks} className="hidden d:flex" />
+      )}
 
       <FloatingFab
         iconSrc="/icons_calling.svg"

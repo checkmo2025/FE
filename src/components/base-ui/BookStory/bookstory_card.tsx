@@ -14,21 +14,11 @@ type Props = {
   commentCount?: number;
   onSubscribeClick?: () => void;
   subscribeText?: string;
+  hideSubscribeButton?: boolean;
+  onClick?: () => void;
 };
 
-function timeAgo(iso: string) {
-  const diff = Date.now() - new Date(iso).getTime();
-  const minutes = Math.floor(diff / 60000);
-
-  if (minutes < 1) return "방금";
-  if (minutes < 60) return `${minutes}분 전`;
-
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}시간 전`;
-
-  const days = Math.floor(hours / 24);
-  return `${days}일 전`;
-}
+import { formatTimeAgo } from "@/utils/time";
 
 export default function BookStoryCard({
   authorName,
@@ -42,10 +32,13 @@ export default function BookStoryCard({
   commentCount = 1,
   onSubscribeClick,
   subscribeText = "구독",
+  hideSubscribeButton = false,
+  onClick,
 }: Props) {
   return (
     <div
-      className="flex flex-col overflow-hidden rounded-lg border-2 border-Subbrown-4 bg-White hover:border-primary-2 transition-colors
+      onClick={onClick}
+      className="flex flex-col overflow-hidden rounded-lg border-2 border-Subbrown-4 bg-White hover:border-primary-2 transition-colors cursor-pointer
       /* 모바일: 161px x 243px */
       w-[161px] h-[243px]
       /* 데스크탑(md 이상): 336px x 380px */
@@ -65,16 +58,21 @@ export default function BookStoryCard({
         <div className="flex-1 min-w-0">
           <p className="truncate body_1 text-Gray-7">{authorName}</p>
           <p className="truncate body_2_3 text-Gray-3">
-            {timeAgo(createdAt)} 조회수 {viewCount}
+            {formatTimeAgo(createdAt)} 조회수 {viewCount}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={onSubscribeClick}
-          className="h-8 rounded-lg bg-primary-2 px-[17px] body_2_1 text-White whitespace-nowrap"
-        >
-          {subscribeText}
-        </button>
+        {!hideSubscribeButton && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSubscribeClick?.();
+            }}
+            className="h-8 rounded-lg bg-primary-2 px-[17px] body_2_1 text-White whitespace-nowrap"
+          >
+            {subscribeText}
+          </button>
+        )}
       </div>
 
       {/* 2. 책 이미지 (모바일: flex-1 / 데스크탑: h-36) */}

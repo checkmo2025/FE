@@ -79,10 +79,10 @@ export default function BookshelfModal({ isOpen, onClose, onSelect }: Props) {
                   author={book.author}
                   category={book.category}
                   rating={book.rating}
-                  onTopicClick={() => {}}
-                  onReviewClick={() => {}}
-                  onMeetingClick={() => {}}
-                />
+                  onTopicClick={() => { } }
+                  onReviewClick={() => { } }
+                  onMeetingClick={() => { } } 
+                  imageUrl={''}                />
               </div>
             ))}
           </div>

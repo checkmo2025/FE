@@ -3,41 +3,67 @@
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { toast } from "react-hot-toast";
 import BookstoryText from "@/components/base-ui/BookStory/bookstory_text";
 import BookstoryChoosebook from "@/components/base-ui/BookStory/bookstory_choosebook";
 import BookSelectModal from "@/components/layout/BookSelectModal";
+import { useBookDetailQuery } from "@/hooks/queries/useBookQueries";
+import { useCreateBookStoryMutation } from "@/hooks/mutations/useStoryMutations";
 
 function StoryNewContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const bookId = searchParams.get("bookId");
+  const isbn = searchParams.get("isbn");
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
   const [isBookSelectModalOpen, setIsBookSelectModalOpen] = useState(false);
 
-  // 더미 데이터 
-  const selectedBook = bookId
-    ? {
-        id: Number(bookId),
-        imgUrl: "/booksample.svg",
-        title: "어린 왕자",
-        author: "김개미, 연수",
-        detail: "최대 500(넘어가면...으로)",
-      }
-    : null;
+  const { data: selectedBook } = useBookDetailQuery(isbn || "");
+  const createStoryMutation = useCreateBookStoryMutation();
 
   const handleCancel = () => {
     router.back();
   };
 
   const handleSubmit = () => {
-    // TODO: 실제 저장 로직 구현
-    console.log("저장:", { title, detail });
-    router.push("/stories");
+    if (!selectedBook) {
+      toast.error("책을 선택해 주세요.");
+      return;
+    }
+    if (!title.trim()) {
+      toast.error("제목을 입력해 주세요.");
+      return;
+    }
+    if (!detail.trim()) {
+      toast.error("내용을 입력해 주세요.");
+      return;
+    }
+
+    createStoryMutation.mutate({
+      bookInfo: {
+        isbn: selectedBook.isbn,
+        title: selectedBook.title,
+        author: selectedBook.author,
+        imgUrl: selectedBook.imgUrl,
+        publisher: selectedBook.publisher,
+        description: selectedBook.description,
+      },
+      title,
+      description: detail,
+    }, {
+      onSuccess: () => {
+        toast.success("스토리가 등록되었습니다!");
+        router.push("/stories");
+      },
+      onError: (error) => {
+        console.error("스토리 등록 실패:", error);
+        toast.error("스토리 등록에 실패했습니다. 다시 시도해 주세요.");
+      }
+    });
   };
 
-  const handleBookSelect = (selectedBookId: number) => {
-    router.push(`/stories/new?bookId=${selectedBookId}`);
+  const handleBookSelect = (selectedIsbn: string) => {
+    router.push(`/stories/new?isbn=${selectedIsbn}`);
   };
 
   return (
@@ -84,7 +110,7 @@ function StoryNewContent() {
               bookUrl={selectedBook.imgUrl}
               bookName={selectedBook.title}
               author={selectedBook.author}
-              bookDetail={selectedBook.detail}
+              bookDetail={selectedBook.description}
               onButtonClick={() => {
                 setIsBookSelectModalOpen(true);
               }}
@@ -125,9 +151,10 @@ function StoryNewContent() {
             <button
               type="button"
               onClick={handleSubmit}
-              className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:opacity-90 transition-opacity"
+              disabled={createStoryMutation.isPending}
+              className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:opacity-90 transition-opacity disabled:opacity-50"
             >
-              등록
+              {createStoryMutation.isPending ? "등록 중..." : "등록"}
             </button>
           </div>
         </div>

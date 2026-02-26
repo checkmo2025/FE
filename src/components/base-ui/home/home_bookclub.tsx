@@ -2,14 +2,16 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
-export type GroupSummary = { id: string; name: string };
+import { MyClubInfo } from '@/types/club';
 
 type Props = {
-  groups: GroupSummary[];
+  groups: MyClubInfo[];
 };
 
 export default function HomeBookclub({ groups }: Props) {
+  const router = useRouter();
   const count = groups.length;
   const isMany = count >= 5;
 
@@ -28,8 +30,8 @@ export default function HomeBookclub({ groups }: Props) {
     >
       {/* 0개 */}
       {count === 0 && (
-        <div className="">
-          <img src="logo2.svg" alt="로고" className="mx-auto mb-4 t:mt-[118px]" />
+        <div className="flex flex-col items-center justify-center h-full">
+          <img src="logo2.svg" alt="로고" className="mx-auto mb-4" />
         </div>
       )}
 
@@ -43,17 +45,17 @@ export default function HomeBookclub({ groups }: Props) {
         >
           {displayGroups.map((group) => (
             <div
-              key={group.id}
-              className="flex w-full t:w-[288px] h-[52px] py-3 px-4 items-center rounded-lg bg-white"
+              key={group.clubId}
+              className="flex w-full t:w-[288px] h-[52px] py-3 px-4 items-center rounded-lg bg-white shrink-0"
             >
-              <span className="text-Gray-7 h-6 subhead_4_1 truncate">{group.name}</span>
+              <span className="text-Gray-7 h-6 subhead_4_1 truncate">{group.clubName}</span>
             </div>
           ))}
         </div>
       )}
 
       {/* 하단 */}
-      <div className="mt-auto pt-3">
+      <div className="mt-auto pt-3 shrink-0">
         {isMany ? (
           <button
             type="button"
@@ -91,8 +93,9 @@ export default function HomeBookclub({ groups }: Props) {
 
             <button
               type="button"
+              onClick={() => router.push('/groups/create')}
               className="w-full h-[32px] t:h-[48px] py-3 rounded-[6px] bg-[#6B5448] text-white
-                        text-[13px] flex items-center justify-center gap-2"
+                        text-[13px] flex items-center justify-center gap-2 cursor-pointer"
             >
               <Image
                 src="/icon_plus.svg"

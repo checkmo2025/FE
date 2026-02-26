@@ -1,45 +1,75 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams, useParams } from "next/navigation";
+
 import BookDetailCard from "@/components/base-ui/Bookcase/BookDetailCard";
-import BookDetailNav from "@/components/base-ui/Bookcase/BookDetailNav";
-import MeetingInfo from "@/components/base-ui/Bookcase/MeetingInfo";
+import BookDetailNav, { Tab as TabKey } from "@/components/base-ui/Bookcase/BookDetailNav";
 import DebateSection from "./DebateSection";
-import TeamFilter from "@/components/base-ui/Bookcase/bookid/TeamFilter";
-import TeamSection from "@/components/base-ui/Bookcase/bookid/TeamSection";
 import ReviewSection from "./ReviewSection";
+import MeetingTabSection from "./MeetingTabSection";
 
 import {
   MOCK_BOOK_DETAIL,
-  MOCK_MEETING_INFO,
   MOCK_DEBATE_TOPICS,
-  MOCK_TEAMS_DATA,
   MOCK_REVIEWS,
-} from './dummy';
+} from "./dummy";
+
+
+function isTabKey(v: string | null): v is TabKey {
+  return v === "topic" || v === "review" || v === "meeting";
+}
 
 export default function AdminBookDetailPage() {
-  const [activeTab, setActiveTab] = useState<"발제" | "한줄평" | "정기모임">(
-    "정기모임"
-  );
-  const [MyprofileImageUrl, setMyprofileImageUrl] = useState("/profile4.svg");
-  const [MyName, setMyName] = useState("aasdfsad");
+  const router = useRouter();
+  const pathname = usePathname(); // /groups/201/bookcase/3
+  const searchParams = useSearchParams();
+  const params = useParams();
 
-  // 발제
+  const groupId = params.id as string;
+  const meetingIdParam = (params.meetingId ?? params.bookId) as string; // 폴더명 차이 커버
+  const meetingId = Number(meetingIdParam);
+
+  const [activeTab, setActiveTab] = useState<TabKey>("meeting");
+
+  const [myProfileImageUrl] = useState("/profile4.svg");
+  const [myName] = useState("aasdfsad");
+
   const [isDebateWriting, setIsDebateWriting] = useState(false);
-
   const [isReviewWriting, setIsReviewWriting] = useState(false);
-  // 조 선택 상태 관리
-  const [selectedTeam, setSelectedTeam] = useState("A조");
-  
-  // 현재 선택된 조의 데이터 찾기
-  const currentTeamData = MOCK_TEAMS_DATA.find(
-    (t) => t.teamName === selectedTeam
-  );
+
+  // URL -> state 동기화 (직접 ?tab=topic 들어와도 맞춰줌)
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (isTabKey(tab) && tab !== activeTab) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setActiveTab(tab);
+    }
+    if (!tab) {
+      const next = new URLSearchParams(searchParams.toString());
+      next.set("tab", "meeting");
+      router.replace(`${pathname}?${next.toString()}`, { scroll: false });
+    }
+
+  }, [searchParams]);
+
+  // state -> URL 동기화 (탭 바꾸면 ?tab=도 같이 바뀜)
+  const handleTabChange = (tab: TabKey) => {
+    setActiveTab(tab);
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("tab", tab);
+    router.replace(`${pathname}?${next.toString()}`, { scroll: false });
+  };
+
+  const handleManageTeams = () => {
+    router.push(
+      `/groups/${groupId}/admin/bookcase/${meetingId}?meetingName=${encodeURIComponent(MOCK_BOOK_DETAIL.title)}`
+    );
+  };
 
   return (
     <div className="flex flex-col w-full items-start gap-[24px]">
       <div className="flex flex-col w-full items-start gap-[40px]">
-        {/* 1. 도서 상세 카드 */}
         <BookDetailCard
           title={MOCK_BOOK_DETAIL.title}
           author={MOCK_BOOK_DETAIL.author}
@@ -49,72 +79,47 @@ export default function AdminBookDetailPage() {
           rating={MOCK_BOOK_DETAIL.rating}
         />
 
-        {/* 2. 하단 상세 정보 영역 */}
         <div className="flex w-full flex-col items-start gap-[24px] self-stretch">
-          {/* 내비게이션 바 */}
-          <BookDetailNav activeTab={activeTab} onTabChange={setActiveTab} />
+          <BookDetailNav activeTab={activeTab} onTabChange={handleTabChange} />
 
-          {/* 탭 컨텐츠 영역 */}
           <div className="flex flex-col items-start gap-[24px] self-stretch">
-            {activeTab === "정기모임" && (
-              <>
-                {/* 2-1. 모임 정보 카드 */}
-                <MeetingInfo
-                  meetingName={MOCK_MEETING_INFO.name}
-                  date={MOCK_MEETING_INFO.date}
-                  location={MOCK_MEETING_INFO.location}
-                />
-
-                {/* 2-2. 조별 멤버 리스트 영역 (Frame 2087328794) */}
-                <div className="flex flex-col items-start gap-[16px] self-stretch">
-                  {/* 조 선택 필터 (Frame 2087328778) */}
-                  <TeamFilter
-                    teams={MOCK_TEAMS_DATA.map((t) => t.teamName)}
-                    selectedTeam={selectedTeam}
-                    onSelect={setSelectedTeam}
-                  />
-
-                  {/* 선택된 조의 멤버 리스트 섹션 (Frame 2087328793) */}
-                  {currentTeamData && (
-                    <TeamSection
-                      teamName={currentTeamData.teamName}
-                      members={currentTeamData.members}
-                    />
-                  )}
-                </div>
-              </>
+            {activeTab === "meeting" && (
+              <MeetingTabSection
+                meetingId={meetingId}
+                onManageTeamsClick={handleManageTeams}
+              />
             )}
 
-            {activeTab === '발제' && (
+            {activeTab === "topic" && (
               <DebateSection
-                myName={MyName}
-                myProfileImageUrl={MyprofileImageUrl}
+                myName={myName}
+                myProfileImageUrl={myProfileImageUrl}
                 defaultProfileUrl="/profile4.svg"
                 isWriting={isDebateWriting}
                 onToggleWriting={() => setIsDebateWriting((v) => !v)}
                 onSendDebate={(text) => {
-                  console.log('send:', text);
-                  // TODO: API 붙일 곳
+                  console.log("topic send:", { meetingId, text });
+                  // TODO: topic API 연결부
                   return true;
                 }}
                 items={MOCK_DEBATE_TOPICS}
               />
             )}
 
-
-            {activeTab === '한줄평' && (
+            {activeTab === "review" && (
               <ReviewSection
-                myName={MyName}
-                myProfileImageUrl={MyprofileImageUrl}
+                myName={myName}
+                myProfileImageUrl={myProfileImageUrl}
                 defaultProfileUrl="/profile4.svg"
                 isWriting={isReviewWriting}
                 onToggleWriting={() => setIsReviewWriting((v) => !v)}
                 onSendReview={(text, rating) => {
-                  console.log('review send:', { text, rating });
+                  console.log("review send:", { meetingId, text, rating });
+                  // TODO: review API 연결부
                   return true;
                 }}
                 items={MOCK_REVIEWS}
-                onClickMore={(id) => console.log('more:', id)}
+                onClickMore={(id) => console.log("more:", id)}
               />
             )}
           </div>

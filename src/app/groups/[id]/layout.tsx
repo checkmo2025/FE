@@ -18,7 +18,7 @@ export default function GroupDetailLayout({
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
   // 공지사항 작성 페이지, 책장 작성 페이지, 회원 관리 페이지는 레이아웃 적용 X
-  if (pathname?.includes('/admin/notice/new') || pathname?.includes('/admin/bookcase/new') || pathname?.includes('/admin/members') || pathname?.includes('/admin/applicant')) {
+  if (pathname?.includes('/admin/notice/new') || pathname?.includes('/admin/bookcase') || pathname?.includes('/admin/members') || pathname?.includes('/admin/applicant')) {
     return <>{children}</>;
   }
 

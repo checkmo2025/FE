@@ -1,16 +1,18 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import SearchBookResult from "@/components/base-ui/Search/search_bookresult";
+import { useInfiniteBookSearchQuery } from "@/hooks/queries/useBookQueries";
+import { useInView } from "react-intersection-observer";
 
 function SearchContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const query = searchParams.get("q") || "";
   const [searchValue, setSearchValue] = useState(query);
-  const [likedResults, setLikedResults] = useState<Record<number, boolean>>({});
+  const [likedResults, setLikedResults] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     setSearchValue(query);
@@ -28,30 +30,31 @@ function SearchContent() {
     }
   };
 
-  // 더미 검색 결과 데이터
-  const searchResults = [
-    {
-      id: 1,
-      imgUrl: "/booksample.svg",
-      title: "어린 왕자",
-      author: "김개미, 연수",
-      detail: "최대 500(넘어가면...으로)",
-    },
-    {
-      id: 2,
-      imgUrl: "/booksample.svg",
-      title: "어린 왕자",
-      author: "김개미, 연수",
-      detail: "최대 500(넘어가면...으로)",
-    },
-    {
-      id: 3,
-      imgUrl: "/booksample.svg",
-      title: "어린 왕자",
-      author: "김개미, 연수",
-      detail: "최대 500(넘어가면...으로)",
-    },
-  ];
+  const {
+    data: searchData,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteBookSearchQuery(query);
+
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const searchResults = useMemo(() => {
+    return searchData?.pages.flatMap((page) => page.detailInfoList) || [];
+  }, [searchData]);
+
+  const totalResults = useMemo(() => {
+    // Note: If the API doesn't return total count, we can only show what's loaded 
+    // or just say "many" or keep it as is. Assuming we show loaded count for now.
+    return searchResults.length;
+  }, [searchResults]);
 
   return (
     <>
@@ -100,28 +103,35 @@ function SearchContent() {
       <div className="max-w-[1040px] mx-auto t:px-8 min-h-screen">
         <div className="px-4 py-6 t:px-6 t:py-8">
           <p className="max-w-[1040px] text-Gray-4 body_1_3 t:subhead_4_1 ml-2 t:ml-0 mb-4">
-            총 <span className="text-primary-3">{searchResults.length}개</span>의 검색결과가 있습니다.
+            총 <span className="text-primary-3">{totalResults}개</span>의 검색결과가 있습니다.
           </p>
           <div className="flex flex-col gap-4 justify-center items-center">
             {searchResults.map((result) => (
               <SearchBookResult
-                key={result.id}
+                key={result.isbn}
                 imgUrl={result.imgUrl}
                 title={result.title}
                 author={result.author}
-                detail={result.detail}
-                liked={likedResults[result.id] || false}
+                detail={result.description}
+                liked={likedResults[result.isbn] || false}
                 onLikeChange={(liked) =>
-                  setLikedResults((prev) => ({ ...prev, [result.id]: liked }))
+                  setLikedResults((prev) => ({ ...prev, [result.isbn]: liked }))
                 }
                 onPencilClick={() => {
-                  router.push(`/books/${result.id}`); //필요한지 확인 필요
+                  router.push(`/books/${result.isbn}`); //필요한지 확인 필요
                 }}
                 onCardClick={() => {
-                  router.push(`/books/${result.id}`);
+                  router.push(`/books/${result.isbn}`);
                 }}
               />
             ))}
+          </div>
+
+          {/* 무한 스크롤 로딩 트리거 */}
+          <div ref={ref} className="h-10 flex items-center justify-center mt-4">
+            {isFetchingNextPage && (
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-3"></div>
+            )}
           </div>
         </div>
       </div>

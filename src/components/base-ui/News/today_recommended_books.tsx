@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import BookCoverCard from "./recommendbook_element";
+import BookCoverCard from "@/components/base-ui/Book/BookCoverCard";
 
 type Book = {
-  id: number;
+  id: string | number;
   imgUrl: string;
   title: string;
   author: string;
@@ -19,9 +19,9 @@ export default function TodayRecommendedBooks({
   books,
   className = "",
 }: TodayRecommendedBooksProps) {
-  const [likedBooks, setLikedBooks] = useState<Record<number, boolean>>({});
+  const [likedBooks, setLikedBooks] = useState<Record<string | number, boolean>>({});
 
-  const handleLikeChange = (bookId: number, liked: boolean) => {
+  const handleLikeChange = (bookId: string | number, liked: boolean) => {
     setLikedBooks((prev) => ({
       ...prev,
       [bookId]: liked,
@@ -36,7 +36,7 @@ export default function TodayRecommendedBooks({
     <div className={`flex flex-col items-center mb-8 ${className}`}>
       <div className="w-full max-w-[1040px] border-t-4 border-Gray-1 d:border-none pt-5">
         <h2 className="subhead_1 t:headline_3 leading-7 t:ml-5 ml-2 text-start text-gray-700 mb-3">오늘의 추천 책</h2>
-        
+
         {/* 모바일: 2개 */}
         <div className="flex gap-5 flex-wrap justify-center t:hidden">
           {mobileBooks.map((book) => (

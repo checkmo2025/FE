@@ -2,18 +2,29 @@
 "use client";
 
 import Image from "next/image";
+import { useRef } from "react";
 
 interface Props {
   nickname?: string;
   intro?: string;
-  profileImageUrl?: string;
+  previewImage?: string | null;
+  onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onReset: () => void;
 }
 
 export default function ProfileImageSection({
   nickname,
   intro,
-  profileImageUrl,
+  previewImage,
+  onUpload,
+  onReset,
 }: Props) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="flex flex-col items-start gap-[32px] self-stretch">
       {/* 이미지 및 정보 영역 */}
@@ -27,12 +38,21 @@ export default function ProfileImageSection({
           h-[100px] w-[100px] xl:h-[138px] xl:w-[138px]"
         >
           <Image
-            src={profileImageUrl || "/profile.svg"}
+            src={previewImage || "/profile.svg"}
             alt="프로필 이미지"
             fill
             className="object-cover rounded-full"
           />
         </div>
+
+        {/* 숨김 처리된 파일 입력창 */}
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          onChange={onUpload}
+          className="hidden"
+        />
 
         {/* 텍스트 정보 */}
         <div
@@ -59,6 +79,7 @@ export default function ProfileImageSection({
       {/* 버튼 영역 */}
       <div className="flex items-center gap-[12px] self-stretch">
         <button
+          onClick={handleUploadClick}
           className="flex flex-1 items-center justify-center gap-[10px] rounded-[8px] bg-primary-1 px-[16px]
           h-[36px] md:h-[48px]"
         >
@@ -71,6 +92,7 @@ export default function ProfileImageSection({
           </span>
         </button>
         <button
+          onClick={onReset}
           className="flex flex-1 items-center justify-center gap-[10px] rounded-[8px] bg-primary-1 px-[16px]
           h-[36px] md:h-[48px]"
         >
