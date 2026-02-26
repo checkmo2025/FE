@@ -2,9 +2,10 @@
 import { apiClient } from "@/lib/api/client";
 import { CLUBS } from "@/lib/api/endpoints/Clubs";
 import type { ApiResponse } from "@/lib/api/types";
+import { ClubAdminDetailResponse, UpdateClubAdminRequest, UpdateClubAdminResponse } from "@/types/groups/clubAdminEdit";
 import { CreateClubRequest } from "@/types/groups/clubCreate";
 import { ClubJoinRequest, ClubJoinResponse, ClubSearchParams, ClubSearchResponse, MyClubsResponse, RecommendationsResponse } from "@/types/groups/clubsearch";
-import { ClubHomeResponse, ClubHomeResponseResult, LatestNoticeResponse, LatestNoticeResponseResult, MyClubStatusResponse, MyClubStatusResponseResult, NextMeetingResponse, NextMeetingResponseResult } from "@/types/groups/grouphome";
+import { ClubHomeResponse, ClubHomeResponseResult, LatestNoticeResponse, MyClubStatusResponse, MyClubStatusResponseResult, NextMeetingResponse } from "@/types/groups/grouphome";
 
 
 export const clubService = {
@@ -55,13 +56,11 @@ export const clubService = {
     return res.result;
   },
 
-  // GET /api/clubs/{clubId}/me
   getMyStatus: async (clubId: number): Promise<MyClubStatusResponseResult> => {
     const res = await apiClient.get<MyClubStatusResponse>(CLUBS.me(clubId));
     return res.result;
   },
 
-  // GET /api/clubs/{clubId}/home
   getClubHome: async (clubId: number): Promise<ClubHomeResponseResult> => {
     const res = await apiClient.get<ClubHomeResponse>(CLUBS.home(clubId));
     return res.result;
@@ -69,7 +68,7 @@ export const clubService = {
 
  getLatestNotice: async (clubId: number) => {
   try {
-    const res = await apiClient.get<LatestNoticeResponse>(CLUBS_ENDPOINTS.latestNotice(clubId));
+    const res = await apiClient.get<LatestNoticeResponse>(CLUBS.latestNotice(clubId));
     return res.result;
   } catch (e: any) {
     const msg = e?.message ?? "";
@@ -84,7 +83,7 @@ export const clubService = {
 
 getNextMeeting: async (clubId: number) => {
   try {
-    const res = await apiClient.get<NextMeetingResponse>(CLUBS_ENDPOINTS.nextMeeting(clubId));
+    const res = await apiClient.get<NextMeetingResponse>(CLUBS.nextMeeting(clubId));
     return res.result;
   } catch (e: any) {
     const msg = e?.message ?? "";
@@ -97,5 +96,14 @@ getNextMeeting: async (clubId: number) => {
     throw e;
   }
 },
+getAdminClubDetail: async (clubId: number) => {
+  const res = await apiClient.get<ClubAdminDetailResponse>(CLUBS.detail(clubId));
+  return res.result;
+},
+updateAdminClub: async (clubId: number, body: UpdateClubAdminRequest) => {
+  const res = await apiClient.put<UpdateClubAdminResponse>(CLUBS.update(clubId), body);
+  return res.result;
+},
+
 };
 
