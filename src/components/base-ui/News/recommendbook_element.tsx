@@ -36,7 +36,7 @@ export default function BookCoverCard({
   return (
     <div
       onClick={onCardClick}
-      className={`flex flex-col items-start gap-3 ${onCardClick ? 'cursor-pointer' : ''
+      className={`flex flex-col items-start gap-3 ${responsive ? 'w-[157px]' : 'w-61'} ${onCardClick ? 'cursor-pointer' : ''
         } ${className}`}
     >
       {/* 도서 커버 이미지 영역 */}

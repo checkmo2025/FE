@@ -28,7 +28,7 @@ export default function Search_BookCoverCard({
   return (
     <div
       onClick={onCardClick}
-      className={`flex flex-col items-start gap-3 ${onCardClick ? 'cursor-pointer' : ''
+      className={`flex flex-col items-start gap-3 w-[111px] t:w-[217px] d:w-[332px] ${onCardClick ? 'cursor-pointer' : ''
         } ${className}`}
     >
       {/* 도서 커버 이미지 영역 */}
