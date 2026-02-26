@@ -25,6 +25,7 @@ type BookstoryDetailProps = {
 
   authorHref?: string; // 기본: `/profile/${authorId}`
   className?: string;
+  hideSubscribeButton?: boolean;
 };
 
 function timeAgo(iso: string) {
@@ -57,6 +58,7 @@ export default function BookstoryDetail({
   likeCount = 1,
   authorHref,
   className = "",
+  hideSubscribeButton = false,
 }: BookstoryDetailProps) {
   const href = authorHref ?? `/profile/${authorId}`;
   const [menuOpen, setMenuOpen] = useState(false);
@@ -100,13 +102,15 @@ export default function BookstoryDetail({
         </Link>
 
         {/* 구독 */}
-        <button
-          type="button"
-          onClick={onSubscribeClick}
-          className="flex px-4 py-1.5 justify-center items-center rounded-lg bg-primary-2 text-White text-[12px] font-medium shrink-0"
-        >
-          {subscribeText}
-        </button>
+        {!hideSubscribeButton && (
+          <button
+            type="button"
+            onClick={onSubscribeClick}
+            className="flex px-4 py-1.5 justify-center items-center rounded-lg bg-primary-2 text-White text-[12px] font-medium shrink-0"
+          >
+            {subscribeText}
+          </button>
+        )}
       </div>
 
       {/* 모바일: 책 제목 + 햄버거 */}
@@ -245,13 +249,15 @@ export default function BookstoryDetail({
 
         {/* 구독 + 햄버거 */}
         <div className="flex flex-col items-end gap-3 shrink-0 t:mr-[20px] d:mr-[130px]">
-          <button
-            type="button"
-            onClick={onSubscribeClick}
-            className="flex px-[17px] py-[8px]  justify-center items-center rounded-lg bg-primary-2 text-White body_2_1 shrink-0 whitespace-nowrap cursor-pointer"
-          >
-            {subscribeText}
-          </button>
+          {!hideSubscribeButton && (
+            <button
+              type="button"
+              onClick={onSubscribeClick}
+              className="flex px-[17px] py-[8px]  justify-center items-center rounded-lg bg-primary-2 text-White body_2_1 shrink-0 whitespace-nowrap cursor-pointer"
+            >
+              {subscribeText}
+            </button>
+          )}
 
           {/* 햄버거 */}
           <div className="relative" ref={menuRef}>

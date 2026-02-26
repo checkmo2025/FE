@@ -3,7 +3,7 @@ import { apiClient } from "@/lib/api/client";
 import { CLUBS } from "@/lib/api/endpoints/Clubs";
 import type { ApiResponse } from "@/lib/api/types";
 import { CreateClubRequest } from "@/types/groups/clubCreate";
-import type {
+import type 
   ClubJoinRequest,
   ClubJoinResponse,
   ClubSearchParams,
@@ -59,3 +59,4 @@ export const clubService = {
     return res.result;
   },
 };
+

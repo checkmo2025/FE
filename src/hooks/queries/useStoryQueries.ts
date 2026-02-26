@@ -6,6 +6,7 @@ export const storyKeys = {
     all: ["stories"] as const,
     list: () => [...storyKeys.all, "list"] as const,
     infiniteList: () => [...storyKeys.all, "infiniteList"] as const,
+    myList: () => [...storyKeys.all, "myList"] as const,
     detail: (id: number) => [...storyKeys.all, "detail", id] as const,
 };
 
@@ -28,6 +29,18 @@ export const useInfiniteStoriesQuery = () => {
     return useInfiniteQuery({
         queryKey: storyKeys.infiniteList(),
         queryFn: ({ pageParam }) => storyService.getAllStories(pageParam ?? undefined),
+        initialPageParam: null as number | null,
+        getNextPageParam: (lastPage) => {
+            if (!lastPage || !lastPage.hasNext) return undefined;
+            return lastPage.nextCursor;
+        },
+    });
+};
+
+export const useMyInfiniteStoriesQuery = () => {
+    return useInfiniteQuery({
+        queryKey: storyKeys.myList(),
+        queryFn: ({ pageParam }) => storyService.getMyStories(pageParam ?? undefined),
         initialPageParam: null as number | null,
         getNextPageParam: (lastPage) => {
             if (!lastPage || !lastPage.hasNext) return undefined;

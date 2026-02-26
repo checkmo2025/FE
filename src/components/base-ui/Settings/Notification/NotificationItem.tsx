@@ -1,33 +1,29 @@
 "use client";
 
-import { useState } from "react";
-
 type Props = {
   title: string;
   description: string;
-  initialChecked?: boolean;
+  isChecked?: boolean;
+  onToggle?: () => void;
+  disabled?: boolean;
 };
 
 export default function NotificationItem({
   title,
   description,
-  initialChecked = true,
+  isChecked = false,
+  onToggle,
+  disabled = false,
 }: Props) {
-  const [isChecked, setIsChecked] = useState(initialChecked);
-
-  const handleToggle = () => {
-    setIsChecked((prev) => !prev);
-  };
-
   return (
     // 전체 아이템 컨테이너
     <div className="flex items-start gap-[38px] self-stretch">
       <button
         type="button"
-        onClick={handleToggle}
-        className={`flex h-[28px] w-[56px] shrink-0 items-center rounded-[17.5px] p-[3.5px] transition-colors ${
-          isChecked ? "bg-primary-2 justify-end" : "bg-Gray-3 justify-start"
-        }`}
+        onClick={onToggle}
+        disabled={disabled}
+        className={`flex h-[28px] w-[56px] shrink-0 items-center rounded-[17.5px] p-[3.5px] transition-colors ${isChecked ? "bg-primary-2 justify-end" : "bg-Gray-3 justify-start"
+          } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
       >
         <div className="h-[22.75px] w-[22.75px] rounded-full bg-White shadow-sm" />
       </button>
