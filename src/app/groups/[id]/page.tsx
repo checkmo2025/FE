@@ -81,12 +81,17 @@ export default function GroupDetailPage() {
   const modalLinks = useMemo(() => {
     const list = home.links ?? [];
     return list
-      .map((x, idx) => ({
-        id: `${idx}`,
-        url: x.link,
-        label: x.label,
-      }))
-      .filter((x) => (x.url ?? "").trim().length > 0);
+      .map((x, idx) => {
+        const raw = (x.link ?? "").trim();
+        if (!raw) return null;
+
+        const url = /^(https?:\/\/)/i.test(raw) ? raw : `http://${raw}`;
+
+        const label = (x.label ?? "").trim() || `링크 ${idx + 1}`;
+
+        return { id: `${idx}`, url, label };
+      })
+      .filter(Boolean) as { id: string; url: string; label: string }[];
   }, [home.links]);
 
   const onClickJoin = () => {
@@ -346,23 +351,24 @@ export default function GroupDetailPage() {
 
             <div className="w-full rounded-[8px] overflow-hidden items-center">
               {modalLinks.map((item) => (
-                <a
-                  key={item.id}
-                  href={/^(https?:\/\/|\/)/.test(item.url) ? item.url : "#"}
-                  rel="noreferrer"
-                  className="
-                    w-full
-                    flex items-center gap-2
-                    px-5 py-[10px]
-                    border-b border-Subbrown-4
-                    last:border-b-0
-                    hover:bg-Subbrown-4/40
-                  "
-                >
-                  <Image src="/link.svg" alt="" width={24} height={24} className="object-contain shrink-0" />
-                  <p className="text-Gray-5 body_2_3 t:body_1_3">{item.label ? `${item.label} · ${item.url}` : item.url}</p>
-                </a>
-              ))}
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => window.open(item.url, "_blank", "noopener,noreferrer")}
+                className="
+                  w-full
+                  flex items-center gap-2
+                  px-5 py-[10px]
+                  border-b border-Subbrown-4
+                  last:border-b-0
+                  hover:bg-Subbrown-4/40
+                  text-left
+                "
+              >
+                <Image src="/link.svg" alt="" width={24} height={24} className="object-contain shrink-0" />
+                <p className="text-Gray-5 body_2_3 t:body_1_3 truncate">{item.label}</p>
+              </button>
+            ))}
             </div>
           </div>
         </div>
