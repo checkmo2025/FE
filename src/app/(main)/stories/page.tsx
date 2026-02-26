@@ -9,10 +9,12 @@ import { useInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
 import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 import { useInView } from "react-intersection-observer";
+import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 
 export default function StoriesPage() {
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
+  const { mutate: toggleLike } = useToggleStoryLikeMutation();
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const {
@@ -90,10 +92,10 @@ export default function StoriesPage() {
           {allStories.slice(0, 4).map((story) => (
             <div
               key={story.bookStoryId}
-              onClick={() => handleCardClick(story.bookStoryId)}
               className="cursor-pointer shrink-0"
             >
               <BookStoryCardLarge
+                id={story.bookStoryId}
                 authorName={story.authorInfo.nickname}
                 profileImgSrc={story.authorInfo.profileImageUrl}
                 createdAt={story.createdAt}
@@ -102,9 +104,12 @@ export default function StoriesPage() {
                 content={story.description}
                 likeCount={story.likes}
                 commentCount={story.commentCount}
+                likedByMe={story.likedByMe}
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText={story.authorInfo.following ? "구독중" : "구독"}
                 hideSubscribeButton={story.writtenByMe}
+                onClick={() => handleCardClick(story.bookStoryId)}
+                onLikeClick={() => toggleLike(story.bookStoryId)}
               />
             </div>
           ))}
@@ -121,10 +126,10 @@ export default function StoriesPage() {
           {allStories.slice(4).map((story) => (
             <div
               key={story.bookStoryId}
-              onClick={() => handleCardClick(story.bookStoryId)}
               className="cursor-pointer shrink-0"
             >
               <BookStoryCardLarge
+                id={story.bookStoryId}
                 authorName={story.authorInfo.nickname}
                 profileImgSrc={story.authorInfo.profileImageUrl}
                 createdAt={story.createdAt}
@@ -133,9 +138,12 @@ export default function StoriesPage() {
                 content={story.description}
                 likeCount={story.likes}
                 commentCount={story.commentCount}
+                likedByMe={story.likedByMe}
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText={story.authorInfo.following ? "구독중" : "구독"}
                 hideSubscribeButton={story.writtenByMe}
+                onClick={() => handleCardClick(story.bookStoryId)}
+                onLikeClick={() => toggleLike(story.bookStoryId)}
               />
             </div>
           ))}

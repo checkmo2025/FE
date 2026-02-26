@@ -76,6 +76,7 @@ export default function BookDetailPage() {
                             className="cursor-pointer"
                         >
                             <BookStoryCardLarge
+                                id={story.id}
                                 authorName={story.authorName}
                                 createdAt={story.createdAt}
                                 viewCount={story.viewCount}

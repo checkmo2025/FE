@@ -72,7 +72,7 @@ export default function BookStoryList() {
         className="grid grid-cols-2 min-[540px]:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-[20px] md:gap-[12px] lg:gap-[20px] w-fit"
       >
         {MOCK_STORIES.map(({ id, ...storyData }) => (
-          <BookStoryCard key={id} {...storyData} />
+          <BookStoryCard key={id} id={id} {...storyData} />
         ))}
       </div>
     </div>

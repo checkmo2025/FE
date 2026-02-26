@@ -15,6 +15,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
 import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
+import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 
 export default function HomePage() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function HomePage() {
   const { data: storiesData, isLoading: isLoadingStories } = useStoriesQuery();
   const { data: membersData, isLoading: isLoadingMembers, isError: isErrorMembers } = useRecommendedMembersQuery(isLoggedIn);
   const { data: myClubsData } = useMyClubsQuery();
+  const { mutate: toggleLike } = useToggleStoryLikeMutation();
 
   const groups = myClubsData?.clubList || [];
 
@@ -100,6 +102,7 @@ export default function HomePage() {
             {stories.slice(0, 3).map((story) => (
               <BookStoryCardLarge
                 key={story.bookStoryId}
+                id={story.bookStoryId}
                 authorName={story.authorInfo.nickname}
                 profileImgSrc={story.authorInfo.profileImageUrl}
                 createdAt={story.createdAt}
@@ -108,10 +111,12 @@ export default function HomePage() {
                 content={story.description}
                 likeCount={story.likes}
                 commentCount={story.commentCount}
+                likedByMe={story.likedByMe}
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText="구독"
                 hideSubscribeButton={story.writtenByMe}
                 onClick={() => router.push(`/stories/${story.bookStoryId}`)}
+                onLikeClick={() => toggleLike(story.bookStoryId)}
               />
             ))}
           </div>
@@ -147,6 +152,7 @@ export default function HomePage() {
             {stories.slice(0, 4).map((story) => (
               <BookStoryCard
                 key={story.bookStoryId}
+                id={story.bookStoryId}
                 authorName={story.authorInfo.nickname}
                 profileImgSrc={story.authorInfo.profileImageUrl}
                 createdAt={story.createdAt}
@@ -155,10 +161,12 @@ export default function HomePage() {
                 content={story.description}
                 likeCount={story.likes}
                 commentCount={story.commentCount}
+                likedByMe={story.likedByMe}
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText="구독"
                 hideSubscribeButton={story.writtenByMe}
                 onClick={() => router.push(`/stories/${story.bookStoryId}`)}
+                onLikeClick={() => toggleLike(story.bookStoryId)}
               />
             ))}
           </div>
@@ -196,6 +204,7 @@ export default function HomePage() {
               {stories.slice(0, 3).map((story) => (
                 <BookStoryCard
                   key={story.bookStoryId}
+                  id={story.bookStoryId}
                   authorName={story.authorInfo.nickname}
                   profileImgSrc={story.authorInfo.profileImageUrl}
                   createdAt={story.createdAt}
@@ -204,10 +213,12 @@ export default function HomePage() {
                   content={story.description}
                   likeCount={story.likes}
                   commentCount={story.commentCount}
+                  likedByMe={story.likedByMe}
                   coverImgSrc={story.bookInfo.imgUrl}
                   subscribeText="구독"
                   hideSubscribeButton={story.writtenByMe}
                   onClick={() => router.push(`/stories/${story.bookStoryId}`)}
+                  onLikeClick={() => toggleLike(story.bookStoryId)}
                 />
               ))}
             </div>
