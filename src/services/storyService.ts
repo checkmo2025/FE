@@ -69,4 +69,10 @@ export const storyService = {
         );
         return response.result!;
     },
+    toggleLikeStory: async (bookStoryId: number): Promise<boolean> => {
+        const response = await apiClient.post<ApiResponse<boolean>>(
+            STORY_ENDPOINTS.LIKE(bookStoryId)
+        );
+        return response.result!;
+    },
 };

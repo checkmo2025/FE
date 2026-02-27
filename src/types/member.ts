@@ -1,6 +1,7 @@
 export interface RecommendedMember {
     nickname: string;
     profileImageUrl: string;
+    isFollowing: boolean;
 }
 
 export interface RecommendResponse {

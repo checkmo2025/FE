@@ -15,6 +15,8 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
 import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
+import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
+import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 
 export default function HomePage() {
   const router = useRouter();
@@ -23,6 +25,8 @@ export default function HomePage() {
   const { data: storiesData, isLoading: isLoadingStories } = useStoriesQuery();
   const { data: membersData, isLoading: isLoadingMembers, isError: isErrorMembers } = useRecommendedMembersQuery(isLoggedIn);
   const { data: myClubsData } = useMyClubsQuery();
+  const { mutate: toggleLike } = useToggleStoryLikeMutation();
+  const { mutate: toggleFollow } = useToggleFollowMutation();
 
   const groups = myClubsData?.clubList || [];
 
@@ -85,7 +89,8 @@ export default function HomePage() {
                         key={u.nickname}
                         name={u.nickname}
                         profileSrc={u.profileImageUrl}
-                        onSubscribeClick={() => console.log("subscribe", u.nickname)}
+                        isFollowing={u.isFollowing}
+                        onSubscribeClick={() => toggleFollow({ nickname: u.nickname, isFollowing: u.isFollowing })}
                       />
                     ))}
                 </div>
@@ -100,6 +105,7 @@ export default function HomePage() {
             {stories.slice(0, 3).map((story) => (
               <BookStoryCardLarge
                 key={story.bookStoryId}
+                id={story.bookStoryId}
                 authorName={story.authorInfo.nickname}
                 profileImgSrc={story.authorInfo.profileImageUrl}
                 createdAt={story.createdAt}
@@ -108,10 +114,14 @@ export default function HomePage() {
                 content={story.description}
                 likeCount={story.likes}
                 commentCount={story.commentCount}
+                likedByMe={story.likedByMe}
                 coverImgSrc={story.bookInfo.imgUrl}
-                subscribeText="구독"
+                subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+                isFollowing={story.authorInfo.following}
+                onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
                 hideSubscribeButton={story.writtenByMe}
                 onClick={() => router.push(`/stories/${story.bookStoryId}`)}
+                onLikeClick={() => toggleLike(story.bookStoryId)}
               />
             ))}
           </div>
@@ -136,7 +146,12 @@ export default function HomePage() {
           <div className="flex gap-6 justify-center">
             <HomeBookclub groups={groups} />
             {isLoggedIn && (
-              <ListSubscribeLarge height="h-[424px]" users={recommendedUsers} isError={isErrorMembers} />
+              <ListSubscribeLarge
+                height="h-[424px]"
+                users={recommendedUsers}
+                isError={isErrorMembers}
+                onSubscribeClick={(nickname, isFollowing) => toggleFollow({ nickname, isFollowing })}
+              />
             )}
           </div>
         </section>
@@ -147,6 +162,7 @@ export default function HomePage() {
             {stories.slice(0, 4).map((story) => (
               <BookStoryCard
                 key={story.bookStoryId}
+                id={story.bookStoryId}
                 authorName={story.authorInfo.nickname}
                 profileImgSrc={story.authorInfo.profileImageUrl}
                 createdAt={story.createdAt}
@@ -155,10 +171,14 @@ export default function HomePage() {
                 content={story.description}
                 likeCount={story.likes}
                 commentCount={story.commentCount}
+                likedByMe={story.likedByMe}
                 coverImgSrc={story.bookInfo.imgUrl}
-                subscribeText="구독"
+                subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+                isFollowing={story.authorInfo.following}
+                onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
                 hideSubscribeButton={story.writtenByMe}
                 onClick={() => router.push(`/stories/${story.bookStoryId}`)}
+                onLikeClick={() => toggleLike(story.bookStoryId)}
               />
             ))}
           </div>
@@ -175,7 +195,12 @@ export default function HomePage() {
           <HomeBookclub groups={groups} />
           {isLoggedIn && (
             <div className="pt-6">
-              <ListSubscribeLarge height="h-[380px]" users={recommendedUsers} isError={isErrorMembers} />
+              <ListSubscribeLarge
+                height="h-[380px]"
+                users={recommendedUsers}
+                isError={isErrorMembers}
+                onSubscribeClick={(nickname, isFollowing) => toggleFollow({ nickname, isFollowing })}
+              />
             </div>
           )}
         </section>
@@ -196,6 +221,7 @@ export default function HomePage() {
               {stories.slice(0, 3).map((story) => (
                 <BookStoryCard
                   key={story.bookStoryId}
+                  id={story.bookStoryId}
                   authorName={story.authorInfo.nickname}
                   profileImgSrc={story.authorInfo.profileImageUrl}
                   createdAt={story.createdAt}
@@ -204,10 +230,14 @@ export default function HomePage() {
                   content={story.description}
                   likeCount={story.likes}
                   commentCount={story.commentCount}
+                  likedByMe={story.likedByMe}
                   coverImgSrc={story.bookInfo.imgUrl}
-                  subscribeText="구독"
+                  subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+                  isFollowing={story.authorInfo.following}
+                  onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
                   hideSubscribeButton={story.writtenByMe}
                   onClick={() => router.push(`/stories/${story.bookStoryId}`)}
+                  onLikeClick={() => toggleLike(story.bookStoryId)}
                 />
               ))}
             </div>
