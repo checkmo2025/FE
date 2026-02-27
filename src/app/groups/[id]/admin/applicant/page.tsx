@@ -190,6 +190,10 @@ export default function AdminApplicantPage() {
   useEffect(() => {
     if (currentPage > totalPages) setCurrentPage(totalPages);
   }, [currentPage, totalPages]);
+  
+  const handleActionClick = (applicantId: number) => {
+    setOpenMenuId(openMenuId === applicantId ? null : applicantId);
+  };
 
    const handleSelectAction = async (clubMemberId: number, action: ActionType) => {
      try {
