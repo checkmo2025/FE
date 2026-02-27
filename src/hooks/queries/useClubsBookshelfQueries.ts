@@ -7,6 +7,7 @@ import type {
   TopicsResponseResult,
   ReviewsResponseResult,
 } from "@/types/bookshelf";
+import type { InfiniteData } from "@tanstack/react-query";
 
 export const bookshelfQueryKeys = {
   simple: (clubId: number) => ["clubs", clubId, "bookshelves", "simple"] as const,
@@ -78,7 +79,6 @@ export function useBookshelfDetailQuery(clubId: number, meetingId: number) {
   });
 }
 
-import type { InfiniteData } from "@tanstack/react-query";
 
 export function useBookshelfTopicsInfiniteQuery(clubId: number, meetingId: number) {
   return useInfiniteQuery<
