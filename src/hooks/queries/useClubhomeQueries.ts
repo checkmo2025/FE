@@ -45,3 +45,13 @@ export function useClubhomeQueries(clubId: number) {
     nextMeetingQuery,
   };
 }
+
+export function useClubMeQuery(clubId: number) {
+  const enabled = Number.isFinite(clubId) && clubId > 0;
+
+  return useQuery({
+    queryKey: clubhomeKeys.me(clubId),
+    queryFn: () => clubService.getMyStatus(clubId),
+    enabled,
+  });
+}
