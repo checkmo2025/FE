@@ -19,7 +19,7 @@ export default async function OtherUserProfilePage({ params }: PageProps) {
       </div>
 
       <div className="flex flex-col items-center w-full max-w-[1440px] px-4 md:px-0 gap-[24px] mt-[10px] md:mt-[72px]">
-        <OtherUserProfileTabs />
+        <OtherUserProfileTabs nickname={nickname} />
       </div>
     </div>
   );
