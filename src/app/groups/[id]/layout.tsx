@@ -25,16 +25,11 @@ export default function GroupDetailLayout({
   const isAdmin = pathname.includes("/admin");
 
   const getActiveTab = (): TabType => {
-    if (isAdmin) {
-      if (pathname.includes("/admin/notice")) return "notice";
-      if (pathname.includes("/admin/bookcase")) return "bookshelf";
-      return "home";
-    }
-
     if (pathname.includes("/notice")) return "notice";
-    if (pathname.includes("/bookcase")) return "bookshelf";
+    if (pathname.includes("/bookcase")) return "bookcase";
     return "home";
   };
+
 
   const activeTab = getActiveTab();
 
@@ -46,19 +41,19 @@ export default function GroupDetailLayout({
         {
           id: "home" as TabType,
           label: "모임 홈",
-          href: `/groups/${groupId}/admin`,
+          href: `/groups/${groupId}`,
           icon: "/group_home.svg",
         },
         {
           id: "notice" as TabType,
           label: "공지사항",
-          href: `/groups/${groupId}/admin/notice`,
+          href: `/groups/${groupId}/notice`,
           icon: "/Notification2.svg",
         },
         {
-          id: "bookshelf" as TabType,
+          id: "bookcase" as TabType,
           label: "책장",
-          href: `/groups/${groupId}/admin/bookcase`,
+          href: `/groups/${groupId}/bookcase`,
           icon: "/bookshelf.svg",
         },
       ]
@@ -76,7 +71,7 @@ export default function GroupDetailLayout({
           icon: "/Notification2.svg",
         },
         {
-          id: "bookshelf" as TabType,
+          id: "bookcase" as TabType,
           label: "책장",
           href: `/groups/${groupId}/bookcase`,
           icon: "/bookshelf.svg",
@@ -94,7 +89,7 @@ export default function GroupDetailLayout({
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-[1440px] px-4 t:px-6 py-3 t:pt-3 t:pb-8">
+      <div className="mx-auto w-full max-w-[1440px] px-auto t:px-6 py-3 t:pt-3 t:pb-8">
         <div className="flex flex-col gap-6 t:gap-9 d:flex-row d:gap-8">
           {/* 사이드바 */}
           <aside className="shrink-0 w-full t:w-auto d:w-[236px]">
