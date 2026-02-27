@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
-import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse } from "@/types/member";
+import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse } from "@/types/member";
 import { ApiResponse } from "@/types/auth";
 
 export const memberService = {
@@ -31,6 +31,12 @@ export const memberService = {
     getProfile: async (): Promise<ProfileResponse> => {
         const response = await apiClient.get<ApiResponse<ProfileResponse>>(
             MEMBER_ENDPOINTS.GET_PROFILE
+        );
+        return response.result!;
+    },
+    getOtherProfile: async (nickname: string): Promise<OtherProfileResponse> => {
+        const response = await apiClient.get<ApiResponse<OtherProfileResponse>>(
+            MEMBER_ENDPOINTS.GET_OTHER_PROFILE(nickname)
         );
         return response.result!;
     },

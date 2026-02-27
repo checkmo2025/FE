@@ -25,3 +25,11 @@ export interface ProfileResponse {
     profileImageUrl: string;
     categories: string[];
 }
+
+export interface OtherProfileResponse {
+    nickname: string;
+    description: string;
+    profileImageUrl: string;
+    following: boolean;
+    categories: string[];
+}

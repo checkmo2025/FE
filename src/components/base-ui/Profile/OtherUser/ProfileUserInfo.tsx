@@ -1,14 +1,18 @@
 "use client";
 
 import Image from "next/image";
+import { useOtherProfileQuery } from "@/hooks/queries/useMemberQueries";
+import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 
 // [보조 컴포넌트] 액션 버튼 (구독하기 / 신고하기)
 function ActionButton({
   variant,
   label,
+  onClick,
 }: {
   variant: "primary" | "secondary";
   label: string;
+  onClick?: () => void;
 }) {
   const baseStyles =
     "flex items-center justify-center rounded-[8px] transition-colors";
@@ -24,7 +28,7 @@ function ActionButton({
   const textStyles = "body_1_2 t:subhead_4_1";
 
   return (
-    <button type="button" className={`${baseStyles} ${variants[variant]}`}>
+    <button type="button" onClick={onClick} className={`${baseStyles} ${variants[variant]}`}>
       <span className={textStyles}>{label}</span>
     </button>
   );
@@ -43,6 +47,30 @@ function StatItem({ label, count }: { label: string; count: number }) {
 }
 
 export default function ProfileUserInfo({ nickname }: { nickname: string }) {
+  const decodedNickname = decodeURIComponent(nickname);
+  const { data: profile, isLoading } = useOtherProfileQuery(decodedNickname);
+  const { mutate: toggleFollow } = useToggleFollowMutation();
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-10 w-full min-h-[200px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7B6154]"></div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="flex justify-center items-center py-10 text-Gray-5 body_1 min-h-[200px]">
+        프로필 정보를 불러올 수 없습니다.
+      </div>
+    );
+  }
+
+  const handleToggleFollow = () => {
+    toggleFollow({ nickname: decodedNickname, isFollowing: profile.following });
+  };
+
   return (
     <div
       className="flex flex-col items-center
@@ -62,8 +90,8 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
           t:h-[138px] t:w-[138px]"
         >
           <Image
-            src="/profile.svg"
-            alt={`${nickname}님의 프로필`}
+            src={profile.profileImageUrl || "/profile.svg"}
+            alt={`${profile.nickname}님의 프로필`}
             fill
             className="object-cover"
           />
@@ -78,27 +106,29 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
           {/* 닉네임 & 통계 */}
           <div className="flex w-full flex-col gap-[8px] items-start t:items-start">
             {/* 닉네임 */}
-            <h1 className="text-Gray-7 subhead_3 t:subhead_1">{nickname}</h1>
+            <h1 className="text-Gray-7 subhead_3 t:subhead_1">{profile.nickname}</h1>
 
             {/* 통계 그룹 */}
             <div className="flex items-center gap-[12px]">
-              <StatItem label="구독 중" count={2} />
-              <StatItem label="구독자" count={2} />
+              <StatItem label="구독 중" count={0} />
+              <StatItem label="구독자" count={0} />
             </div>
           </div>
 
           {/* 소개글 */}
           <p className="w-full text-left break-keep text-Gray-4 body_2_3 t:body_1_2 line-clamp-3 t:line-clamp-none">
-            이제 다양한 책을 함께 읽고 서로의 생각을 나누는 특별한 시간을
-            시작해보세요. 한 권의 책이 주는 작은 울림이 일상에 큰 변화를
-            가져올지도 모릅니다.
+            {profile.description || "이 사용자는 소개를 작성하지 않았습니다."}
           </p>
         </div>
       </div>
 
       {/* 2. 하단 버튼 그룹 */}
       <div className="flex w-full justify-center items-center gap-[19px] t:gap-[24px]">
-        <ActionButton variant="primary" label="구독하기" />
+        <ActionButton
+          variant={profile.following ? "secondary" : "primary"}
+          label={profile.following ? "구독 중" : "구독하기"}
+          onClick={handleToggleFollow}
+        />
         <ActionButton variant="secondary" label="신고하기" />
       </div>
     </div>
