@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useOtherProfileQuery } from "@/hooks/queries/useMemberQueries";
-import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
+import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations"
 
 // [보조 컴포넌트] 액션 버튼 (구독하기 / 신고하기)
 function ActionButton({
@@ -49,7 +49,6 @@ function StatItem({ label, count }: { label: string; count: number }) {
 export default function ProfileUserInfo({ nickname }: { nickname: string }) {
   const decodedNickname = decodeURIComponent(nickname);
   const { data: profile, isLoading } = useOtherProfileQuery(decodedNickname);
-  const { mutate: toggleFollow } = useToggleFollowMutation();
 
   if (isLoading) {
     return (
@@ -68,7 +67,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
   }
 
   const handleToggleFollow = () => {
-    toggleFollow({ nickname: decodedNickname, isFollowing: profile.following });
+    console.log("toggleFollow clicked", { nickname: decodedNickname, isFollowing: profile.following });
   };
 
   return (
