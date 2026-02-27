@@ -16,6 +16,7 @@ type Props = {
   subscribeText?: string;
   onClick?: () => void;
   hideSubscribeButton?: boolean;
+  onProfileClick?: () => void;
 };
 
 import { formatTimeAgo } from "@/utils/time";
@@ -34,6 +35,7 @@ export default function BookStoryCardLarge({
   subscribeText = "구독",
   onClick,
   hideSubscribeButton = false,
+  onProfileClick,
 }: Props) {
   return (
     <div
@@ -42,7 +44,15 @@ export default function BookStoryCardLarge({
       w-[336px] h-[380px]"
     >
       {/* 상단 프로필 */}
-      <div className="flex items-center gap-2 px-4 py-3">
+      <div
+        className="flex items-center gap-2 px-4 py-3 group cursor-pointer"
+        onClick={(e) => {
+          if (onProfileClick) {
+            e.stopPropagation();
+            onProfileClick();
+          }
+        }}
+      >
         <div className="relative w-8 h-8 overflow-hidden rounded-full shrink-0">
           <Image
             src={profileImgSrc}

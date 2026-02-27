@@ -112,6 +112,7 @@ export default function HomePage() {
                 subscribeText="구독"
                 hideSubscribeButton={story.writtenByMe}
                 onClick={() => router.push(`/stories/${story.bookStoryId}`)}
+                onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
               />
             ))}
           </div>
@@ -159,6 +160,7 @@ export default function HomePage() {
                 subscribeText="구독"
                 hideSubscribeButton={story.writtenByMe}
                 onClick={() => router.push(`/stories/${story.bookStoryId}`)}
+                onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
               />
             ))}
           </div>
@@ -208,6 +210,7 @@ export default function HomePage() {
                   subscribeText="구독"
                   hideSubscribeButton={story.writtenByMe}
                   onClick={() => router.push(`/stories/${story.bookStoryId}`)}
+                  onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
                 />
               ))}
             </div>

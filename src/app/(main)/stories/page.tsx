@@ -105,6 +105,7 @@ export default function StoriesPage() {
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText={story.authorInfo.following ? "구독중" : "구독"}
                 hideSubscribeButton={story.writtenByMe}
+                onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
               />
             </div>
           ))}
@@ -136,6 +137,7 @@ export default function StoriesPage() {
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText={story.authorInfo.following ? "구독중" : "구독"}
                 hideSubscribeButton={story.writtenByMe}
+                onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
               />
             </div>
           ))}
