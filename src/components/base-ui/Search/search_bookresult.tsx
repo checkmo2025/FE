@@ -38,11 +38,11 @@ export default function SearchBookResult({
       onClick={onCardClick}
       className={[
         "relative flex w-full p-[20px] justify-center items-start gap-6 rounded-[8px] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-Subbrown-4",
-        onCardClick ? "cursor-pointer" : "",
+        onCardClick ? "cursor-pointer hover:shadow-lg" : "",
         className,
       ].join(" ")}
     >
-      <div className="relative w-[126px] h-[183px] shrink-0">
+      <div className="relative w-[126px] h-[183px] shrink-0 ">
         <Image
           src={coverSrc}
           alt={title}
@@ -64,14 +64,14 @@ export default function SearchBookResult({
           </p>
         </div>
 
-        <div className="hidden d:flex flex-col items-end shrink-0 ml-4">
+        <div className="hidden d:flex flex-col items-end shrink-0 ml-4 ">
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               onLikeChange(!liked);
             }}
-            className="w-[24px] h-[24px] shrink-0"
+            className="w-[24px] h-[24px] shrink-0 cursor-pointer transition-transform hover:scale-[1.1]"
           >
             <Image
               src={liked ? "/red_heart.svg" : "/gray_heart.svg"}
@@ -93,6 +93,7 @@ export default function SearchBookResult({
               flex absolute bottom-[20px] right-[20px] w-12 h-12 t:w-15 t:h-15 px-[10px] py-[4.167px]
               flex-col justify-center items-center gap-[8.333px] shrink-0
               rounded-full bg-primary-2
+              cursor-pointer active:-translate-y-[6px] active:brightness-95 hover:brightness-90
             "
       >
         <Image src="/pencil_icon.svg" alt="" width={20} height={20} />

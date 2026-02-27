@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useInfiniteBookSearchQuery } from "@/hooks/queries/useBookQueries";
 import { useDebounce } from "@/hooks/useDebounce";
 import SearchBookResult from "@/components/base-ui/Search/search_bookresult";
@@ -75,6 +74,11 @@ export default function BookSelectModal({
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+
+  const openLinkNewTab = (url?: string) => {
+    if (!url) return;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <div
@@ -153,11 +157,10 @@ export default function BookSelectModal({
                     onLikeChange={(liked) =>
                       setLikedResults((prev) => ({ ...prev, [result.isbn]: liked }))
                     }
+                    // ✅ 카드 클릭: link 새 탭
+                    onCardClick={() => openLinkNewTab(result.link)}
+                    // ✅ 연필 클릭: 기존 선택 로직
                     onPencilClick={() => {
-                      onSelect(result.isbn);
-                      onClose();
-                    }}
-                    onCardClick={() => {
                       onSelect(result.isbn);
                       onClose();
                     }}

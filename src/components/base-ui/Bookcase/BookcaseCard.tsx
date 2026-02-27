@@ -7,8 +7,8 @@ type Props = {
   title: string;
   author: string;
   category: {
-    generation: string; // 예: "7기"
-    genre: string; // 예: "소설/시/희곡"
+    generation: string; 
+    genre: string;
   };
   rating: number; // 0 ~ 5
   onTopicClick?: () => void;

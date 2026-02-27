@@ -6,7 +6,6 @@ type BookstoryChoosebookProps = {
   bookName: string;
   author: string;
   bookDetail: string;
-  onButtonClick?: () => void;
   className?: string;
 };
 
@@ -15,7 +14,6 @@ export default function BookstoryChoosebook({
   bookName,
   author,
   bookDetail,
-  onButtonClick,
   className = '',
 }: BookstoryChoosebookProps) {
   return (
@@ -52,23 +50,7 @@ export default function BookstoryChoosebook({
 
       {/* 모바일: 아래줄 가운데, 태블릿부터: 오른쪽 */}
       <div className="shrink-0 t:ml-[52px] t:self-stretch t:flex t:items-end mt-4 t:mt-0 flex justify-center">
-        <button
-          type="button"
-          onClick={onButtonClick}
-          className="
-              flex w-[132px] h-[44px]
-              px-[16px] py-[12px]
-              justify-center items-center gap-[10px]
-              rounded-[8px]
-              border border-primary-2
-              bg-background
-              text-primary-2
-              body_1_2
-              whitespace-nowrap
-            "
-        >
-          변경하기
-        </button>
+        
       </div>
     </div>
   );
