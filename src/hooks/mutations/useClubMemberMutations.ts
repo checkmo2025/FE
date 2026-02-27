@@ -20,10 +20,15 @@ export function useUpdateClubMemberStatusMutation() {
       clubMemberService.updateClubMemberStatus(clubId, clubMemberId, body),
 
     onSuccess: async (_data, variables) => {
-      // 가입 신청 관리 페이지는 PENDING만 보면 되니까 이거 하나만 갱신해도 충분
-      await qc.invalidateQueries({
-        queryKey: clubMemberQueryKeys.members(variables.clubId, "PENDING"),
-      });
+      // 가입 신청 관리(PENDING)와 전체 회원 관리(ALL) 페이지 쿼리를 모두 무효화합니다.
+      await Promise.all([
+        qc.invalidateQueries({
+          queryKey: clubMemberQueryKeys.members(variables.clubId, "PENDING"),
+        }),
+        qc.invalidateQueries({
+          queryKey: clubMemberQueryKeys.members(variables.clubId, "ALL"),
+        }),
+      ]);
     },
   });
 }
