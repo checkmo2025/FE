@@ -191,36 +191,30 @@ export default function AdminApplicantPage() {
     if (currentPage > totalPages) setCurrentPage(totalPages);
   }, [currentPage, totalPages]);
 
-  const handleActionClick = (applicantId: number) => {
-    setOpenMenuId(openMenuId === applicantId ? null : applicantId);
-  };
-
-  const handleSelectAction = async (clubMemberId: number, action: ActionType) => {
-    // action 매핑:
-    // delete -> REJECT (PENDING 삭제)
-    // approve -> APPROVE (PENDING -> MEMBER)
-    try {
-      if (action === 'delete') {
-        await updateStatus({
-          clubId,
-          clubMemberId,
-          body: {
-            command: 'REJECT'
-          },
-        });
-      } else {
-        await updateStatus({
-          clubId,
-          clubMemberId,
-          body: {
-            command: 'APPROVE',
-          },
-        });
-      }
-    } finally {
-      setOpenMenuId(null);
-    }
-  };
+   const handleSelectAction = async (clubMemberId: number, action: ActionType) => {
+     try {
+       if (action === 'delete') {
+         await updateStatus({
+           clubId,
+           clubMemberId,
+           body: { command: 'REJECT' },
+         });
+       } else {
+         await updateStatus({
+           clubId,
+           clubMemberId,
+           body: { command: 'APPROVE' },
+         });
+       }
+    } catch (err) {
+       const message = action === 'delete' ? '거절 처리에 실패했습니다.' : '가입 처리에 실패했습니다.';
+       // Consider using toast or alert here
+       console.error(message, err);
+       // toast.error(message); // if using react-hot-toast
+     } finally {
+       setOpenMenuId(null);
+     }
+   };
 
   const handleMessageClick = (message: string) => {
     setMessageModal({ isOpen: true, message });
