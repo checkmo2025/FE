@@ -1,50 +1,54 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import React from 'react';
+import Image from "next/image";
+import React from "react";
 
-
-import LongtermChatInput from '@/components/base-ui/LongtermInput';
-import DebateList from '@/components/base-ui/Group/DebateList';
-
-type DebateItem = {
-  id: number;
-  name: string;
-  content: string;
-  profileImageUrl?: string | null;
-};
+import LongtermChatInput from "@/components/base-ui/LongtermInput";
+import DebateList, { DebateItem } from "@/components/base-ui/Group/DebateList";
 
 type Props = {
-  // 내 정보
   myName: string;
   myProfileImageUrl?: string | null;
-  defaultProfileUrl?: string; // "/profile4.svg"
+  defaultProfileUrl?: string;
 
-  // 작성 토글/전송
+  isStaff: boolean;
+
   isWriting: boolean;
   onToggleWriting: () => void;
   onSendDebate: (text: string) => boolean | void;
 
-  // 리스트
   items: DebateItem[];
+
+  onReport: (id: DebateItem["id"]) => void;
+  onUpdate: (id: DebateItem["id"], nextContent: string) => void;
+  onDelete: (id: DebateItem["id"]) => void;
+
+  onClickAuthor?: (name: string) => void;
 };
 
 export default function DebateSection({
   myName,
   myProfileImageUrl,
-  defaultProfileUrl = '/profile4.svg',
+  defaultProfileUrl = "/profile4.svg",
+
+  isStaff,
 
   isWriting,
   onToggleWriting,
   onSendDebate,
 
   items,
+
+  onReport,
+  onUpdate,
+  onDelete,
+
+  onClickAuthor,
 }: Props) {
   const profileSrc = myProfileImageUrl || defaultProfileUrl;
 
   return (
     <div className="flex w-full flex-col items-start self-stretch">
-      {/* 헤더 */}
       <div className="w-full flex items-center justify-between mb-7">
         <div className="flex items-center gap-2">
           <div className="relative w-6 h-6 shrink-0">
@@ -63,20 +67,8 @@ export default function DebateSection({
         </button>
       </div>
 
-      {/* 작성칸 */}
       {isWriting && (
-        <div
-          className="
-            w-full rounded-[8px]
-            border border-Subbrown-4
-            bg-White
-            px-5 py-3
-            flex items-center
-            gap-3
-            mb-[6px]
-          "
-        >
-          {/* 프로필 + 이름 (가로) */}
+        <div className="w-full rounded-[8px] border border-Subbrown-4 bg-White px-5 py-3 flex items-center gap-3 mb-[6px]">
           <div className="flex shrink-0 items-center gap-3 t:min-w-[150px] d:min-w-[200px] hover:brightness-95 cursor-pointer">
             <Image
               src={profileSrc}
@@ -85,17 +77,10 @@ export default function DebateSection({
               height={28}
               className="rounded-full object-cover w-[24px] h-[24px] t:w-[28px] t:h-[28px] d:w-[40px] d:h-[40px]"
             />
-            <p className="text-Gray-7 body_1_2 d:subhead_4_1  truncate">
-              {myName}
-            </p>
+            <p className="text-Gray-7 body_1_2 d:subhead_4_1 truncate">{myName}</p>
           </div>
 
-            
-
-          {/* 입력 */}
           <div className="min-w-0 flex-1 flex items-start gap-3">
-
-            {/* 입력: 내부에서 "글 뒤 20px + 전송버튼" 처리 */}
             <LongtermChatInput
               onSend={onSendDebate}
               placeholder="발제를 입력해 주세요"
@@ -105,8 +90,14 @@ export default function DebateSection({
         </div>
       )}
 
-      {/* 리스트 */}
-      <DebateList items={items} />
+      <DebateList
+        items={items}
+        isStaff={isStaff}
+        onReport={onReport}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
+        onClickAuthor={onClickAuthor}
+      />
     </div>
   );
 }
