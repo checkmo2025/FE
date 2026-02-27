@@ -18,4 +18,12 @@ export const CLUBS = {
 
   detail: (clubId: number) => `${API_BASE_URL}/clubs/${clubId}`,
   update: (clubId: number) => `${API_BASE_URL}/clubs/${clubId}`,
+
+
+  meetingDetail: (clubId: number, meetingId: number) => `${API_BASE_URL}/clubs/${clubId}/meetings/${meetingId}`,
+
+  meetingMembers: (clubId: number, meetingId: number) => `${API_BASE_URL}/clubs/${clubId}/meetings/${meetingId}/members`,
+
+
+  meetingTeams: (clubId: number, meetingId: number) => `${API_BASE_URL}/clubs/${clubId}/meetings/${meetingId}/teams`,   
 } as const;
