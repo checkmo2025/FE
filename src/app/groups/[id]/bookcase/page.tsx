@@ -110,17 +110,19 @@ export default function BookcasePage() {
   const list = adaptedResponse.result.bookShelfInfoList;
 
   return (
-    <div
-    className="
-      w-full
-      grid
-      gap-[10px]
-      justify-center
-      justify-items-start
-      [grid-template-columns:repeat(auto-fit,minmax(166px,166px))]
-      t:[grid-template-columns:repeat(auto-fit,minmax(200px,200px))]
-    "
-  >
+      <div
+        className="
+          w-full grid justify-center
+          gap-y-[10px]
+          [grid-template-columns:repeat(2,166px)]
+          [@media(min-width:360px)_and_(max-width:375px)]:[column-gap:clamp(2px,calc((100vw-332px)/1),10px)]
+          [@media(min-width:376px)]:gap-x-[10px]
+          [@media(min-width:376px)]:[grid-template-columns:repeat(auto-fit,166px)]
+          [@media(min-width:768px)]:[grid-template-columns:repeat(auto-fit,200px)]
+          t:gap-x-[10px]
+          t:[grid-template-columns:repeat(auto-fit,200px)]
+        "
+      >
     {list.map((item) => {
       const meetingId = item.meetingInfo.meetingId;
       const bookId = item.bookInfo.bookId;

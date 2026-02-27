@@ -89,7 +89,7 @@ export default function GroupDetailLayout({
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-[1440px] px-auto t:px-6 py-3 t:pt-3 t:pb-8">
+      <div className="mx-auto w-full max-w-[1440px] px-4 t:px-6 py-3 t:pt-3 t:pb-8">
         <div className="flex flex-col gap-6 t:gap-9 d:flex-row d:gap-8">
           {/* 사이드바 */}
           <aside className="shrink-0 w-full t:w-auto d:w-[236px]">
