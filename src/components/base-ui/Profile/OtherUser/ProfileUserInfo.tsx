@@ -23,7 +23,7 @@ function ActionButton({
       "bg-primary-1 text-White font-semibold t:font-medium w-[220px] h-[32px] t:w-[486px] t:h-[48px] d:w-[532px]",
 
     following:
-      "bg-primary-3 text-white font-semibold t:font-medium w-[220px] h-[32px] t:w-[486px] t:h-[48px] d:w-[532px] border-none bg-[var(--Subbrown_4,#EAE5E2)] !text-[var(--primary_3,#F0E8E1)]",
+      "bg-[var(--Subbrown_4)] text-primary-3 font-semibold t:font-medium w-[220px] h-[32px] t:w-[486px] t:h-[48px] d:w-[532px]",
 
     secondary:
       "bg-White border border-Subbrown-3 text-Gray-4 font-medium hover:bg-gray-50 w-[100px] h-[32px] t:w-[178px] t:h-[48px]",
