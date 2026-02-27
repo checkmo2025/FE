@@ -7,6 +7,8 @@ type BookstoryChoosebookProps = {
   author: string;
   bookDetail: string;
   className?: string;
+
+  onButtonClick?: () => void;
 };
 
 export default function BookstoryChoosebook({
@@ -15,10 +17,25 @@ export default function BookstoryChoosebook({
   author,
   bookDetail,
   className = '',
+  onButtonClick,
 }: BookstoryChoosebookProps) {
+  const clickable = !!onButtonClick
+
   return (
     <div
-      className={`w-full max-w-[1040px] flex flex-col t:flex-row t:items-center p-[20px] ${className} bg-White border border-Subbrown-4 rounded-[8px]`}
+      role={clickable ? 'button' : undefined}
+      tabIndex={clickable ? 0 : undefined}
+      onClick={clickable ? onButtonClick : undefined}
+      onKeyDown={
+        clickable
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') onButtonClick?.();
+            }
+          : undefined
+      }
+      className={`w-full max-w-[1040px] flex flex-col t:flex-row t:items-center p-[20px] ${className} bg-White border border-Subbrown-4 rounded-[8px] ${
+        clickable ? 'cursor-pointer' : ''
+      }`}
     >
       {/* 왼쪽: 책 + 텍스트 */}
       <div className="flex items-start gap-[24px] min-w-0 flex-1">
@@ -50,7 +67,7 @@ export default function BookstoryChoosebook({
 
       {/* 모바일: 아래줄 가운데, 태블릿부터: 오른쪽 */}
       <div className="shrink-0 t:ml-[52px] t:self-stretch t:flex t:items-end mt-4 t:mt-0 flex justify-center">
-        
+        {/* 비워둠 (기존 UI 유지) */}
       </div>
     </div>
   );

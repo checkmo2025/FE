@@ -5,7 +5,7 @@ import { useParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-type TabType = "home" | "notice" | "bookshelf";
+type TabType = "home" | "notice" | "bookcase";
 
 export default function GroupDetailLayout({
   children,

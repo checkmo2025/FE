@@ -138,7 +138,8 @@ export default function EditBookshelfPage() {
     setMeetingLocation(meetingInfo.location ?? '');
     setGeneration(String(meetingInfo.generation ?? 1));
 
-    const idx = TAG_LABELS.indexOf(meetingInfo.tag ?? '');
+    const tag = (meetingInfo.tag ??  "") as (typeof TAG_LABELS)[number] | "";
+    const idx = TAG_LABELS.indexOf(tag as (typeof TAG_LABELS)[number]);
     setSelectedTags(idx >= 0 ? [idx] : []);
 
     // meetingTime ISO -> YYYY.MM.DD
