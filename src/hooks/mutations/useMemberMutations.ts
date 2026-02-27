@@ -58,10 +58,52 @@ export const useUpdateProfileMutation = () => {
     });
 };
 
-import { UpdatePasswordRequest } from "@/types/member";
+import { UpdatePasswordRequest, RecommendResponse } from "@/types/member";
+import { BookStoryListResponse } from "@/types/story";
 import { storyKeys } from "@/hooks/queries/useStoryQueries";
 import { memberKeys } from "@/hooks/queries/useMemberQueries";
 import { toast } from "react-hot-toast";
+import { InfiniteData } from "@tanstack/react-query";
+
+// Optimistic update helpers
+const updateFollowStateInRecommend = (old: RecommendResponse | undefined, nickname: string, isFollowing: boolean) => {
+    if (!old || !old.friends) return old;
+    return {
+        ...old,
+        friends: old.friends.map((member) =>
+            member.nickname === nickname
+                ? { ...member, isFollowing: !isFollowing }
+                : member
+        )
+    };
+};
+
+const updateFollowStateInInfiniteList = (old: InfiniteData<BookStoryListResponse> | undefined, nickname: string, isFollowing: boolean) => {
+    if (!old || !old.pages) return old;
+    return {
+        ...old,
+        pages: old.pages.map((page) => ({
+            ...page,
+            basicInfoList: page.basicInfoList.map((story) =>
+                story.authorInfo.nickname === nickname
+                    ? { ...story, authorInfo: { ...story.authorInfo, following: !isFollowing } }
+                    : story
+            )
+        }))
+    };
+};
+
+const updateFollowStateInList = (old: BookStoryListResponse | undefined, nickname: string, isFollowing: boolean) => {
+    if (!old || !old.basicInfoList) return old;
+    return {
+        ...old,
+        basicInfoList: old.basicInfoList.map((story) =>
+            story.authorInfo.nickname === nickname
+                ? { ...story, authorInfo: { ...story.authorInfo, following: !isFollowing } }
+                : story
+        )
+    };
+};
 
 // Throttle map to prevent spam clicking (per nickname)
 const followThrottleMap: Record<string, number> = {};
@@ -109,50 +151,23 @@ export const useToggleFollowMutation = () => {
 
             // 1. Optimistically update recommendations
             if (previousRecommendations) {
-                queryClient.setQueryData(memberKeys.recommended(), (old: any) => {
-                    if (!old || !old.friends) return old;
-                    return {
-                        ...old,
-                        friends: old.friends.map((member: any) =>
-                            member.nickname === nickname
-                                ? { ...member, isFollowing: !isFollowing }
-                                : member
-                        )
-                    };
-                });
+                queryClient.setQueryData<RecommendResponse>(memberKeys.recommended(), (old) =>
+                    updateFollowStateInRecommend(old, nickname, isFollowing)
+                );
             }
 
             // 2. Optimistically update infinite stories
             if (previousInfiniteStories) {
-                queryClient.setQueryData(storyKeys.infiniteList(), (old: any) => {
-                    if (!old || !old.pages) return old;
-                    return {
-                        ...old,
-                        pages: old.pages.map((page: any) => ({
-                            ...page,
-                            basicInfoList: page.basicInfoList.map((story: any) =>
-                                story.authorInfo.nickname === nickname
-                                    ? { ...story, authorInfo: { ...story.authorInfo, following: !isFollowing } }
-                                    : story
-                            )
-                        }))
-                    };
-                });
+                queryClient.setQueryData<InfiniteData<BookStoryListResponse>>(storyKeys.infiniteList(), (old) =>
+                    updateFollowStateInInfiniteList(old, nickname, isFollowing)
+                );
             }
 
             // 3. Optimistically update stories list
             if (previousStories) {
-                queryClient.setQueryData(storyKeys.list(), (old: any) => {
-                    if (!old || !old.basicInfoList) return old;
-                    return {
-                        ...old,
-                        basicInfoList: old.basicInfoList.map((story: any) =>
-                            story.authorInfo.nickname === nickname
-                                ? { ...story, authorInfo: { ...story.authorInfo, following: !isFollowing } }
-                                : story
-                        )
-                    };
-                });
+                queryClient.setQueryData<BookStoryListResponse>(storyKeys.list(), (old) =>
+                    updateFollowStateInList(old, nickname, isFollowing)
+                );
             }
 
             return { previousRecommendations, previousInfiniteStories, previousStories };

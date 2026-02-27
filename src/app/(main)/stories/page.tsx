@@ -94,7 +94,7 @@ export default function StoriesPage() {
           {allStories.slice(0, 4).map((story) => (
             <div
               key={story.bookStoryId}
-              className="cursor-pointer shrink-0"
+              className="shrink-0"
             >
               <BookStoryCardLarge
                 id={story.bookStoryId}
@@ -131,7 +131,7 @@ export default function StoriesPage() {
           {allStories.slice(4).map((story) => (
             <div
               key={story.bookStoryId}
-              className="cursor-pointer shrink-0"
+              className="shrink-0"
             >
               <BookStoryCardLarge
                 id={story.bookStoryId}

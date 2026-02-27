@@ -1,7 +1,47 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, InfiniteData } from "@tanstack/react-query";
 import { storyService } from "@/services/storyService";
 import { CreateBookStoryRequest, storyKeys } from "@/hooks/queries/useStoryQueries";
 import { toast } from "react-hot-toast";
+import { BookStoryListResponse, BookStoryDetail } from "@/types/story";
+
+const updateLikeInStoryList = (old: BookStoryListResponse | undefined, bookStoryId: number) => {
+    if (!old || !old.basicInfoList) return old;
+    return {
+        ...old,
+        basicInfoList: old.basicInfoList.map((story) => {
+            if (story.bookStoryId === bookStoryId) {
+                const nextLiked = !story.likedByMe;
+                return {
+                    ...story,
+                    likedByMe: nextLiked,
+                    likes: nextLiked ? story.likes + 1 : story.likes - 1,
+                };
+            }
+            return story;
+        }),
+    };
+};
+
+const updateLikeInInfiniteList = (old: InfiniteData<BookStoryListResponse> | undefined, bookStoryId: number) => {
+    if (!old || !old.pages) return old;
+    return {
+        ...old,
+        pages: old.pages.map((page) => ({
+            ...page,
+            basicInfoList: page.basicInfoList.map((story) => {
+                if (story.bookStoryId === bookStoryId) {
+                    const nextLiked = !story.likedByMe;
+                    return {
+                        ...story,
+                        likedByMe: nextLiked,
+                        likes: nextLiked ? story.likes + 1 : story.likes - 1,
+                    };
+                }
+                return story;
+            }),
+        })),
+    };
+};
 
 // Throttle map to prevent spam clicking (per bookStoryId)
 const likeThrottleMap: Record<number, number> = {};
@@ -77,76 +117,28 @@ export const useToggleStoryLikeMutation = () => {
 
             // Optimistically update the infinite list
             if (previousInfiniteStories) {
-                queryClient.setQueryData(storyKeys.infiniteList(), (old: any) => {
-                    if (!old) return old;
-                    return {
-                        ...old,
-                        pages: old.pages.map((page: any) => ({
-                            ...page,
-                            basicInfoList: page.basicInfoList.map((story: any) => {
-                                if (story.bookStoryId === bookStoryId) {
-                                    const nextLiked = !story.likedByMe;
-                                    return {
-                                        ...story,
-                                        likedByMe: nextLiked,
-                                        likes: nextLiked ? story.likes + 1 : story.likes - 1,
-                                    };
-                                }
-                                return story;
-                            }),
-                        })),
-                    };
-                });
+                queryClient.setQueryData<InfiniteData<BookStoryListResponse>>(storyKeys.infiniteList(), (old) =>
+                    updateLikeInInfiniteList(old, bookStoryId)
+                );
             }
 
             // Optimistically update my stories
             if (previousMyStories) {
-                queryClient.setQueryData(storyKeys.myList(), (old: any) => {
-                    if (!old) return old;
-                    return {
-                        ...old,
-                        pages: old.pages.map((page: any) => ({
-                            ...page,
-                            basicInfoList: page.basicInfoList.map((story: any) => {
-                                if (story.bookStoryId === bookStoryId) {
-                                    const nextLiked = !story.likedByMe;
-                                    return {
-                                        ...story,
-                                        likedByMe: nextLiked,
-                                        likes: nextLiked ? story.likes + 1 : story.likes - 1,
-                                    };
-                                }
-                                return story;
-                            }),
-                        })),
-                    };
-                });
+                queryClient.setQueryData<InfiniteData<BookStoryListResponse>>(storyKeys.myList(), (old) =>
+                    updateLikeInInfiniteList(old, bookStoryId)
+                );
             }
 
             // Optimistically update the regular list (if used)
             if (previousStories) {
-                queryClient.setQueryData(storyKeys.list(), (old: any) => {
-                    if (!old) return old;
-                    return {
-                        ...old,
-                        basicInfoList: old.basicInfoList.map((story: any) => {
-                            if (story.bookStoryId === bookStoryId) {
-                                const nextLiked = !story.likedByMe;
-                                return {
-                                    ...story,
-                                    likedByMe: nextLiked,
-                                    likes: nextLiked ? story.likes + 1 : story.likes - 1,
-                                };
-                            }
-                            return story;
-                        }),
-                    };
-                });
+                queryClient.setQueryData<BookStoryListResponse>(storyKeys.list(), (old) =>
+                    updateLikeInStoryList(old, bookStoryId)
+                );
             }
 
             // Optimistically update the detail view
             if (previousStoryDetail) {
-                queryClient.setQueryData(storyKeys.detail(bookStoryId), (old: any) => {
+                queryClient.setQueryData<BookStoryDetail>(storyKeys.detail(bookStoryId), (old) => {
                     if (!old) return old;
                     const nextLiked = !old.likedByMe;
                     return {
