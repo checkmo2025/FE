@@ -241,7 +241,7 @@ export default function EditBookshelfPage() {
       <div className="py-4 t:py-6 px-2.5 t:px-10">
         <div className="flex justify-center">
           <div className="w-full max-w-[1040px] flex flex-col gap-6">
-            <p className="subhead_3 text-Gray-7">책장 작성</p>
+            <p className="subhead_3 text-Gray-7">책장 수정</p>
 
             {/* 책 선택 */}
             <div className="flex flex-col gap-2">
@@ -432,7 +432,7 @@ export default function EditBookshelfPage() {
                     : 'bg-primary-2 text-White hover:opacity-90'
                 }`}
               >
-                등록
+                수정
               </button>
             </div>
           </div>
