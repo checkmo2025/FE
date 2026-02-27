@@ -1,10 +1,23 @@
 "use client";
 
 import React from "react";
-import MyMeetingCard from "./items/AdminMeetingCard";
+import AdminMeetingCard from "./items/AdminMeetingCard";
 import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 
-const MyMeetingList = () => {
+type Props = {
+  /** 관리자 상세 페이지의 대상 유저 ID */
+  userId: string;
+};
+
+const MeetingList = ({ userId }: Props) => {
+  /**
+   * TODO:
+   * 관리자 전용 "특정 사용자(userId) 모임 목록 조회" API가 아직 없어
+   * 임시로 useMyClubsQuery()를 사용 중입니다.
+   * 추후 useUserClubsQuery(userId) 형태로 교체 예정입니다.
+   */
+  void userId; // 현재는 사용하지 않지만 구조 통일을 위해 유지
+
   const { data, isLoading, isError } = useMyClubsQuery();
   const clubs = data?.clubList || [];
 
@@ -37,10 +50,10 @@ const MyMeetingList = () => {
   return (
     <div className="flex flex-col items-start gap-[8px] w-full max-w-[1048px] px-[18px] md:px-[40px] lg:px-0 mx-auto">
       {clubs.map((club) => (
-        <MyMeetingCard key={club.clubId} club={club} />
+        <AdminMeetingCard key={club.clubId} club={club} />
       ))}
     </div>
   );
 };
 
-export default MyMeetingList;
+export default MeetingList;

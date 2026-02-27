@@ -2,7 +2,16 @@
 
 import ReportItem from "./items/AdminReportItem";
 
-export default function ReportList() {
+type Props = {
+  /** 관리자 상세 페이지의 대상 유저 ID */
+  userId: string;
+};
+
+// TODO: 관리자 사용자 신고 목록 조회 API 연동 후 userId 기반 실제 데이터로 교체 예정
+export default function ReportList({ userId }: Props) {
+  // 현재는 구조 통일을 위해 props만 받고 사용하지 않음
+  void userId;
+
   const reports = [
     {
       id: 1,
