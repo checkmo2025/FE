@@ -11,7 +11,7 @@ function ActionButton({
   label,
   onClick,
 }: {
-  variant: "primary" | "secondary";
+  variant: "primary" | "secondary" | "following";
   label: string;
   onClick?: () => void;
 }) {
@@ -21,6 +21,9 @@ function ActionButton({
   const variants = {
     primary:
       "bg-primary-1 text-White font-semibold t:font-medium w-[220px] h-[32px] t:w-[486px] t:h-[48px] d:w-[532px]",
+
+    following:
+      "bg-White border border-Subbrown-3 text-Gray-4 font-semibold t:font-medium hover:bg-gray-50 w-[220px] h-[32px] t:w-[486px] t:h-[48px] d:w-[532px]",
 
     secondary:
       "bg-White border border-Subbrown-3 text-Gray-4 font-medium hover:bg-gray-50 w-[100px] h-[32px] t:w-[178px] t:h-[48px]",
@@ -126,7 +129,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
       {/* 2. 하단 버튼 그룹 */}
       <div className="flex w-full justify-center items-center gap-[19px] t:gap-[24px]">
         <ActionButton
-          variant={profile.following ? "secondary" : "primary"}
+          variant={profile.following ? "following" : "primary"}
           label={profile.following ? "구독 중" : "구독하기"}
           onClick={handleToggleFollow}
         />
