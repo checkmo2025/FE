@@ -7,7 +7,14 @@ export interface ApiResponse<T> {
 }
 
 // 1) 나의 상태 조회: GET /api/clubs/{clubId}/me
-export type MyClubStatus = "OWNER" | "MEMBER" | string;
+export type MyClubStatus =
+  | "NONE"
+  | "PENDING"
+  | "MEMBER"
+  | "STAFF"
+  | "OWNER"
+  | "WITHDRAWN"
+  | "KICKED";
 
 export interface MyClubStatusResponseResult {
   clubId: number;
