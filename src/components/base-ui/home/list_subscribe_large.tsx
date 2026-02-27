@@ -9,6 +9,7 @@ type ListSubscribeElementLargeProps = {
   profileSrc?: string;
   onSubscribeClick?: () => void;
   buttonText?: string;
+  isFollowing?: boolean;
 };
 
 function ListSubscribeElementLarge({
@@ -18,6 +19,7 @@ function ListSubscribeElementLarge({
   profileSrc = '/profile2.svg',
   onSubscribeClick,
   buttonText = '구독',
+  isFollowing = false,
 }: ListSubscribeElementLargeProps) {
   return (
     <div className="flex w-[296px] h-[66px] px-[14px] py-[8px] gap-[8px] rounded-[8px] border border-Subbrown-4 bg-white">
@@ -45,7 +47,10 @@ function ListSubscribeElementLarge({
         <button
           type="button"
           onClick={onSubscribeClick}
-          className="flex px-[17px] py-[8px] justify-center items-center gap-[10px] rounded-[8px] bg-[#9A7A6B] text-white text-[12px] font-semibold leading-[100%] tracking-[-0.012px] whitespace-nowrap shrink-0"
+          className={`flex px-[17px] py-[8px] justify-center items-center gap-[10px] rounded-[8px] text-[12px] font-semibold leading-[100%] tracking-[-0.012px] whitespace-nowrap shrink-0 transition-colors ${isFollowing
+              ? "bg-Subbrown-4 text-primary-3"
+              : "bg-primary-2 text-white"
+            }`}
         >
           {buttonText}
         </button>
@@ -61,14 +66,17 @@ type ListSubscribeLargeProps = {
     profileImageUrl?: string;
     subscribingCount?: number;
     subscribersCount?: number;
+    isFollowing?: boolean;
   }>;
   isError?: boolean;
+  onSubscribeClick?: (nickname: string, isFollowing: boolean) => void;
 };
 
 export default function ListSubscribeLarge({
   height = "h-[380px]",
   users = [],
   isError = false,
+  onSubscribeClick,
 }: ListSubscribeLargeProps) {
 
   return (
@@ -96,7 +104,9 @@ export default function ListSubscribeLarge({
               subscribingCount={u.subscribingCount}
               subscribersCount={u.subscribersCount}
               profileSrc={u.profileImageUrl}
-              onSubscribeClick={() => console.log("subscribe", u.nickname)}
+              isFollowing={u.isFollowing}
+              buttonText={u.isFollowing ? "구독 중" : "구독"}
+              onSubscribeClick={() => onSubscribeClick?.(u.nickname, u.isFollowing || false)}
             />
           ))}
       </div>

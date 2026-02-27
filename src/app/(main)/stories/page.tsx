@@ -9,10 +9,14 @@ import { useInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
 import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 import { useInView } from "react-intersection-observer";
+import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
+import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 
 export default function StoriesPage() {
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
+  const { mutate: toggleLike } = useToggleStoryLikeMutation();
+  const { mutate: toggleFollow } = useToggleFollowMutation();
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const {
@@ -90,10 +94,10 @@ export default function StoriesPage() {
           {allStories.slice(0, 4).map((story) => (
             <div
               key={story.bookStoryId}
-              onClick={() => handleCardClick(story.bookStoryId)}
-              className="cursor-pointer shrink-0"
+              className="shrink-0"
             >
               <BookStoryCardLarge
+                id={story.bookStoryId}
                 authorName={story.authorInfo.nickname}
                 profileImgSrc={story.authorInfo.profileImageUrl}
                 createdAt={story.createdAt}
@@ -102,10 +106,15 @@ export default function StoriesPage() {
                 content={story.description}
                 likeCount={story.likes}
                 commentCount={story.commentCount}
+                likedByMe={story.likedByMe}
                 coverImgSrc={story.bookInfo.imgUrl}
-                subscribeText={story.authorInfo.following ? "구독중" : "구독"}
+                subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+                isFollowing={story.authorInfo.following}
+                onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
                 hideSubscribeButton={story.writtenByMe}
                 onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
+                onClick={() => handleCardClick(story.bookStoryId)}
+                onLikeClick={() => toggleLike(story.bookStoryId)}
               />
             </div>
           ))}
@@ -115,6 +124,7 @@ export default function StoriesPage() {
             <ListSubscribeLarge
               height="h-[380px]"
               users={recommendedMembers}
+              onSubscribeClick={(nickname, isFollowing) => toggleFollow({ nickname, isFollowing })}
             />
           )}
 
@@ -122,10 +132,10 @@ export default function StoriesPage() {
           {allStories.slice(4).map((story) => (
             <div
               key={story.bookStoryId}
-              onClick={() => handleCardClick(story.bookStoryId)}
-              className="cursor-pointer shrink-0"
+              className="shrink-0"
             >
               <BookStoryCardLarge
+                id={story.bookStoryId}
                 authorName={story.authorInfo.nickname}
                 profileImgSrc={story.authorInfo.profileImageUrl}
                 createdAt={story.createdAt}
@@ -134,10 +144,15 @@ export default function StoriesPage() {
                 content={story.description}
                 likeCount={story.likes}
                 commentCount={story.commentCount}
+                likedByMe={story.likedByMe}
                 coverImgSrc={story.bookInfo.imgUrl}
-                subscribeText={story.authorInfo.following ? "구독중" : "구독"}
+                subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+                isFollowing={story.authorInfo.following}
+                onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
                 hideSubscribeButton={story.writtenByMe}
                 onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
+                onClick={() => handleCardClick(story.bookStoryId)}
+                onLikeClick={() => toggleLike(story.bookStoryId)}
               />
             </div>
           ))}

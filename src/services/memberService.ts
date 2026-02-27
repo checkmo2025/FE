@@ -40,4 +40,20 @@ export const memberService = {
         );
         return response.result!;
     },
+    followMember: async (nickname: string): Promise<void> => {
+        const response = await apiClient.post<ApiResponse<unknown>>(
+            MEMBER_ENDPOINTS.FOLLOW(nickname)
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "Failed to follow member");
+        }
+    },
+    unfollowMember: async (nickname: string): Promise<void> => {
+        const response = await apiClient.delete<ApiResponse<unknown>>(
+            MEMBER_ENDPOINTS.FOLLOW(nickname)
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "Failed to unfollow member");
+        }
+    },
 };

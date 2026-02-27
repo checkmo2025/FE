@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import BookStoryCard from "@/components/base-ui/BookStory/bookstory_card";
 
 const MOCK_STORIES = [
@@ -66,13 +67,19 @@ const MOCK_STORIES = [
 ];
 
 export default function BookStoryList() {
+  const router = useRouter();
   return (
     <div className="flex flex-col items-center w-full max-w-[1048px] mx-auto gap-[20px] px-[18px] md:px-[40px] lg:px-0">
       <div
         className="grid grid-cols-2 min-[540px]:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-[20px] md:gap-[12px] lg:gap-[20px] w-fit"
       >
         {MOCK_STORIES.map(({ id, ...storyData }) => (
-          <BookStoryCard key={id} {...storyData} />
+          <BookStoryCard
+            key={id}
+            id={id}
+            {...storyData}
+            onClick={() => router.push(`/stories/${id}`)}
+          />
         ))}
       </div>
     </div>
