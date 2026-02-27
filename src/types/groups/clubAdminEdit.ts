@@ -20,7 +20,7 @@ export type ClubAdminDetail = {
   clubId: number;
   name: string;
   description: string;
-  profileImageUrl: string;
+  profileImageUrl: string | null;
   region: string;
   category: CodeDescItem[]; // [{code, description}]
   participantTypes: CodeDescItem[]; // [{code, description}]
@@ -36,7 +36,7 @@ export type ClubAdminDetailResponse = ApiResponse<ClubAdminDetail>;
 export type UpdateClubAdminRequest = {
   name: string;
   description: string;
-  profileImageUrl: string;
+  profileImageUrl: string | null;
   open: boolean;
   region: string;
   category: string[]; 
