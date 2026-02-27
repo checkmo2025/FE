@@ -43,6 +43,41 @@ const updateLikeInInfiniteList = (old: InfiniteData<BookStoryListResponse> | und
     };
 };
 
+const updateCommentCountInStoryList = (old: BookStoryListResponse | undefined, bookStoryId: number, delta: number) => {
+    if (!old || !old.basicInfoList) return old;
+    return {
+        ...old,
+        basicInfoList: old.basicInfoList.map((story) => {
+            if (story.bookStoryId === bookStoryId) {
+                return {
+                    ...story,
+                    commentCount: story.commentCount + delta,
+                };
+            }
+            return story;
+        }),
+    };
+};
+
+const updateCommentCountInInfiniteList = (old: InfiniteData<BookStoryListResponse> | undefined, bookStoryId: number, delta: number) => {
+    if (!old || !old.pages) return old;
+    return {
+        ...old,
+        pages: old.pages.map((page) => ({
+            ...page,
+            basicInfoList: page.basicInfoList.map((story) => {
+                if (story.bookStoryId === bookStoryId) {
+                    return {
+                        ...story,
+                        commentCount: story.commentCount + delta,
+                    };
+                }
+                return story;
+            }),
+        })),
+    };
+};
+
 // Throttle map to prevent spam clicking (per bookStoryId)
 const likeThrottleMap: Record<number, number> = {};
 
@@ -63,6 +98,15 @@ export const useCreateCommentMutation = (bookStoryId: number) => {
             storyService.createComment(bookStoryId, { content: args.content }, args.parentCommentId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: storyKeys.detail(bookStoryId) });
+            queryClient.setQueryData<InfiniteData<BookStoryListResponse>>(storyKeys.infiniteList(), (old) =>
+                updateCommentCountInInfiniteList(old, bookStoryId, 1)
+            );
+            queryClient.setQueryData<InfiniteData<BookStoryListResponse>>(storyKeys.myList(), (old) =>
+                updateCommentCountInInfiniteList(old, bookStoryId, 1)
+            );
+            queryClient.setQueryData<BookStoryListResponse>(storyKeys.list(), (old) =>
+                updateCommentCountInStoryList(old, bookStoryId, 1)
+            );
         },
     });
 };
@@ -85,6 +129,15 @@ export const useDeleteCommentMutation = (bookStoryId: number) => {
             storyService.deleteComment(bookStoryId, commentId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: storyKeys.detail(bookStoryId) });
+            queryClient.setQueryData<InfiniteData<BookStoryListResponse>>(storyKeys.infiniteList(), (old) =>
+                updateCommentCountInInfiniteList(old, bookStoryId, -1)
+            );
+            queryClient.setQueryData<InfiniteData<BookStoryListResponse>>(storyKeys.myList(), (old) =>
+                updateCommentCountInInfiniteList(old, bookStoryId, -1)
+            );
+            queryClient.setQueryData<BookStoryListResponse>(storyKeys.list(), (old) =>
+                updateCommentCountInStoryList(old, bookStoryId, -1)
+            );
         },
     });
 };
