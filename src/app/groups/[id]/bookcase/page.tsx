@@ -1,102 +1,156 @@
 "use client";
 
+import React, { useEffect, useMemo, useRef } from "react";
 import BookcaseCard from "@/components/base-ui/Bookcase/BookcaseCard";
 import FloatingFab from "@/components/base-ui/Float";
-import { BookcaseApiResponse, groupByGeneration } from "@/types/groups/bookcasehome";
+import { BookcaseApiResponse } from "@/types/groups/bookcasehome";
 import { useParams, useRouter } from "next/navigation";
-
-
-
-//API 형태 그대로
-const MOCK_BOOKCASE_RESPONSE: BookcaseApiResponse = {
-  isSuccess: true,
-  code: "COMMON200",
-  message: "성공입니다.",
-  result: {
-    bookShelfInfoList: [
-      {
-        meetingInfo: { meetingId: 2, generation: 1, tag: "MEETING", averageRate: 3 },
-        bookInfo: {
-          bookId: "9791192625133",
-          title: "거인의 어깨 1 - 벤저민 그레이엄, 워런 버핏, 피터 린치에게 배우다",
-          author: "홍진채",
-          imgUrl: null,
-        },
-      },
-      {
-        meetingInfo: { meetingId: 1, generation: 1, tag: "MEETING", averageRate: 4.5 },
-        bookInfo: {
-          bookId: "9791192005317",
-          title: "살인자ㅇ난감",
-          author: "꼬마비",
-          imgUrl: null,
-        },
-      },
-      {
-        meetingInfo: { meetingId: 3, generation: 2, tag: "MEETING", averageRate: 3.8 },
-        bookInfo: {
-          bookId: "1",
-          title: "더미 책",
-          author: "더미 작가",
-          imgUrl: null,
-        },
-      },
-    ],
-    hasNext: false,
-    nextCursor: null,
-  },
-};
+import { useClubsBookshelfSimpleInfiniteQuery } from "@/hooks/queries/useClubsBookshelfQueries";
 
 export default function BookcasePage() {
   const router = useRouter();
   const params = useParams();
-  const groupId = params.id as string;
-
-  const sections = groupByGeneration(MOCK_BOOKCASE_RESPONSE.result.bookShelfInfoList);
+  const groupId = Number(params.id);
 
   type TabParam = "topic" | "review" | "meeting";
 
   const handleGoToDetail = (meetingId: number, tab: TabParam) => {
-  router.push(`/groups/${groupId}/bookcase/${meetingId}?tab=${tab}`);
-};
+    router.push(`/groups/${groupId}/bookcase/${meetingId}?tab=${tab}`);
+  };
+
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useClubsBookshelfSimpleInfiniteQuery(groupId);
+
+  const autoFetchCountRef = useRef(0);
+  const AUTO_FETCH_LIMIT = 10;
+
+  useEffect(() => {
+    if (!hasNextPage) return;
+    if (isFetchingNextPage) return;
+    if (autoFetchCountRef.current >= AUTO_FETCH_LIMIT) return;
+
+    autoFetchCountRef.current += 1;
+    fetchNextPage();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const mergedBookShelfInfoList = useMemo(() => {
+    const pages = data?.pages ?? [];
+    return pages.flatMap((p) => p.bookShelfInfoList ?? []);
+  }, [data]);
+
+  const isStaff = useMemo(() => {
+    const first = data?.pages?.[0];
+    return Boolean(first?.isStaff);
+  }, [data]);
+
+  const adaptedResponse: BookcaseApiResponse | null = useMemo(() => {
+    if (!data?.pages?.length) return null;
+
+    const first = data.pages[0];
+
+    return {
+      isSuccess: true,
+      code: "COMMON200",
+      message: "성공입니다.",
+      result: {
+        bookShelfInfoList: mergedBookShelfInfoList,
+        hasNext: Boolean(first.hasNext),
+        nextCursor: first.nextCursor == null ? null : String(first.nextCursor),
+      },
+    };
+  }, [data, mergedBookShelfInfoList]);
+
+  if (Number.isNaN(groupId)) {
+    return (
+      <div className="w-full flex flex-col gap-[24px] text-Gray-7 body_1_2">
+        잘못된 모임 ID
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="w-full flex flex-col gap-[24px] text-Gray-7 body_1_2">
+        불러오는 중...
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="w-full flex flex-col gap-[24px] text-Gray-7 body_1_2">
+        책장 조회 실패: {(error as Error)?.message ?? "unknown error"}
+      </div>
+    );
+  }
+
+  if (!adaptedResponse || mergedBookShelfInfoList.length === 0) {
+    return (
+      <div className="w-full flex flex-col gap-[24px] items-center h-50 justify-center">
+        <div className="text-Gray-6 body_1_2">아직 책장이 없습니다.</div>
+
+        {isStaff && (
+          <FloatingFab
+            iconSrc="/icons_pencil.svg"
+            iconAlt="문의하기"
+            onClick={() => router.push(`/groups/${groupId}/admin/bookcase/new`)}
+          />
+        )}
+      </div>
+    );
+  }
+
+  const list = adaptedResponse.result.bookShelfInfoList;
 
   return (
-    <div className="w-full flex flex-col gap-[24px]">
-      {/* 책장 리스트 영역 */}
-      {sections.map((section) => (
-        <section
-          key={section.generationNumber}
-          className="flex flex-col items-start gap-[8px] self-stretch"
-        >
-          {/* 기수 라벨 */}
-          <div className="flex w-[112px] items-center gap-[10px] px-[12px] py-[10px]">
-            <span className="text-Gray-4 body_1_2">{section.generationLabel}</span>
-          </div>
+      <div
+        className="
+          w-full grid justify-center
+          gap-y-[10px]
+          [grid-template-columns:repeat(2,166px)]
+          [@media(min-width:360px)_and_(max-width:375px)]:[column-gap:clamp(2px,calc((100vw-332px)/1),10px)]
+          [@media(min-width:376px)]:gap-x-[10px]
+          [@media(min-width:376px)]:[grid-template-columns:repeat(auto-fit,166px)]
+          [@media(min-width:768px)]:[grid-template-columns:repeat(auto-fit,200px)]
+          t:gap-x-[10px]
+          t:[grid-template-columns:repeat(auto-fit,200px)]
+        "
+      >
+    {list.map((item) => {
+      const meetingId = item.meetingInfo.meetingId;
+      const bookId = item.bookInfo.bookId;
 
-          {/* 카드 리스트 */}
-          <div className="flex flex-wrap items-center gap-[10px] self-stretch justify-center d:justify-start">
-            {section.books.map((book) => (
-              <BookcaseCard
-                key={`${book.meetingId}-${book.bookId}`} // bookId만 쓰면 중복날 수도 있음
-                title={book.title}
-                author={book.author}
-                imageUrl={book.imageUrl}
-                category={book.category}
-                rating={book.rating}
-                onTopicClick={() => handleGoToDetail(book.meetingId, "topic")}
-                onReviewClick={() => handleGoToDetail(book.meetingId, "review")}
-                onMeetingClick={() => handleGoToDetail(book.meetingId, "meeting")}
-              />
-            ))}
-          </div>
-        </section>
-      ))}
-
-      <FloatingFab
-        iconSrc="/icons_pencil.svg"
-        iconAlt="문의하기"
-        onClick={() => router.push(`/groups/${groupId}/admin/bookcase/new`)}
-      />
-    </div>
-  );
+      return (
+        <BookcaseCard
+          key={`${meetingId}-${bookId}`}
+          title={item.bookInfo.title}
+          author={item.bookInfo.author}
+          imageUrl={item.bookInfo.imgUrl ?? "/dummy_book_cover.png"}
+          category={{
+            generation: `${item.meetingInfo.generation}기`,
+            genre: item.meetingInfo.tag,
+          }}
+          rating={item.meetingInfo.averageRate}
+          onTopicClick={() => handleGoToDetail(meetingId, "topic")}
+          onReviewClick={() => handleGoToDetail(meetingId, "review")}
+          onMeetingClick={() => handleGoToDetail(meetingId, "meeting")}
+        />
+      );
+    })}
+     {isStaff && (
+        <FloatingFab
+          iconSrc="/icons_pencil.svg"
+          iconAlt="문의하기"
+          onClick={() => router.push(`/groups/${groupId}/admin/bookcase/new`)}
+        />
+      )}
+  </div>
+    );
 }

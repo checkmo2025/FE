@@ -6,18 +6,13 @@ import toast from "react-hot-toast";
 
 import ButtonWithoutImg from "@/components/base-ui/button_without_img";
 import SearchGroupSearch from "@/components/base-ui/Group-Search/search_groupsearch";
-import Mybookclub, {
-  type GroupSummary,
-} from "@/components/base-ui/Group-Search/search_mybookclub";
+import Mybookclub, { type GroupSummary } from "@/components/base-ui/Group-Search/search_mybookclub";
 
-import SearchClubListItem, {
-  type ClubSummary,
-} from "@/components/base-ui/Group-Search/search_clublist/search_clublist_item";
+import SearchClubListItem, { type ClubSummary } from "@/components/base-ui/Group-Search/search_clublist/search_clublist_item";
 import SearchClubApplyModal from "@/components/base-ui/Group-Search/search_club_apply_modal";
 
 import type { Category, ParticipantType } from "@/types/groups/groups";
 import type {
-  ClubCategoryDTO,
   ClubDTO,
   ClubListItemDTO,
   ClubSearchParams,
@@ -56,62 +51,26 @@ function mapCategoryToOutputFilter(category: Category): OutputFilter {
 function mapInputFilter(group: boolean, region: boolean): InputFilter | null {
   if (group && !region) return "NAME";
   if (!group && region) return "REGION";
-  return null; // 둘 다 선택 or 둘 다 해제
-}
-
-const CATEGORY_LABEL_TO_NUM: Record<string, number> = {
-  여행: 1,
-  외국어: 2,
-  "어린이/청소년": 3,
-  "종교/철학": 4,
-  "소설/시/희곡": 5,
-  에세이: 6,
-  인문학: 7,
-  과학: 8,
-  "컴퓨터/IT": 9,
-  "경제/경영": 10,
-  자기계발: 11,
-  사회과학: 12,
-  "정치/외교/국방": 13,
-  "역사/문화": 14,
-  "예술/대중문화": 15,
-};
-
-function mapCategories(dto: ClubCategoryDTO[]): number[] {
-  return dto
-    .map((c) => {
-      const byDesc = CATEGORY_LABEL_TO_NUM[c.description];
-      if (byDesc) return byDesc;
-      const n = Number(c.code);
-      return Number.isFinite(n) ? n : null;
-    })
-    .filter((v): v is number => typeof v === "number" && v >= 1 && v <= 15);
+  return null;
 }
 
 function mapApplyType(myStatus: string): "No" | "Wait" | "Yes" {
-  // 안전 기본값: NONE만 No, MEMBER/JOINED류 Yes, 나머지 Wait
   if (myStatus === "NONE") return "No";
   if (myStatus === "MEMBER" || myStatus === "JOINED") return "Yes";
   return "Wait";
 }
 
-function mapClubDTOToSummary(
-  club: ClubDTO,
-  myStatus: string,
-  reason = ""
-): ClubSummary {
+function mapClubDTOToSummary(club: ClubDTO, myStatus: string, reason = ""): ClubSummary {
   return {
     reason,
     clubId: club.clubId,
     name: club.name,
     profileImageUrl: club.profileImageUrl,
-    category: mapCategories(club.category),
+    category: club.category,
     public: club.open,
     applytype: mapApplyType(myStatus),
     region: club.region,
-    participantTypes: club.participantTypes
-      .map((p) => p.code as ParticipantType)
-      .filter(Boolean),
+    participantTypes: club.participantTypes.map((p) => p.code as ParticipantType).filter(Boolean),
   };
 }
 
@@ -134,21 +93,13 @@ export default function Searchpage() {
 
   const [appliedParams, setAppliedParams] = useState<Omit<ClubSearchParams, "cursorId"> | null>(null);
 
-  // 추천/검색 모드 판단
   const isSearchMode = appliedParams !== null;
 
-  // ===== 가입 모달 =====
   const [applyClubId, setApplyClubId] = useState<number | null>(null);
 
-  // ===== Queries =====
-  const {
-    data: myClubsData,
-    isLoading: myClubsLoading,
-  } = useMyClubsQuery();
-
+  const { data: myClubsData, isLoading: myClubsLoading } = useMyClubsQuery();
   const { data: recData, isLoading: recLoading } = useClubRecommendationsQuery(!isSearchMode);
 
-  // 검색은 appliedParams 있을 때만 실행
   const {
     data: searchData,
     isFetching: searchFetching,
@@ -160,11 +111,8 @@ export default function Searchpage() {
     isSearchMode
   );
 
-  // ===== Mutation =====
-  const { mutateAsync: joinAsync, isPending: joinPending } =
-    useClubJoinMutation();
+  const { mutateAsync: joinAsync, isPending: joinPending } = useClubJoinMutation();
 
-  // ===== UI 데이터 변환 =====
   const myGroups: GroupSummary[] = useMemo(() => {
     const list = myClubsData?.clubList ?? [];
     return list.map((c) => ({ id: String(c.clubId), name: c.clubName }));
@@ -181,8 +129,7 @@ export default function Searchpage() {
   }, [searchData]);
 
   const clubsToRender = isSearchMode ? searchedClubs : recommendationClubs;
-  const selectedClub =
-    clubsToRender.find((c) => c.clubId === applyClubId) ?? null;
+  const selectedClub = clubsToRender.find((c) => c.clubId === applyClubId) ?? null;
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -204,12 +151,9 @@ export default function Searchpage() {
     return () => io.disconnect();
   }, [isSearchMode, hasNextPage, searchFetching, fetchNextPage]);
 
-  // ===== Handlers =====
   const onClickVisit = (clubId: number) => router.push(`/groups/${clubId}`);
 
-  const onClickApply = (clubId: number) =>
-    setApplyClubId((prev) => (prev === clubId ? null : clubId));
-
+  const onClickApply = (clubId: number) => setApplyClubId((prev) => (prev === clubId ? null : clubId));
   const onCloseApply = () => setApplyClubId(null);
 
   const onSubmitApply = async (clubId: number, reason: string) => {
@@ -228,22 +172,23 @@ export default function Searchpage() {
     }
   };
 
-const onSubmitSearch = () => {
-  const keyword = q.trim();
+  const onSubmitSearch = () => {
+    const keyword = q.trim();
 
-  // 검색없으면 추천모드로
-  if (!keyword) {
-    setAppliedParams(null); 
-    return;
-  }
-  setAppliedParams({
-    outputFilter: mapCategoryToOutputFilter(category),
-    inputFilter: mapInputFilter(group, region),
-    keyword: keyword,
-  });
+    if (!keyword) {
+      setAppliedParams(null);
+      return;
+    }
 
-  refetchSearch();
-};
+    setAppliedParams({
+      outputFilter: mapCategoryToOutputFilter(category),
+      inputFilter: mapInputFilter(group, region),
+      keyword,
+    });
+
+    refetchSearch();
+  };
+
   return (
     <div className="max-w-[1440px] flex flex-col gap-6 d:flex-row mt-3 sm:mt-5 d:mt-6 mx-auto px-6">
       <aside className="d:w-[332px]">
@@ -275,7 +220,6 @@ const onSubmitSearch = () => {
           />
         </div>
 
-        {/* 로딩 중에도 로고 나오게 */}
         <Mybookclub groups={myGroups} isLoading={myClubsLoading} />
       </aside>
 
@@ -312,17 +256,14 @@ const onSubmitSearch = () => {
             ))}
           </div>
 
-          {/* 추천 로딩 */}
           {!isSearchMode && recLoading && (
             <p className="mt-3 body_2_2 text-Gray-4">불러오는 중…</p>
           )}
 
-          {/* 검색 무한 스크롤 sentinel */}
           {isSearchMode && <div ref={sentinelRef} className="h-10" />}
         </div>
       </main>
 
-      {/* 태블릿 이상: 기존 모달 */}
       <div className="hidden t:block">
         <SearchClubApplyModal
           open={applyClubId !== null}

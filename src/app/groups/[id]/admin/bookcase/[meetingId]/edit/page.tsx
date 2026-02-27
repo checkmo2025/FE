@@ -1,16 +1,20 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
 
 import BookSelectModal from '@/components/layout/BookSelectModal';
 import BookstoryChoosebook from '@/components/base-ui/BookStory/bookstory_choosebook';
-import { useBookDetailQuery } from '@/hooks/queries/useBookQueries';
 import { useHeaderTitle } from '@/contexts/HeaderTitleContext';
-import { useCreateBookshelfMutation } from '@/hooks/mutations/useClubsBookshelfMutations';
-import { CreateBookshelfRequest } from '@/types/bookshelf';
+
+
+// 타입
+import { BookshelfPatchRequest } from '@/types/bookshelf';
+import { useBookshelfEditQuery } from '@/hooks/queries/useClubsBookshelfQueries';
+import { usePatchBookshelfMutation } from '@/hooks/mutations/useClubsBookshelfMutations';
 
 const TAGS = [
   { label: '여행', colorClass: 'bg-Secondary-2' },
@@ -43,14 +47,12 @@ function formatMeetingDateLoose(input: string) {
   const m = digits.slice(4, 6);
   const d = digits.slice(6, 8);
 
-  // 강제적으로 '.' 찍지 말고, 있는 만큼만 자연스럽게 보여준다.
   if (digits.length <= 4) return y;
   if (digits.length <= 6) return `${y}.${m}`;
   return `${y}.${m}.${d}`;
 }
 
 function meetingDateToISO(dateDot: string) {
-  // "YYYY.MM.DD" -> ISO
   const m = dateDot.trim().match(/^(\d{4})\.(\d{2})\.(\d{2})$/);
   if (!m) return null;
 
@@ -64,7 +66,6 @@ function meetingDateToISO(dateDot: string) {
 }
 
 function parseDateDotToLocalDate(dateDot: string) {
-  // "YYYY.MM.DD" only
   const m = dateDot.trim().match(/^(\d{4})\.(\d{2})\.(\d{2})$/);
   if (!m) return null;
 
@@ -72,10 +73,9 @@ function parseDateDotToLocalDate(dateDot: string) {
   const mo = Number(m[2]) - 1;
   const d = Number(m[3]);
 
-  const dt = new Date(y, mo, d, 0, 0, 0, 0); // local midnight
+  const dt = new Date(y, mo, d, 0, 0, 0, 0);
   if (Number.isNaN(dt.getTime())) return null;
 
-  // 날짜가 실제로 존재하는지(예: 2026.02.31 방지)
   if (dt.getFullYear() !== y || dt.getMonth() !== mo || dt.getDate() !== d) return null;
 
   return dt;
@@ -87,27 +87,40 @@ function isBeforeTodayLocal(date: Date) {
   return date.getTime() < today.getTime();
 }
 
-export default function NewBookshelfPage() {
+// ✅ ISO -> "YYYY.MM.DD" (edit에서 초기값 채우기용)
+function isoToDateDot(iso: string) {
+  const dt = new Date(iso);
+  if (Number.isNaN(dt.getTime())) return '';
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth() + 1).padStart(2, '0');
+  const d = String(dt.getDate()).padStart(2, '0');
+  return `${y}.${m}.${d}`;
+}
+
+export default function EditBookshelfPage() {
   const params = useParams();
   const router = useRouter();
-  const groupId = params.id as string;
+  const clubId = Number(params.id as string);
+  const meetingId = Number(params.meetingId as string);
   const { setCustomTitle } = useHeaderTitle();
-
-  const [selectedIsbn, setSelectedIsbn] = useState<string>('');
-  const { data: selectedBook } = useBookDetailQuery(selectedIsbn);
 
   const [meetingDateError, setMeetingDateError] = useState<string>('');
 
   // 모바일 헤더 타이틀 설정
   useEffect(() => {
-    setCustomTitle('책장 작성');
+    setCustomTitle('책장 수정'); 
     return () => setCustomTitle(null);
   }, [setCustomTitle]);
+
+
+  const { data: editData, isLoading } = useBookshelfEditQuery(clubId, meetingId);
+  const patchMutation = usePatchBookshelfMutation(clubId, meetingId);
+
+  const selectedBook = editData?.bookDetailInfo;
 
   const [generation, setGeneration] = useState('1');
   const [isGenerationOpen, setIsGenerationOpen] = useState(false);
 
-  // ✅ 태그는 1개만
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
 
   const [meetingName, setMeetingName] = useState('');
@@ -115,9 +128,28 @@ export default function NewBookshelfPage() {
   const [meetingDate, setMeetingDate] = useState('');
   const [isBookSelectModalOpen, setIsBookSelectModalOpen] = useState(false);
 
-  const createBookshelfMutation = useCreateBookshelfMutation();
+  // ✅ GET 결과로 초기값 채우기 (UI 변경 없음, state만 채움)
+  useEffect(() => {
+    if (!editData) return;
 
-  // ✅ 버튼 막기 조건
+    const { meetingInfo } = editData;
+
+    setMeetingName(meetingInfo.title ?? '');
+    setMeetingLocation(meetingInfo.location ?? '');
+    setGeneration(String(meetingInfo.generation ?? 1));
+
+    const tag = (meetingInfo.tag ??  "") as (typeof TAG_LABELS)[number] | "";
+    const idx = TAG_LABELS.indexOf(tag as (typeof TAG_LABELS)[number]);
+    setSelectedTags(idx >= 0 ? [idx] : []);
+
+    // meetingTime ISO -> YYYY.MM.DD
+    setMeetingDate(isoToDateDot(meetingInfo.meetingTime ?? ''));
+
+    // edit 초기값 세팅 시 에러 초기화
+    setMeetingDateError('');
+  }, [editData]);
+
+  // ✅ 버튼 막기 조건 (기존 로직 유지)
   const selectedTagIndex = selectedTags[0];
   const tagString = selectedTagIndex !== undefined ? TAG_LABELS[selectedTagIndex] : '';
   const meetingTimeISO = meetingDateToISO(meetingDate);
@@ -139,60 +171,57 @@ export default function NewBookshelfPage() {
       toast.error('필수 입력값을 확인해 주세요.');
       return;
     }
-    if (!selectedBook) return;
 
-    // meetingTimeISO는 canSubmit에서 이미 보장
-    const body: CreateBookshelfRequest = {
+    // ✅ PATCH payload는 이것만
+    const body: BookshelfPatchRequest = {
       title: meetingName.trim(),
       meetingTime: meetingTimeISO as string,
       location: meetingLocation.trim(),
       generation: Number(generation),
       tag: tagString,
-      bookInfo: {
-        isbn: selectedBook.isbn,
-        title: selectedBook.title,
-        author: selectedBook.author,
-        imgUrl: selectedBook.imgUrl,
-        publisher: selectedBook.publisher,
-        description: selectedBook.description,
-      },
     };
 
     try {
-      await createBookshelfMutation.mutateAsync({
-        clubId: Number(groupId),
+      await patchMutation.mutateAsync({
+        clubId,
+        meetingId,
         body,
       });
 
-      toast.success('책장 생성 완료!');
-      router.push(`/groups/${groupId}/bookcase`);
+      toast.success('책장 수정 완료!');
+      router.push(`/groups/${clubId}/bookcase`);
     } catch (e: any) {
       console.error(e);
       const msg =
         e?.response?.data?.message ||
         e?.message ||
-        '책장 생성에 실패했습니다.';
+        '책장 수정에 실패했습니다.';
       toast.error(msg);
     }
   };
 
   const handleTagToggle = (index: number) => {
     setSelectedTags((prev) => {
-      // 이미 선택한 태그면 해제
       if (prev[0] === index) return [];
-      // 다른 거 누르면 기존 선택 제거 후 새로 선택
       return [index];
     });
   };
 
-  const handleBookSelect = (selectedIsbn: string) => {
-    setSelectedIsbn(selectedIsbn);
+  // ✅ 책 수정 불가: 선택 모달 열기/선택 함수는 "막기"
+  const handleBookSelect = (_selectedIsbn: string) => {
+    // 요구사항: 책은 수정 불가
+    toast.error('책은 수정할 수 없습니다.');
     setIsBookSelectModalOpen(false);
   };
 
   const handleBack = () => {
     router.back();
   };
+
+  // 로딩 처리(최소)
+  if (isLoading) {
+    return <div className="w-full px-4 py-6 text-Gray-7 body_1_3">로딩중...</div>;
+  }
 
   return (
     <div className="w-full">
@@ -212,39 +241,43 @@ export default function NewBookshelfPage() {
       <div className="py-4 t:py-6 px-2.5 t:px-10">
         <div className="flex justify-center">
           <div className="w-full max-w-[1040px] flex flex-col gap-6">
-            <p className="subhead_3 text-Gray-7">책장 작성</p>
+            <p className="subhead_3 text-Gray-7">책장 수정</p>
 
             {/* 책 선택 */}
             <div className="flex flex-col gap-2">
               <label className="subhead_4_1 text-Gray-7">
                 책 선택<span className="text-[#FF5151]">*</span>
               </label>
+
               {selectedBook ? (
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={() => setIsBookSelectModalOpen(true)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") setIsBookSelectModalOpen(true);
-                }}
-                className="cursor-pointer"
-              >
-                <BookstoryChoosebook
-                  bookUrl={selectedBook.imgUrl}
-                  bookName={selectedBook.title}
-                  author={selectedBook.author}
-                  bookDetail={selectedBook.description}
-                />
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setIsBookSelectModalOpen(true)}
-                className="w-full px-4 py-3 rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 subhead_4 d:body_1_2 text-center underline underline-offset-3 cursor-pointer"
-              >
-                선택하기
-              </button>
-            )}
+                // ✅ UI 유지: BookstoryChoosebook 그대로
+                // ✅ 단, 클릭해도 모달 안 열리게(요구사항)
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => toast.error('책은 수정할 수 없습니다.')}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") toast.error('책은 수정할 수 없습니다.');
+                  }}
+                  className="cursor-pointer"
+                >
+                  <BookstoryChoosebook
+                    bookUrl={selectedBook.imgUrl}
+                    bookName={selectedBook.title}
+                    author={selectedBook.author}
+                    bookDetail={selectedBook.description}
+                  />
+                </div>
+              ) : (
+                // edit인데 book이 없다면 이상한 상태. UI는 유지하되 버튼은 비활성처럼 처리
+                <button
+                  type="button"
+                  onClick={() => toast.error('책 정보를 불러오지 못했습니다.')}
+                  className="w-full px-4 py-3 rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 subhead_4 d:body_1_2 text-center underline underline-offset-3 cursor-pointer"
+                >
+                  선택하기
+                </button>
+              )}
             </div>
 
             {/* 기수 */}
@@ -350,7 +383,6 @@ export default function NewBookshelfPage() {
                     const next = formatMeetingDateLoose(e.target.value);
                     setMeetingDate(next);
 
-                    // 8자리(YYYYMMDD) 다 입력된 상태에서만 검사
                     const digits = next.replace(/\D/g, '');
                     if (digits.length < 8) {
                       setMeetingDateError('');
@@ -393,21 +425,21 @@ export default function NewBookshelfPage() {
               <button
                 type="button"
                 onClick={handleSubmit}
-                disabled={!canSubmit || createBookshelfMutation.isPending}
+                disabled={!canSubmit || patchMutation.isPending}
                 className={`flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg body_1_2 transition-opacity ${
-                  !canSubmit || createBookshelfMutation.isPending
+                  !canSubmit || patchMutation.isPending
                     ? 'bg-Subbrown-4 text-Gray-4 cursor-not-allowed opacity-70'
                     : 'bg-primary-2 text-White hover:opacity-90'
                 }`}
               >
-                등록
+                수정
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 책 선택 모달 */}  
+      {/* 책 선택 모달 */}
       <BookSelectModal
         isOpen={isBookSelectModalOpen}
         onClose={() => setIsBookSelectModalOpen(false)}

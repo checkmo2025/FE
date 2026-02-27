@@ -1,19 +1,18 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
-type GroupAdminMenuProps = {
-  groupId: number;
+type Props = {
+  isDeleting?: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
 };
 
-export default function GroupAdminMenu({ groupId }: GroupAdminMenuProps) {
-  const router = useRouter();
+export default function BookshelfAdminMenu({ isDeleting = false, onEdit, onDelete }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -24,18 +23,13 @@ export default function GroupAdminMenu({ groupId }: GroupAdminMenuProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleMembersClick = () => {
-    router.push(`/groups/${groupId}/admin/members`);
-    setMenuOpen(false);
-  };
-
-  const handleApplicantClick = () => {
-    router.push(`/groups/${groupId}/admin/applicant`);
-    setMenuOpen(false);
-  };
-
   const handleEditClick = () => {
-    router.push(`/groups/${groupId}/admin/edit`);
+    onEdit();
+    setMenuOpen(false);
+  };
+
+  const handleDeleteClick = () => {
+    onDelete();
     setMenuOpen(false);
   };
 
@@ -43,76 +37,57 @@ export default function GroupAdminMenu({ groupId }: GroupAdminMenuProps) {
     <div className="relative" ref={menuRef}>
       <button
         type="button"
-        onClick={() => setMenuOpen(!menuOpen)}
+        onClick={() => setMenuOpen((v) => !v)}
         className="flex items-center gap-2 hover:brightness-50 cursor-pointer"
       >
-        <span className="body_1_3 text-Gray-5 ">모임 관리하기</span>
-        <Image
-          src="/Setting.svg"
-          alt="설정"
-          width={24}
-          height={24}
-          className="object-contain"
-        />
+        <span className="body_1_3 text-Gray-5">책장 관리하기</span>
+        <Image src="/Setting.svg" alt="설정" width={24} height={24} className="object-contain" />
       </button>
 
       {menuOpen && (
         <div
           className="
             absolute right-0 top-full mt-2
-            w-34 h-[120px]
+            w-34
             rounded-lg
             border border-Subbrown-4
             bg-White
             shadow-md
             z-10
             flex flex-col
+            overflow-hidden
           "
         >
           <button
             type="button"
-            onClick={handleApplicantClick}
-            className="
-              flex-1 w-full
-              flex items-center justify-center
-              body_1_2 text-Gray-4
-              hover:text-Gray-7
-              cursor-pointer
-            "
-          >
-            모임 가입 신청 관리
-          </button>
-
-          <div className="mx-3 border-b border-Subbrown-4" />
-
-          <button
-            type="button"
-            onClick={handleMembersClick}
-            className="
-              flex-1 w-full
-              flex items-center justify-center
-              body_1_2 text-Gray-4
-              hover:text-Gray-7
-              cursor-pointer
-            "
-          >
-            모임 회원 관리
-          </button>
-
-          <div className="mx-3 border-b border-Subbrown-4" />
-
-          <button
-            type="button"
             onClick={handleEditClick}
             className="
-              flex-1 w-full
+              h-[44px] w-full
               flex items-center justify-center
               body_1_2 text-Gray-4
               hover:text-Gray-7
               cursor-pointer
             "
           >
-            모임 수정
+            책장 수정
+          </button>
+
+          <div className="mx-3 border-b border-Subbrown-4" />
+
+          <button
+            type="button"
+            onClick={handleDeleteClick}
+            disabled={isDeleting}
+            className="
+              h-[44px] w-full
+              flex items-center justify-center
+              body_1_2 text-Gray-4
+              hover:text-Gray-7
+              cursor-pointer
+              disabled:opacity-50
+            "
+          >
+            {isDeleting ? "삭제중..." : "책장 삭제"}
           </button>
         </div>
       )}

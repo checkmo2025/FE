@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import BookshelfAdminMenu from "./bookid/BookshelfAdminMenu";
+
 
 type Props = {
   imageUrl?: string;
@@ -12,6 +14,11 @@ type Props = {
     genre: string; // 예: "소설/시/희곡"
   };
   rating: number; // 0 ~ 5
+
+  isStaff?: boolean;
+  isDeletingBookshelf?: boolean;
+  onEditBookshelf?: () => void;
+  onDeleteBookshelf?: () => void;
 };
 
 export default function BookDetailCard({
@@ -21,13 +28,17 @@ export default function BookDetailCard({
   description,
   category,
   rating,
+
+  isStaff = false,
+  isDeletingBookshelf = false,
+  onEditBookshelf,
+  onDeleteBookshelf,
 }: Props) {
-  // 별점 렌더링 헬퍼
   const renderStars = () => {
     return Array.from({ length: 5 }).map((_, i) => {
       const isFull = i < Math.floor(rating);
       return (
-        <div key={i} className="relative h-[24px] w-[24px]">
+        <div key={i} className="relative h-[18px] w-[18px] t:h-[24px] t:w-[24px]">
           <Image
             src={isFull ? "/full_star.svg" : "/empty_star.svg"}
             alt={isFull ? "full star" : "empty star"}
@@ -40,56 +51,65 @@ export default function BookDetailCard({
   };
 
   return (
-    // [책장_도서 상세]
-    <div className="flex items-center gap-[24px] self-stretch">
-      {/* 1. 도서 이미지 */}
-      <div className="relative h-[230px] w-[159px] shrink-0 bg-Gray-2 shadow-sm overflow-hidden rounded-[4px]">
-        <Image src={imageUrl} alt={title} fill className="object-cover" />
+    <div className="flex items-start gap-[24px] self-stretch">
+      {/* 왼쪽: 이미지 + (모바일에서 메뉴) */}
+      <div className="flex flex-col items-start gap-[8px] shrink-0">
+        <div className="relative h-[172px] w-[119px] t:h-[230px] t:w-[159px] shrink-0 bg-Gray-2 shadow-sm overflow-hidden rounded-[4px]">
+          <Image src={imageUrl} alt={title} fill className="object-cover" />
+        </div>
+
+        {/* ✅ 모바일에서: 이미지 아래 */}
+        {isStaff && onEditBookshelf && onDeleteBookshelf && (
+          <div className="t:hidden w-full ml-1.5">
+            <BookshelfAdminMenu
+              isDeleting={isDeletingBookshelf}
+              onEdit={onEditBookshelf}
+              onDelete={onDeleteBookshelf}
+            />
+          </div>
+        )}
       </div>
 
-      {/* 2. 상세 정보 영역 (Frame 2087328745) */}
-      <div className="flex h-[230px] w-[857px] flex-col items-start gap-[20px]">
-        {/* 상단 정보 그룹 (Frame 2087328717) */}
-        <div className="flex w-[132px] flex-col items-start gap-[24px] flex-1">
-          {/* 제목/저자/배지 (Frame 2087328715) */}
-          <div className="flex w-[115px] flex-col items-start gap-[4px]">
-            {/* 제목 & 저자 */}
-            <div className="flex w-[61px] flex-col items-start">
-              <span className="self-stretch truncate body_1 text-Gray-7">
+      {/* 오른쪽: 텍스트 + (t 이상에서 메뉴는 제목 오른쪽) */}
+      <div className="flex flex-1 min-w-0 flex-col items-start gap-[10px] t:gap-[20px]">
+        <div className="flex w-full min-w-0 flex-col items-start gap-[10px] t:gap-[24px] flex-1">
+          <div className="flex w-full min-w-0 flex-col items-start gap-[4px]">
+            <div className="w-full min-w-0 t:flex t:items-start t:justify-between t:gap-[12px]">
+              <p className="w-full min-w-0 body_1 text-Gray-7 line-clamp-[2] break-words">
                 {title}
-              </span>
-              <span className="self-stretch truncate body_2_2 text-Gray-4">
-                {author}
-              </span>
+              </p>
+
+              {/* ✅ t 이상에서: 제목 옆 오른쪽 끝 */}
+              {isStaff && onEditBookshelf && onDeleteBookshelf && (
+                <div className="hidden t:block shrink-0">
+                  <BookshelfAdminMenu
+                    isDeleting={isDeletingBookshelf}
+                    onEdit={onEditBookshelf}
+                    onDelete={onDeleteBookshelf}
+                  />
+                </div>
+              )}
             </div>
 
-            {/* 카테고리 배지 (Frame 2087328708) */}
-            <div className="flex items-center gap-[4px] self-stretch">
-              {/* 기수 */}
-              <div className="flex items-center justify-center rounded-[4px] bg-primary-2 px-[8px] py-[2px]">
-                <span className="body_2_2 text-White whitespace-nowrap">
-                  {category.generation}
-                </span>
-              </div>
-              {/* 장르 */}
-              <div className="flex items-center justify-center rounded-[4px] bg-Secondary-1 px-[8px] py-[2px]">
-                <span className="body_2_2 text-White whitespace-nowrap">
-                  {category.genre}
-                </span>
-              </div>
-            </div>
+            <span className="truncate w-full body_2_2 text-Gray-4">{author}</span>
           </div>
 
-          {/* 별점 영역 (Frame 2087328716) */}
-          <div className="flex flex-col items-start gap-[8px] self-stretch">
-            <div className="flex items-center">{renderStars()}</div>
+          <div className="flex items-center gap-[4px] self-stretch">
+            <div className="flex items-center justify-center rounded-[4px] bg-primary-2 px-[8px] py-[2px]">
+              <span className="body_2_2 text-White whitespace-nowrap">{category.generation}</span>
+            </div>
+            <div className="flex items-center justify-center rounded-[4px] bg-Secondary-1 px-[8px] py-[2px]">
+              <span className="body_2_2 text-White whitespace-nowrap">{category.genre}</span>
+            </div>
           </div>
         </div>
 
-        {/* 책 소개 텍스트 */}
-        <div className="flex flex-col self-stretch justify-center flex-1 text-Gray-5 body_1_3">
-          {/* line-clamp 등으로 줄수 제한이 필요할 수도 있음 */}
-          <p className="line-clamp-[4] whitespace-pre-wrap">{description}</p>
+        <div className="flex flex-col items-start self-stretch">
+          <div className="flex items-center">{renderStars()}</div>
+        </div>
+
+        <div className="flex flex-col self-stretch justify-center flex-1 text-Gray-5 body_1_3 min-w-0">
+          <p className="line-clamp-[4] body_2_3 whitespace-pre-wrap break-words">{description}</p>
         </div>
       </div>
     </div>

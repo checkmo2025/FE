@@ -43,3 +43,36 @@ export function normalizeTeams(input: number[]) {
   // 1..N이 아닐 수도 있으니 갯수만큼 1..len
   return uniqueSorted.map((_, idx) => idx + 1);
 }
+
+// ===== (실제 API) 조 관리 페이지: GET /meetings/{meetingId}/members =====
+
+export type TeamKey = {
+  teamId: number;
+  teamNumber: number;
+};
+
+export type ExistingTeamItem = {
+  teamId: number;
+  teamNumber: number;
+};
+
+export type MeetingMemberInfo = {
+  nickname: string;
+  profileImageUrl: string;
+};
+
+export type MeetingMemberItem = {
+  clubMemberId: number;
+  memberInfo: MeetingMemberInfo;
+  teamKey: TeamKey | null;
+};
+
+export type GetMeetingMembersResult = {
+  existingTeams: ExistingTeamItem[];
+  clubMembers: MeetingMemberItem[];
+};
+
+export type GetMeetingMembersResponse = import("@/lib/api/types").ApiResponse<GetMeetingMembersResult>;
+export type GetMeetingMembersResponseResult = GetMeetingMembersResponse["result"];
+
+// PUT 바디는 이미 있음: TeamMemberListPutBody 그대로 사용

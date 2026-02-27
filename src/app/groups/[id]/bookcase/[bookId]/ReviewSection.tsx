@@ -1,50 +1,61 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import React, { useState } from 'react';
+import Image from "next/image";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
 
-
-import LongtermChatInput from '@/components/base-ui/LongtermInput';
-import ReviewList, { ReviewItem } from '@/components/base-ui/Bookcase/bookid/ReviewList';
-import { StarSelector } from '@/components/base-ui/Bookcase/bookid/StarRating';
-
-
+import LongtermChatInput from "@/components/base-ui/LongtermInput";
+import ReviewList, { ReviewItem } from "@/components/base-ui/Bookcase/bookid/ReviewList";
+import { StarSelector } from "@/components/base-ui/Bookcase/bookid/StarRating";
 
 type Props = {
   myName: string;
   myProfileImageUrl?: string | null;
   defaultProfileUrl?: string;
 
+  isStaff: boolean;
+
   isWriting: boolean;
   onToggleWriting: () => void;
 
-  // 별점까지 같이 보냄
   onSendReview: (text: string, rating: number) => boolean | void;
 
   items: ReviewItem[];
-  onClickMore?: (id: ReviewItem['id']) => void;
-};
 
+  onReport: (id: ReviewItem["id"]) => void;
+  onUpdate: (id: ReviewItem["id"], nextContent: string, nextRating: number) => void;
+  onDelete: (id: ReviewItem["id"]) => void;
+
+  onClickAuthor?: (name: string) => void;
+};
 
 export default function ReviewSection({
   myName,
   myProfileImageUrl,
-  defaultProfileUrl = '/profile4.svg',
+  defaultProfileUrl = "/profile4.svg",
+
+  isStaff,
 
   isWriting,
   onToggleWriting,
   onSendReview,
 
   items,
-  onClickMore,
+
+  onReport,
+  onUpdate,
+  onDelete,
+
+  onClickAuthor,
 }: Props) {
   const profileSrc = myProfileImageUrl || defaultProfileUrl;
-
   const [newRating, setNewRating] = useState<number>(0);
 
   const handleSend = (text: string) => {
-    if (newRating < 1) return false;
-
+    if (newRating < 1) {
+      toast.error("별점을 선택해 주세요.");
+      return false;
+    }
     const ok = onSendReview(text, newRating);
     if (ok !== false) setNewRating(0);
     return ok;
@@ -52,17 +63,10 @@ export default function ReviewSection({
 
   return (
     <div className="flex w-full flex-col items-start self-stretch">
-      {/* 헤더 */}
       <div className="w-full flex items-center justify-between mb-7">
         <div className="flex items-center gap-2">
           <div className="relative w-6 h-6 shrink-0 text-Gray-7">
-            <Image
-              src="/Star.svg" 
-              alt=""
-              fill
-              className="object-contain"
-              priority
-            />
+            <Image src="/Star.svg" alt="" fill className="object-contain" priority />
           </div>
           <p className="subhead_4_1 text-Gray-7">한줄평</p>
         </div>
@@ -77,7 +81,7 @@ export default function ReviewSection({
         </button>
       </div>
 
-      {/* 작성칸 */}
+      {/* 생성 UI */}
       {isWriting && (
         <div
           className="
@@ -91,7 +95,6 @@ export default function ReviewSection({
             t:flex-row t:items-center
           "
         >
-          {/* (모바일) 프로필+이름 / 별점은 한 덩어리로 보이게 */}
           <div className="grid grid-cols-[auto_1fr] items-center gap-x-3 t:flex t:items-center t:gap-1 t:shrink-0">
             <div className="flex shrink-0 items-center gap-3 t:min-w-[128px] d:min-w-[178px] hover:brightness-95 cursor-pointer">
               <Image
@@ -112,7 +115,6 @@ export default function ReviewSection({
             />
           </div>
 
-          {/* 입력 */}
           <div className="min-w-0 flex-1">
             <LongtermChatInput
               onSend={handleSend}
@@ -123,8 +125,14 @@ export default function ReviewSection({
         </div>
       )}
 
-      {/* 리스트 */}
-      <ReviewList items={items} onClickMore={onClickMore} />
+      <ReviewList
+        items={items}
+        isStaff={isStaff}
+        onReport={onReport}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
+        onClickAuthor={onClickAuthor}
+      />
     </div>
   );
 }
