@@ -121,7 +121,6 @@ export default function HomePage() {
                 onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
                 hideSubscribeButton={story.writtenByMe}
                 onClick={() => router.push(`/stories/${story.bookStoryId}`)}
-                onLikeClick={() => toggleLike(story.bookStoryId)}
               />
             ))}
           </div>
@@ -178,7 +177,6 @@ export default function HomePage() {
                 onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
                 hideSubscribeButton={story.writtenByMe}
                 onClick={() => router.push(`/stories/${story.bookStoryId}`)}
-                onLikeClick={() => toggleLike(story.bookStoryId)}
               />
             ))}
           </div>
@@ -237,7 +235,6 @@ export default function HomePage() {
                   onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
                   hideSubscribeButton={story.writtenByMe}
                   onClick={() => router.push(`/stories/${story.bookStoryId}`)}
-                  onLikeClick={() => toggleLike(story.bookStoryId)}
                 />
               ))}
             </div>

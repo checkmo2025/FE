@@ -22,6 +22,15 @@ export const storyService = {
         );
         return response.result!;
     },
+    getOtherMemberStories: async (nickname: string, cursorId?: number): Promise<BookStoryListResponse> => {
+        const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
+            STORY_ENDPOINTS.OTHER_MEMBER(nickname),
+            {
+                params: { cursorId },
+            }
+        );
+        return response.result!;
+    },
     getStoryById: async (id: number): Promise<BookStoryDetail> => {
         const response = await apiClient.get<ApiResponse<BookStoryDetail>>(
             `${STORY_ENDPOINTS.LIST}/${id}`

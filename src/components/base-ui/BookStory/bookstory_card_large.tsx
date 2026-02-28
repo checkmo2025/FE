@@ -21,6 +21,7 @@ type Props = {
   isFollowing?: boolean;
   onClick?: () => void;
   hideSubscribeButton?: boolean;
+  onProfileClick?: () => void;
 };
 
 export default function BookStoryCardLarge({
@@ -41,6 +42,7 @@ export default function BookStoryCardLarge({
   isFollowing = false,
   onClick,
   hideSubscribeButton = false,
+  onProfileClick,
 }: Props) {
   const heartIcon = likedByMe ? "/red_heart.svg" : "/gray_heart.svg";
 
@@ -51,7 +53,15 @@ export default function BookStoryCardLarge({
       w-[336px] h-[380px]"
     >
       {/* 상단 프로필 */}
-      <div className="flex items-center gap-2 px-4 py-3">
+      <div
+        className="flex items-center gap-2 px-4 py-3 group cursor-pointer"
+        onClick={(e) => {
+          if (onProfileClick) {
+            e.stopPropagation();
+            onProfileClick();
+          }
+        }}
+      >
         <div className="relative w-8 h-8 overflow-hidden rounded-full shrink-0">
           <Image
             src={profileImgSrc}

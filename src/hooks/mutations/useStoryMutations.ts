@@ -104,6 +104,9 @@ export const useCreateCommentMutation = (bookStoryId: number) => {
             queryClient.setQueryData<InfiniteData<BookStoryListResponse>>(storyKeys.myList(), (old) =>
                 updateCommentCountInInfiniteList(old, bookStoryId, 1)
             );
+            queryClient.setQueriesData<InfiniteData<BookStoryListResponse>>({ queryKey: [...storyKeys.all, "otherMember"] }, (old) =>
+                updateCommentCountInInfiniteList(old, bookStoryId, 1)
+            );
             queryClient.setQueryData<BookStoryListResponse>(storyKeys.list(), (old) =>
                 updateCommentCountInStoryList(old, bookStoryId, 1)
             );
@@ -133,6 +136,9 @@ export const useDeleteCommentMutation = (bookStoryId: number) => {
                 updateCommentCountInInfiniteList(old, bookStoryId, -1)
             );
             queryClient.setQueryData<InfiniteData<BookStoryListResponse>>(storyKeys.myList(), (old) =>
+                updateCommentCountInInfiniteList(old, bookStoryId, -1)
+            );
+            queryClient.setQueriesData<InfiniteData<BookStoryListResponse>>({ queryKey: [...storyKeys.all, "otherMember"] }, (old) =>
                 updateCommentCountInInfiniteList(old, bookStoryId, -1)
             );
             queryClient.setQueryData<BookStoryListResponse>(storyKeys.list(), (old) =>
@@ -167,6 +173,7 @@ export const useToggleStoryLikeMutation = () => {
             const previousMyStories = queryClient.getQueryData(storyKeys.myList());
             const previousStories = queryClient.getQueryData(storyKeys.list());
             const previousStoryDetail = queryClient.getQueryData(storyKeys.detail(bookStoryId));
+            const previousOtherMemberStories = queryClient.getQueriesData({ queryKey: [...storyKeys.all, "otherMember"] });
 
             // Optimistically update the infinite list
             if (previousInfiniteStories) {
@@ -181,6 +188,11 @@ export const useToggleStoryLikeMutation = () => {
                     updateLikeInInfiniteList(old, bookStoryId)
                 );
             }
+
+            // Optimistically update other member stories
+            queryClient.setQueriesData<InfiniteData<BookStoryListResponse>>({ queryKey: [...storyKeys.all, "otherMember"] }, (old) =>
+                updateLikeInInfiniteList(old, bookStoryId)
+            );
 
             // Optimistically update the regular list (if used)
             if (previousStories) {
@@ -207,6 +219,7 @@ export const useToggleStoryLikeMutation = () => {
                 previousMyStories,
                 previousStories,
                 previousStoryDetail,
+                previousOtherMemberStories,
             };
         },
         onError: (err, bookStoryId, context) => {
@@ -225,11 +238,17 @@ export const useToggleStoryLikeMutation = () => {
             if (context?.previousStoryDetail) {
                 queryClient.setQueryData(storyKeys.detail(bookStoryId), context.previousStoryDetail);
             }
+            if (context?.previousOtherMemberStories) {
+                context.previousOtherMemberStories.forEach(([queryKey, oldData]) => {
+                    queryClient.setQueryData(queryKey, oldData);
+                });
+            }
         },
         onSettled: (data, err, bookStoryId) => {
             // Invalidate queries to ensure sync with server
             queryClient.invalidateQueries({ queryKey: storyKeys.infiniteList() });
             queryClient.invalidateQueries({ queryKey: storyKeys.myList() });
+            queryClient.invalidateQueries({ queryKey: [...storyKeys.all, "otherMember"] });
             queryClient.invalidateQueries({ queryKey: storyKeys.list() });
             queryClient.invalidateQueries({ queryKey: storyKeys.detail(bookStoryId) });
         },

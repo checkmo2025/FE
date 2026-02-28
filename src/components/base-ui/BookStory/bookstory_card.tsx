@@ -21,6 +21,7 @@ type Props = {
   isFollowing?: boolean;
   hideSubscribeButton?: boolean;
   onClick?: () => void;
+  onProfileClick?: () => void;
 };
 
 export default function BookStoryCard({
@@ -41,6 +42,7 @@ export default function BookStoryCard({
   isFollowing = false,
   hideSubscribeButton = false,
   onClick,
+  onProfileClick,
 }: Props) {
   const heartIcon = likedByMe ? "/red_heart.svg" : "/gray_heart.svg";
 
@@ -54,7 +56,15 @@ export default function BookStoryCard({
       md:w-[336px] md:h-[380px]"
     >
       {/* 1. 상단 프로필 (모바일 숨김 / 데스크탑 노출) */}
-      <div className="items-center hidden gap-2 px-4 py-3 md:flex">
+      <div
+        className="items-center hidden gap-2 px-4 py-3 md:flex group cursor-pointer"
+        onClick={(e) => {
+          if (onProfileClick) {
+            e.stopPropagation();
+            onProfileClick();
+          }
+        }}
+      >
         <div className="relative w-8 h-8 overflow-hidden rounded-full shrink-0">
           <Image
             src={profileImgSrc}

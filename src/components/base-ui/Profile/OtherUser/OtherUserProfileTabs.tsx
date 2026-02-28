@@ -8,11 +8,11 @@ import BookStoryList from "@/components/base-ui/Profile/BookStoryList";
 const TABS = ["책 이야기", "서재", "모임"] as const;
 type Tab = (typeof TABS)[number];
 
-export default function OtherUserProfileTabs() {
+export default function OtherUserProfileTabs({ nickname }: { nickname: string }) {
   const [activeTab, setActiveTab] = useState<Tab>("책 이야기");
 
   const TAB_CONTENT: Record<Tab, React.ReactNode> = {
-    "책 이야기": <BookStoryList />,
+    "책 이야기": <BookStoryList nickname={nickname} />,
     서재: <LibraryList />,
     모임: <MeetingList />,
   };
@@ -28,10 +28,9 @@ export default function OtherUserProfileTabs() {
               onClick={() => setActiveTab(tab)}
               className={`flex-1 py-[10px] text-center transition-colors
                 body_1_2 t:subhead_3
-                ${
-                  activeTab === tab
-                    ? "border-b-2 border-primary-3 text-primary-3 -mb-[2px]"
-                    : "text-Gray-3 border-b-2 border-transparent"
+                ${activeTab === tab
+                  ? "border-b-2 border-primary-3 text-primary-3 -mb-[2px]"
+                  : "text-Gray-3 border-b-2 border-transparent"
                 }`}
             >
               {tab}

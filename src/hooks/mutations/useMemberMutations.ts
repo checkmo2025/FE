@@ -58,10 +58,11 @@ export const useUpdateProfileMutation = () => {
     });
 };
 
-import { UpdatePasswordRequest, RecommendResponse } from "@/types/member";
+import { UpdatePasswordRequest, RecommendResponse, ReportMemberRequest } from "@/types/member";
 import { BookStoryListResponse } from "@/types/story";
 import { storyKeys } from "@/hooks/queries/useStoryQueries";
 import { memberKeys } from "@/hooks/queries/useMemberQueries";
+import { OtherProfileResponse } from "@/types/member";
 import { toast } from "react-hot-toast";
 import { InfiniteData } from "@tanstack/react-query";
 
@@ -143,11 +144,13 @@ export const useToggleFollowMutation = () => {
             // Cancel outgoing refetches
             await queryClient.cancelQueries({ queryKey: storyKeys.all });
             await queryClient.cancelQueries({ queryKey: memberKeys.recommended() });
+            await queryClient.cancelQueries({ queryKey: memberKeys.otherProfile(nickname) });
 
             // Snapshot previous values
             const previousRecommendations = queryClient.getQueryData(memberKeys.recommended());
             const previousInfiniteStories = queryClient.getQueryData(storyKeys.infiniteList());
             const previousStories = queryClient.getQueryData(storyKeys.list());
+            const previousOtherProfile = queryClient.getQueryData(memberKeys.otherProfile(nickname));
 
             // 1. Optimistically update recommendations
             if (previousRecommendations) {
@@ -170,9 +173,17 @@ export const useToggleFollowMutation = () => {
                 );
             }
 
-            return { previousRecommendations, previousInfiniteStories, previousStories };
+            // 4. Optimistically update other profile
+            if (previousOtherProfile) {
+                queryClient.setQueryData<OtherProfileResponse>(memberKeys.otherProfile(nickname), (old) => {
+                    if (!old) return old;
+                    return { ...old, following: !isFollowing };
+                });
+            }
+
+            return { previousRecommendations, previousInfiniteStories, previousStories, previousOtherProfile };
         },
-        onError: (error: any, _variables, context) => {
+        onError: (error: any, variables, context) => {
             console.error("Failed to toggle follow:", error);
             toast.error("팔로우 상태 업데이트에 실패했습니다.");
 
@@ -186,11 +197,31 @@ export const useToggleFollowMutation = () => {
             if (context?.previousStories) {
                 queryClient.setQueryData(storyKeys.list(), context.previousStories);
             }
+            if (context?.previousOtherProfile) {
+                queryClient.setQueryData(memberKeys.otherProfile(variables.nickname), context.previousOtherProfile);
+            }
         },
-        onSettled: () => {
+        onSettled: (_data, _error, variables) => {
             // Refetch to sync with server
             queryClient.invalidateQueries({ queryKey: storyKeys.all });
             queryClient.invalidateQueries({ queryKey: memberKeys.recommended() });
+            queryClient.invalidateQueries({ queryKey: memberKeys.otherProfile(variables.nickname) });
+        },
+    });
+};
+
+export const useReportMemberMutation = () => {
+    return useMutation({
+        mutationFn: async (payload: ReportMemberRequest) => {
+            await memberService.reportMember(payload);
+        },
+        onSuccess: () => {
+            toast.success("신고가 완료되었습니다.");
+        },
+        onError: (error: any) => {
+            console.error("Failed to report member:", error);
+            const errorMessage = error.response?.data?.message || error.message || "신고에 실패했습니다.";
+            toast.error(errorMessage);
         },
     });
 };

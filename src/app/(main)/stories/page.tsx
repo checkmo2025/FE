@@ -112,6 +112,7 @@ export default function StoriesPage() {
                 isFollowing={story.authorInfo.following}
                 onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
                 hideSubscribeButton={story.writtenByMe}
+                onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
                 onClick={() => handleCardClick(story.bookStoryId)}
                 onLikeClick={() => toggleLike(story.bookStoryId)}
               />
@@ -149,6 +150,7 @@ export default function StoriesPage() {
                 isFollowing={story.authorInfo.following}
                 onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
                 hideSubscribeButton={story.writtenByMe}
+                onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
                 onClick={() => handleCardClick(story.bookStoryId)}
                 onLikeClick={() => toggleLike(story.bookStoryId)}
               />
