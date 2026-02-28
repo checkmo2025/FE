@@ -24,7 +24,7 @@ export default function HomePage() {
 
   const { data: storiesData, isLoading: isLoadingStories } = useStoriesQuery();
   const { data: membersData, isLoading: isLoadingMembers, isError: isErrorMembers } = useRecommendedMembersQuery(isLoggedIn);
-  const { data: myClubsData } = useMyClubsQuery();
+  const { data: myClubsData, isLoading: isLoadingClubs } = useMyClubsQuery(isLoggedIn);
   const { mutate: toggleLike } = useToggleStoryLikeMutation();
   const { mutate: toggleFollow } = useToggleFollowMutation();
 
@@ -34,8 +34,8 @@ export default function HomePage() {
   // 멤버 데이터가 없으면 빈 배열
   const recommendedUsers = membersData?.friends || [];
 
-  // isLoading 멤버 변수는 로그인 되어있을 때만 실제 로딩 상태를 반영해야 함
-  const isLoading = isLoadingStories || (isLoggedIn && isLoadingMembers);
+  // isLoading 멤버/클럽 변수는 로그인 되어있을 때만 실제 로딩 상태를 반영해야 함
+  const isLoading = isLoadingStories || (isLoggedIn && isLoadingMembers) || (isLoggedIn && isLoadingClubs);
 
   if (isLoading) {
     return (
@@ -66,36 +66,34 @@ export default function HomePage() {
               <h2 className="pb-2 body_1 leading-7 text-zinc-800">독서모임</h2>
               <HomeBookclub groups={groups} />
             </div>
-            {/* 사용자 추천: 로그인한 회원에게만 노출 */}
-            {isLoggedIn && (
-              <div className="flex-1">
-                <h2 className="pb-2 body_1 leading-7 text-zinc-800">
-                  사용자 추천
-                </h2>
-                <div className="flex flex-col gap-3">
-                  {isErrorMembers && (
-                    <div className="flex flex-1 items-center justify-center py-4">
-                      <p className="text-Gray-4 text-[14px]">추천 목록을 불러오지 못했어요.</p>
-                    </div>
-                  )}
-                  {!isErrorMembers && recommendedUsers.length === 0 && (
-                    <div className="flex flex-1 items-center justify-center py-4">
-                      <p className="text-Gray-4 text-[14px]">사용자 추천이 없습니다.</p>
-                    </div>
-                  )}
-                  {!isErrorMembers && recommendedUsers.length > 0 &&
-                    recommendedUsers.slice(0, 3).map((u) => (
-                      <ListSubscribeElement
-                        key={u.nickname}
-                        name={u.nickname}
-                        profileSrc={u.profileImageUrl}
-                        isFollowing={u.isFollowing}
-                        onSubscribeClick={() => toggleFollow({ nickname: u.nickname, isFollowing: u.isFollowing })}
-                      />
-                    ))}
-                </div>
+            {/* 사용자 추천 */}
+            <div className="flex-1">
+              <h2 className="pb-2 body_1 leading-7 text-zinc-800">
+                사용자 추천
+              </h2>
+              <div className="flex flex-col gap-3">
+                {isErrorMembers && (
+                  <div className="flex flex-1 items-center justify-center py-4">
+                    <p className="text-Gray-4 text-[14px]">추천 목록을 불러오지 못했어요.</p>
+                  </div>
+                )}
+                {!isErrorMembers && recommendedUsers.length === 0 && (
+                  <div className="flex flex-1 items-center justify-center py-4">
+                    <p className="text-Gray-4 text-[14px]">사용자 추천이 없습니다.</p>
+                  </div>
+                )}
+                {!isErrorMembers && recommendedUsers.length > 0 &&
+                  recommendedUsers.slice(0, 3).map((u) => (
+                    <ListSubscribeElement
+                      key={u.nickname}
+                      name={u.nickname}
+                      profileSrc={u.profileImageUrl}
+                      isFollowing={u.isFollowing}
+                      onSubscribeClick={() => toggleFollow({ nickname: u.nickname, isFollowing: u.isFollowing })}
+                    />
+                  ))}
               </div>
-            )}
+            </div>
           </div>
         </section>
 
@@ -145,14 +143,12 @@ export default function HomePage() {
           </h2>
           <div className="flex gap-6 justify-center">
             <HomeBookclub groups={groups} />
-            {isLoggedIn && (
-              <ListSubscribeLarge
-                height="h-[424px]"
-                users={recommendedUsers}
-                isError={isErrorMembers}
-                onSubscribeClick={(nickname, isFollowing) => toggleFollow({ nickname, isFollowing })}
-              />
-            )}
+            <ListSubscribeLarge
+              height="h-[424px]"
+              users={recommendedUsers}
+              isError={isErrorMembers}
+              onSubscribeClick={(nickname, isFollowing) => toggleFollow({ nickname, isFollowing })}
+            />
           </div>
         </section>
 
@@ -193,16 +189,14 @@ export default function HomePage() {
             독서모임
           </h2>
           <HomeBookclub groups={groups} />
-          {isLoggedIn && (
-            <div className="pt-6">
-              <ListSubscribeLarge
-                height="h-[380px]"
-                users={recommendedUsers}
-                isError={isErrorMembers}
-                onSubscribeClick={(nickname, isFollowing) => toggleFollow({ nickname, isFollowing })}
-              />
-            </div>
-          )}
+          <div className="pt-6">
+            <ListSubscribeLarge
+              height="h-[380px]"
+              users={recommendedUsers}
+              isError={isErrorMembers}
+              onSubscribeClick={(nickname, isFollowing) => toggleFollow({ nickname, isFollowing })}
+            />
+          </div>
         </section>
 
         {/* 소식 + 책 이야기 */}
