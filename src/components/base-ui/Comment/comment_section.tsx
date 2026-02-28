@@ -14,6 +14,7 @@ import ConfirmModal from "@/components/common/ConfirmModal";
 import ReportModal from "@/components/common/ReportModal";
 import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
 import { ReportType } from "@/types/member";
+import { useAuthStore } from "@/store/useAuthStore";
 
 // 어떤 글의 댓글인지 구분
 type CommentSectionProps = {
@@ -32,6 +33,7 @@ export default function CommentSection({
   const updateCommentMutation = useUpdateCommentMutation(storyId);
   const deleteCommentMutation = useDeleteCommentMutation(storyId);
   const { mutate: reportMember } = useReportMemberMutation();
+  const { isLoggedIn, openLoginModal } = useAuthStore();
 
   // API 데이터를 UI용 Comment 형식으로 변환 및 계층 구조화
   const mapApiToUiComments = (apiComments: CommentInfo[]): Comment[] => {
@@ -87,6 +89,10 @@ export default function CommentSection({
 
   // 댓글 추가
   const handleAddComment = (content: string) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
     createCommentMutation.mutate(
       { content },
       {
@@ -102,6 +108,10 @@ export default function CommentSection({
 
   // 답글 추가
   const handleAddReply = (parentId: number, content: string) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
     createCommentMutation.mutate(
       { content, parentCommentId: parentId },
       {
@@ -151,6 +161,10 @@ export default function CommentSection({
   };
 
   const handleReportComment = (id: number) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
     // 찾기: 최상단 댓글과 대댓글 모두 탐색
     let targetComment: Comment | undefined;
 
