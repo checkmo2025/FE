@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
 import ListSubscribeLarge from "@/components/base-ui/home/list_subscribe_large";
 import { useRouter } from "next/navigation";
@@ -39,12 +39,47 @@ export default function StoriesPage() {
 
   const isFollowingTab = selectedCategory === "following";
 
-  const storiesData = isFollowingTab ? followingStoriesData : defaultStoriesData;
-  const isLoadingStories = isFollowingTab ? isLoadingFollowingStories : isLoadingDefaultStories;
-  const isErrorStories = isFollowingTab ? isErrorFollowingStories : isErrorDefaultStories;
-  const fetchNextPage = isFollowingTab ? fetchNextFollowingPage : fetchNextDefaultPage;
-  const hasNextPage = isFollowingTab ? hasNextFollowingPage : hasNextDefaultPage;
-  const isFetchingNextPage = isFollowingTab ? isFetchingNextFollowingPage : isFetchingNextDefaultPage;
+  const {
+    storiesData,
+    isLoadingStories,
+    isErrorStories,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useMemo(() => {
+    if (isFollowingTab) {
+      return {
+        storiesData: followingStoriesData,
+        isLoadingStories: isLoadingFollowingStories,
+        isErrorStories: isErrorFollowingStories,
+        fetchNextPage: fetchNextFollowingPage,
+        hasNextPage: hasNextFollowingPage,
+        isFetchingNextPage: isFetchingNextFollowingPage,
+      };
+    }
+    return {
+      storiesData: defaultStoriesData,
+      isLoadingStories: isLoadingDefaultStories,
+      isErrorStories: isErrorDefaultStories,
+      fetchNextPage: fetchNextDefaultPage,
+      hasNextPage: hasNextDefaultPage,
+      isFetchingNextPage: isFetchingNextDefaultPage,
+    };
+  }, [
+    isFollowingTab,
+    followingStoriesData,
+    isLoadingFollowingStories,
+    isErrorFollowingStories,
+    fetchNextFollowingPage,
+    hasNextFollowingPage,
+    isFetchingNextFollowingPage,
+    defaultStoriesData,
+    isLoadingDefaultStories,
+    isErrorDefaultStories,
+    fetchNextDefaultPage,
+    hasNextDefaultPage,
+    isFetchingNextDefaultPage,
+  ]);
 
   const { data: membersData, isLoading: isLoadingMembers } = useRecommendedMembersQuery(isLoggedIn);
   const { data: myClubsData, isLoading: isLoadingClubs } = useMyClubsQuery();

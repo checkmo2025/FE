@@ -46,9 +46,11 @@ function FollowsContent() {
     }
 
     const user = {
-        ...DUMMY_USER_PROFILE,
-        name: profileData?.nickname || DUMMY_USER_PROFILE.name,
-        profileImage: profileData?.profileImageUrl || DUMMY_USER_PROFILE.profileImage,
+        name: profileData?.nickname || "알 수 없음",
+        profileImage: profileData?.profileImageUrl || null,
+        // TODO: API에서 구독자/구독중 수 제공 시 실제 데이터로 교체해야 함
+        subscribers: DUMMY_USER_PROFILE.subscribers,
+        following: DUMMY_USER_PROFILE.following,
     };
 
     const currentData = activeTab === "follower" ? followerData : followingData;
