@@ -85,8 +85,8 @@ export default function BookStoryCardLarge({
               onSubscribeClick?.();
             }}
             className={`h-8 rounded-lg px-[17px] body_2_1 whitespace-nowrap transition-colors ${isFollowing
-                ? "bg-Subbrown-4 text-primary-3"
-                : "bg-primary-2 text-White"
+              ? "bg-Subbrown-4 text-primary-3"
+              : "bg-primary-2 text-White"
               }`}
           >
             {subscribeText}
@@ -113,20 +113,24 @@ export default function BookStoryCardLarge({
 
       {/* 좋아요/댓글 */}
       <div className="grid mt-1 grid-cols-[1fr_auto_1fr] items-center px-2 pb-[10px]">
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            onLikeClick?.(e);
-          }}
-          className="flex items-center justify-center gap-2 pt-1 cursor-pointer hover:bg-gray-100 transition-colors rounded-full px-2 h-10"
-        >
-          <Image src={heartIcon} alt="좋아요" width={24} height={24} />
-          <span className={`body_1_2 ${likedByMe ? 'text-primary-2' : 'text-Gray-4'}`}>좋아요 {likeCount}</span>
+        <div className="flex justify-center items-center">
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              onLikeClick?.(e);
+            }}
+            className="flex items-center justify-center gap-2 pt-1 cursor-pointer hover:bg-gray-100 transition-colors rounded-full px-4 h-10"
+          >
+            <Image src={heartIcon} alt="좋아요" width={24} height={24} />
+            <span className={`body_1_2 ${likedByMe ? 'text-primary-2' : 'text-Gray-4'}`}>좋아요 {likeCount}</span>
+          </div>
         </div>
         <div className="h-10 w-[1.8px] mt-2 rounded-full bg-Gray-2" />
-        <div className="flex items-center justify-center gap-2 pt-1">
-          <Image src="/comment.svg" alt="댓글" width={24} height={24} />
-          <span className="body_1_2 text-Gray-4">댓글 {commentCount}</span>
+        <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center gap-2 pt-1 px-4 h-10">
+            <Image src="/comment.svg" alt="댓글" width={24} height={24} />
+            <span className="body_1_2 text-Gray-4">댓글 {commentCount}</span>
+          </div>
         </div>
       </div>
     </div>
