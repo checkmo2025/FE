@@ -7,57 +7,79 @@ import BookshelfModal from "@/components/base-ui/Group/BookshelfModal";
 import BookDetailCard from "@/components/base-ui/Bookcase/BookDetailCard";
 import { useHeaderTitle } from "@/contexts/HeaderTitleContext";
 import { CreateClubNoticeRequest, CreateClubNoticeVote } from "@/types/clubnotification";
+import toast from "react-hot-toast";
 
-
+import { useClubsBookshelfSimpleInfiniteQuery } from "@/hooks/queries/useClubsBookshelfQueries";
+import { imageService } from "@/services/imageService";
+import { useCreateClubNoticeMutation } from "@/hooks/mutations/useClubNotificationMutations";
 
 type Book = {
-  id: number;
+  id: number; // meetingId로 사용
   title: string;
   author: string;
   category: { generation: string; genre: string };
   rating: number;
   description: string;
+  imageUrl?: string | null;
 };
 
 export default function NewNoticePage() {
   const params = useParams();
   const router = useRouter();
   const groupId = params.id as string;
+  const clubId = Number(groupId);
   const { setCustomTitle } = useHeaderTitle();
 
-  // 기본 입력
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  // 동시 가능 토글
   const [isVoteEnabled, setIsVoteEnabled] = useState(false);
   const [isImageEnabled, setIsImageEnabled] = useState(false);
 
-  // 중요여부(핀)
   const [isPinned, setIsPinned] = useState(false);
 
-  // 투표 상태 (✅ 제목/설명 UI 없음. payload는 빈 문자열로 보냄)
-  const [voteItems, setVoteItems] = useState<string[]>(["", ""]); // ✅ 기본 2개
+  const [voteItems, setVoteItems] = useState<string[]>(["", ""]);
   const [isMultiple, setIsMultiple] = useState(false);
   const [isAnonymous, setIsAnonymous] = useState(false);
 
-  // deadline UI (date + time)
-  const [deadlineDate, setDeadlineDate] = useState(""); // YYYY-MM-DD
-  const [deadlineTime, setDeadlineTime] = useState(""); // HH:mm
+  const [deadlineDate, setDeadlineDate] = useState("");
+  const [deadlineTime, setDeadlineTime] = useState("");
   const [isDeadlineEditing, setIsDeadlineEditing] = useState(false);
   const dateInputRef = useRef<HTMLInputElement | null>(null);
   const timeInputRef = useRef<HTMLInputElement | null>(null);
 
-  // 책장
   const [isBookshelfModalOpen, setIsBookshelfModalOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
 
-  // 이미지
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const hasImages = imagePreviews.length > 0;
 
-  // 본문 자동 높이
+  const shelvesQuery = useClubsBookshelfSimpleInfiniteQuery(clubId, {
+    enabled: Number.isFinite(clubId) && isBookshelfModalOpen,
+  });
+
+  const shelves =
+  shelvesQuery.data?.pages.flatMap((p: any) => p.bookShelfInfoList) ?? [];
+
+  const modalBooks: Book[] = useMemo(() => {
+    return shelves.map((s: any) => ({
+      id: s.meetingInfo.meetingId,
+      title: s.bookInfo.title,
+      author: s.bookInfo.author,
+      category: {
+        generation: `${s.meetingInfo.generation}기`,
+        genre: s.meetingInfo.tag,
+      },
+      rating: s.meetingInfo.averageRate ?? 0,
+      description: "",
+      imageUrl: s.bookInfo.imgUrl ?? null, 
+    }));
+  }, [shelves]);
+
+  const { mutateAsync: createNotice, isPending } = useCreateClubNoticeMutation();
+
   const contentRef = useRef<HTMLTextAreaElement | null>(null);
   const adjustContentHeight = () => {
     const ta = contentRef.current;
@@ -66,7 +88,6 @@ export default function NewNoticePage() {
     ta.style.height = `${ta.scrollHeight}px`;
   };
 
-  // 모바일 헤더 타이틀
   useEffect(() => {
     setCustomTitle("공지사항 작성");
     return () => setCustomTitle(null);
@@ -76,7 +97,6 @@ export default function NewNoticePage() {
     adjustContentHeight();
   }, [content]);
 
-  // objectURL 정리
   useEffect(() => {
     return () => {
       imagePreviews.forEach((url) => URL.revokeObjectURL(url));
@@ -97,10 +117,7 @@ export default function NewNoticePage() {
   };
 
   const addVoteItem = () => {
-    setVoteItems((prev) => {
-      if (prev.length >= 6) return prev;
-      return [...prev, ""];
-    });
+    setVoteItems((prev) => (prev.length >= 6 ? prev : [...prev, ""]));
   };
 
   const handleImageFile = () => {
@@ -112,18 +129,23 @@ export default function NewNoticePage() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    const urls = Array.from(files).map((file) => URL.createObjectURL(file));
+    const fileArr = Array.from(files);
+    const urls = fileArr.map((file) => URL.createObjectURL(file));
+
+    setImageFiles((prev) => [...prev, ...fileArr]);
     setImagePreviews((prev) => [...prev, ...urls]);
+
     e.target.value = "";
   };
 
   const handleRemoveImage = (index: number) => {
     const url = imagePreviews[index];
     if (url) URL.revokeObjectURL(url);
+
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // deadline ISO 만들기 (date + time 둘 다 있을 때만)
   const voteDeadlineISO = useMemo(() => {
     if (!deadlineDate || !deadlineTime) return null;
     const [y, m, d] = deadlineDate.split("-").map(Number);
@@ -145,37 +167,80 @@ export default function NewNoticePage() {
     };
   };
 
-  const handleSubmit = () => {
-    const nowISO = new Date().toISOString();
+  const handleSubmit = async () => {
+    if (!Number.isFinite(clubId)) {
+      toast.error("clubId가 올바르지 않습니다.");
+      return;
+    }
+    if (isPending) return;
 
-    const vote: CreateClubNoticeVote | null =
-      isVoteEnabled
+    const now = new Date();
+    const nowISO = now.toISOString();
+
+    //  deadline 미설정이면 막기
+    if (isVoteEnabled && !voteDeadlineISO) {
+      toast.error("마감시간을 설정하지 않았습니다.");
+      return;
+    }
+
+    // deadline이 startTime(=now)보다 앞서면 막기
+    if (isVoteEnabled && voteDeadlineISO) {
+      const deadline = new Date(voteDeadlineISO);
+      if (deadline.getTime() <= now.getTime()) {
+        toast.error("마감시간이 현재시간보다 앞설 수 없습니다.");
+        return;
+      }
+    }
+
+    // inned 5개 제한 “사전 차단”은 pinned 개수를 알아야 가능
+    const tid = toast.loading("공지사항 등록 중...");
+
+    try {
+      const uploadedImageUrls =
+        isImageEnabled && imageFiles.length > 0
+          ? await Promise.all(imageFiles.map((f) => imageService.uploadClubImage(f)))
+          : [];
+
+      const vote: CreateClubNoticeVote | undefined = isVoteEnabled
         ? {
-            // ✅ UI엔 없지만 서버 스펙상 필요해서 빈 문자열로 보냄
-            title: "",
-            content: "",
+            title: "투표 DUMMY값",
+            content: "투표 DUMMY값",
             ...mapVoteItemsToRequest(voteItems),
             anonymity: isAnonymous,
             duplication: isMultiple,
             startTime: nowISO,
-            deadline: voteDeadlineISO ?? nowISO,
+            deadline: voteDeadlineISO!, // 위에서 체크함
           }
-        : null;
+        : undefined;
 
-    const payload: CreateClubNoticeRequest = {
-      title,
-      content,
-      meetingId: 0,
-      imageUrls: isImageEnabled ? imagePreviews : [],
-      vote,
-      isPinned,
-    };
 
-    console.log("CreateClubNotice payload:", payload);
-    router.push(`/groups/${groupId}/admin/notice`);
+      const body: CreateClubNoticeRequest = {
+        title,
+        content,
+        imageUrls: uploadedImageUrls, 
+        isPinned,
+        ...(selectedBook ? { meetingId: selectedBook.id } : {}), 
+        ...(vote ? { vote } : {}),
+      };
+
+      await createNotice({ clubId, body });
+
+      toast.dismiss(tid);
+      toast.success("공지사항 등록 성공");
+      router.push(`/groups/${groupId}/notice`);
+    } catch (e: any) {
+      toast.dismiss(tid);
+
+      const msg = e?.message ?? "";
+      if (msg.includes("isPinned") || msg.includes("pinned") || msg.includes("고정")) {
+        toast.error("고정 공지는 최대 5개까지 가능합니다.");
+        return;
+      }
+
+      toast.error("공지사항 등록 실패");
+    }
   };
 
-  // 활성 표시 (opacity + 약한 그림자만)
   const glow = "drop-shadow-[0_0_6px_rgba(0,0,0,0.10)]";
   const isBookshelfActive = !!selectedBook;
 
@@ -190,7 +255,6 @@ export default function NewNoticePage() {
               공지사항 작성
             </p>
 
-            {/* 선택된 책 표시 + X */}
             {selectedBook && (
               <div className="relative mb-4 p-4 rounded-[8px] bg-White border border-Subbrown-4">
                 <button
@@ -209,6 +273,7 @@ export default function NewNoticePage() {
                 </button>
 
                 <BookDetailCard
+                  imageUrl={selectedBook.imageUrl ?? "/dummy_book_cover.png"}
                   title={selectedBook.title}
                   author={selectedBook.author}
                   description={selectedBook.description}
@@ -218,12 +283,10 @@ export default function NewNoticePage() {
               </div>
             )}
 
-            {/* 공지 박스: 내부 고정 + 하단 고정 */}
+            {/* 이하 UI는 그대로 */}
             <div className="relative w-full border border-Subbrown-4 t:border-2 bg-White rounded-[8px]">
-              {/* 내용 영역 */}
               <div className="flex flex-col min-h-[300px] t:min-h-[500px]">
                 <div className="flex-1 overflow-auto">
-                  {/* 제목 */}
                   <div className="flex px-6 py-4 items-center border-b border-b-Subbrown-4">
                     <input
                       value={title}
@@ -233,7 +296,6 @@ export default function NewNoticePage() {
                     />
                   </div>
 
-                  {/* 내용 */}
                   <div className="px-6 py-4">
                     <textarea
                       ref={contentRef}
@@ -251,7 +313,6 @@ export default function NewNoticePage() {
                     />
                   </div>
 
-                  {/* 투표 */}
                   {isVoteEnabled && (
                     <div className="px-6 pb-4">
                       <div className="rounded-[8px] bg-background border border-Gray-2 p-4 flex flex-col gap-4">
@@ -259,7 +320,6 @@ export default function NewNoticePage() {
                           <span className="subhead_4_1 text-Gray-7">투표</span>
                         </div>
 
-                        {/* 항목 입력 */}
                         <div className="flex flex-col gap-3">
                           {voteItems.map((v, index) => (
                             <div
@@ -277,7 +337,6 @@ export default function NewNoticePage() {
                             </div>
                           ))}
 
-                          {/* ✅ 항목 추가: 스샷처럼 한 줄 박스 */}
                           {voteItems.length < 6 && (
                             <button
                               type="button"
@@ -299,7 +358,6 @@ export default function NewNoticePage() {
                           )}
                         </div>
 
-                        {/* 옵션 */}
                         <div className="flex flex-col gap-4">
                           <button
                             type="button"
@@ -330,7 +388,6 @@ export default function NewNoticePage() {
                               익명선택
                             </span>
                           </button>
-
 
                           <div className="flex flex-col gap-2">
                             <button
@@ -394,11 +451,10 @@ export default function NewNoticePage() {
                     </div>
                   )}
 
-                  {/* ✅ 이미지 영역: 3번 스샷처럼 + 모바일 작게 + 가로스크롤(스크롤바 숨김) */}
                   {hasImages && (
                     <div className="px-6 pb-4">
                       <div className="overflow-x-auto [&::-webkit-scrollbar]:hidden scrollbar-none">
-                        <div className="flex gap-4 w-max">
+                        <div className="flex gap-4 min-w-full w-max">
                           {imagePreviews.map((src, index) => (
                             <div
                               key={index}
@@ -433,9 +489,7 @@ export default function NewNoticePage() {
                   )}
                 </div>
 
-
                 <div className="flex flex-col gap-3 t:flex-row t:items-center t:justify-between px-6 py-4">
-                  {/* ✅ 중요여부: 모바일에서는 위 라인 + 오른쪽 정렬 / t 이상은 왼쪽 */}
                   <div className="flex justify-end t:justify-start">
                     <button
                       type="button"
@@ -455,7 +509,6 @@ export default function NewNoticePage() {
                     </button>
                   </div>
 
-                  {/* ✅ 오른쪽 3개: 항상 오른쪽 정렬 */}
                   <div className="flex items-center justify-end gap-4">
                     <button
                       type="button"
@@ -515,15 +568,23 @@ export default function NewNoticePage() {
                     </button>
                   </div>
                 </div>
+
+                <input
+                  ref={imageInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
               </div>
             </div>
 
-            {/* 하단 버튼 */}
             <div className="flex justify-center">
               <div className="flex w-full max-w-[1040px] justify-end gap-4 mt-2 t:mt-6">
                 <button
                   type="button"
-                  onClick={handleCancel}
+                  onClick={() => toast("임시저장은 미구현입니다.")}
                   className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors"
                 >
                   임시저장
@@ -544,6 +605,14 @@ export default function NewNoticePage() {
           isOpen={isBookshelfModalOpen}
           onClose={() => setIsBookshelfModalOpen(false)}
           onSelect={handleBookSelect}
+          books={modalBooks}
+          hasNextPage={shelvesQuery.hasNextPage}
+          isFetchingNextPage={shelvesQuery.isFetchingNextPage}
+          onLoadMore={() => {
+            if (shelvesQuery.hasNextPage && !shelvesQuery.isFetchingNextPage) {
+              shelvesQuery.fetchNextPage();
+            }
+          }}
         />
       </div>
     </div>
