@@ -7,4 +7,5 @@ export const MEMBER_ENDPOINTS = {
     UPDATE_PASSWORD: `${API_BASE_URL}/members/me/update-password`,
     GET_OTHER_PROFILE: (nickname: string) => `${API_BASE_URL}/members/${encodeURIComponent(nickname)}`,
     FOLLOW: (nickname: string) => `${API_BASE_URL}/members/${encodeURIComponent(nickname)}/following`,
+    REPORT: `${API_BASE_URL}/members/report`,
 };

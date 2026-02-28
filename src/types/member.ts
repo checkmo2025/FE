@@ -34,3 +34,11 @@ export interface OtherProfileResponse {
     following: boolean;
     categories: string[];
 }
+
+export type ReportType = "GENERAL" | "CLUB_MEETING" | "BOOK_STORY" | "COMMENT";
+
+export interface ReportMemberRequest {
+    reportedMemberNickname: string;
+    reportType: ReportType;
+    content: string;
+}

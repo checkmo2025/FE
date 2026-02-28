@@ -3,6 +3,9 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import ReportModal from "@/components/common/ReportModal";
+import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
+import { ReportType } from "@/types/member";
 
 type BookstoryDetailProps = {
   imageUrl?: string;
@@ -70,8 +73,10 @@ export default function BookstoryDetail({
 }: BookstoryDetailProps) {
   const href = authorHref ?? `/profile/${authorId}`;
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const heartIcon = likedByMe ? "/red_heart.svg" : "/gray_heart.svg";
+  const { mutate: reportMember } = useReportMemberMutation();
 
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
@@ -83,6 +88,19 @@ export default function BookstoryDetail({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleReportSubmit = (type: string, content: string) => {
+    let mappedType: ReportType = "GENERAL";
+    if (type === "책 이야기") mappedType = "BOOK_STORY";
+    if (type === "책이야기(댓글)") mappedType = "COMMENT";
+    if (type === "책모임 내부") mappedType = "CLUB_MEETING";
+
+    reportMember({
+      reportedMemberNickname: authorNickname,
+      reportType: mappedType,
+      content,
+    });
+  };
 
   return (
     <div
@@ -116,8 +134,8 @@ export default function BookstoryDetail({
             type="button"
             onClick={onSubscribeClick}
             className={`flex px-4 py-1.5 justify-center items-center rounded-lg text-White text-[12px] font-medium shrink-0 transition-colors ${isFollowing
-                ? "bg-Subbrown-4 text-primary-3"
-                : "bg-primary-2 text-White"
+              ? "bg-Subbrown-4 text-primary-3"
+              : "bg-primary-2 text-White"
               }`}
           >
             {subscribeText}
@@ -147,7 +165,7 @@ export default function BookstoryDetail({
               <button
                 type="button"
                 onClick={() => {
-                  console.log("신고하기");
+                  setIsReportModalOpen(true);
                   setMenuOpen(false);
                 }}
                 className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
@@ -281,8 +299,8 @@ export default function BookstoryDetail({
               type="button"
               onClick={onSubscribeClick}
               className={`flex px-[17px] py-[8px] justify-center items-center rounded-lg bg-primary-2 text-White body_2_1 shrink-0 whitespace-nowrap cursor-pointer transition-colors ${isFollowing
-                  ? "bg-Subbrown-4 text-primary-3"
-                  : "bg-primary-2 text-White"
+                ? "bg-Subbrown-4 text-primary-3"
+                : "bg-primary-2 text-White"
                 }`}
             >
               {subscribeText}
@@ -305,7 +323,7 @@ export default function BookstoryDetail({
                 <button
                   type="button"
                   onClick={() => {
-                    console.log("신고하기");
+                    setIsReportModalOpen(true);
                     setMenuOpen(false);
                   }}
                   className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
@@ -335,6 +353,12 @@ export default function BookstoryDetail({
           </div>
         </div>
       </div>
+      {/* Report Modal */}
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        onSubmit={handleReportSubmit}
+      />
     </div>
   );
 }

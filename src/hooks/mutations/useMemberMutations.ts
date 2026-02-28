@@ -58,7 +58,7 @@ export const useUpdateProfileMutation = () => {
     });
 };
 
-import { UpdatePasswordRequest, RecommendResponse } from "@/types/member";
+import { UpdatePasswordRequest, RecommendResponse, ReportMemberRequest } from "@/types/member";
 import { BookStoryListResponse } from "@/types/story";
 import { storyKeys } from "@/hooks/queries/useStoryQueries";
 import { memberKeys } from "@/hooks/queries/useMemberQueries";
@@ -206,6 +206,22 @@ export const useToggleFollowMutation = () => {
             queryClient.invalidateQueries({ queryKey: storyKeys.all });
             queryClient.invalidateQueries({ queryKey: memberKeys.recommended() });
             queryClient.invalidateQueries({ queryKey: memberKeys.otherProfile(variables.nickname) });
+        },
+    });
+};
+
+export const useReportMemberMutation = () => {
+    return useMutation({
+        mutationFn: async (payload: ReportMemberRequest) => {
+            await memberService.reportMember(payload);
+        },
+        onSuccess: () => {
+            toast.success("신고가 완료되었습니다.");
+        },
+        onError: (error: any) => {
+            console.error("Failed to report member:", error);
+            const errorMessage = error.response?.data?.message || error.message || "신고에 실패했습니다.";
+            toast.error(errorMessage);
         },
     });
 };

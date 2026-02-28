@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
-import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse } from "@/types/member";
+import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest } from "@/types/member";
 import { ApiResponse } from "@/types/auth";
 
 export const memberService = {
@@ -54,6 +54,15 @@ export const memberService = {
         );
         if (!response.isSuccess) {
             throw new Error(response.message || "Failed to unfollow member");
+        }
+    },
+    reportMember: async (data: ReportMemberRequest): Promise<void> => {
+        const response = await apiClient.post<ApiResponse<unknown>>(
+            MEMBER_ENDPOINTS.REPORT,
+            data
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "Failed to report member");
         }
     },
 };
