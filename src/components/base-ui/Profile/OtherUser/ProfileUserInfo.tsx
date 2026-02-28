@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useOtherProfileQuery } from "@/hooks/queries/useMemberQueries";
 
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
+import { useState } from "react";
+import ReportModal from "@/components/common/ReportModal";
 
 // [보조 컴포넌트] 액션 버튼 (구독하기 / 신고하기)
 function ActionButton({
@@ -54,6 +56,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
   const decodedNickname = decodeURIComponent(nickname);
   const { data: profile, isLoading } = useOtherProfileQuery(decodedNickname);
   const { mutate: toggleFollow } = useToggleFollowMutation();
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -73,6 +76,11 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
 
   const handleToggleFollow = () => {
     toggleFollow({ nickname: decodedNickname, isFollowing: profile.following });
+  };
+
+  const handleReportSubmit = (type: string, content: string) => {
+    // API 연동 전까지 콘솔로 확인
+    console.log("Report Submitted:", { type, content });
   };
 
   return (
@@ -133,8 +141,15 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
           label={profile.following ? "구독 중" : "구독하기"}
           onClick={handleToggleFollow}
         />
-        <ActionButton variant="secondary" label="신고하기" />
+        <ActionButton variant="secondary" label="신고하기" onClick={() => setIsReportModalOpen(true)} />
       </div>
+
+      {/* Report Modal */}
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        onSubmit={handleReportSubmit}
+      />
     </div>
   );
 }
