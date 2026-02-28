@@ -8,6 +8,7 @@ interface RequestOptions extends RequestInit {
   headers?: Record<string, string>;
   params?: Record<string, any>;
   timeout?: number; // Timeout in ms (default: 10000)
+  silentAuthError?: boolean; // If true, suppresses the 401 toast
 }
 
 async function request<T>(
@@ -55,7 +56,9 @@ async function request<T>(
     if (response.status === 401) {
       console.warn("Session expired. Logging out...");
       useAuthStore.getState().logout();
-      toast.error("세션이 만료되었습니다. 다시 로그인해주세요.");
+      if (!options.silentAuthError) {
+        toast.error("세션이 만료되었습니다. 다시 로그인해주세요.");
+      }
     }
 
     // [Resilience] Safe JSON Parsing

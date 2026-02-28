@@ -43,7 +43,9 @@ export const authService = {
   },
 
   getProfile: async (): Promise<ApiResponse<User>> => {
-    return await apiClient.get<ApiResponse<User>>(AUTH_ENDPOINTS.PROFILE);
+    return await apiClient.get<ApiResponse<User>>(AUTH_ENDPOINTS.PROFILE, {
+      silentAuthError: true,
+    });
   },
 
   getPresignedUrl: async (type: "PROFILE" | "CLUB" | "NOTICE", fileName: string, contentType: string): Promise<ApiResponse<{ presignedUrl: string; imageUrl: string }>> => {
