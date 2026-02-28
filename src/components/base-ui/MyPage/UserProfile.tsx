@@ -50,22 +50,22 @@ const UserProfile = () => {
                   {user.name}
                 </span>
                 <div className="flex items-center gap-[12px] self-stretch">
-                  <div className="flex items-center gap-[4px]">
+                  <Link href="/profile/mypage/follows?tab=following" className="flex items-center gap-[4px] cursor-pointer hover:opacity-80 transition-opacity">
                     <span className="text-[#8D8D8D] font-sans text-[18px] font-medium">
                       구독중
                     </span>
                     <span className="text-[#7B6154] font-sans text-[18px] font-medium">
                       {user.following}
                     </span>
-                  </div>
-                  <div className="flex items-center gap-[4px]">
+                  </Link>
+                  <Link href="/profile/mypage/follows?tab=follower" className="flex items-center gap-[4px] cursor-pointer hover:opacity-80 transition-opacity">
                     <span className="text-[#8D8D8D] font-sans text-[18px] font-medium">
                       구독자
                     </span>
                     <span className="text-[#7B6154] font-sans text-[18px] font-medium">
                       {user.subscribers}
                     </span>
-                  </div>
+                  </Link>
                 </div>
               </div>
 

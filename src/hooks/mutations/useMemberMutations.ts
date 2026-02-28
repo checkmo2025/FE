@@ -58,7 +58,7 @@ export const useUpdateProfileMutation = () => {
     });
 };
 
-import { UpdatePasswordRequest, RecommendResponse, ReportMemberRequest } from "@/types/member";
+import { UpdatePasswordRequest, RecommendResponse, ReportMemberRequest, FollowListResponse } from "@/types/member";
 import { BookStoryListResponse } from "@/types/story";
 import { storyKeys } from "@/hooks/queries/useStoryQueries";
 import { memberKeys } from "@/hooks/queries/useMemberQueries";
@@ -106,6 +106,21 @@ const updateFollowStateInList = (old: BookStoryListResponse | undefined, nicknam
     };
 };
 
+const updateFollowStateInFollowList = (old: InfiniteData<FollowListResponse> | undefined, nickname: string, isFollowing: boolean) => {
+    if (!old || !old.pages) return old;
+    return {
+        ...old,
+        pages: old.pages.map((page) => ({
+            ...page,
+            followList: page.followList.map((member) =>
+                member.nickname === nickname
+                    ? { ...member, following: !isFollowing }
+                    : member
+            )
+        }))
+    };
+};
+
 // Throttle map to prevent spam clicking (per nickname)
 const followThrottleMap: Record<string, number> = {};
 
@@ -145,12 +160,16 @@ export const useToggleFollowMutation = () => {
             await queryClient.cancelQueries({ queryKey: storyKeys.all });
             await queryClient.cancelQueries({ queryKey: memberKeys.recommended() });
             await queryClient.cancelQueries({ queryKey: memberKeys.otherProfile(nickname) });
+            await queryClient.cancelQueries({ queryKey: memberKeys.followers() });
+            await queryClient.cancelQueries({ queryKey: memberKeys.followings() });
 
             // Snapshot previous values
             const previousRecommendations = queryClient.getQueryData(memberKeys.recommended());
             const previousInfiniteStories = queryClient.getQueryData(storyKeys.infiniteList());
             const previousStories = queryClient.getQueryData(storyKeys.list());
             const previousOtherProfile = queryClient.getQueryData(memberKeys.otherProfile(nickname));
+            const previousFollowers = queryClient.getQueryData(memberKeys.followers());
+            const previousFollowings = queryClient.getQueryData(memberKeys.followings());
 
             // 1. Optimistically update recommendations
             if (previousRecommendations) {
@@ -181,7 +200,19 @@ export const useToggleFollowMutation = () => {
                 });
             }
 
-            return { previousRecommendations, previousInfiniteStories, previousStories, previousOtherProfile };
+            // 5. Optimistically update followers/followings list
+            if (previousFollowers) {
+                queryClient.setQueryData<InfiniteData<FollowListResponse>>(memberKeys.followers(), (old) =>
+                    updateFollowStateInFollowList(old, nickname, isFollowing)
+                );
+            }
+            if (previousFollowings) {
+                queryClient.setQueryData<InfiniteData<FollowListResponse>>(memberKeys.followings(), (old) =>
+                    updateFollowStateInFollowList(old, nickname, isFollowing)
+                );
+            }
+
+            return { previousRecommendations, previousInfiniteStories, previousStories, previousOtherProfile, previousFollowers, previousFollowings };
         },
         onError: (error: any, variables, context) => {
             console.error("Failed to toggle follow:", error);
@@ -200,12 +231,20 @@ export const useToggleFollowMutation = () => {
             if (context?.previousOtherProfile) {
                 queryClient.setQueryData(memberKeys.otherProfile(variables.nickname), context.previousOtherProfile);
             }
+            if (context?.previousFollowers) {
+                queryClient.setQueryData(memberKeys.followers(), context.previousFollowers);
+            }
+            if (context?.previousFollowings) {
+                queryClient.setQueryData(memberKeys.followings(), context.previousFollowings);
+            }
         },
         onSettled: (_data, _error, variables) => {
             // Refetch to sync with server
             queryClient.invalidateQueries({ queryKey: storyKeys.all });
             queryClient.invalidateQueries({ queryKey: memberKeys.recommended() });
             queryClient.invalidateQueries({ queryKey: memberKeys.otherProfile(variables.nickname) });
+            queryClient.invalidateQueries({ queryKey: memberKeys.followers() });
+            queryClient.invalidateQueries({ queryKey: memberKeys.followings() });
         },
     });
 };

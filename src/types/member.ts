@@ -42,3 +42,15 @@ export interface ReportMemberRequest {
     reportType: ReportType;
     content: string;
 }
+
+export interface FollowMember {
+    nickname: string;
+    profileImageUrl: string;
+    following: boolean;
+}
+
+export interface FollowListResponse {
+    followList: FollowMember[];
+    hasNext: boolean;
+    nextCursor: number | null;
+}

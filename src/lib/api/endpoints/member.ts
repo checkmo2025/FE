@@ -8,4 +8,6 @@ export const MEMBER_ENDPOINTS = {
     GET_OTHER_PROFILE: (nickname: string) => `${API_BASE_URL}/members/${encodeURIComponent(nickname)}`,
     FOLLOW: (nickname: string) => `${API_BASE_URL}/members/${encodeURIComponent(nickname)}/following`,
     REPORT: `${API_BASE_URL}/members/report`,
+    GET_FOLLOWERS: `${API_BASE_URL}/members/me/follower`,
+    GET_FOLLOWINGS: `${API_BASE_URL}/members/me/following`,
 };

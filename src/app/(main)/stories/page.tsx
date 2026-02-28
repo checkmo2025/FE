@@ -1,11 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
 import ListSubscribeLarge from "@/components/base-ui/home/list_subscribe_large";
 import { useRouter } from "next/navigation";
 import FloatingFab from "@/components/base-ui/Float";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
+import { useInfiniteStoriesQuery, useFollowingInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
 import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 import { useInView } from "react-intersection-observer";
@@ -20,12 +20,66 @@ export default function StoriesPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const {
-    data: storiesData,
-    isLoading: isLoadingStories,
+    data: defaultStoriesData,
+    isLoading: isLoadingDefaultStories,
+    isError: isErrorDefaultStories,
+    fetchNextPage: fetchNextDefaultPage,
+    hasNextPage: hasNextDefaultPage,
+    isFetchingNextPage: isFetchingNextDefaultPage,
+  } = useInfiniteStoriesQuery();
+
+  const {
+    data: followingStoriesData,
+    isLoading: isLoadingFollowingStories,
+    isError: isErrorFollowingStories,
+    fetchNextPage: fetchNextFollowingPage,
+    hasNextPage: hasNextFollowingPage,
+    isFetchingNextPage: isFetchingNextFollowingPage,
+  } = useFollowingInfiniteStoriesQuery();
+
+  const isFollowingTab = selectedCategory === "following";
+
+  const {
+    storiesData,
+    isLoadingStories,
+    isErrorStories,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteStoriesQuery();
+  } = useMemo(() => {
+    if (isFollowingTab) {
+      return {
+        storiesData: followingStoriesData,
+        isLoadingStories: isLoadingFollowingStories,
+        isErrorStories: isErrorFollowingStories,
+        fetchNextPage: fetchNextFollowingPage,
+        hasNextPage: hasNextFollowingPage,
+        isFetchingNextPage: isFetchingNextFollowingPage,
+      };
+    }
+    return {
+      storiesData: defaultStoriesData,
+      isLoadingStories: isLoadingDefaultStories,
+      isErrorStories: isErrorDefaultStories,
+      fetchNextPage: fetchNextDefaultPage,
+      hasNextPage: hasNextDefaultPage,
+      isFetchingNextPage: isFetchingNextDefaultPage,
+    };
+  }, [
+    isFollowingTab,
+    followingStoriesData,
+    isLoadingFollowingStories,
+    isErrorFollowingStories,
+    fetchNextFollowingPage,
+    hasNextFollowingPage,
+    isFetchingNextFollowingPage,
+    defaultStoriesData,
+    isLoadingDefaultStories,
+    isErrorDefaultStories,
+    fetchNextDefaultPage,
+    hasNextDefaultPage,
+    isFetchingNextDefaultPage,
+  ]);
 
   const { data: membersData, isLoading: isLoadingMembers } = useRecommendedMembersQuery(isLoggedIn);
   const { data: myClubsData, isLoading: isLoadingClubs } = useMyClubsQuery();
@@ -89,77 +143,88 @@ export default function StoriesPage() {
 
       {/* 메인 콘텐츠 영역 */}
       <div>
-        <div className="flex flex-wrap gap-5 mt-6 justify-center d:grid d:grid-cols-4 d:justify-items-center">
-          {/* 첫 번째 줄 (처음 4개) */}
-          {allStories.slice(0, 4).map((story) => (
-            <div
-              key={story.bookStoryId}
-              className="shrink-0"
-            >
-              <BookStoryCardLarge
-                id={story.bookStoryId}
-                authorName={story.authorInfo.nickname}
-                profileImgSrc={story.authorInfo.profileImageUrl}
-                createdAt={story.createdAt}
-                viewCount={story.viewCount}
-                title={story.bookStoryTitle}
-                content={story.description}
-                likeCount={story.likes}
-                commentCount={story.commentCount}
-                likedByMe={story.likedByMe}
-                coverImgSrc={story.bookInfo.imgUrl}
-                subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
-                isFollowing={story.authorInfo.following}
-                onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
-                hideSubscribeButton={story.writtenByMe}
-                onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
-                onClick={() => handleCardClick(story.bookStoryId)}
-                onLikeClick={() => toggleLike(story.bookStoryId)}
-              />
-            </div>
-          ))}
+        {isErrorStories ? (
+          <div className="flex w-full min-h-[400px] justify-center items-center text-Gray-4 body_1_2">
+            책 이야기 리스트를 불러오지 못했어요.
+          </div>
+        ) : allStories.length === 0 && !isLoading ? (
+          <div className="flex w-full min-h-[400px] justify-center items-center text-Gray-4 body_1_2">
+            책 이야기 리스트가 없습니다.
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-5 mt-6 justify-center d:grid d:grid-cols-4 d:justify-items-center">
+            {/* 첫 번째 줄 (처음 4개) */}
+            {allStories.slice(0, 4).map((story) => (
+              <div
+                key={story.bookStoryId}
+                className="shrink-0"
+              >
+                <BookStoryCardLarge
+                  id={story.bookStoryId}
+                  authorName={story.authorInfo.nickname}
+                  profileImgSrc={story.authorInfo.profileImageUrl}
+                  createdAt={story.createdAt}
+                  viewCount={story.viewCount}
+                  title={story.bookStoryTitle}
+                  content={story.description}
+                  likeCount={story.likes}
+                  commentCount={story.commentCount}
+                  likedByMe={story.likedByMe}
+                  coverImgSrc={story.bookInfo.imgUrl}
+                  subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+                  isFollowing={story.authorInfo.following}
+                  onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
+                  hideSubscribeButton={story.writtenByMe}
+                  onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
+                  onClick={() => handleCardClick(story.bookStoryId)}
+                  onLikeClick={() => toggleLike(story.bookStoryId)}
+                />
+              </div>
+            ))}
 
-          {/* 두 번째 줄: 추천 멤버가 있을 경우에만 추천 영역 표시 */}
-          {recommendedMembers.length > 0 && (
-            <ListSubscribeLarge
-              height="h-[380px]"
-              users={recommendedMembers}
-              onSubscribeClick={(nickname, isFollowing) => toggleFollow({ nickname, isFollowing })}
-            />
-          )}
-
-          {/* 나머지 카드들 */}
-          {allStories.slice(4).map((story) => (
-            <div
-              key={story.bookStoryId}
-              className="shrink-0"
-            >
-              <BookStoryCardLarge
-                id={story.bookStoryId}
-                authorName={story.authorInfo.nickname}
-                profileImgSrc={story.authorInfo.profileImageUrl}
-                createdAt={story.createdAt}
-                viewCount={story.viewCount}
-                title={story.bookStoryTitle}
-                content={story.description}
-                likeCount={story.likes}
-                commentCount={story.commentCount}
-                likedByMe={story.likedByMe}
-                coverImgSrc={story.bookInfo.imgUrl}
-                subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
-                isFollowing={story.authorInfo.following}
-                onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
-                hideSubscribeButton={story.writtenByMe}
-                onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
-                onClick={() => handleCardClick(story.bookStoryId)}
-                onLikeClick={() => toggleLike(story.bookStoryId)}
+            {/* 두 번째 줄: 추천 멤버가 있을 경우에만 추천 영역 표시 */}
+            {recommendedMembers.length > 0 && (
+              <ListSubscribeLarge
+                height="h-[380px]"
+                users={recommendedMembers}
+                onSubscribeClick={(nickname, isFollowing) => toggleFollow({ nickname, isFollowing })}
               />
-            </div>
-          ))}
-        </div>
+            )}
+
+            {/* 나머지 카드들 */}
+            {allStories.slice(4).map((story) => (
+              <div
+                key={story.bookStoryId}
+                className="shrink-0"
+              >
+                <BookStoryCardLarge
+                  id={story.bookStoryId}
+                  authorName={story.authorInfo.nickname}
+                  profileImgSrc={story.authorInfo.profileImageUrl}
+                  createdAt={story.createdAt}
+                  viewCount={story.viewCount}
+                  title={story.bookStoryTitle}
+                  content={story.description}
+                  likeCount={story.likes}
+                  commentCount={story.commentCount}
+                  likedByMe={story.likedByMe}
+                  coverImgSrc={story.bookInfo.imgUrl}
+                  subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+                  isFollowing={story.authorInfo.following}
+                  onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
+                  hideSubscribeButton={story.writtenByMe}
+                  onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
+                  onClick={() => handleCardClick(story.bookStoryId)}
+                  onLikeClick={() => toggleLike(story.bookStoryId)}
+                />
+              </div>
+            ))}
+          </div>
+
+        )}
 
         {/* 무한 스크롤 옵저버 타겟 */}
-        {hasNextPage && (
+        {!isErrorStories && hasNextPage && (
           <div ref={ref} className="w-full flex justify-center py-10">
             {isFetchingNextPage ? (
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-2"></div>
