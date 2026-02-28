@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import MyPageBreadcrumb from "@/components/base-ui/MyPage/MyPageBreadcrumb";
@@ -11,7 +11,7 @@ import { useProfileQuery, useFollowerListQuery, useFollowingListQuery } from "@/
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 import { DUMMY_USER_PROFILE } from "@/constants/mocks/mypage";
 
-export default function FollowsPage() {
+function FollowsContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const initialTab = (searchParams?.get("tab") as "follower" | "following") || "follower";
@@ -112,5 +112,17 @@ export default function FollowsPage() {
                 />
             </div>
         </div>
+    );
+}
+
+export default function FollowsPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex w-full min-h-screen justify-center items-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-2"></div>
+            </div>
+        }>
+            <FollowsContent />
+        </Suspense>
     );
 }
