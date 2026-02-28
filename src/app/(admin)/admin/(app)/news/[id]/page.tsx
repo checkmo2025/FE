@@ -114,15 +114,24 @@ export default async function AdminNewsDetailPage({ params }: Props) {
           <Link
             href={`/admin/news/${news.id}/edit`}
             className="
-              inline-flex items-center justify-center gap-2
-              w-[105px] h-[40px]
+              inline-flex items-center
+              w-[120px] h-[40px]
               rounded
               bg-primary-1
               text-White
+              text-[14px]
               body_2
+              pl-[16px]
+              gap-[8px]
               hover:opacity-90
             "
           >
+            <Image
+              src="/AdminEdit.svg"
+              alt="수정 아이콘"
+              width={24}
+              height={24}
+            />
             수정하기
           </Link>
         </div>
