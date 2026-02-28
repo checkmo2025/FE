@@ -65,10 +65,6 @@ export interface CreateClubNoticeRequest {
 export type CreateClubNoticeResponse = ApiResponse<string>;
 export type CreateClubNoticeResponseResult = CreateClubNoticeResponse["result"];
 
-/** POST /clubs/{clubId}/notices response.result = "string" */
-export type CreateClubNoticeResponse = ApiResponse<string>;
-export type CreateClubNoticeResponseResult = CreateClubNoticeResponse["result"];
-
 /** -------------------- Notice Detail (GET /clubs/{clubId}/notices/{noticeId}) -------------------- */
 
 export interface ClubNoticeDetailTag {

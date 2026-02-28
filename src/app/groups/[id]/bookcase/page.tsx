@@ -26,8 +26,7 @@ export default function BookcasePage() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useClubsBookshelfSimpleInfiniteQuery(groupId);
-
+  } = useClubsBookshelfSimpleInfiniteQuery(groupId, { enabled: Number.isFinite(groupId) && groupId > 0 });
   const autoFetchCountRef = useRef(0);
   const AUTO_FETCH_LIMIT = 10;
 
