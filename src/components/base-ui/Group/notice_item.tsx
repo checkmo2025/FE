@@ -1,6 +1,8 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
+import Image from "next/image";
+
+type NoticeTag = "general" | "vote" | "meeting";
 
 type NoticeItemProps = {
   id?: number;
@@ -8,7 +10,7 @@ type NoticeItemProps = {
   content: string;
   date: string;
   isPinned?: boolean;
-  tags?: readonly ('vote' | 'meeting')[];
+  tags?: readonly NoticeTag[];
   onClick?: () => void;
   className?: string;
 };
@@ -21,14 +23,14 @@ export default function NoticeItem({
   isPinned = false,
   tags,
   onClick,
-  className = '',
+  className = "",
 }: NoticeItemProps) {
   return (
     <div
       onClick={onClick}
       className={`
-        w-full t:w-full d:w-[1039px] h-[48px] border border-Subbrown-3 rounded-lg cursor-pointer
-        ${isPinned ? 'bg-Subbrown-4' : 'bg-white'}
+        w-full t:w-full d:w-[1039px] h-[48px] border border-Subbrown-3 rounded-lg cursor-pointer hover:brightness-97   
+        ${isPinned ? "bg-Subbrown-4" : "bg-white"}
         ${className}
       `}
     >
@@ -45,21 +47,31 @@ export default function NoticeItem({
             </div>
           </div>
         )}
+
         {!isPinned && tags && tags.length > 0 && (
           <div className="flex items-center gap-2 shrink-0">
             {tags.map((tag, index) => (
               <div
-                key={index}
+                key={`${tag}-${index}`}
                 className={`w-13 h-7 rounded flex items-center justify-center px-2 py-1 text-white body_1_2 ${
-                  tag === 'vote' ? 'bg-Secondary-3' : 'bg-Secondary-2'
+                  tag === "vote"
+                    ? "bg-Secondary-3"
+                    : tag === "meeting"
+                      ? "bg-Secondary-2"
+                      : "bg-primary-2" // ✅ GENERAL(일반)
                 }`}
               >
-                {tag === 'vote' ? '투표' : '모임'}
+                {tag === "vote" ? "투표" : tag === "meeting" ? "모임" : "일반"}
               </div>
             ))}
           </div>
         )}
-        <h3 className={`${isPinned ? 'text-Gray-7' : 'text-Gray-6'}  body_1_2  truncate flex-1`}>
+
+        <h3
+          className={`${
+            isPinned ? "text-Gray-7" : "text-Gray-6"
+          } body_1_2 truncate flex-1`}
+        >
           {title}
         </h3>
       </div>

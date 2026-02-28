@@ -22,7 +22,7 @@ type Props = {
 };
 
 export default function BookDetailCard({
-  imageUrl = "/dummy_book_cover.png",
+  imageUrl,
   title,
   author,
   description,
@@ -55,7 +55,7 @@ export default function BookDetailCard({
       {/* 왼쪽: 이미지 + (모바일에서 메뉴) */}
       <div className="flex flex-col items-start gap-[8px] shrink-0">
         <div className="relative h-[172px] w-[119px] t:h-[230px] t:w-[159px] shrink-0 bg-Gray-2 shadow-sm overflow-hidden rounded-[4px]">
-          <Image src={imageUrl} alt={title} fill className="object-cover" />
+          <Image src={imageUrl ?? "/dummy_book_cover.png"} alt={title} fill className="object-cover" />
         </div>
 
         {/* ✅ 모바일에서: 이미지 아래 */}
