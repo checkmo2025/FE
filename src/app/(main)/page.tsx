@@ -28,6 +28,22 @@ export default function HomePage() {
   const { mutate: toggleLike } = useToggleStoryLikeMutation();
   const { mutate: toggleFollow } = useToggleFollowMutation();
 
+  const handleToggleLike = (bookStoryId: number) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    toggleLike(bookStoryId);
+  };
+
+  const handleToggleFollow = (nickname: string, isFollowing: boolean) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    toggleFollow({ nickname, isFollowing });
+  };
+
   const groups = myClubsData?.clubList || [];
 
   const stories = storiesData?.basicInfoList || [];
@@ -89,7 +105,7 @@ export default function HomePage() {
                       name={u.nickname}
                       profileSrc={u.profileImageUrl}
                       isFollowing={u.isFollowing}
-                      onSubscribeClick={() => toggleFollow({ nickname: u.nickname, isFollowing: u.isFollowing })}
+                      onSubscribeClick={() => handleToggleFollow(u.nickname, u.isFollowing || false)}
                     />
                   ))}
               </div>
@@ -116,10 +132,10 @@ export default function HomePage() {
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
                 isFollowing={story.authorInfo.following}
-                onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
+                onSubscribeClick={() => handleToggleFollow(story.authorInfo.nickname, story.authorInfo.following)}
                 hideSubscribeButton={story.writtenByMe}
                 onClick={() => router.push(`/stories/${story.bookStoryId}`)}
-                onLikeClick={() => toggleLike(story.bookStoryId)}
+                onLikeClick={() => handleToggleLike(story.bookStoryId)}
               />
             ))}
           </div>
@@ -147,7 +163,7 @@ export default function HomePage() {
               height="h-[424px]"
               users={recommendedUsers}
               isError={isErrorMembers}
-              onSubscribeClick={(nickname, isFollowing) => toggleFollow({ nickname, isFollowing })}
+              onSubscribeClick={(nickname, isFollowing) => handleToggleFollow(nickname, isFollowing)}
             />
           </div>
         </section>
@@ -171,10 +187,10 @@ export default function HomePage() {
                 coverImgSrc={story.bookInfo.imgUrl}
                 subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
                 isFollowing={story.authorInfo.following}
-                onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
+                onSubscribeClick={() => handleToggleFollow(story.authorInfo.nickname, story.authorInfo.following)}
                 hideSubscribeButton={story.writtenByMe}
                 onClick={() => router.push(`/stories/${story.bookStoryId}`)}
-                onLikeClick={() => toggleLike(story.bookStoryId)}
+                onLikeClick={() => handleToggleLike(story.bookStoryId)}
               />
             ))}
           </div>
@@ -194,7 +210,7 @@ export default function HomePage() {
               height="h-[380px]"
               users={recommendedUsers}
               isError={isErrorMembers}
-              onSubscribeClick={(nickname, isFollowing) => toggleFollow({ nickname, isFollowing })}
+              onSubscribeClick={(nickname, isFollowing) => handleToggleFollow(nickname, isFollowing)}
             />
           </div>
         </section>
@@ -228,10 +244,10 @@ export default function HomePage() {
                   coverImgSrc={story.bookInfo.imgUrl}
                   subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
                   isFollowing={story.authorInfo.following}
-                  onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
+                  onSubscribeClick={() => handleToggleFollow(story.authorInfo.nickname, story.authorInfo.following)}
                   hideSubscribeButton={story.writtenByMe}
                   onClick={() => router.push(`/stories/${story.bookStoryId}`)}
-                  onLikeClick={() => toggleLike(story.bookStoryId)}
+                  onLikeClick={() => handleToggleLike(story.bookStoryId)}
                 />
               ))}
             </div>
