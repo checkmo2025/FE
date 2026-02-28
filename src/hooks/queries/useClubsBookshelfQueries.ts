@@ -27,7 +27,7 @@ export const bookshelfQueryKeys = {
     ["clubs", clubId, "bookshelves", meetingId, "reviews"] as const,
 };
 
-export function useClubsBookshelfSimpleInfiniteQuery(clubId: number) {
+export function useClubsBookshelfSimpleInfiniteQuery(clubId: number, p0: { enabled: boolean; }) {
   return useInfiniteQuery({
     queryKey: bookshelfQueryKeys.simple(clubId),
     initialPageParam: undefined as number | undefined,
