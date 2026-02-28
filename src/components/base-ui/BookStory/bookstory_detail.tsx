@@ -358,6 +358,7 @@ export default function BookstoryDetail({
         isOpen={isReportModalOpen}
         onClose={() => setIsReportModalOpen(false)}
         onSubmit={handleReportSubmit}
+        defaultReportType="책 이야기"
       />
     </div>
   );

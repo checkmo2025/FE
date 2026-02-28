@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { useOtherProfileQuery } from "@/hooks/queries/useMemberQueries";
 
-import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
+import { useToggleFollowMutation, useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
+import { ReportType } from "@/types/member";
 import { useState } from "react";
 import ReportModal from "@/components/common/ReportModal";
 
@@ -56,6 +57,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
   const decodedNickname = decodeURIComponent(nickname);
   const { data: profile, isLoading } = useOtherProfileQuery(decodedNickname);
   const { mutate: toggleFollow } = useToggleFollowMutation();
+  const { mutate: reportMember } = useReportMemberMutation();
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   if (isLoading) {
@@ -79,8 +81,16 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
   };
 
   const handleReportSubmit = (type: string, content: string) => {
-    // API 연동 전까지 콘솔로 확인
-    console.log("Report Submitted:", { type, content });
+    let mappedType: ReportType = "GENERAL";
+    if (type === "책 이야기") mappedType = "BOOK_STORY";
+    if (type === "책이야기(댓글)") mappedType = "COMMENT";
+    if (type === "책모임 내부") mappedType = "CLUB_MEETING";
+
+    reportMember({
+      reportedMemberNickname: decodedNickname,
+      reportType: mappedType,
+      content,
+    });
   };
 
   return (
@@ -149,6 +159,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
         isOpen={isReportModalOpen}
         onClose={() => setIsReportModalOpen(false)}
         onSubmit={handleReportSubmit}
+        defaultReportType="일반"
       />
     </div>
   );

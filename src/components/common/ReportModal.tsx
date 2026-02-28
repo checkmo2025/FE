@@ -9,10 +9,11 @@ type ReportModalProps = {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (type: string, content: string) => void;
+    defaultReportType?: ReportType;
 };
 
-export default function ReportModal({ isOpen, onClose, onSubmit }: ReportModalProps) {
-    const [reportType, setReportType] = useState<ReportType>(null);
+export default function ReportModal({ isOpen, onClose, onSubmit, defaultReportType = null }: ReportModalProps) {
+    const [reportType, setReportType] = useState<ReportType>(defaultReportType);
     const [reportContent, setReportContent] = useState("");
 
     const reportTypes: ReportType[] = ["일반", "책 이야기", "책이야기(댓글)", "책모임 내부"];
@@ -28,10 +29,11 @@ export default function ReportModal({ isOpen, onClose, onSubmit }: ReportModalPr
         if (isOpen) {
             document.body.style.overflow = "hidden";
             document.addEventListener("keydown", handleEscape);
+            setReportType(defaultReportType);
         } else {
             document.body.style.overflow = "";
             // Reset state when closed
-            setReportType(null);
+            setReportType(defaultReportType);
             setReportContent("");
         }
 

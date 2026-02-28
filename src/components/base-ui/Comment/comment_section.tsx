@@ -217,6 +217,7 @@ export default function CommentSection({
           setReportTargetNickname("");
         }}
         onSubmit={handleReportSubmit}
+        defaultReportType="책이야기(댓글)"
       />
     </>
   );
