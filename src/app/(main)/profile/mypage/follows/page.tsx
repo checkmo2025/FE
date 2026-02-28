@@ -8,6 +8,7 @@ import FollowList from "@/components/base-ui/Profile/FollowList";
 import { FollowUser } from "@/components/base-ui/Profile/FollowItem";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useProfileQuery, useFollowerListQuery, useFollowingListQuery } from "@/hooks/queries/useMemberQueries";
+import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 import { DUMMY_USER_PROFILE } from "@/constants/mocks/mypage";
 
 export default function FollowsPage() {
@@ -60,9 +61,10 @@ export default function FollowsPage() {
         isFollowing: userDTO.following,
     })) || [];
 
+    const { mutate: toggleFollow } = useToggleFollowMutation();
+
     const handleToggleFollow = (id: string | number, currentIsFollowing: boolean) => {
-        // TODO: Follow API Mutate 적용
-        console.log("Toggle Follow for user ID:", id, "Current state:", currentIsFollowing);
+        toggleFollow({ nickname: String(id), isFollowing: currentIsFollowing });
     };
 
     const hasMore = activeTab === "follower" ? hasNextFollower : hasNextFollowing;

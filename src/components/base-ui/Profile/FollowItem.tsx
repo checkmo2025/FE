@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export type FollowUser = {
     id: string | number;
@@ -16,7 +17,7 @@ type FollowItemProps = {
 export default function FollowItem({ user, onToggleFollow }: FollowItemProps) {
     return (
         <div className="flex w-full max-w-[1040px] p-[20px] justify-between items-center rounded-[8px] border border-Subbrown-4 bg-White">
-            <div className="flex items-center gap-[12px]">
+            <Link href={`/profile/${user.nickname}`} className="flex items-center gap-[12px] cursor-pointer">
                 <div className="flex w-[40px] h-[40px] justify-center items-center shrink-0 rounded-full overflow-hidden relative">
                     {user.profileImageUrl ? (
                         <Image
@@ -30,7 +31,7 @@ export default function FollowItem({ user, onToggleFollow }: FollowItemProps) {
                     )}
                 </div>
                 <span className="text-Gray-7 subhead_4_1">{user.nickname}</span>
-            </div>
+            </Link>
 
             <button
                 type="button"
