@@ -39,7 +39,7 @@ export const useInfiniteStoriesQuery = () => {
     });
 };
 
-export const useFollowingInfiniteStoriesQuery = () => {
+export const useFollowingInfiniteStoriesQuery = (enabled: boolean = true) => {
     return useInfiniteQuery({
         queryKey: storyKeys.followingList(),
         queryFn: ({ pageParam }) => storyService.getFollowingStories(pageParam ?? undefined),
@@ -48,6 +48,7 @@ export const useFollowingInfiniteStoriesQuery = () => {
             if (!lastPage || !lastPage.hasNext) return undefined;
             return lastPage.nextCursor;
         },
+        enabled,
     });
 };
 
