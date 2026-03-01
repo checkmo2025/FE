@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useEffect, useRef } from 'react';
-import Image from 'next/image';
+import React, { useEffect, useRef } from "react";
+import Image from "next/image";
 
 interface ChatInputProps {
   onSend: (text: string) => boolean | void;
@@ -14,8 +14,8 @@ interface ChatInputProps {
 export default function LongtermChatInput({
   onSend,
   placeholder,
-  buttonIconSrc = '/Send.svg',
-  className = '',
+  buttonIconSrc = "/Send.svg",
+  className = "",
   initialValue,
 }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -23,20 +23,23 @@ export default function LongtermChatInput({
   const adjustHeight = () => {
     const ta = textareaRef.current;
     if (!ta) return;
-    ta.style.height = 'auto';
+    ta.style.height = "auto";
     ta.style.height = `${ta.scrollHeight}px`;
   };
+
+  const isOnlyWhitespace = (text: string) => text.replace(/\s/g, "").length === 0;
 
   const handleSend = () => {
     const ta = textareaRef.current;
     if (!ta) return;
-    const text = ta.value.trim();
-    if (!text) return;
+
+    const text = ta.value; // ✅ trim 금지: 내용 변형하면 UX가 쓰레기됨
+    if (isOnlyWhitespace(text)) return;
 
     const ok = onSend(text);
     if (ok === false) return;
 
-    ta.value = '';
+    ta.value = "";
     adjustHeight();
   };
 
@@ -61,20 +64,19 @@ export default function LongtermChatInput({
           overflow-hidden
           border-b border-Subbrown-4
           py-2
-          [font-feature-settings:'case'_on]
           d:body_1_2
           t:body_2_3
           body_2_3
           text-Gray-6 placeholder:text-Gray-4
+          whitespace-pre-wrap
         "
       />
 
-      {/* 글 뒤 20px + 전송 */}
       <button
         type="button"
         onClick={handleSend}
         className="shrink-0 ml-5 w-6 h-6 relative hover:brightness-70 cursor-pointer"
-        aria-label="발제 전송"
+        aria-label="전송"
       >
         <Image src={buttonIconSrc} alt="" fill className="object-contain" />
       </button>

@@ -175,3 +175,11 @@ body {
 @utility animate-slide-down {
   animation: slide-down 0.3s ease-out;
 }
+
+@utility no-scrollbar {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

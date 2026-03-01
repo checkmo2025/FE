@@ -3,6 +3,10 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import ReportModal from "@/components/common/ReportModal";
+import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
+import { ReportType } from "@/types/member";
+import { useAuthStore } from "@/store/useAuthStore";
 
 type BookstoryDetailProps = {
   imageUrl?: string;
@@ -13,6 +17,7 @@ type BookstoryDetailProps = {
 
   profileImgSrc?: string; // 기본: "/profile.svg"
   subscribeText?: string; // 기본: "구독"
+  isFollowing?: boolean;
   onSubscribeClick?: () => void;
 
   bookTitle: string;
@@ -25,6 +30,9 @@ type BookstoryDetailProps = {
 
   authorHref?: string; // 기본: `/profile/${authorId}`
   className?: string;
+  id?: number;
+  likedByMe?: boolean;
+  onLikeClick?: (e: React.MouseEvent) => void;
   hideSubscribeButton?: boolean;
 };
 
@@ -49,6 +57,7 @@ export default function BookstoryDetail({
   authorId,
   profileImgSrc = "/profile2.svg",
   subscribeText = "구독",
+  isFollowing = false,
   onSubscribeClick,
   bookTitle,
   bookAuthor,
@@ -58,11 +67,18 @@ export default function BookstoryDetail({
   likeCount = 1,
   authorHref,
   className = "",
+  id,
+  likedByMe = false,
+  onLikeClick,
   hideSubscribeButton = false,
 }: BookstoryDetailProps) {
   const href = authorHref ?? `/profile/${authorId}`;
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const heartIcon = likedByMe ? "/red_heart.svg" : "/gray_heart.svg";
+  const { isLoggedIn, openLoginModal } = useAuthStore();
+  const { mutate: reportMember } = useReportMemberMutation();
 
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
@@ -74,6 +90,19 @@ export default function BookstoryDetail({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleReportSubmit = (type: string, content: string) => {
+    let mappedType: ReportType = "GENERAL";
+    if (type === "책 이야기") mappedType = "BOOK_STORY";
+    if (type === "책이야기(댓글)") mappedType = "COMMENT";
+    if (type === "책모임 내부") mappedType = "CLUB_MEETING";
+
+    reportMember({
+      reportedMemberNickname: authorNickname,
+      reportType: mappedType,
+      content,
+    });
+  };
 
   return (
     <div
@@ -106,7 +135,10 @@ export default function BookstoryDetail({
           <button
             type="button"
             onClick={onSubscribeClick}
-            className="flex px-4 py-1.5 justify-center items-center rounded-lg bg-primary-2 text-White text-[12px] font-medium shrink-0"
+            className={`flex px-4 py-1.5 justify-center items-center rounded-lg text-White text-[12px] font-medium shrink-0 transition-colors ${isFollowing
+              ? "bg-Subbrown-4 text-primary-3"
+              : "bg-primary-2 text-White"
+              }`}
           >
             {subscribeText}
           </button>
@@ -135,7 +167,11 @@ export default function BookstoryDetail({
               <button
                 type="button"
                 onClick={() => {
-                  console.log("신고하기");
+                  if (!isLoggedIn) {
+                    openLoginModal();
+                    return;
+                  }
+                  setIsReportModalOpen(true);
                   setMenuOpen(false);
                 }}
                 className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
@@ -174,9 +210,15 @@ export default function BookstoryDetail({
 
         {/* 좋아요/공유 */}
         <div className="flex flex-col gap-6">
-          <div className="flex items-center gap-2">
-            <Image src="/gray_heart.svg" alt="heart" width={20} height={20} />
-            <span className="body_1_2 text-Gray-5">좋아요 {likeCount}</span>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              onLikeClick?.(e);
+            }}
+            className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1 rounded-full transition-colors"
+          >
+            <Image src={heartIcon} alt="heart" width={20} height={20} />
+            <span className={`body_1_2 ${likedByMe ? 'text-primary-2' : 'text-Gray-5'}`}>좋아요 {likeCount}</span>
           </div>
           <div className="flex items-center gap-2">
             <Image src="/share.svg" alt="share" width={20} height={20} />
@@ -227,18 +269,27 @@ export default function BookstoryDetail({
           {/* 좋아요/공유 + 시간/조회수 */}
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-3">
-              <Image src="/gray_heart.svg" alt="heart" width={24} height={24} />
-              <span className="subhead_4_1 text-Gray-5">
-                좋아요 {likeCount}
-              </span>
-              <Image
-                src="/share.svg"
-                alt="share"
-                width={24}
-                height={24}
-                className="ml-2"
-              />
-              <span className="subhead_4_1 text-Gray-5">공유하기</span>
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onLikeClick?.(e);
+                }}
+                className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1.5 rounded-full transition-colors group"
+              >
+                <Image src={heartIcon} alt="heart" width={24} height={24} />
+                <span className={`subhead_4_1 ${likedByMe ? 'text-primary-2' : 'text-Gray-5'}`}>
+                  좋아요 {likeCount}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1.5 rounded-full transition-colors group">
+                <Image
+                  src="/share.svg"
+                  alt="share"
+                  width={24}
+                  height={24}
+                />
+                <span className="subhead_4_1 text-Gray-5">공유하기</span>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <span className="body_1_2 text-Gray-3">{timeAgo(createdAt)}</span>
@@ -253,7 +304,10 @@ export default function BookstoryDetail({
             <button
               type="button"
               onClick={onSubscribeClick}
-              className="flex px-[17px] py-[8px]  justify-center items-center rounded-lg bg-primary-2 text-White body_2_1 shrink-0 whitespace-nowrap cursor-pointer"
+              className={`flex px-[17px] py-[8px] justify-center items-center rounded-lg bg-primary-2 text-White body_2_1 shrink-0 whitespace-nowrap cursor-pointer transition-colors ${isFollowing
+                ? "bg-Subbrown-4 text-primary-3"
+                : "bg-primary-2 text-White"
+                }`}
             >
               {subscribeText}
             </button>
@@ -275,7 +329,11 @@ export default function BookstoryDetail({
                 <button
                   type="button"
                   onClick={() => {
-                    console.log("신고하기");
+                    if (!isLoggedIn) {
+                      openLoginModal();
+                      return;
+                    }
+                    setIsReportModalOpen(true);
                     setMenuOpen(false);
                   }}
                   className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
@@ -305,6 +363,13 @@ export default function BookstoryDetail({
           </div>
         </div>
       </div>
+      {/* Report Modal */}
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        onSubmit={handleReportSubmit}
+        defaultReportType="책 이야기"
+      />
     </div>
   );
 }

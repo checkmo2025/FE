@@ -6,7 +6,9 @@ export const storyKeys = {
     all: ["stories"] as const,
     list: () => [...storyKeys.all, "list"] as const,
     infiniteList: () => [...storyKeys.all, "infiniteList"] as const,
+    followingList: () => [...storyKeys.all, "followingList"] as const,
     myList: () => [...storyKeys.all, "myList"] as const,
+    otherMember: (nickname: string) => [...storyKeys.all, "otherMember", nickname] as const,
     detail: (id: number) => [...storyKeys.all, "detail", id] as const,
 };
 
@@ -37,6 +39,19 @@ export const useInfiniteStoriesQuery = () => {
     });
 };
 
+export const useFollowingInfiniteStoriesQuery = (enabled: boolean = true) => {
+    return useInfiniteQuery({
+        queryKey: storyKeys.followingList(),
+        queryFn: ({ pageParam }) => storyService.getFollowingStories(pageParam ?? undefined),
+        initialPageParam: null as number | null,
+        getNextPageParam: (lastPage) => {
+            if (!lastPage || !lastPage.hasNext) return undefined;
+            return lastPage.nextCursor;
+        },
+        enabled,
+    });
+};
+
 export const useMyInfiniteStoriesQuery = () => {
     return useInfiniteQuery({
         queryKey: storyKeys.myList(),
@@ -46,5 +61,18 @@ export const useMyInfiniteStoriesQuery = () => {
             if (!lastPage || !lastPage.hasNext) return undefined;
             return lastPage.nextCursor;
         },
+    });
+};
+
+export const useOtherMemberInfiniteStoriesQuery = (nickname: string) => {
+    return useInfiniteQuery({
+        queryKey: storyKeys.otherMember(nickname),
+        queryFn: ({ pageParam }) => storyService.getOtherMemberStories(nickname, pageParam ?? undefined),
+        initialPageParam: null as number | null,
+        getNextPageParam: (lastPage) => {
+            if (!lastPage || !lastPage.hasNext) return undefined;
+            return lastPage.nextCursor;
+        },
+        enabled: !!nickname,
     });
 };

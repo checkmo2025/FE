@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { formatTimeAgo } from "@/utils/time";
 
 type Props = {
+  id: number;
   authorName: string;
   profileImgSrc?: string;
   createdAt: string;
@@ -12,15 +14,18 @@ type Props = {
   content: string;
   likeCount?: number;
   commentCount?: number;
+  likedByMe?: boolean;
   onSubscribeClick?: () => void;
+  onLikeClick?: (e: React.MouseEvent) => void;
   subscribeText?: string;
+  isFollowing?: boolean;
   onClick?: () => void;
   hideSubscribeButton?: boolean;
+  onProfileClick?: () => void;
 };
 
-import { formatTimeAgo } from "@/utils/time";
-
 export default function BookStoryCardLarge({
+  id,
   authorName,
   profileImgSrc = "/profile2.svg",
   createdAt,
@@ -28,13 +33,19 @@ export default function BookStoryCardLarge({
   coverImgSrc = "/bookstorycard.svg",
   title,
   content,
-  likeCount = 1,
-  commentCount = 1,
+  likeCount = 0,
+  commentCount = 0,
+  likedByMe = false,
   onSubscribeClick,
+  onLikeClick,
   subscribeText = "구독",
+  isFollowing = false,
   onClick,
   hideSubscribeButton = false,
+  onProfileClick,
 }: Props) {
+  const heartIcon = likedByMe ? "/red_heart.svg" : "/gray_heart.svg";
+
   return (
     <div
       onClick={onClick}
@@ -42,7 +53,15 @@ export default function BookStoryCardLarge({
       w-[336px] h-[380px]"
     >
       {/* 상단 프로필 */}
-      <div className="flex items-center gap-2 px-4 py-3">
+      <div
+        className="flex items-center gap-2 px-4 py-3 group cursor-pointer"
+        onClick={(e) => {
+          if (onProfileClick) {
+            e.stopPropagation();
+            onProfileClick();
+          }
+        }}
+      >
         <div className="relative w-8 h-8 overflow-hidden rounded-full shrink-0">
           <Image
             src={profileImgSrc}
@@ -65,7 +84,10 @@ export default function BookStoryCardLarge({
               e.stopPropagation();
               onSubscribeClick?.();
             }}
-            className="h-8 rounded-lg bg-primary-2 px-[17px] body_2_1 text-White whitespace-nowrap"
+            className={`h-8 rounded-lg px-[17px] body_2_1 whitespace-nowrap transition-colors ${isFollowing
+              ? "bg-Subbrown-4 text-primary-3"
+              : "bg-primary-2 text-White"
+              }`}
           >
             {subscribeText}
           </button>
@@ -91,14 +113,24 @@ export default function BookStoryCardLarge({
 
       {/* 좋아요/댓글 */}
       <div className="grid mt-1 grid-cols-[1fr_auto_1fr] items-center px-2 pb-[10px]">
-        <div className="flex items-center justify-center gap-2 pt-1">
-          <Image src="/gray_heart.svg" alt="좋아요" width={24} height={24} />
-          <span className="body_1_2 text-Gray-4">좋아요 {likeCount}</span>
+        <div className="flex justify-center items-center">
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              onLikeClick?.(e);
+            }}
+            className="flex items-center justify-center gap-2 pt-1 cursor-pointer hover:bg-gray-100 transition-colors rounded-full px-4 h-10"
+          >
+            <Image src={heartIcon} alt="좋아요" width={24} height={24} />
+            <span className={`body_1_2 ${likedByMe ? 'text-primary-2' : 'text-Gray-4'}`}>좋아요 {likeCount}</span>
+          </div>
         </div>
         <div className="h-10 w-[1.8px] mt-2 rounded-full bg-Gray-2" />
-        <div className="flex items-center justify-center gap-2 pt-1">
-          <Image src="/comment.svg" alt="댓글" width={24} height={24} />
-          <span className="body_1_2 text-Gray-4">댓글 {commentCount}</span>
+        <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center gap-2 pt-1 px-4 h-10">
+            <Image src="/comment.svg" alt="댓글" width={24} height={24} />
+            <span className="body_1_2 text-Gray-4">댓글 {commentCount}</span>
+          </div>
         </div>
       </div>
     </div>

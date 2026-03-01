@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import AdminSearchHeader from "@/components/layout/AdminSearchHeader";
+import Link from "next/link";
 
 type UserRow = {
   id: string;
@@ -129,9 +130,12 @@ export default function UsersPage() {
                   <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{u.email}</td>
                   <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{u.phone}</td>
                   <td className="pl-[12px] py-0">
-                    <button className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70">
+                    <Link
+                      href={`/admin/users/${u.id}`}
+                      className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
+                    >
                       상세보기
-                    </button>
+                    </Link>
                   </td>
                 </tr>
               ))}

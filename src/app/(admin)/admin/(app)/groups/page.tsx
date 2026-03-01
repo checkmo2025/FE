@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import AdminSearchHeader from "@/components/layout/AdminSearchHeader";
 
 type GroupRow = {
@@ -143,9 +144,12 @@ export default function GroupsPage() {
                   <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{g.createdAt}</td>
                   <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{g.memberCount}</td>
                   <td className="pl-[12px] py-0">
-                    <button className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70">
+                     <Link
+                      href={`/admin/groups/${g.id}`}
+                      className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
+                    >
                       상세보기
-                    </button>
+                    </Link>
                   </td>
                 </tr>
               ))}

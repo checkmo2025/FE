@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
@@ -9,10 +9,23 @@ import BookstoryChoosebook from "@/components/base-ui/BookStory/bookstory_choose
 import BookSelectModal from "@/components/layout/BookSelectModal";
 import { useBookDetailQuery } from "@/hooks/queries/useBookQueries";
 import { useCreateBookStoryMutation } from "@/hooks/mutations/useStoryMutations";
+import { useAuthStore } from "@/store/useAuthStore";
 
 function StoryNewContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isLoggedIn, isInitialized, openLoginModal } = useAuthStore();
+
+  useEffect(() => {
+    if (isInitialized && !isLoggedIn) {
+      toast.error("책 이야기 글 작성하기는 로그인이 필요한 서비스입니다.", { id: "story-create-auth-error-direct" });
+      router.replace("/stories");
+      setTimeout(() => {
+        openLoginModal();
+      }, 100);
+    }
+  }, [isInitialized, isLoggedIn, router, openLoginModal]);
+
   const isbn = searchParams.get("isbn");
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");

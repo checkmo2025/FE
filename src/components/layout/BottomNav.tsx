@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
+import LoginModal from "../base-ui/Login/LoginModal";
 
 const NAV_ITEMS = [
   {
@@ -39,6 +41,16 @@ const NAV_ITEMS = [
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
+
+  const handleNavClick = (e: React.MouseEvent, href: string, label: string) => {
+    if (label === "모임" && !isLoggedIn) {
+      e.preventDefault();
+      openLoginModal();
+      return;
+    }
+  };
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-White border-Gray-2 t:hidden">
@@ -53,6 +65,7 @@ export default function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={(e) => handleNavClick(e, item.href, item.label)}
               className="flex flex-col items-center justify-center gap-1 py-2 "
             >
               <div className="relative w-12 h-12">
@@ -67,6 +80,9 @@ export default function BottomNav() {
           );
         })}
       </div>
+      {isLoginModalOpen && (
+        <LoginModal onClose={() => closeLoginModal()} />
+      )}
     </nav>
   );
 }

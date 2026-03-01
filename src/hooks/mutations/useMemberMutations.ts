@@ -58,7 +58,71 @@ export const useUpdateProfileMutation = () => {
     });
 };
 
-import { UpdatePasswordRequest } from "@/types/member";
+import { UpdatePasswordRequest, RecommendResponse, ReportMemberRequest, FollowListResponse } from "@/types/member";
+import { BookStoryListResponse } from "@/types/story";
+import { storyKeys } from "@/hooks/queries/useStoryQueries";
+import { memberKeys } from "@/hooks/queries/useMemberQueries";
+import { OtherProfileResponse } from "@/types/member";
+import { toast } from "react-hot-toast";
+import { InfiniteData } from "@tanstack/react-query";
+
+// Optimistic update helpers
+const updateFollowStateInRecommend = (old: RecommendResponse | undefined, nickname: string, isFollowing: boolean) => {
+    if (!old || !old.friends) return old;
+    return {
+        ...old,
+        friends: old.friends.map((member) =>
+            member.nickname === nickname
+                ? { ...member, isFollowing: !isFollowing }
+                : member
+        )
+    };
+};
+
+const updateFollowStateInInfiniteList = (old: InfiniteData<BookStoryListResponse> | undefined, nickname: string, isFollowing: boolean) => {
+    if (!old || !old.pages) return old;
+    return {
+        ...old,
+        pages: old.pages.map((page) => ({
+            ...page,
+            basicInfoList: page.basicInfoList.map((story) =>
+                story.authorInfo.nickname === nickname
+                    ? { ...story, authorInfo: { ...story.authorInfo, following: !isFollowing } }
+                    : story
+            )
+        }))
+    };
+};
+
+const updateFollowStateInList = (old: BookStoryListResponse | undefined, nickname: string, isFollowing: boolean) => {
+    if (!old || !old.basicInfoList) return old;
+    return {
+        ...old,
+        basicInfoList: old.basicInfoList.map((story) =>
+            story.authorInfo.nickname === nickname
+                ? { ...story, authorInfo: { ...story.authorInfo, following: !isFollowing } }
+                : story
+        )
+    };
+};
+
+const updateFollowStateInFollowList = (old: InfiniteData<FollowListResponse> | undefined, nickname: string, isFollowing: boolean) => {
+    if (!old || !old.pages) return old;
+    return {
+        ...old,
+        pages: old.pages.map((page) => ({
+            ...page,
+            followList: page.followList.map((member) =>
+                member.nickname === nickname
+                    ? { ...member, following: !isFollowing }
+                    : member
+            )
+        }))
+    };
+};
+
+// Throttle map to prevent spam clicking (per nickname)
+const followThrottleMap: Record<string, number> = {};
 
 export const useUpdatePasswordMutation = () => {
     return useMutation({
@@ -67,6 +131,136 @@ export const useUpdatePasswordMutation = () => {
         },
         onError: (error: any) => {
             console.error("Failed to update password:", error);
+        },
+    });
+};
+
+export const useToggleFollowMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ nickname, isFollowing }: { nickname: string; isFollowing: boolean }) => {
+            const now = Date.now();
+            const lastTime = followThrottleMap[nickname] || 0;
+
+            // Throttle: 500ms
+            if (now - lastTime < 500) {
+                return; // Ignore rapid clicks
+            }
+            followThrottleMap[nickname] = now;
+
+            if (isFollowing) {
+                await memberService.unfollowMember(nickname);
+            } else {
+                await memberService.followMember(nickname);
+            }
+        },
+        onMutate: async ({ nickname, isFollowing }) => {
+            // Cancel outgoing refetches
+            await queryClient.cancelQueries({ queryKey: storyKeys.all });
+            await queryClient.cancelQueries({ queryKey: memberKeys.recommended() });
+            await queryClient.cancelQueries({ queryKey: memberKeys.otherProfile(nickname) });
+            await queryClient.cancelQueries({ queryKey: memberKeys.followers() });
+            await queryClient.cancelQueries({ queryKey: memberKeys.followings() });
+
+            // Snapshot previous values
+            const previousRecommendations = queryClient.getQueryData(memberKeys.recommended());
+            const previousInfiniteStories = queryClient.getQueryData(storyKeys.infiniteList());
+            const previousStories = queryClient.getQueryData(storyKeys.list());
+            const previousOtherProfile = queryClient.getQueryData(memberKeys.otherProfile(nickname));
+            const previousFollowers = queryClient.getQueryData(memberKeys.followers());
+            const previousFollowings = queryClient.getQueryData(memberKeys.followings());
+
+            // 1. Optimistically update recommendations
+            if (previousRecommendations) {
+                queryClient.setQueryData<RecommendResponse>(memberKeys.recommended(), (old) =>
+                    updateFollowStateInRecommend(old, nickname, isFollowing)
+                );
+            }
+
+            // 2. Optimistically update infinite stories
+            if (previousInfiniteStories) {
+                queryClient.setQueryData<InfiniteData<BookStoryListResponse>>(storyKeys.infiniteList(), (old) =>
+                    updateFollowStateInInfiniteList(old, nickname, isFollowing)
+                );
+            }
+
+            // 3. Optimistically update stories list
+            if (previousStories) {
+                queryClient.setQueryData<BookStoryListResponse>(storyKeys.list(), (old) =>
+                    updateFollowStateInList(old, nickname, isFollowing)
+                );
+            }
+
+            // 4. Optimistically update other profile
+            if (previousOtherProfile) {
+                queryClient.setQueryData<OtherProfileResponse>(memberKeys.otherProfile(nickname), (old) => {
+                    if (!old) return old;
+                    return { ...old, following: !isFollowing };
+                });
+            }
+
+            // 5. Optimistically update followers/followings list
+            if (previousFollowers) {
+                queryClient.setQueryData<InfiniteData<FollowListResponse>>(memberKeys.followers(), (old) =>
+                    updateFollowStateInFollowList(old, nickname, isFollowing)
+                );
+            }
+            if (previousFollowings) {
+                queryClient.setQueryData<InfiniteData<FollowListResponse>>(memberKeys.followings(), (old) =>
+                    updateFollowStateInFollowList(old, nickname, isFollowing)
+                );
+            }
+
+            return { previousRecommendations, previousInfiniteStories, previousStories, previousOtherProfile, previousFollowers, previousFollowings };
+        },
+        onError: (error: any, variables, context) => {
+            console.error("Failed to toggle follow:", error);
+            toast.error("팔로우 상태 업데이트에 실패했습니다.");
+
+            // Rollback
+            if (context?.previousRecommendations) {
+                queryClient.setQueryData(memberKeys.recommended(), context.previousRecommendations);
+            }
+            if (context?.previousInfiniteStories) {
+                queryClient.setQueryData(storyKeys.infiniteList(), context.previousInfiniteStories);
+            }
+            if (context?.previousStories) {
+                queryClient.setQueryData(storyKeys.list(), context.previousStories);
+            }
+            if (context?.previousOtherProfile) {
+                queryClient.setQueryData(memberKeys.otherProfile(variables.nickname), context.previousOtherProfile);
+            }
+            if (context?.previousFollowers) {
+                queryClient.setQueryData(memberKeys.followers(), context.previousFollowers);
+            }
+            if (context?.previousFollowings) {
+                queryClient.setQueryData(memberKeys.followings(), context.previousFollowings);
+            }
+        },
+        onSettled: (_data, _error, variables) => {
+            // Refetch to sync with server
+            queryClient.invalidateQueries({ queryKey: storyKeys.all });
+            queryClient.invalidateQueries({ queryKey: memberKeys.recommended() });
+            queryClient.invalidateQueries({ queryKey: memberKeys.otherProfile(variables.nickname) });
+            queryClient.invalidateQueries({ queryKey: memberKeys.followers() });
+            queryClient.invalidateQueries({ queryKey: memberKeys.followings() });
+        },
+    });
+};
+
+export const useReportMemberMutation = () => {
+    return useMutation({
+        mutationFn: async (payload: ReportMemberRequest) => {
+            await memberService.reportMember(payload);
+        },
+        onSuccess: () => {
+            toast.success("신고가 완료되었습니다.");
+        },
+        onError: (error: any) => {
+            console.error("Failed to report member:", error);
+            const errorMessage = error.response?.data?.message || error.message || "신고에 실패했습니다.";
+            toast.error(errorMessage);
         },
     });
 };

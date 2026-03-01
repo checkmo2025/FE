@@ -34,6 +34,11 @@ export default function GroupAdminMenu({ groupId }: GroupAdminMenuProps) {
     setMenuOpen(false);
   };
 
+  const handleEditClick = () => {
+    router.push(`/groups/${groupId}/admin/edit`);
+    setMenuOpen(false);
+  };
+
   return (
     <div className="relative" ref={menuRef}>
       <button
@@ -55,7 +60,7 @@ export default function GroupAdminMenu({ groupId }: GroupAdminMenuProps) {
         <div
           className="
             absolute right-0 top-full mt-2
-            w-34 h-[80px]
+            w-34 h-[120px]
             rounded-lg
             border border-Subbrown-4
             bg-White
@@ -93,8 +98,24 @@ export default function GroupAdminMenu({ groupId }: GroupAdminMenuProps) {
           >
             모임 회원 관리
           </button>
+
+          <div className="mx-3 border-b border-Subbrown-4" />
+
+          <button
+            type="button"
+            onClick={handleEditClick}
+            className="
+              flex-1 w-full
+              flex items-center justify-center
+              body_1_2 text-Gray-4
+              hover:text-Gray-7
+              cursor-pointer
+            "
+          >
+            모임 수정
+          </button>
         </div>
       )}
     </div>
   );
-} 
+}

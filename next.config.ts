@@ -8,10 +8,13 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "image.aladin.co.kr",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "checkmo-s3-presigned.s3.ap-northeast-2.amazonaws.com",
+        pathname: "/**",
+
       },
     ],
   },

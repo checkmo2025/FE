@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { NavItem } from "./NavItem";
 import { useState } from "react";
 import SearchModal from "./SearchModal";
+import LoginModal from "../base-ui/Login/LoginModal";
 import { useHeaderTitle } from "@/contexts/HeaderTitleContext";
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -27,11 +28,20 @@ const getPageTitle = (pathname: string) => {
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const defaultTitle = getPageTitle(pathname);
   const { customTitle } = useHeaderTitle();
-  const { user } = useAuthStore();
+  const { user, isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
   const pageTitle = customTitle || defaultTitle;
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const handleNavClick = (href: string, label: string) => {
+    if (label === "모임" && !isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    router.push(href);
+  };
   return (
     <header className="w-full bg-primary-1">
       <div className="mx-auto w-full max-w-[1440px] px-4 py-3 t:px-6 t:py-3.5 d:px-5">
@@ -65,6 +75,7 @@ export default function Header() {
                     href={item.href}
                     label={item.label}
                     active={active}
+                    onClick={() => handleNavClick(item.href, item.label)}
                   />
                 );
               })}
@@ -127,6 +138,9 @@ export default function Header() {
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
       />
+      {isLoginModalOpen && (
+        <LoginModal onClose={() => closeLoginModal()} />
+      )}
     </header>
   );
 }

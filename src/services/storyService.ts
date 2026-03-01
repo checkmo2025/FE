@@ -13,9 +13,27 @@ export const storyService = {
         );
         return response.result!;
     },
+    getFollowingStories: async (cursorId?: number): Promise<BookStoryListResponse> => {
+        const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
+            STORY_ENDPOINTS.FOLLOWING,
+            {
+                params: { cursorId },
+            }
+        );
+        return response.result!;
+    },
     getMyStories: async (cursorId?: number): Promise<BookStoryListResponse> => {
         const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
             STORY_ENDPOINTS.ME,
+            {
+                params: { cursorId },
+            }
+        );
+        return response.result!;
+    },
+    getOtherMemberStories: async (nickname: string, cursorId?: number): Promise<BookStoryListResponse> => {
+        const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
+            STORY_ENDPOINTS.OTHER_MEMBER(nickname),
             {
                 params: { cursorId },
             }
@@ -66,6 +84,12 @@ export const storyService = {
     ): Promise<null> => {
         const response = await apiClient.delete<ApiResponse<null>>(
             `${STORY_ENDPOINTS.LIST}/${bookStoryId}/comments/${commentId}`
+        );
+        return response.result!;
+    },
+    toggleLikeStory: async (bookStoryId: number): Promise<boolean> => {
+        const response = await apiClient.post<ApiResponse<boolean>>(
+            STORY_ENDPOINTS.LIKE(bookStoryId)
         );
         return response.result!;
     },

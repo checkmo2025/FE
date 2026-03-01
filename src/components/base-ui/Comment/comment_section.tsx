@@ -11,6 +11,10 @@ import {
 } from "@/hooks/mutations/useStoryMutations";
 import { toast } from "react-hot-toast";
 import ConfirmModal from "@/components/common/ConfirmModal";
+import ReportModal from "@/components/common/ReportModal";
+import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
+import { ReportType } from "@/types/member";
+import { useAuthStore } from "@/store/useAuthStore";
 
 // 어떤 글의 댓글인지 구분
 type CommentSectionProps = {
@@ -28,6 +32,8 @@ export default function CommentSection({
   const createCommentMutation = useCreateCommentMutation(storyId);
   const updateCommentMutation = useUpdateCommentMutation(storyId);
   const deleteCommentMutation = useDeleteCommentMutation(storyId);
+  const { mutate: reportMember } = useReportMemberMutation();
+  const { isLoggedIn, openLoginModal } = useAuthStore();
 
   // API 데이터를 UI용 Comment 형식으로 변환 및 계층 구조화
   const mapApiToUiComments = (apiComments: CommentInfo[]): Comment[] => {
@@ -73,6 +79,9 @@ export default function CommentSection({
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState<number | null>(null);
 
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [reportTargetNickname, setReportTargetNickname] = useState<string>("");
+
   // 데이터가 변경되면 상태 업데이트
   useEffect(() => {
     setComments(mapApiToUiComments(initialComments));
@@ -80,6 +89,10 @@ export default function CommentSection({
 
   // 댓글 추가
   const handleAddComment = (content: string) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
     createCommentMutation.mutate(
       { content },
       {
@@ -95,6 +108,10 @@ export default function CommentSection({
 
   // 답글 추가
   const handleAddReply = (parentId: number, content: string) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
     createCommentMutation.mutate(
       { content, parentCommentId: parentId },
       {
@@ -144,9 +161,46 @@ export default function CommentSection({
   };
 
   const handleReportComment = (id: number) => {
-    // TODO: 댓글 신고 API 연동
-    console.log("댓글 신고:", id);
-    toast.success("신고가 접수되었습니다.");
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    // 찾기: 최상단 댓글과 대댓글 모두 탐색
+    let targetComment: Comment | undefined;
+
+    for (const c of comments) {
+      if (c.id === id) {
+        targetComment = c;
+        break;
+      }
+      if (c.replies) {
+        const found = c.replies.find(r => r.id === id);
+        if (found) {
+          targetComment = found;
+          break;
+        }
+      }
+    }
+
+    if (targetComment) {
+      setReportTargetNickname(targetComment.authorName);
+      setIsReportModalOpen(true);
+    }
+  };
+
+  const handleReportSubmit = (type: string, content: string) => {
+    let mappedType: ReportType = "GENERAL";
+    if (type === "책 이야기") mappedType = "BOOK_STORY";
+    if (type === "책이야기(댓글)") mappedType = "COMMENT";
+    if (type === "책모임 내부") mappedType = "CLUB_MEETING";
+
+    if (reportTargetNickname) {
+      reportMember({
+        reportedMemberNickname: reportTargetNickname,
+        reportType: mappedType,
+        content,
+      });
+    }
   };
 
   return (
@@ -167,6 +221,17 @@ export default function CommentSection({
           setIsConfirmOpen(false);
           setCommentToDelete(null);
         }}
+      />
+
+      {/* Report Modal */}
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => {
+          setIsReportModalOpen(false);
+          setReportTargetNickname("");
+        }}
+        onSubmit={handleReportSubmit}
+        defaultReportType="책이야기(댓글)"
       />
     </>
   );

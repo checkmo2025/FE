@@ -8,6 +8,7 @@ type ListSubscribeElementProps = {
   profileSrc?: string; // 기본: "/profile.svg" (public)
   onSubscribeClick?: () => void;
   buttonText?: string; // 기본: "구독"
+  isFollowing?: boolean;
 };
 
 export default function ListSubscribeElement({
@@ -17,6 +18,7 @@ export default function ListSubscribeElement({
   profileSrc = '/profile2.svg',
   onSubscribeClick,
   buttonText = '구독',
+  isFollowing = false,
 }: ListSubscribeElementProps) {
   return (
     <div className="flex w-full t:w-[296px] min-h-[60px] t:h-[66px] px-[14px] py-[8px] gap-[8px] rounded-[8px] border border-Subbrown-4 bg-white">
@@ -46,7 +48,10 @@ export default function ListSubscribeElement({
         <button
           type="button"
           onClick={onSubscribeClick}
-          className="hidden t:flex px-[10px] t:px-[17px] py-[6px] t:py-[8px] justify-center items-center gap-[10px] rounded-[8px] bg-[#9A7A6B] text-white text-[color:var(--White,#FFF)] text-[11px] t:text-[12px] font-semibold leading-[100%] tracking-[-0.012px] whitespace-nowrap shrink-0"
+          className={`hidden t:flex px-[10px] t:px-[17px] py-[6px] t:py-[8px] justify-center items-center gap-[10px] rounded-[8px] text-[11px] t:text-[12px] font-semibold leading-[100%] tracking-[-0.012px] whitespace-nowrap shrink-0 transition-colors ${isFollowing
+              ? "bg-Subbrown-4 text-primary-3"
+              : "bg-primary-2 text-white"
+            }`}
         >
           {buttonText}
         </button>
@@ -54,7 +59,10 @@ export default function ListSubscribeElement({
         <button
           type="button"
           onClick={onSubscribeClick}
-          className="flex t:hidden w-full px-[17px] py-[6px] justify-center items-center rounded-[10px] bg-[#9A7A6B] text-white text-[11px] font-semibold leading-[100%] tracking-[-0.012px] whitespace-nowrap"
+          className={`flex t:hidden w-full px-[17px] py-[6px] justify-center items-center rounded-[10px] text-[11px] font-semibold leading-[100%] tracking-[-0.012px] whitespace-nowrap transition-colors ${isFollowing
+              ? "bg-Subbrown-4 text-primary-3"
+              : "bg-primary-2 text-white"
+            }`}
         >
           {buttonText}
         </button>

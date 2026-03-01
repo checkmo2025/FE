@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { formatTimeAgo } from "@/utils/time";
 
 type Props = {
+  id: number;
   authorName: string;
   profileImgSrc?: string;
   createdAt: string;
@@ -12,15 +14,18 @@ type Props = {
   content: string;
   likeCount?: number;
   commentCount?: number;
+  likedByMe?: boolean;
   onSubscribeClick?: () => void;
+  onLikeClick?: (e: React.MouseEvent) => void;
   subscribeText?: string;
+  isFollowing?: boolean;
   hideSubscribeButton?: boolean;
   onClick?: () => void;
+  onProfileClick?: () => void;
 };
 
-import { formatTimeAgo } from "@/utils/time";
-
 export default function BookStoryCard({
+  id,
   authorName,
   profileImgSrc = "/profile2.svg",
   createdAt,
@@ -28,13 +33,19 @@ export default function BookStoryCard({
   coverImgSrc = "/bookstorycard.svg",
   title,
   content,
-  likeCount = 1,
-  commentCount = 1,
+  likeCount = 0,
+  commentCount = 0,
+  likedByMe = false,
   onSubscribeClick,
+  onLikeClick,
   subscribeText = "구독",
+  isFollowing = false,
   hideSubscribeButton = false,
   onClick,
+  onProfileClick,
 }: Props) {
+  const heartIcon = likedByMe ? "/red_heart.svg" : "/gray_heart.svg";
+
   return (
     <div
       onClick={onClick}
@@ -45,7 +56,15 @@ export default function BookStoryCard({
       md:w-[336px] md:h-[380px]"
     >
       {/* 1. 상단 프로필 (모바일 숨김 / 데스크탑 노출) */}
-      <div className="items-center hidden gap-2 px-4 py-3 md:flex">
+      <div
+        className="items-center hidden gap-2 px-4 py-3 md:flex group cursor-pointer"
+        onClick={(e) => {
+          if (onProfileClick) {
+            e.stopPropagation();
+            onProfileClick();
+          }
+        }}
+      >
         <div className="relative w-8 h-8 overflow-hidden rounded-full shrink-0">
           <Image
             src={profileImgSrc}
@@ -68,7 +87,10 @@ export default function BookStoryCard({
               e.stopPropagation();
               onSubscribeClick?.();
             }}
-            className="h-8 rounded-lg bg-primary-2 px-[17px] body_2_1 text-White whitespace-nowrap"
+            className={`h-8 rounded-lg px-[17px] body_2_1 whitespace-nowrap transition-colors ${isFollowing
+              ? "bg-Subbrown-4 text-primary-3"
+              : "bg-primary-2 text-White"
+              }`}
           >
             {subscribeText}
           </button>
@@ -112,9 +134,15 @@ export default function BookStoryCard({
       {/* 4. 하단 통계 (좋아요/댓글) */}
       {/* 모바일 버전 Footer */}
       <div className="flex md:hidden h-[37px] items-start border-t border-Subbrown-4 pt-[4px] pb-[12px]">
-        <div className="flex flex-1 items-center justify-center gap-[6px] border-r-2 border-Gray-2 h-[32px]">
-          <Image src="/gray_heart.svg" alt="좋아요" width={20} height={20} />
-          <span className="text-[12px] font-medium text-Gray-4">
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            onLikeClick?.(e);
+          }}
+          className="flex flex-1 items-center justify-center gap-[6px] border-r-2 border-Gray-2 h-[32px] hover:bg-gray-100 transition-colors"
+        >
+          <Image src={heartIcon} alt="좋아요" width={20} height={20} />
+          <span className={`text-[12px] font-medium ${likedByMe ? 'text-primary-2' : 'text-Gray-4'}`}>
             {likeCount}
           </span>
         </div>
@@ -128,14 +156,24 @@ export default function BookStoryCard({
 
       {/* 데스크탑 버전 Footer */}
       <div className="hidden md:grid mt-1 grid-cols-[1fr_auto_1fr] items-center px-2 pb-[10px]">
-        <div className="flex items-center justify-center gap-2 pt-1">
-          <Image src="/gray_heart.svg" alt="좋아요" width={24} height={24} />
-          <span className="body_1_2 text-Gray-4">좋아요 {likeCount}</span>
+        <div className="flex justify-center items-center">
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              onLikeClick?.(e);
+            }}
+            className="flex items-center justify-center gap-2 pt-1 cursor-pointer hover:bg-gray-100 transition-colors rounded-full px-4 h-10"
+          >
+            <Image src={heartIcon} alt="좋아요" width={24} height={24} />
+            <span className={`body_1_2 ${likedByMe ? 'text-primary-2' : 'text-Gray-4'}`}>좋아요 {likeCount}</span>
+          </div>
         </div>
         <div className="h-10 w-[1.8px] mt-2 rounded-full bg-Gray-2" />
-        <div className="flex items-center justify-center gap-2 pt-1">
-          <Image src="/comment.svg" alt="댓글" width={24} height={24} />
-          <span className="body_1_2 text-Gray-4">댓글 {commentCount}</span>
+        <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center gap-2 pt-1 px-4 h-10">
+            <Image src="/comment.svg" alt="댓글" width={24} height={24} />
+            <span className="body_1_2 text-Gray-4">댓글 {commentCount}</span>
+          </div>
         </div>
       </div>
     </div>

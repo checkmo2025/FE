@@ -73,21 +73,3 @@ export const toBookcaseCardModel = (item: BookShelfInfo): BookcaseCardModel => (
   tag: item.meetingInfo.tag,
 });
 
-export const groupByGeneration = (list: BookShelfInfo[]): BookcaseSectionModel[] => {
-  const map = new Map<number, BookcaseCardModel[]>();
-
-  for (const item of list) {
-    const gen = item.meetingInfo.generation;
-    const arr = map.get(gen) ?? [];
-    arr.push(toBookcaseCardModel(item));
-    map.set(gen, arr);
-  }
-
-  return Array.from(map.entries())
-    .sort((a, b) => b[0] - a[0]) // 최신 기수 먼저 (원하면 반대로)
-    .map(([generationNumber, books]) => ({
-      generationNumber,
-      generationLabel: `${generationNumber}기`,
-      books,
-    }));
-};
