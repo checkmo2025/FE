@@ -12,6 +12,7 @@ import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 import { useInView } from "react-intersection-observer";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
+import { toast } from "react-hot-toast";
 
 export default function StoriesPage() {
   const router = useRouter();
@@ -109,6 +110,15 @@ export default function StoriesPage() {
       fetchNextPage();
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const handleCreateStory = () => {
+    if (!isLoggedIn) {
+      toast.error("책 이야기 글 작성하기는 로그인이 필요한 서비스입니다.", { id: "story-create-auth-error" });
+      openLoginModal();
+      return;
+    }
+    router.push("/stories/new");
+  };
 
   const handleCardClick = (id: number) => {
     router.push(`/stories/${id}`);
@@ -257,7 +267,7 @@ export default function StoriesPage() {
         <FloatingFab
           iconSrc="/icons_pencil.svg"
           iconAlt="글쓰기"
-          onClick={() => router.push("/stories/new")}
+          onClick={handleCreateStory}
         />
       </div>
     </div>
