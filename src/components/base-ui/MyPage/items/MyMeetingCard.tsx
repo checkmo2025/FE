@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { MyClubInfo } from "@/types/club";
 import { useLeaveClubMutation } from "@/hooks/mutations/useClubMutations";
+import ConfirmModal from "@/components/common/ConfirmModal";
 
 interface MyMeetingCardProps {
   club: MyClubInfo;
@@ -11,6 +12,7 @@ interface MyMeetingCardProps {
 
 const MyMeetingCard = ({ club }: MyMeetingCardProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const { mutate: leaveClub } = useLeaveClubMutation();
@@ -27,10 +29,13 @@ const MyMeetingCard = ({ club }: MyMeetingCardProps) => {
   }, []);
 
   const handleLeaveClick = () => {
-    if (window.confirm(`'${club.clubName}' 모임에서 탈퇴하시겠습니까?`)) {
-      leaveClub(club.clubId);
-    }
+    setIsConfirmModalOpen(true);
     setMenuOpen(false);
+  };
+
+  const handleConfirmLeave = () => {
+    leaveClub(club.clubId);
+    setIsConfirmModalOpen(false);
   };
 
   return (
@@ -67,6 +72,13 @@ const MyMeetingCard = ({ club }: MyMeetingCardProps) => {
           </div>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        message={`'${club.clubName}' 모임에서\n탈퇴하시겠습니까?`}
+        onConfirm={handleConfirmLeave}
+        onCancel={() => setIsConfirmModalOpen(false)}
+      />
     </div>
   );
 };
