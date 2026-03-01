@@ -6,6 +6,8 @@ import CommentSection from "@/components/base-ui/Comment/comment_section";
 import Image from "next/image";
 import { isValidUrl } from "@/utils/url";
 import { useParams } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
+import LoginModal from "@/components/base-ui/Login/LoginModal";
 import { useStoryDetailQuery } from "@/hooks/queries/useStoryQueries";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
@@ -16,6 +18,26 @@ export default function StoryDetailPage() {
   const { data: story, isLoading, isError } = useStoryDetailQuery(Number(id));
   const { mutate: toggleLike } = useToggleStoryLikeMutation();
   const { mutate: toggleFollow } = useToggleFollowMutation();
+  const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
+
+  const handleToggleLike = () => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    toggleLike(story!.bookStoryId);
+  };
+
+  const handleToggleFollow = () => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    toggleFollow({
+      nickname: story!.authorInfo.nickname,
+      isFollowing: story!.authorInfo.following
+    });
+  };
 
   if (isLoading) {
     return (
@@ -41,6 +63,9 @@ export default function StoryDetailPage() {
 
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4">
+      {isLoginModalOpen && (
+        <LoginModal onClose={() => closeLoginModal()} />
+      )}
       {/* 책이야기 > 상세보기 */}
       {/* 모바일: 전체 너비 선 */}
       <div className="t:hidden w-screen -mx-4 border-b border-zinc-300">
@@ -86,10 +111,10 @@ export default function StoryDetailPage() {
             viewCount={story.viewCount}
             likeCount={story.likes}
             likedByMe={story.likedByMe}
-            onLikeClick={() => toggleLike(story.bookStoryId)}
+            onLikeClick={handleToggleLike}
             subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
             isFollowing={story.authorInfo.following}
-            onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
+            onSubscribeClick={handleToggleFollow}
             hideSubscribeButton={story.writtenByMe}
           />
         </StoryNavigation>

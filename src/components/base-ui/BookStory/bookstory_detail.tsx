@@ -6,6 +6,7 @@ import Link from "next/link";
 import ReportModal from "@/components/common/ReportModal";
 import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
 import { ReportType } from "@/types/member";
+import { useAuthStore } from "@/store/useAuthStore";
 
 type BookstoryDetailProps = {
   imageUrl?: string;
@@ -76,6 +77,7 @@ export default function BookstoryDetail({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const heartIcon = likedByMe ? "/red_heart.svg" : "/gray_heart.svg";
+  const { isLoggedIn, openLoginModal } = useAuthStore();
   const { mutate: reportMember } = useReportMemberMutation();
 
   // 바깥 클릭 시 메뉴 닫기
@@ -165,6 +167,10 @@ export default function BookstoryDetail({
               <button
                 type="button"
                 onClick={() => {
+                  if (!isLoggedIn) {
+                    openLoginModal();
+                    return;
+                  }
                   setIsReportModalOpen(true);
                   setMenuOpen(false);
                 }}
@@ -323,6 +329,10 @@ export default function BookstoryDetail({
                 <button
                   type="button"
                   onClick={() => {
+                    if (!isLoggedIn) {
+                      openLoginModal();
+                      return;
+                    }
                     setIsReportModalOpen(true);
                     setMenuOpen(false);
                   }}

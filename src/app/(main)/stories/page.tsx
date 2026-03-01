@@ -4,6 +4,7 @@ import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_la
 import ListSubscribeLarge from "@/components/base-ui/home/list_subscribe_large";
 import { useRouter } from "next/navigation";
 import FloatingFab from "@/components/base-ui/Float";
+import LoginModal from "@/components/base-ui/Login/LoginModal";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useInfiniteStoriesQuery, useFollowingInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
@@ -11,13 +12,30 @@ import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 import { useInView } from "react-intersection-observer";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
+import { toast } from "react-hot-toast";
 
 export default function StoriesPage() {
   const router = useRouter();
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
   const { mutate: toggleLike } = useToggleStoryLikeMutation();
   const { mutate: toggleFollow } = useToggleFollowMutation();
   const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const handleToggleLike = (bookStoryId: number) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    toggleLike(bookStoryId);
+  };
+
+  const handleToggleFollow = (nickname: string, isFollowing: boolean) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    toggleFollow({ nickname, isFollowing });
+  };
 
   const {
     data: defaultStoriesData,
@@ -35,7 +53,7 @@ export default function StoriesPage() {
     fetchNextPage: fetchNextFollowingPage,
     hasNextPage: hasNextFollowingPage,
     isFetchingNextPage: isFetchingNextFollowingPage,
-  } = useFollowingInfiniteStoriesQuery();
+  } = useFollowingInfiniteStoriesQuery(isLoggedIn);
 
   const isFollowingTab = selectedCategory === "following";
 
@@ -82,7 +100,7 @@ export default function StoriesPage() {
   ]);
 
   const { data: membersData, isLoading: isLoadingMembers } = useRecommendedMembersQuery(isLoggedIn);
-  const { data: myClubsData, isLoading: isLoadingClubs } = useMyClubsQuery();
+  const { data: myClubsData, isLoading: isLoadingClubs } = useMyClubsQuery(isLoggedIn);
   const { ref, inView } = useInView({
     threshold: 0,
   });
@@ -93,11 +111,20 @@ export default function StoriesPage() {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  const handleCreateStory = () => {
+    if (!isLoggedIn) {
+      toast.error("글 작성하기는 로그인이 필요한 서비스입니다.", { id: "story-create-auth-error" });
+      openLoginModal();
+      return;
+    }
+    router.push("/stories/new");
+  };
+
   const handleCardClick = (id: number) => {
     router.push(`/stories/${id}`);
   };
 
-  const isLoading = isLoadingStories || (isLoggedIn && isLoadingMembers) || isLoadingClubs;
+  const isLoading = isLoadingStories || (isLoggedIn && isLoadingMembers) || (isLoggedIn && isLoadingClubs);
 
   if (isLoading) {
     return (
@@ -117,6 +144,9 @@ export default function StoriesPage() {
 
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4">
+      {isLoginModalOpen && (
+        <LoginModal onClose={() => closeLoginModal()} />
+      )}
       <div className="t:mt-3 h-[44px] d:h-[54px] flex gap-14 items-center border-b border-zinc-300 overflow-x-auto scrollbar-hide">
         <div
           onClick={() => setSelectedCategory("all")}
@@ -173,11 +203,11 @@ export default function StoriesPage() {
                   coverImgSrc={story.bookInfo.imgUrl}
                   subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
                   isFollowing={story.authorInfo.following}
-                  onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
+                  onSubscribeClick={() => handleToggleFollow(story.authorInfo.nickname, story.authorInfo.following)}
                   hideSubscribeButton={story.writtenByMe}
                   onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
                   onClick={() => handleCardClick(story.bookStoryId)}
-                  onLikeClick={() => toggleLike(story.bookStoryId)}
+                  onLikeClick={() => handleToggleLike(story.bookStoryId)}
                 />
               </div>
             ))}
@@ -187,7 +217,7 @@ export default function StoriesPage() {
               <ListSubscribeLarge
                 height="h-[380px]"
                 users={recommendedMembers}
-                onSubscribeClick={(nickname, isFollowing) => toggleFollow({ nickname, isFollowing })}
+                onSubscribeClick={(nickname, isFollowing) => handleToggleFollow(nickname, isFollowing)}
               />
             )}
 
@@ -211,11 +241,11 @@ export default function StoriesPage() {
                   coverImgSrc={story.bookInfo.imgUrl}
                   subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
                   isFollowing={story.authorInfo.following}
-                  onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
+                  onSubscribeClick={() => handleToggleFollow(story.authorInfo.nickname, story.authorInfo.following)}
                   hideSubscribeButton={story.writtenByMe}
                   onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
                   onClick={() => handleCardClick(story.bookStoryId)}
-                  onLikeClick={() => toggleLike(story.bookStoryId)}
+                  onLikeClick={() => handleToggleLike(story.bookStoryId)}
                 />
               </div>
             ))}
@@ -237,7 +267,7 @@ export default function StoriesPage() {
         <FloatingFab
           iconSrc="/icons_pencil.svg"
           iconAlt="글쓰기"
-          onClick={() => router.push("/stories/new")}
+          onClick={handleCreateStory}
         />
       </div>
     </div>

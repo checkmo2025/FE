@@ -6,9 +6,10 @@ export const clubKeys = {
     myList: () => [...clubKeys.all, "myList"] as const,
 };
 
-export const useMyClubsQuery = () => {
+export const useMyClubsQuery = (enabled: boolean = true) => {
     return useQuery({
         queryKey: clubKeys.myList(),
         queryFn: () => clubService.getMyClubs(),
+        enabled,
     });
 };

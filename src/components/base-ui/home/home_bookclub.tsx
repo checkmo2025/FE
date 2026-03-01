@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
+import { useAuthStore } from '@/store/useAuthStore';
 import { MyClubInfo } from '@/types/club';
 
 type Props = {
@@ -12,10 +13,27 @@ type Props = {
 
 export default function HomeBookclub({ groups }: Props) {
   const router = useRouter();
+  const { isLoggedIn, openLoginModal } = useAuthStore();
   const count = groups.length;
   const isMany = count >= 5;
 
   const [open, setOpen] = useState(false);
+
+  const handleCreateGroup = () => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    router.push('/groups/create');
+  };
+
+  const handleSearchGroup = () => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    router.push('/groups');
+  };
 
   // 접힘: 6개만 / 펼침: 전체
   const displayGroups = isMany && !open ? groups.slice(0, 6) : groups;
@@ -78,6 +96,7 @@ export default function HomeBookclub({ groups }: Props) {
           <div className="flex flex-col gap-2">
             <button
               type="button"
+              onClick={handleSearchGroup}
               className="w-full h-[32px] t:h-[48px] py-3 rounded-[8px] bg-white border border-[#E6E6E6]
                         text-[13px] flex items-center justify-center gap-2"
             >
@@ -93,7 +112,7 @@ export default function HomeBookclub({ groups }: Props) {
 
             <button
               type="button"
-              onClick={() => router.push('/groups/create')}
+              onClick={handleCreateGroup}
               className="w-full h-[32px] t:h-[48px] py-3 rounded-[6px] bg-[#6B5448] text-white
                         text-[13px] flex items-center justify-center gap-2 cursor-pointer"
             >
