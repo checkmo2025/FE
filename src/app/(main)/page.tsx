@@ -105,7 +105,7 @@ export default function HomePage() {
                       name={u.nickname}
                       profileSrc={u.profileImageUrl}
                       isFollowing={u.isFollowing}
-                      onSubscribeClick={() => handleToggleFollow(u.nickname, u.isFollowing || false)}
+                      onSubscribeClick={() => handleToggleFollow(u.nickname, u.isFollowing)}
                     />
                   ))}
               </div>
