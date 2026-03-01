@@ -27,6 +27,8 @@ import {
   useMyClubsQuery,
 } from "@/hooks/queries/useSearchClubQueries";
 import { useClubJoinMutation } from "@/hooks/mutations/useSearchClubMutations";
+import { useAuthStore } from "@/store/useAuthStore";
+import LoginModal from "@/components/base-ui/Login/LoginModal";
 
 function mapCategoryToOutputFilter(category: Category): OutputFilter {
   switch (category) {
@@ -85,6 +87,17 @@ function mapSearchItem(item: ClubListItemDTO): ClubSummary {
 
 export default function Searchpage() {
   const router = useRouter();
+  const { isLoggedIn, isInitialized, openLoginModal, isLoginModalOpen, closeLoginModal } = useAuthStore();
+
+  useEffect(() => {
+    if (isInitialized && !isLoggedIn) {
+      router.replace("/");
+      // 약간의 지연을 주어 홈으로 이동한 후 모달이 뜨게 함
+      setTimeout(() => {
+        openLoginModal();
+      }, 100);
+    }
+  }, [isLoggedIn, isInitialized, router, openLoginModal]);
 
   const [q, setQ] = useState("");
   const [category, setCategory] = useState<Category>("전체");
@@ -191,6 +204,9 @@ export default function Searchpage() {
 
   return (
     <div className="max-w-[1440px] flex flex-col gap-6 d:flex-row mt-3 sm:mt-5 d:mt-6 mx-auto px-6">
+      {isLoginModalOpen && (
+        <LoginModal onClose={() => closeLoginModal()} />
+      )}
       <aside className="d:w-[332px]">
         <p className="body_1 t:subhead_2">독서 모임</p>
 
