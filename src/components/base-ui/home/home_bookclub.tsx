@@ -27,6 +27,14 @@ export default function HomeBookclub({ groups }: Props) {
     router.push('/groups/create');
   };
 
+  const handleSearchGroup = () => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    router.push('/groups');
+  };
+
   // 접힘: 6개만 / 펼침: 전체
   const displayGroups = isMany && !open ? groups.slice(0, 6) : groups;
 
@@ -88,7 +96,7 @@ export default function HomeBookclub({ groups }: Props) {
           <div className="flex flex-col gap-2">
             <button
               type="button"
-              onClick={() => router.push('/groups')}
+              onClick={handleSearchGroup}
               className="w-full h-[32px] t:h-[48px] py-3 rounded-[8px] bg-white border border-[#E6E6E6]
                         text-[13px] flex items-center justify-center gap-2"
             >
