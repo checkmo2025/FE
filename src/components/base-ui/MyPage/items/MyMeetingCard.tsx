@@ -5,6 +5,7 @@ import Image from "next/image";
 import { MyClubInfo } from "@/types/club";
 import { useLeaveClubMutation } from "@/hooks/mutations/useClubMutations";
 import ConfirmModal from "@/components/common/ConfirmModal";
+import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 
 interface MyMeetingCardProps {
   club: MyClubInfo;
@@ -18,15 +19,9 @@ const MyMeetingCard = ({ club }: MyMeetingCardProps) => {
   const { mutate: leaveClub } = useLeaveClubMutation();
 
   // 바깥 클릭 시 메뉴 닫기
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  useOnClickOutside(menuRef, () => {
+    setMenuOpen(false);
+  });
 
   const handleLeaveClick = () => {
     setIsConfirmModalOpen(true);
@@ -35,7 +30,6 @@ const MyMeetingCard = ({ club }: MyMeetingCardProps) => {
 
   const handleConfirmLeave = () => {
     leaveClub(club.clubId);
-    setIsConfirmModalOpen(false);
   };
 
   return (

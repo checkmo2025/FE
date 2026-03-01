@@ -14,7 +14,7 @@ export function useLeaveClubMutation() {
             toast.success("모임에서 탈퇴했습니다.");
             queryClient.invalidateQueries({ queryKey: clubKeys.myList() });
         },
-        onError: (error: any) => {
+        onError: (error: Error) => {
             const message = error?.message || "탈퇴 처리 중 오류가 발생했습니다.";
             toast.error(message);
         },
