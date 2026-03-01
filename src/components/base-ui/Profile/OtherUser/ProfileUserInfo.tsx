@@ -7,6 +7,7 @@ import { useToggleFollowMutation, useReportMemberMutation } from "@/hooks/mutati
 import { ReportType } from "@/types/member";
 import { useState } from "react";
 import ReportModal from "@/components/common/ReportModal";
+import { useAuthStore } from "@/store/useAuthStore";
 
 // [보조 컴포넌트] 액션 버튼 (구독하기 / 신고하기)
 function ActionButton({
@@ -56,6 +57,7 @@ function StatItem({ label, count }: { label: string; count: number }) {
 export default function ProfileUserInfo({ nickname }: { nickname: string }) {
   const decodedNickname = decodeURIComponent(nickname);
   const { data: profile, isLoading } = useOtherProfileQuery(decodedNickname);
+  const { isLoggedIn, openLoginModal } = useAuthStore();
   const { mutate: toggleFollow } = useToggleFollowMutation();
   const { mutate: reportMember } = useReportMemberMutation();
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -77,6 +79,10 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
   }
 
   const handleToggleFollow = () => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
     toggleFollow({ nickname: decodedNickname, isFollowing: profile.following });
   };
 
@@ -151,7 +157,17 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
           label={profile.following ? "구독 중" : "구독하기"}
           onClick={handleToggleFollow}
         />
-        <ActionButton variant="secondary" label="신고하기" onClick={() => setIsReportModalOpen(true)} />
+        <ActionButton
+          variant="secondary"
+          label="신고하기"
+          onClick={() => {
+            if (!isLoggedIn) {
+              openLoginModal();
+              return;
+            }
+            setIsReportModalOpen(true);
+          }}
+        />
       </div>
 
       {/* Report Modal */}

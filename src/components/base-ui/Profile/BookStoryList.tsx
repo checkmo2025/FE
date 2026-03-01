@@ -7,9 +7,11 @@ import { useOtherMemberInfiniteStoriesQuery } from "@/hooks/queries/useStoryQuer
 import { useInView } from "react-intersection-observer";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function BookStoryList({ nickname }: { nickname: string }) {
   const router = useRouter();
+  const { isLoggedIn, openLoginModal } = useAuthStore();
   const { mutate: toggleLike } = useToggleStoryLikeMutation();
   const { mutate: toggleFollow } = useToggleFollowMutation();
 
@@ -23,6 +25,22 @@ export default function BookStoryList({ nickname }: { nickname: string }) {
     isFetchingNextPage,
     isError
   } = useOtherMemberInfiniteStoriesQuery(decodedNickname);
+
+  const handleToggleLike = (bookStoryId: number) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    toggleLike(bookStoryId);
+  };
+
+  const handleToggleFollow = (nickname: string, isFollowing: boolean) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    toggleFollow({ nickname, isFollowing });
+  };
 
   const { ref, inView } = useInView({ threshold: 0 });
 
@@ -77,10 +95,10 @@ export default function BookStoryList({ nickname }: { nickname: string }) {
             coverImgSrc={story.bookInfo.imgUrl}
             subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
             isFollowing={story.authorInfo.following}
-            onSubscribeClick={() => toggleFollow({ nickname: story.authorInfo.nickname, isFollowing: story.authorInfo.following })}
+            onSubscribeClick={() => handleToggleFollow(story.authorInfo.nickname, story.authorInfo.following)}
             hideSubscribeButton={story.writtenByMe}
             onClick={() => router.push(`/stories/${story.bookStoryId}`)}
-            onLikeClick={() => toggleLike(story.bookStoryId)}
+            onLikeClick={() => handleToggleLike(story.bookStoryId)}
           />
         ))}
       </div>
