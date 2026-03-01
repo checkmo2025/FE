@@ -1,8 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-
+import Link from "next/link";
 import AdminSearchHeader from "@/components/layout/AdminSearchHeader";
 
 type NewsRow = {
@@ -14,8 +13,6 @@ type NewsRow = {
 };
 
 export default function NewsPage() {
-  const router = useRouter();
-
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
 
@@ -47,7 +44,7 @@ export default function NewsPage() {
       const end = toDate(i, 7);
 
       return {
-        id: 100 + i,
+        id: 1 + i,
         title: `${b.title} ${i + 1}`,
         authorEmail: b.authorEmail,
         createdAt: toDate(i, 0),
@@ -113,13 +110,12 @@ export default function NewsPage() {
           placeholder="검색 하기 (소식 제목)"
           inputWidthClassName="w-[1040px]"
           rightAddon={
-            <button
-              type="button"
-              onClick={() => router.push("/admin/news/new")}
+            <Link
+              href="/admin/news/new"
               className="flex-shrink-0 flex w-[187px] h-[48px] px-[16px] py-[12px] items-center justify-center gap-[10px] rounded-[8px] bg-primary-1 text-White body_1_1 hover:opacity-90"
             >
               소식 등록
-            </button>
+            </Link>
           }
         />
 
@@ -137,12 +133,24 @@ export default function NewsPage() {
 
             <thead>
               <tr className="border-b border-Subbrown-3">
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">소식 ID</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">소식 제목</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">등록자 이메일</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">등록 일자</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">게시날짜</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">상세보기</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  소식 ID
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  소식 제목
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  등록자 이메일
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  등록 일자
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  게시날짜
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  상세보기
+                </th>
               </tr>
             </thead>
 
@@ -153,14 +161,21 @@ export default function NewsPage() {
                   className="h-[48px] border-b border-Subbrown-4 body_1_2"
                 >
                   <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{n.id}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{n.title}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{n.authorEmail}</td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
+                    {n.title}
+                  </td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
+                    {n.authorEmail}
+                  </td>
                   <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{n.createdAt}</td>
                   <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{n.postedAt}</td>
                   <td className="pl-[12px] py-0">
-                    <button className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70">
+                    <Link
+                      href={`/admin/news/${n.id}`}
+                      className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
+                    >
                       상세보기
-                    </button>
+                    </Link>
                   </td>
                 </tr>
               ))}
@@ -173,11 +188,10 @@ export default function NewsPage() {
               onClick={() => goTo(page - 1)}
               disabled={isFirst}
               className={`flex items-center ${
-                isFirst
-                  ? "cursor-default opacity-30"
-                  : "cursor-pointer hover:opacity-70"
+                isFirst ? "cursor-default opacity-30" : "cursor-pointer hover:opacity-70"
               }`}
               aria-label="이전 페이지"
+              type="button"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
@@ -197,6 +211,7 @@ export default function NewsPage() {
                 className={`cursor-pointer ${
                   p === page ? "text-Gray-7" : "text-Gray-4"
                 } hover:opacity-70`}
+                type="button"
               >
                 {p}
               </button>
@@ -206,11 +221,10 @@ export default function NewsPage() {
               onClick={() => goTo(page + 1)}
               disabled={isLast}
               className={`flex items-center ${
-                isLast
-                  ? "cursor-default opacity-30"
-                  : "cursor-pointer hover:opacity-70"
+                isLast ? "cursor-default opacity-30" : "cursor-pointer hover:opacity-70"
               }`}
               aria-label="다음 페이지"
+              type="button"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
