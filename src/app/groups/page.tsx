@@ -91,6 +91,7 @@ export default function Searchpage() {
 
   useEffect(() => {
     if (isInitialized && !isLoggedIn) {
+      toast.error("모임은 로그인이 필요한 서비스입니다.", { id: "groups-auth-error" });
       router.replace("/");
       // 약간의 지연을 주어 홈으로 이동한 후 모달이 뜨게 함
       setTimeout(() => {
@@ -110,8 +111,8 @@ export default function Searchpage() {
 
   const [applyClubId, setApplyClubId] = useState<number | null>(null);
 
-  const { data: myClubsData, isLoading: myClubsLoading } = useMyClubsQuery();
-  const { data: recData, isLoading: recLoading } = useClubRecommendationsQuery(!isSearchMode);
+  const { data: myClubsData, isLoading: myClubsLoading } = useMyClubsQuery(isLoggedIn);
+  const { data: recData, isLoading: recLoading } = useClubRecommendationsQuery(isLoggedIn && !isSearchMode);
 
   const {
     data: searchData,

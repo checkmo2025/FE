@@ -20,10 +20,11 @@ export const clubQueryKeys = {
     ["clubs", "search", params] as const,
 };
 
-export function useMyClubsQuery() {
+export function useMyClubsQuery(enabled?: boolean) {
   return useQuery<MyClubsResult>({
     queryKey: clubQueryKeys.myClubs,
     queryFn: clubService.getMyClubs,
+    enabled,
   });
 }
 
@@ -48,7 +49,7 @@ export function useInfiniteClubSearchQuery(
   >({
     queryKey: clubQueryKeys.search(params),
     enabled,
-    
+
     initialPageParam: undefined,
 
     queryFn: ({ pageParam }) =>
