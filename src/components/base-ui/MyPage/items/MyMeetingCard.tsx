@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { MyClubInfo } from "@/types/club";
+import { useLeaveClubMutation } from "@/hooks/mutations/useClubMutations";
 
 interface MyMeetingCardProps {
   club: MyClubInfo;
@@ -11,6 +12,8 @@ interface MyMeetingCardProps {
 const MyMeetingCard = ({ club }: MyMeetingCardProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const { mutate: leaveClub } = useLeaveClubMutation();
 
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
@@ -24,8 +27,9 @@ const MyMeetingCard = ({ club }: MyMeetingCardProps) => {
   }, []);
 
   const handleLeaveClick = () => {
-    // API 연동 전이므로 로그만 남김
-    console.log(`모임 탈퇴 시도: ${club.clubName} (ID: ${club.clubId})`);
+    if (window.confirm(`'${club.clubName}' 모임에서 탈퇴하시겠습니까?`)) {
+      leaveClub(club.clubId);
+    }
     setMenuOpen(false);
   };
 

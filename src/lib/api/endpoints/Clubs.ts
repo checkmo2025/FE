@@ -7,6 +7,7 @@ export const CLUBS = {
   recommendations: `${API_BASE_URL}/clubs/recommendations`,
   search: `${API_BASE_URL}/clubs/search`,
   join: (clubId: number) => `${API_BASE_URL}/clubs/${clubId}/join`,
+  leave: (clubId: number) => `${API_BASE_URL}/clubs/${clubId}/leave`,
 
   me: (clubId: number) => `${API_BASE_URL}/clubs/${clubId}/me`,
   home: (clubId: number) => `${API_BASE_URL}/clubs/${clubId}/home`,
@@ -25,5 +26,5 @@ export const CLUBS = {
   meetingMembers: (clubId: number, meetingId: number) => `${API_BASE_URL}/clubs/${clubId}/meetings/${meetingId}/members`,
 
 
-  meetingTeams: (clubId: number, meetingId: number) => `${API_BASE_URL}/clubs/${clubId}/meetings/${meetingId}/teams`,   
+  meetingTeams: (clubId: number, meetingId: number) => `${API_BASE_URL}/clubs/${clubId}/meetings/${meetingId}/teams`,
 } as const;
