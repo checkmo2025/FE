@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import LoginLogo from "@/components/base-ui/Login/LoginLogo";
 import styles from "@/components/base-ui/Login/LoginModal.module.css";
 import useLoginForm from "@/components/base-ui/Login/useLoginForm";
 import { SOCIAL_LOGINS } from "@/constants/auth";
+import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 
 type Props = {
   onClose: () => void;
@@ -30,6 +31,12 @@ export default function LoginModal({
     handleKeyDown,
   } = useLoginForm(onClose);
 
+  const modalRef = useRef<HTMLDivElement>(null);
+  const [showPassword, setShowPassword] = useState(false);
+
+  // 모달 외부 클릭 감지
+  useOnClickOutside(modalRef, onClose);
+
   // Body scroll lock
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -45,7 +52,7 @@ export default function LoginModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className={styles.container}>
+      <div className={styles.container} ref={modalRef}>
         {/* 닫기 버튼 */}
         <button type="button" onClick={onClose} className={styles.closeIcon}>
           <Image src="/cancle_button.svg" alt="닫기" width={24} height={24} />
@@ -68,27 +75,35 @@ export default function LoginModal({
                   value={form.email}
                   onChange={handleChange}
                   placeholder="이메일"
-                  className={`${styles.input} ${
-                    errors?.email ? styles.inputError : ""
-                  }`}
+                  className={`${styles.input} ${errors?.email ? styles.inputError : ""
+                    }`}
                   onKeyDown={handleKeyDown}
                   disabled={isLoading}
                 />
                 {errors?.email && (
                   <span className={styles.errorMessage}>{errors.email}</span>
                 )}
-                <input
-                  name="password"
-                  type="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  placeholder="비밀번호"
-                  className={`${styles.input} ${
-                    errors?.password ? styles.inputError : ""
-                  }`}
-                  onKeyDown={handleKeyDown}
-                  disabled={isLoading}
-                />
+                <div className={styles.passwordWrapper}>
+                  <input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    value={form.password}
+                    onChange={handleChange}
+                    placeholder="비밀번호"
+                    className={`${styles.input} ${errors?.password ? styles.inputError : ""
+                      }`}
+                    onKeyDown={handleKeyDown}
+                    disabled={isLoading}
+                  />
+                  <button
+                    type="button"
+                    className={styles.passwordToggle}
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? "숨기기" : "보기"}
+                  </button>
+                </div>
                 {errors?.password && (
                   <span className={styles.errorMessage}>{errors.password}</span>
                 )}
@@ -122,9 +137,8 @@ export default function LoginModal({
                 <button
                   key={social.name}
                   type="button"
-                  className={`${styles.socialIcon} ${
-                    isLoading ? "opacity-60 cursor-not-allowed" : ""
-                  }`}
+                  className={`${styles.socialIcon} ${isLoading ? "opacity-60 cursor-not-allowed" : ""
+                    }`}
                   disabled={isLoading}
                   onClick={() => handleSocialLogin(social.name)}
                 >

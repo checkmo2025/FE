@@ -111,7 +111,7 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 145%;
-  color: var(--Gray_3);
+  color: var(--Gray_7);
   transition: border-color 0.2s ease;
 }
 
@@ -138,6 +138,33 @@
   font-size: 12px;
   color: #d32f2f;
   text-align: left;
+}
+
+/* [Password Wrapper & Toggle] */
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 16px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--Gray_4);
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.passwordToggle:hover {
+  color: var(--Gray_6);
 }
 
 /* [Find ID/PW] */
