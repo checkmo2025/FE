@@ -22,6 +22,17 @@ export const storyService = {
         );
         return response.result!;
     },
+    // 특정 모임의 클럽 책 이야기 조회 
+    getClubStories: async (clubId: number, cursorId?: number): Promise<BookStoryListResponse> => {
+        const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
+            STORY_ENDPOINTS.CLUB(clubId),
+            {
+                params: { cursorId }
+            }
+        );
+        return response.result!;
+    },
+
     getMyStories: async (cursorId?: number): Promise<BookStoryListResponse> => {
         const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
             STORY_ENDPOINTS.ME,
