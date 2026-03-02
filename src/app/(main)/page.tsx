@@ -228,44 +228,45 @@ export default function HomePage() {
       </div>
 
       {/* 데스크톱 */}
-      <div className="hidden d:flex flex-row gap-6 justify-center items-center">
-        {/* 독서모임 + 사용자 추천 */}
-        <section className="w-[332px] pt-6 shrink-0">
-          <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">
-            독서모임
-          </h2>
-          <HomeBookclub groups={groups} />
-          <div className="pt-6">
-            <ListSubscribeLarge
-              height="h-[380px]"
-              users={recommendedUsers}
-              isError={isErrorMembers}
-              onSubscribeClick={(nickname, isFollowing) => handleToggleFollow(nickname, isFollowing)}
-            />
-          </div>
-        </section>
+      <div className="hidden d:flex flex-col gap-6 w-full">
+        {/* 상단: 독서모임, 사용자 추천, 소식 */}
+        <div className="flex flex-row gap-6 w-full pt-6">
+          {/* 독서모임 + 사용자 추천 (좌측, 너비 고정) */}
+          <section className="w-[332px] shrink-0">
+            <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">
+              독서모임
+            </h2>
+            <HomeBookclub groups={groups} />
+            <div className="pt-6">
+              <ListSubscribeLarge
+                height="h-[380px]"
+                users={recommendedUsers}
+                isError={isErrorMembers}
+                onSubscribeClick={(nickname, isFollowing) => handleToggleFollow(nickname, isFollowing)}
+              />
+            </div>
+          </section>
 
-        {/* 소식 + 책 이야기 */}
-        <div className="flex-1 pt-6 flex flex-col gap-6">
-          {/* 소식 */}
-          <section>
+          {/* 소식 (우측, 남은 너비 전부) */}
+          <section className="flex-1">
             <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">
               소식
             </h2>
             <NewsBannerSlider />
           </section>
+        </div>
 
-          {/* 책 이야기 카드 */}
-          <section>
-            <div className="grid grid-cols-3 gap-5">
-              {isErrorStories ? (
-                <div className="col-span-3 text-center text-Gray-4 text-[14px]">책 이야기 리스트를 불러오지 못했어요.</div>
-              ) : stories.length === 0 ? (
-                <div className="col-span-3 text-center text-Gray-4 text-[14px]">책 이야기 리스트가 없습니다.</div>
-              ) : (
-                stories.map((story) => (
-                  <BookStoryCard
-                    key={story.bookStoryId}
+        {/* 하단: 책 이야기 카드 영역 (전체 너비 4열 그리드) */}
+        <section className="w-full pt-6">
+          <div className="d:grid d:grid-cols-4 gap-5 d:justify-items-center">
+            {isErrorStories ? (
+              <div className="col-span-4 text-center text-Gray-4 text-[14px]">책 이야기 리스트를 불러오지 못했어요.</div>
+            ) : stories.length === 0 ? (
+              <div className="col-span-4 text-center text-Gray-4 text-[14px]">책 이야기 리스트가 없습니다.</div>
+            ) : (
+              stories.map((story) => (
+                <div key={story.bookStoryId} className="shrink-0 w-full flex justify-center">
+                  <BookStoryCardLarge
                     id={story.bookStoryId}
                     authorName={story.authorInfo.nickname}
                     profileImgSrc={story.authorInfo.profileImageUrl}
@@ -284,11 +285,11 @@ export default function HomePage() {
                     onClick={() => router.push(`/stories/${story.bookStoryId}`)}
                     onLikeClick={() => handleToggleLike(story.bookStoryId)}
                   />
-                ))
-              )}
-            </div>
-          </section>
-        </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
       </div>
 
       {/* 무한 스크롤 옵저버 타겟 */}

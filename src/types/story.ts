@@ -50,6 +50,7 @@ export interface CommentInfo {
     writtenByMe: boolean;
     deleted: boolean;
     parentCommentId?: number | null;
+    replies?: CommentInfo[];
 }
 
 
