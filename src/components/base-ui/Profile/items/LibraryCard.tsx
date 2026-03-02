@@ -1,21 +1,22 @@
 "use client";
 
 import Image from "next/image";
-import { MyPageLibraryBook } from "@/types/mypage";
+import { Book } from "@/types/book";
+import { useToggleBookLikeMutation } from "@/hooks/mutations/useBookMutations";
 
 interface LibraryCardProps {
-  book: MyPageLibraryBook;
-  isLiked: boolean;
-  onToggleLike: (id: number) => void;
+  book: Book;
 }
 
-const LibraryCard = ({ book, isLiked, onToggleLike }: LibraryCardProps) => {
+const LibraryCard = ({ book }: LibraryCardProps) => {
+  const { mutate: toggleLike } = useToggleBookLikeMutation();
+
   return (
     <div
       className="relative flex flex-col justify-end items-start gap-[8px] md:gap-[10px] w-[102px] h-[132px] p-[8px] md:w-[244px] md:h-[320px] md:p-[12px] rounded-[4px] shrink-0 cursor-pointer overflow-hidden"
     >
       <Image
-        src={book.src}
+        src={book.imgUrl || "/booksample.svg"}
         alt={book.title}
         fill
         className="object-cover"
@@ -31,12 +32,12 @@ const LibraryCard = ({ book, isLiked, onToggleLike }: LibraryCardProps) => {
         type="button"
         onClick={(e) => {
           e.stopPropagation();
-          onToggleLike(book.id);
+          toggleLike(book.isbn);
         }}
         className="relative z-10 w-[20px] h-[20px] md:w-[24px] md:h-[24px]"
       >
         <Image
-          src={isLiked ? "/red_heart.svg" : "/gray_heart.svg"}
+          src={book.likedByMe !== false ? "/red_heart.svg" : "/gray_heart.svg"}
           alt="like"
           width={24}
           height={24}

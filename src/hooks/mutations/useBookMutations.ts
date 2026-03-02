@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient, InfiniteData } from "@tanstack/react-query";
 import { bookService } from "@/services/bookService";
 import { bookKeys } from "../queries/useBookQueries";
-import { Book, BookSearchResponse } from "@/types/book";
+import { Book, BookSearchResponse, MyLikedBooksResponse } from "@/types/book";
 import { toast } from "react-hot-toast";
 
 // Throttle map to prevent spam clicking (per isbn)
@@ -69,6 +69,10 @@ export const useToggleBookLikeMutation = () => {
                 queryKey: [...bookKeys.all, "infiniteSearch"],
             });
 
+            const previousMyLikes = queryClient.getQueriesData<InfiniteData<MyLikedBooksResponse>>({
+                queryKey: bookKeys.myLikes(),
+            });
+
             if (previousRecommended) {
                 queryClient.setQueryData<BookSearchResponse>(bookKeys.recommend(), (old) =>
                     updateLikeInBookList(old, isbn)
@@ -93,7 +97,24 @@ export const useToggleBookLikeMutation = () => {
                 }
             });
 
-            return { previousRecommended, previousDetail, previousSearches };
+            previousMyLikes.forEach(([queryKey, oldData]) => {
+                if (oldData) {
+                    queryClient.setQueryData<InfiniteData<MyLikedBooksResponse>>(queryKey, (old) => {
+                        if (!old || !old.pages) return old;
+                        return {
+                            ...old,
+                            pages: old.pages.map((page) => ({
+                                ...page,
+                                books: page.books.map((book) =>
+                                    book.isbn === isbn ? { ...book, likedByMe: !book.likedByMe } : book
+                                ),
+                            })),
+                        };
+                    });
+                }
+            });
+
+            return { previousRecommended, previousDetail, previousSearches, previousMyLikes };
         },
         onError: (err, isbn, context) => {
             if (err.message === "Throttled request") return;
@@ -109,6 +130,11 @@ export const useToggleBookLikeMutation = () => {
             }
             if (context?.previousSearches) {
                 context.previousSearches.forEach(([queryKey, oldData]) => {
+                    queryClient.setQueryData(queryKey, oldData);
+                });
+            }
+            if (context?.previousMyLikes) {
+                context.previousMyLikes.forEach(([queryKey, oldData]) => {
                     queryClient.setQueryData(queryKey, oldData);
                 });
             }
@@ -135,7 +161,11 @@ export const useToggleBookLikeMutation = () => {
             const searches = queryClient.getQueriesData<InfiniteData<BookSearchResponse>>({
                 queryKey: [...bookKeys.all, "infiniteSearch"],
             });
+            const myLikes = queryClient.getQueriesData<InfiniteData<MyLikedBooksResponse>>({
+                queryKey: bookKeys.myLikes(),
+            });
 
+            // Update infinite search lists
             searches.forEach(([queryKey, oldData]) => {
                 if (oldData) {
                     queryClient.setQueryData<InfiniteData<BookSearchResponse>>(queryKey, (old) => {
@@ -145,6 +175,24 @@ export const useToggleBookLikeMutation = () => {
                             pages: old.pages.map(page => ({
                                 ...page,
                                 detailInfoList: page.detailInfoList.map(book =>
+                                    book.isbn === isbn ? { ...book, likedByMe: liked } : book
+                                )
+                            }))
+                        };
+                    });
+                }
+            });
+
+            // Update my likes list
+            myLikes.forEach(([queryKey, oldData]) => {
+                if (oldData) {
+                    queryClient.setQueryData<InfiniteData<MyLikedBooksResponse>>(queryKey, (old) => {
+                        if (!old || !old.pages) return old;
+                        return {
+                            ...old,
+                            pages: old.pages.map(page => ({
+                                ...page,
+                                books: page.books.map(book =>
                                     book.isbn === isbn ? { ...book, likedByMe: liked } : book
                                 )
                             }))

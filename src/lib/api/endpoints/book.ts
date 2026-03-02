@@ -5,4 +5,5 @@ export const BOOK_ENDPOINTS = {
     RECOMMEND: `${API_BASE_URL}/books/recommend`,
     DETAIL: (isbn: string) => `${API_BASE_URL}/books/${isbn}`,
     LIKE: (isbn: string) => `${API_BASE_URL}/books/${isbn}/like`,
+    MY_LIKES: `${API_BASE_URL}/books/me/likes`,
 };

@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/api/client";
 import { BOOK_ENDPOINTS } from "@/lib/api/endpoints/book";
 import { ApiResponse } from "@/types/auth";
-import { Book, BookSearchResponse } from "@/types/book";
+import { Book, BookSearchResponse, MyLikedBooksResponse } from "@/types/book";
 
 export const bookService = {
     searchBooks: async (keyword: string, page: number = 1): Promise<BookSearchResponse> => {
@@ -34,4 +34,15 @@ export const bookService = {
         );
         return response.result!;
     },
+    getMyLikedBooks: async (cursorId?: number): Promise<MyLikedBooksResponse> => {
+        const response = await apiClient.get<ApiResponse<MyLikedBooksResponse>>(
+            BOOK_ENDPOINTS.MY_LIKES,
+            {
+                params: {
+                    cursorId
+                }
+            }
+        );
+        return response.result!;
+    }
 };
