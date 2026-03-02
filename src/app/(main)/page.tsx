@@ -229,22 +229,14 @@ export default function HomePage() {
 
       {/* 데스크톱 */}
       <div className="hidden d:flex flex-col gap-6 w-full">
-        {/* 상단: 독서모임, 사용자 추천, 소식 */}
+        {/* 상단: 독서모임, 소식 */}
         <div className="flex flex-row gap-6 w-full pt-6">
-          {/* 독서모임 + 사용자 추천 (좌측, 너비 고정) */}
+          {/* 독서모임 (좌측, 너비 고정) */}
           <section className="w-[332px] shrink-0">
             <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">
               독서모임
             </h2>
             <HomeBookclub groups={groups} />
-            <div className="pt-6">
-              <ListSubscribeLarge
-                height="h-[380px]"
-                users={recommendedUsers}
-                isError={isErrorMembers}
-                onSubscribeClick={(nickname, isFollowing) => handleToggleFollow(nickname, isFollowing)}
-              />
-            </div>
           </section>
 
           {/* 소식 (우측, 남은 너비 전부) */}
@@ -264,29 +256,69 @@ export default function HomePage() {
             ) : stories.length === 0 ? (
               <div className="col-span-4 text-center text-Gray-4 text-[14px]">책 이야기 리스트가 없습니다.</div>
             ) : (
-              stories.map((story) => (
-                <div key={story.bookStoryId} className="shrink-0 w-full flex justify-center">
-                  <BookStoryCardLarge
-                    id={story.bookStoryId}
-                    authorName={story.authorInfo.nickname}
-                    profileImgSrc={story.authorInfo.profileImageUrl}
-                    createdAt={story.createdAt}
-                    viewCount={story.viewCount}
-                    title={story.bookStoryTitle}
-                    content={story.description}
-                    likeCount={story.likes}
-                    commentCount={story.commentCount}
-                    likedByMe={story.likedByMe}
-                    coverImgSrc={story.bookInfo.imgUrl}
-                    subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
-                    isFollowing={story.authorInfo.following}
-                    onSubscribeClick={() => handleToggleFollow(story.authorInfo.nickname, story.authorInfo.following)}
-                    hideSubscribeButton={story.writtenByMe}
-                    onClick={() => router.push(`/stories/${story.bookStoryId}`)}
-                    onLikeClick={() => handleToggleLike(story.bookStoryId)}
+              <>
+                {/* 1. 첫 4개 스토리 렌더링 */}
+                {stories.slice(0, 4).map((story) => (
+                  <div key={story.bookStoryId} className="shrink-0 w-full flex justify-center">
+                    <BookStoryCardLarge
+                      id={story.bookStoryId}
+                      authorName={story.authorInfo.nickname}
+                      profileImgSrc={story.authorInfo.profileImageUrl}
+                      createdAt={story.createdAt}
+                      viewCount={story.viewCount}
+                      title={story.bookStoryTitle}
+                      content={story.description}
+                      likeCount={story.likes}
+                      commentCount={story.commentCount}
+                      likedByMe={story.likedByMe}
+                      coverImgSrc={story.bookInfo.imgUrl}
+                      subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+                      isFollowing={story.authorInfo.following}
+                      onSubscribeClick={() => handleToggleFollow(story.authorInfo.nickname, story.authorInfo.following)}
+                      hideSubscribeButton={story.writtenByMe}
+                      onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
+                      onClick={() => router.push(`/stories/${story.bookStoryId}`)}
+                      onLikeClick={() => handleToggleLike(story.bookStoryId)}
+                    />
+                  </div>
+                ))}
+
+                {/* 2. 두 번째 줄에 사용자 추천 (존재할 경우) */}
+                {recommendedUsers.length > 0 && (
+                  <ListSubscribeLarge
+                    height="h-[380px]"
+                    users={recommendedUsers}
+                    isError={isErrorMembers}
+                    onSubscribeClick={(nickname, isFollowing) => handleToggleFollow(nickname, isFollowing)}
                   />
-                </div>
-              ))
+                )}
+
+                {/* 3. 나머지 스토리 렌더링 */}
+                {stories.slice(4).map((story) => (
+                  <div key={story.bookStoryId} className="shrink-0 w-full flex justify-center">
+                    <BookStoryCardLarge
+                      id={story.bookStoryId}
+                      authorName={story.authorInfo.nickname}
+                      profileImgSrc={story.authorInfo.profileImageUrl}
+                      createdAt={story.createdAt}
+                      viewCount={story.viewCount}
+                      title={story.bookStoryTitle}
+                      content={story.description}
+                      likeCount={story.likes}
+                      commentCount={story.commentCount}
+                      likedByMe={story.likedByMe}
+                      coverImgSrc={story.bookInfo.imgUrl}
+                      subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+                      isFollowing={story.authorInfo.following}
+                      onSubscribeClick={() => handleToggleFollow(story.authorInfo.nickname, story.authorInfo.following)}
+                      hideSubscribeButton={story.writtenByMe}
+                      onProfileClick={() => router.push(`/profile/${story.authorInfo.nickname}`)}
+                      onClick={() => router.push(`/stories/${story.bookStoryId}`)}
+                      onLikeClick={() => handleToggleLike(story.bookStoryId)}
+                    />
+                  </div>
+                ))}
+              </>
             )}
           </div>
         </section>

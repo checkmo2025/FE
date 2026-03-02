@@ -58,11 +58,14 @@ export const storyService = {
         data: { content: string },
         parentCommentId?: number
     ): Promise<number> => {
-        // 백엔드 명세에 따라 parentCommentId를 body에 포함하여 전송
+        // 백엔드가 Request Param과 Body 중 어느 곳을 기대할지 모호한 경우를 대비하여 둘 다 전달
         const requestBody = parentCommentId ? { ...data, parentCommentId } : data;
         const response = await apiClient.post<ApiResponse<number>>(
             `${STORY_ENDPOINTS.LIST}/${bookStoryId}/comments`,
-            requestBody
+            requestBody,
+            {
+                params: { parentCommentId }
+            }
         );
         return response.result!;
     },
