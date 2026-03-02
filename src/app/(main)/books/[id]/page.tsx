@@ -6,14 +6,14 @@ import SearchBookResult from "@/components/base-ui/Search/search_bookresult";
 import { DUMMY_STORIES } from "@/data/dummyStories";
 import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
 import { useBookDetailQuery } from "@/hooks/queries/useBookQueries";
+import { useToggleBookLikeMutation } from "@/hooks/mutations/useBookMutations";
 
 export default function BookDetailPage() {
     const params = useParams();
     const router = useRouter();
     const isbn = params.id as string;
-    const [liked, setLiked] = useState(false);
-
     const { data: bookData, isLoading, isError } = useBookDetailQuery(isbn);
+    const { mutate: toggleLike } = useToggleBookLikeMutation();
 
     // 관련된 책 이야기들 (더미 데이터에서 필터링)
     const relatedStories = useMemo(() => {
@@ -51,8 +51,8 @@ export default function BookDetailPage() {
                         title={bookData.title}
                         author={bookData.author}
                         detail={bookData.description}
-                        liked={liked}
-                        onLikeChange={setLiked}
+                        liked={bookData.likedByMe || false}
+                        onLikeChange={() => toggleLike(isbn)}
                         onPencilClick={() => {
                             router.push(`/stories/new?isbn=${isbn}`);
                         }}

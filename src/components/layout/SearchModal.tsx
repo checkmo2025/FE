@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import BookCoverCard from "@/components/base-ui/Book/BookCoverCard";
 import { useInfiniteBookSearchQuery, useRecommendedBooksQuery } from "@/hooks/queries/useBookQueries";
+import { useToggleBookLikeMutation } from "@/hooks/mutations/useBookMutations";
+import { useAuthStore } from "@/store/useAuthStore";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useInView } from "react-intersection-observer";
 import { Book } from "@/types/book";
@@ -18,9 +20,18 @@ type SearchModalProps = {
 export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const router = useRouter();
   const [topOffset, setTopOffset] = useState(0);
-  const [likedBooks, setLikedBooks] = useState<Record<string, boolean>>({});
   const [searchValue, setSearchValue] = useState("");
   const debouncedSearchValue = useDebounce(searchValue, 300);
+  const { isLoggedIn, openLoginModal } = useAuthStore();
+  const { mutate: toggleLike } = useToggleBookLikeMutation();
+
+  const handleLikeChange = (isbn: string) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    toggleLike(isbn);
+  };
 
   const {
     data: searchData,
@@ -216,10 +227,8 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                           imgUrl={book.imgUrl}
                           title={book.title}
                           author={book.author}
-                          liked={likedBooks[book.isbn] || false}
-                          onLikeChange={(liked) =>
-                            setLikedBooks((prev) => ({ ...prev, [book.isbn]: liked }))
-                          }
+                          liked={book.likedByMe || false}
+                          onLikeChange={() => handleLikeChange(book.isbn)}
                           onCardClick={() => {
                             router.push(`/books/${book.isbn}`);
                             onClose();

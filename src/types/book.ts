@@ -6,6 +6,7 @@ export interface Book {
     publisher: string;
     description: string;
     link: string;
+    likedByMe?: boolean;
 }
 
 export interface BookSearchResponse {

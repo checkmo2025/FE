@@ -28,4 +28,10 @@ export const bookService = {
         );
         return response.result!;
     },
+    toggleLike: async (isbn: string): Promise<{ isbn: string; liked: boolean; likes: number }> => {
+        const response = await apiClient.post<ApiResponse<{ isbn: string; liked: boolean; likes: number }>>(
+            BOOK_ENDPOINTS.LIKE(isbn)
+        );
+        return response.result!;
+    },
 };
