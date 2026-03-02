@@ -14,6 +14,7 @@ export type Comment = {
   createdAt: string;
   isAuthor?: boolean; // 글 작성자인지 (뱃지용)
   isMine?: boolean; // 내가 쓴 댓글인지
+  parentCommentId?: number | null;
   replies?: Comment[];
 };
 
@@ -135,7 +136,7 @@ export default function CommentList({
                         }
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
-                            handleReplySubmit(comment.id);
+                            handleReplySubmit(comment.parentCommentId || comment.id);
                           }
                         }}
                         placeholder="답글 내용을 입력해주세요"
@@ -144,7 +145,7 @@ export default function CommentList({
                       />
                       <button
                         type="button"
-                        onClick={() => handleReplySubmit(comment.id)}
+                        onClick={() => handleReplySubmit(comment.parentCommentId || comment.id)}
                         className="px-4 t:px-6 py-2 t:py-3 h-[36px] t:h-[56px] border border-Subbrown-3 text-primary-3 rounded-lg bg-Subbrown-4 subhead_4_1 cursor-pointer shrink-0"
                       >
                         입력
