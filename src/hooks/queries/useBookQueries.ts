@@ -7,7 +7,6 @@ export const bookKeys = {
     infiniteSearch: (title: string) => [...bookKeys.all, "infiniteSearch", title] as const,
     recommend: () => [...bookKeys.all, "recommend"] as const,
     detail: (isbn: string) => [...bookKeys.all, "detail", isbn] as const,
-    myLikes: () => [...bookKeys.all, "myLikes"] as const,
     likedBooks: (nickname?: string) => [...bookKeys.all, "likedBooks", nickname || "me"] as const,
 };
 
