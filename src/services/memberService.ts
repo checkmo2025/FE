@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
-import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest, FollowListResponse } from "@/types/member";
+import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest, FollowListResponse, FollowCountResponse } from "@/types/member";
 import { ApiResponse } from "@/types/auth";
 
 export const memberService = {
@@ -79,6 +79,12 @@ export const memberService = {
             url.searchParams.append("cursorId", cursorId.toString());
         }
         const response = await apiClient.get<ApiResponse<FollowListResponse>>(url.toString());
+        return response.result!;
+    },
+    getMyFollowCount: async (): Promise<FollowCountResponse> => {
+        const response = await apiClient.get<ApiResponse<FollowCountResponse>>(
+            MEMBER_ENDPOINTS.GET_FOLLOW_COUNT
+        );
         return response.result!;
     },
 };

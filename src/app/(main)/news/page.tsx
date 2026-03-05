@@ -6,6 +6,7 @@ import TodayRecommendedBooks from "@/components/base-ui/News/today_recommended_b
 import FloatingFab from "@/components/base-ui/Float";
 import { useRecommendedBooksQuery } from "@/hooks/queries/useBookQueries";
 import { useMemo } from "react";
+import { EXTERNAL_LINKS } from "@/constants/links";
 
 const DUMMY_NEWS = [
   {
@@ -100,6 +101,7 @@ export default function NewsPage() {
       <FloatingFab
         iconSrc="/icons_calling.svg"
         iconAlt="문의하기"
+        onClick={() => window.open(EXTERNAL_LINKS.INQUIRY_FORM_URL, "_blank")}
       />
     </div>
   );

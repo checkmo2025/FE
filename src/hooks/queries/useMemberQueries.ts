@@ -8,6 +8,7 @@ export const memberKeys = {
     otherProfile: (nickname: string) => [...memberKeys.all, "profile", nickname] as const,
     followers: () => [...memberKeys.all, "followers"] as const,
     followings: () => [...memberKeys.all, "followings"] as const,
+    followCount: () => [...memberKeys.all, "follow-count"] as const,
 };
 
 export const useRecommendedMembersQuery = (enabled: boolean = true) => {
@@ -50,6 +51,14 @@ export const useFollowingListQuery = (enabled: boolean = true) => {
         queryFn: ({ pageParam }) => memberService.getFollowingList(pageParam),
         initialPageParam: undefined as number | undefined,
         getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor : undefined),
+        enabled,
+    });
+};
+
+export const useFollowCountQuery = (enabled: boolean = true) => {
+    return useQuery({
+        queryKey: memberKeys.followCount(),
+        queryFn: () => memberService.getMyFollowCount(),
         enabled,
     });
 };
