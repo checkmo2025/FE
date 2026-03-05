@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import BookCoverCard from "@/components/base-ui/Book/BookCoverCard";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useToggleBookLikeMutation } from "@/hooks/mutations/useBookMutations";
@@ -22,6 +23,7 @@ export default function TodayRecommendedBooks({
   books,
   className = "",
 }: TodayRecommendedBooksProps) {
+  const router = useRouter();
   const { isLoggedIn, openLoginModal } = useAuthStore();
   const { mutate: toggleLike } = useToggleBookLikeMutation();
 
@@ -82,6 +84,7 @@ export default function TodayRecommendedBooks({
               author={book.author}
               liked={book.likedByMe || false}
               onLikeChange={() => handleLikeChange(book.id)}
+              onCardClick={() => router.push(`/books/${book.id}`)}
             />
           ))}
         </div>

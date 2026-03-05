@@ -56,30 +56,33 @@ export default function BookStoryCard({
       md:w-[336px] md:h-[380px]"
     >
       {/* 1. 상단 프로필 (모바일 숨김 / 데스크탑 노출) */}
-      <div
-        className="items-center hidden gap-2 px-4 py-3 md:flex group cursor-pointer"
-        onClick={(e) => {
-          if (onProfileClick) {
-            e.stopPropagation();
-            onProfileClick();
-          }
-        }}
-      >
-        <div className="relative w-8 h-8 overflow-hidden rounded-full shrink-0">
-          <Image
-            src={profileImgSrc}
-            alt={authorName}
-            fill
-            className="object-cover"
-            sizes="32px"
-          />
+      <div className="items-center hidden gap-2 px-4 py-3 md:flex">
+        <div
+          className="flex items-center gap-2 group cursor-pointer hover:bg-gray-100 transition-colors px-2 py-1 -ml-2 rounded-lg"
+          onClick={(e) => {
+            if (onProfileClick) {
+              e.stopPropagation();
+              onProfileClick();
+            }
+          }}
+        >
+          <div className="relative w-8 h-8 overflow-hidden rounded-full shrink-0">
+            <Image
+              src={profileImgSrc}
+              alt={authorName}
+              fill
+              className="object-cover"
+              sizes="32px"
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="truncate body_1 text-Gray-7">{authorName}</p>
+            <p className="truncate body_2_3 text-Gray-3">
+              {formatTimeAgo(createdAt)} 조회수 {viewCount}
+            </p>
+          </div>
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="truncate body_1 text-Gray-7">{authorName}</p>
-          <p className="truncate body_2_3 text-Gray-3">
-            {formatTimeAgo(createdAt)} 조회수 {viewCount}
-          </p>
-        </div>
+        <div className="flex-1" />
         {!hideSubscribeButton && (
           <button
             type="button"
@@ -87,7 +90,7 @@ export default function BookStoryCard({
               e.stopPropagation();
               onSubscribeClick?.();
             }}
-            className={`h-8 rounded-lg px-[17px] body_2_1 whitespace-nowrap transition-colors ${isFollowing
+            className={`h-8 rounded-lg px-[17px] body_2_1 whitespace-nowrap transition-all hover:brightness-90 active:scale-95 ${isFollowing
               ? "bg-Subbrown-4 text-primary-3"
               : "bg-primary-2 text-White"
               }`}

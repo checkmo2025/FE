@@ -72,14 +72,7 @@ export interface BookStoryDetail {
 }
 
 export interface CreateBookStoryRequest {
-    bookInfo: {
-        isbn: string;
-        title: string;
-        author: string;
-        imgUrl: string;
-        publisher: string;
-        description: string;
-    };
+    isbn: string;
     title: string;
     description: string;
 }

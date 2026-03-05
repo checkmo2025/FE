@@ -10,6 +10,8 @@ import LoginModal from "../base-ui/Login/LoginModal";
 import { useHeaderTitle } from "@/contexts/HeaderTitleContext";
 import { useAuthStore } from "@/store/useAuthStore";
 
+import { useSearchStore } from "@/store/useSearchStore";
+
 const NAV = [
   { label: "책모 홈", href: "/" },
   { label: "모임", href: "/groups" },
@@ -33,7 +35,7 @@ export default function Header() {
   const { customTitle } = useHeaderTitle();
   const { user, isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
   const pageTitle = customTitle || defaultTitle;
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { isSearchOpen, toggleSearch, closeSearch } = useSearchStore();
 
   const handleNavClick = (href: string, label: string) => {
     if (label === "모임" && !isLoggedIn) {
@@ -90,7 +92,7 @@ export default function Header() {
           {/*아이콘*/}
           <div className="flex items-center gap-2.5 t:gap-4 d:mr-1">
             <button
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              onClick={toggleSearch}
               aria-label="검색"
               className="relative h-6 w-6 cursor-pointer"
             >
@@ -136,7 +138,7 @@ export default function Header() {
       </div>
       <SearchModal
         isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
+        onClose={closeSearch}
       />
       {isLoginModalOpen && (
         <LoginModal onClose={() => closeLoginModal()} />

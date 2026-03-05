@@ -103,13 +103,45 @@ export const useToggleBookLikeMutation = () => {
                 // likedBooks 키의 마지막 요소가 "me" 인 경우 "내 서재" 로 판단
                 const isMyLibrary = queryKey.includes("me");
 
+                // Find the full book object from other caches to inject if it's a new like
+                let fullBookToInject: Book | null = null;
+                if (previousDetail && previousDetail.isbn === isbn) {
+                    fullBookToInject = previousDetail;
+                } else if (previousRecommended) {
+                    const found = previousRecommended.detailInfoList?.find(b => b.isbn === isbn);
+                    if (found) fullBookToInject = found;
+                }
+                if (!fullBookToInject && previousSearches.length > 0) {
+                    for (const [, searchData] of previousSearches) {
+                        if (searchData && searchData.pages) {
+                            for (const page of searchData.pages) {
+                                const found = page.detailInfoList?.find(b => b.isbn === isbn);
+                                if (found) {
+                                    fullBookToInject = found;
+                                    break;
+                                }
+                            }
+                        }
+                        if (fullBookToInject) break;
+                    }
+                }
+
                 queryClient.setQueryData<InfiniteData<MyLikedBooksResponse>>(queryKey, (old) => {
                     if (!old || !old.pages) return old;
+
+                    // If it's my library and it's a "like" action (wasn't liked before), we need to add it
+                    let isAlreadyInLibrary = false;
+                    for (const page of old.pages) {
+                        if (page.books.some(b => b.isbn === isbn)) {
+                            isAlreadyInLibrary = true;
+                            break;
+                        }
+                    }
+
                     return {
                         ...old,
-                        pages: old.pages.map((page) => ({
-                            ...page,
-                            books: page.books
+                        pages: old.pages.map((page, index) => {
+                            let updatedBooks = page.books
                                 .map((book) =>
                                     book.isbn === isbn ? { ...book, likedByMe: !book.likedByMe } : book
                                 )
@@ -119,8 +151,23 @@ export const useToggleBookLikeMutation = () => {
                                         return book.isbn !== isbn || book.likedByMe;
                                     }
                                     return true; // 타인의 서재면 제거하지 않음
-                                }),
-                        })),
+                                });
+
+                            // Inject the new book into the very first page if it's not already in the library,
+                            // we are actually liking it, and we are looking at My Library
+                            if (index === 0 && isMyLibrary && !isAlreadyInLibrary && fullBookToInject) {
+                                const isLikedAfterMutation = fullBookToInject.likedByMe; // This is the state *after* the mutation execution context (already toggled by previous logic)
+                                if (isLikedAfterMutation) {
+                                    // Make sure to add it as liked
+                                    updatedBooks = [{ ...fullBookToInject, likedByMe: true }, ...updatedBooks];
+                                }
+                            }
+
+                            return {
+                                ...page,
+                                books: updatedBooks
+                            };
+                        }),
                     };
                 });
             };
