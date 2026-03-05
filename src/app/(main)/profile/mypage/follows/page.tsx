@@ -7,9 +7,8 @@ import MyPageBreadcrumb from "@/components/base-ui/MyPage/MyPageBreadcrumb";
 import FollowList from "@/components/base-ui/Profile/FollowList";
 import { FollowUser } from "@/components/base-ui/Profile/FollowItem";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
-import { useProfileQuery, useFollowerListQuery, useFollowingListQuery } from "@/hooks/queries/useMemberQueries";
+import { useProfileQuery, useFollowerListQuery, useFollowingListQuery, useFollowCountQuery } from "@/hooks/queries/useMemberQueries";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
-import { DUMMY_USER_PROFILE } from "@/constants/mocks/mypage";
 
 function FollowsContent() {
     const router = useRouter();
@@ -19,6 +18,7 @@ function FollowsContent() {
 
     const { isInitialized, isLoggedIn } = useAuthGuard();
     const { data: profileData } = useProfileQuery();
+    const { data: followCountData } = useFollowCountQuery();
 
     const {
         data: followerData,
@@ -40,7 +40,7 @@ function FollowsContent() {
     useEffect(() => {
         router.replace(`?tab=${activeTab}`, { scroll: false });
     }, [activeTab, router]);
-
+    const { mutate: toggleFollow } = useToggleFollowMutation();
     if (!isInitialized || !isLoggedIn) {
         return null;
     }
@@ -48,9 +48,8 @@ function FollowsContent() {
     const user = {
         name: profileData?.nickname || "알 수 없음",
         profileImage: profileData?.profileImageUrl || null,
-        // TODO: API에서 구독자/구독중 수 제공 시 실제 데이터로 교체해야 함
-        subscribers: DUMMY_USER_PROFILE.subscribers,
-        following: DUMMY_USER_PROFILE.following,
+        subscribers: followCountData?.followerCount ?? 0,
+        following: followCountData?.followingCount ?? 0,
     };
 
     const currentData = activeTab === "follower" ? followerData : followingData;
@@ -62,8 +61,6 @@ function FollowsContent() {
         profileImageUrl: userDTO.profileImageUrl,
         isFollowing: userDTO.following,
     })) || [];
-
-    const { mutate: toggleFollow } = useToggleFollowMutation();
 
     const handleToggleFollow = (id: string | number, currentIsFollowing: boolean) => {
         toggleFollow({ nickname: String(id), isFollowing: currentIsFollowing });

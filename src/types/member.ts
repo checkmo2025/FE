@@ -54,3 +54,8 @@ export interface FollowListResponse {
     hasNext: boolean;
     nextCursor: number | null;
 }
+
+export interface FollowCountResponse {
+    followerCount: number;
+    followingCount: number;
+}

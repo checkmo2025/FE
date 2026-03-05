@@ -100,6 +100,7 @@ export default function NewsPage() {
       <FloatingFab
         iconSrc="/icons_calling.svg"
         iconAlt="문의하기"
+        onClick={() => window.open("https://forms.gle/oC9QWacXmoQcSshE8", "_blank")}
       />
     </div>
   );

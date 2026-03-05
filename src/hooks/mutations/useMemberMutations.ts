@@ -62,7 +62,7 @@ import { UpdatePasswordRequest, RecommendResponse, ReportMemberRequest, FollowLi
 import { BookStoryListResponse } from "@/types/story";
 import { storyKeys } from "@/hooks/queries/useStoryQueries";
 import { memberKeys } from "@/hooks/queries/useMemberQueries";
-import { OtherProfileResponse } from "@/types/member";
+import { OtherProfileResponse, FollowCountResponse } from "@/types/member";
 import { toast } from "react-hot-toast";
 import { InfiniteData } from "@tanstack/react-query";
 
@@ -162,6 +162,7 @@ export const useToggleFollowMutation = () => {
             await queryClient.cancelQueries({ queryKey: memberKeys.otherProfile(nickname) });
             await queryClient.cancelQueries({ queryKey: memberKeys.followers() });
             await queryClient.cancelQueries({ queryKey: memberKeys.followings() });
+            await queryClient.cancelQueries({ queryKey: memberKeys.followCount() });
 
             // Snapshot previous values
             const previousRecommendations = queryClient.getQueryData(memberKeys.recommended());
@@ -170,6 +171,7 @@ export const useToggleFollowMutation = () => {
             const previousOtherProfile = queryClient.getQueryData(memberKeys.otherProfile(nickname));
             const previousFollowers = queryClient.getQueryData(memberKeys.followers());
             const previousFollowings = queryClient.getQueryData(memberKeys.followings());
+            const previousFollowCount = queryClient.getQueryData<FollowCountResponse>(memberKeys.followCount());
 
             // 1. Optimistically update recommendations
             if (previousRecommendations) {
@@ -212,7 +214,18 @@ export const useToggleFollowMutation = () => {
                 );
             }
 
-            return { previousRecommendations, previousInfiniteStories, previousStories, previousOtherProfile, previousFollowers, previousFollowings };
+            // 6. Optimistically update follow count (only "following" count since it's "me" following someone else)
+            if (previousFollowCount) {
+                queryClient.setQueryData<FollowCountResponse>(memberKeys.followCount(), (old) => {
+                    if (!old) return old;
+                    return {
+                        ...old,
+                        followingCount: isFollowing ? Math.max(0, old.followingCount - 1) : old.followingCount + 1
+                    };
+                });
+            }
+
+            return { previousRecommendations, previousInfiniteStories, previousStories, previousOtherProfile, previousFollowers, previousFollowings, previousFollowCount };
         },
         onError: (error: any, variables, context) => {
             console.error("Failed to toggle follow:", error);
@@ -237,6 +250,9 @@ export const useToggleFollowMutation = () => {
             if (context?.previousFollowings) {
                 queryClient.setQueryData(memberKeys.followings(), context.previousFollowings);
             }
+            if (context?.previousFollowCount) {
+                queryClient.setQueryData(memberKeys.followCount(), context.previousFollowCount);
+            }
         },
         onSettled: (_data, _error, variables) => {
             // Refetch to sync with server
@@ -245,6 +261,7 @@ export const useToggleFollowMutation = () => {
             queryClient.invalidateQueries({ queryKey: memberKeys.otherProfile(variables.nickname) });
             queryClient.invalidateQueries({ queryKey: memberKeys.followers() });
             queryClient.invalidateQueries({ queryKey: memberKeys.followings() });
+            queryClient.invalidateQueries({ queryKey: memberKeys.followCount() });
         },
     });
 };
