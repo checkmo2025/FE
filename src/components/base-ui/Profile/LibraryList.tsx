@@ -2,12 +2,13 @@
 
 import React, { useEffect, useMemo } from "react";
 import LibraryCard from "./items/LibraryCard";
-import { useMyLikedBooksInfiniteQuery } from "@/hooks/queries/useBookQueries";
+import { useLikedBooksInfiniteQuery } from "@/hooks/queries/useBookQueries";
 import { useInView } from "react-intersection-observer";
 
-const LibraryList = () => {
+const LibraryList = ({ nickname }: { nickname?: string }) => {
+  const isMyLibrary = !nickname;
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useMyLikedBooksInfiniteQuery();
+    useLikedBooksInfiniteQuery(nickname);
 
   const { ref, inView } = useInView();
 
@@ -22,11 +23,11 @@ const LibraryList = () => {
   }, [data]);
 
   if (isLoading) {
-    return <div className="py-10 text-center text-gray-500">내 서재를 불러오는 중...</div>;
+    return <div className="py-10 text-center text-gray-500">{isMyLibrary ? "내 서재를 불러오는 중..." : "서재를 불러오는 중..."}</div>;
   }
 
   if (books.length === 0) {
-    return <div className="py-10 text-center text-gray-500">내 서재가 비어있습니다.</div>;
+    return <div className="py-10 text-center text-gray-500">{isMyLibrary ? "내 서재가 비어있습니다." : "서재가 비어있습니다."}</div>;
   }
 
   return (

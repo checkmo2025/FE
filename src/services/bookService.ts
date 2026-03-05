@@ -34,9 +34,10 @@ export const bookService = {
         );
         return response.result!;
     },
-    getMyLikedBooks: async (cursorId?: number): Promise<MyLikedBooksResponse> => {
+    getLikedBooks: async (nickname?: string, cursorId?: number): Promise<MyLikedBooksResponse> => {
+        const url = nickname ? BOOK_ENDPOINTS.OTHER_LIKES(nickname) : BOOK_ENDPOINTS.MY_LIKES;
         const response = await apiClient.get<ApiResponse<MyLikedBooksResponse>>(
-            BOOK_ENDPOINTS.MY_LIKES,
+            url,
             {
                 params: {
                     cursorId

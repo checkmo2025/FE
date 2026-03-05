@@ -2,12 +2,12 @@
 
 import React, { useEffect, useMemo } from "react";
 import LibraryCard from "@/components/base-ui/Profile/items/LibraryCard";
-import { useMyLikedBooksInfiniteQuery } from "@/hooks/queries/useBookQueries";
+import { useLikedBooksInfiniteQuery } from "@/hooks/queries/useBookQueries";
 import { useInView } from "react-intersection-observer";
 
 const LibraryList = () => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useMyLikedBooksInfiniteQuery();
+    useLikedBooksInfiniteQuery();
 
   const { ref, inView } = useInView();
 

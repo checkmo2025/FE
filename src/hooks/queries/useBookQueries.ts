@@ -8,6 +8,7 @@ export const bookKeys = {
     recommend: () => [...bookKeys.all, "recommend"] as const,
     detail: (isbn: string) => [...bookKeys.all, "detail", isbn] as const,
     myLikes: () => [...bookKeys.all, "myLikes"] as const,
+    likedBooks: (nickname?: string) => [...bookKeys.all, "likedBooks", nickname || "me"] as const,
 };
 
 export const useBookSearchQuery = (keyword: string) => {
@@ -47,15 +48,13 @@ export const useBookDetailQuery = (isbn: string) => {
     });
 };
 
-export const useMyLikedBooksInfiniteQuery = () => {
+export const useLikedBooksInfiniteQuery = (nickname?: string) => {
     return useInfiniteQuery({
-        queryKey: bookKeys.myLikes(),
-        queryFn: ({ pageParam }) => bookService.getMyLikedBooks(pageParam),
+        queryKey: bookKeys.likedBooks(nickname),
+        queryFn: ({ pageParam }) => bookService.getLikedBooks(nickname, pageParam),
         initialPageParam: undefined as number | undefined,
         getNextPageParam: (lastPage) => {
             if (!lastPage || !lastPage.hasNext) return undefined;
-            // Assuming nextCursor is returned by backend for cursor pagination
-            // Need to type cast or ignore if nextCursor is not in BookSearchResponse yet
             return (lastPage as any).nextCursor;
         },
     });
