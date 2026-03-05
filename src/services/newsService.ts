@@ -6,7 +6,7 @@ import { ApiResponse } from "@/types/auth";
 export const newsService = {
     getNewsList: async (cursorId?: number): Promise<NewsListResponse> => {
         const url = new URL(NEWS_ENDPOINTS.GET_NEWS_LIST);
-        if (cursorId) {
+        if (cursorId !== undefined && cursorId !== null) {
             url.searchParams.append("cursorId", cursorId.toString());
         }
 
