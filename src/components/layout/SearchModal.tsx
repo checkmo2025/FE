@@ -11,6 +11,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useInView } from "react-intersection-observer";
 import { Book } from "@/types/book";
+import { EXTERNAL_LINKS } from "@/constants/links";
 
 type SearchModalProps = {
   isOpen: boolean;
@@ -243,11 +244,15 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
               </div>
               <div className="flex justify-end mt-4 w-full t:w-[683px] d:w-[1400px] t:mx-auto">
                 <Link
-                  href="#"
-                  className="flex items-center gap-1 text-white body_1_2 t:subhead_4_1 hover:opacity-80 border-b border-white"
+                  href={EXTERNAL_LINKS.ALADIN_BESTSELLER_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 text-white/80 body_1_2 t:subhead_4_1 border-white/80 transition-all duration-300 hover:text-white hover:border-white hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group relative pb-0.5"
                 >
-                  <span>알라딘 랭킹 더 보러가기</span>
-                  <div className="relative w-6 h-6">
+                  <span className="relative z-10 transition-colors after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 group-hover:after:origin-bottom-left group-hover:after:scale-x-100">
+                    알라딘 랭킹 더 보러가기
+                  </span>
+                  <div className="relative w-6 h-6 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">
                     <Image
                       src="/to_aladin.svg"
                       alt="알라딘"
