@@ -1,12 +1,46 @@
 "use client";
 
 import Image from "next/image";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import LoginLogo from "@/components/base-ui/Login/LoginLogo";
 import styles from "@/components/base-ui/Login/LoginModal.module.css";
 import useLoginForm from "@/components/base-ui/Login/useLoginForm";
 import { SOCIAL_LOGINS } from "@/constants/auth";
+
+const EyeIcon = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
+
+const EyeOffIcon = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7c.84 0 1.68-.1 2.47-.28" />
+    <path d="M2 2l20 20" />
+  </svg>
+);
 
 type Props = {
   onClose: () => void;
@@ -30,6 +64,8 @@ export default function LoginModal({
     handleKeyDown,
   } = useLoginForm(onClose);
 
+  const [showPassword, setShowPassword] = useState(false);
+
   // Body scroll lock
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -44,8 +80,14 @@ export default function LoginModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className={styles.container}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      onClick={onClose}
+    >
+      <div
+        className={styles.container}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* 닫기 버튼 */}
         <button type="button" onClick={onClose} className={styles.closeIcon}>
           <Image src="/cancle_button.svg" alt="닫기" width={24} height={24} />
@@ -68,27 +110,35 @@ export default function LoginModal({
                   value={form.email}
                   onChange={handleChange}
                   placeholder="이메일"
-                  className={`${styles.input} ${
-                    errors?.email ? styles.inputError : ""
-                  }`}
+                  className={`${styles.input} ${errors?.email ? styles.inputError : ""
+                    }`}
                   onKeyDown={handleKeyDown}
                   disabled={isLoading}
                 />
                 {errors?.email && (
                   <span className={styles.errorMessage}>{errors.email}</span>
                 )}
-                <input
-                  name="password"
-                  type="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  placeholder="비밀번호"
-                  className={`${styles.input} ${
-                    errors?.password ? styles.inputError : ""
-                  }`}
-                  onKeyDown={handleKeyDown}
-                  disabled={isLoading}
-                />
+                <div className={styles.passwordWrapper}>
+                  <input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    value={form.password}
+                    onChange={handleChange}
+                    placeholder="비밀번호"
+                    className={`${styles.input} ${errors?.password ? styles.inputError : ""
+                      } pr-[40px]`}
+                    onKeyDown={handleKeyDown}
+                    disabled={isLoading}
+                  />
+                  <button
+                    type="button"
+                    className={styles.passwordToggle}
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  </button>
+                </div>
                 {errors?.password && (
                   <span className={styles.errorMessage}>{errors.password}</span>
                 )}
@@ -122,9 +172,8 @@ export default function LoginModal({
                 <button
                   key={social.name}
                   type="button"
-                  className={`${styles.socialIcon} ${
-                    isLoading ? "opacity-60 cursor-not-allowed" : ""
-                  }`}
+                  className={`${styles.socialIcon} ${isLoading ? "opacity-60 cursor-not-allowed" : ""
+                    }`}
                   disabled={isLoading}
                   onClick={() => handleSocialLogin(social.name)}
                 >

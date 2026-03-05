@@ -14,6 +14,7 @@ export type Comment = {
   createdAt: string;
   isAuthor?: boolean; // 글 작성자인지 (뱃지용)
   isMine?: boolean; // 내가 쓴 댓글인지
+  parentCommentId?: number | null;
   replies?: Comment[];
 };
 
@@ -112,37 +113,44 @@ export default function CommentList({
 
               {/* 답글 입력창  */}
               {isReplyInputVisible && (
-                <div className="flex items-center gap-4 t:gap-8 py-2">
-                  <Image
-                    src="/reply.svg"
-                    alt="대댓글"
-                    width={40}
-                    height={40}
-                    className="shrink-0 w-6 h-6 t:w-10 t:h-10 self-start mt-4"
-                  />
-               <div className="flex items-center gap-3 flex-1">
-                    <input
-                      type="text"
-                      value={replyContent}
-                      onChange={(e) =>
-                        handleReplyContentChange(comment.id, e.target.value)
-                      }
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleReplySubmit(comment.id);
-                        }
-                      }}
-                      placeholder="답글 달기"
-                      className="flex-1 min-w-0 h-[36px] t:h-[56px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White Body_1_2 text-Gray-7 placeholder:text-Gray-3 outline-none"
-                      autoFocus
+                <div className="flex flex-col gap-2 py-2 w-full">
+                  <div className="flex items-center gap-2 pl-[40px] t:pl-[72px]">
+                    <span className="text-primary-3 body_2_1 t:body_1_2 bg-Subbrown-4 px-3 py-1 rounded-full shrink-0">
+                      @{comment.authorName} 님에게 답글
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4 t:gap-8">
+                    <Image
+                      src="/reply.svg"
+                      alt="대댓글"
+                      width={40}
+                      height={40}
+                      className="shrink-0 w-6 h-6 t:w-10 t:h-10 self-start mt-2"
                     />
-                    <button
-                      type="button"
-                      onClick={() => handleReplySubmit(comment.id)}
-                      className="px-4 t:px-6 py-2 t:py-3 h-[36px] t:h-[56px] border border-Subbrown-3 text-primary-3 rounded-lg bg-Subbrown-4 subhead_4_1 cursor-pointer shrink-0"
-                    >
-                      입력
-                    </button>
+                    <div className="flex items-center gap-3 flex-1">
+                      <input
+                        type="text"
+                        value={replyContent}
+                        onChange={(e) =>
+                          handleReplyContentChange(comment.id, e.target.value)
+                        }
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleReplySubmit(comment.parentCommentId || comment.id);
+                          }
+                        }}
+                        placeholder="답글 내용을 입력해주세요"
+                        className="flex-1 min-w-0 h-[36px] t:h-[56px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White Body_1_2 text-Gray-7 placeholder:text-Gray-3 outline-none"
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleReplySubmit(comment.parentCommentId || comment.id)}
+                        className="px-4 t:px-6 py-2 t:py-3 h-[36px] t:h-[56px] border border-Subbrown-3 text-primary-3 rounded-lg bg-Subbrown-4 subhead_4_1 cursor-pointer shrink-0"
+                      >
+                        입력
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}

@@ -42,15 +42,17 @@ function ActionButton({
   );
 }
 
+import Link from "next/link";
+
 // [보조 컴포넌트] 통계 아이템 (구독 중 / 구독자)
-function StatItem({ label, count }: { label: string; count: number }) {
+function StatItem({ label, count, href }: { label: string; count: number, href: string }) {
   return (
-    <div className="flex items-center gap-[4px]">
+    <Link href={href} className="flex items-center gap-[4px] hover:opacity-70 transition-opacity">
       {/* Label: Gray-4 */}
       <span className="text-Gray-4 body_1_2 t:subhead_4_1">{label}</span>
       {/* Count: primary-1 */}
       <span className="text-primary-1 body_1_2 t:subhead_4_1">{count}</span>
-    </div>
+    </Link>
   );
 }
 
@@ -138,8 +140,16 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
 
             {/* 통계 그룹 */}
             <div className="flex items-center gap-[12px]">
-              <StatItem label="구독 중" count={0} />
-              <StatItem label="구독자" count={0} />
+              <StatItem
+                label="구독 중"
+                count={profile.followingCount}
+                href={`/profile/${profile.nickname}/follows?tab=following`}
+              />
+              <StatItem
+                label="구독자"
+                count={profile.followerCount}
+                href={`/profile/${profile.nickname}/follows?tab=follower`}
+              />
             </div>
           </div>
 

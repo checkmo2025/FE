@@ -7,6 +7,7 @@ import ReportModal from "@/components/common/ReportModal";
 import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
 import { ReportType } from "@/types/member";
 import { useAuthStore } from "@/store/useAuthStore";
+import { toast } from "react-hot-toast";
 
 type BookstoryDetailProps = {
   imageUrl?: string;
@@ -104,6 +105,16 @@ export default function BookstoryDetail({
     });
   };
 
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success("클립보드에 복사되었습니다.");
+    } catch (err) {
+      toast.error("복사에 실패했습니다.");
+    }
+    setMenuOpen(false);
+  };
+
   return (
     <div
       className={`flex flex-col t:flex-row w-full px-[20px] items-start gap-4 t:gap-[28px] bg-Background ${className}`}
@@ -182,10 +193,7 @@ export default function BookstoryDetail({
               <div className="mx-2 border-b border-Subbrown-4" />
               <button
                 type="button"
-                onClick={() => {
-                  console.log("공유하기");
-                  setMenuOpen(false);
-                }}
+                onClick={handleShare}
                 className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
               >
                 <Image
@@ -220,7 +228,10 @@ export default function BookstoryDetail({
             <Image src={heartIcon} alt="heart" width={20} height={20} />
             <span className={`body_1_2 ${likedByMe ? 'text-primary-2' : 'text-Gray-5'}`}>좋아요 {likeCount}</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={handleShare}
+          >
             <Image src="/share.svg" alt="share" width={20} height={20} />
             <span className="body_1_2 text-Gray-5">공유하기</span>
           </div>
@@ -281,7 +292,10 @@ export default function BookstoryDetail({
                   좋아요 {likeCount}
                 </span>
               </div>
-              <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1.5 rounded-full transition-colors group">
+              <div
+                className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1.5 rounded-full transition-colors group"
+                onClick={handleShare}
+              >
                 <Image
                   src="/share.svg"
                   alt="share"
@@ -344,10 +358,7 @@ export default function BookstoryDetail({
                 <div className="mx-2 border-b border-Subbrown-4" />
                 <button
                   type="button"
-                  onClick={() => {
-                    console.log("공유하기");
-                    setMenuOpen(false);
-                  }}
+                  onClick={handleShare}
                   className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
                 >
                   <Image

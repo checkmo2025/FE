@@ -1,13 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import BookCoverCard from "@/components/base-ui/Book/BookCoverCard";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useToggleBookLikeMutation } from "@/hooks/mutations/useBookMutations";
 
 type Book = {
   id: string | number;
   imgUrl: string;
   title: string;
   author: string;
+  likedByMe?: boolean;
 };
 
 type TodayRecommendedBooksProps = {
@@ -19,13 +23,16 @@ export default function TodayRecommendedBooks({
   books,
   className = "",
 }: TodayRecommendedBooksProps) {
-  const [likedBooks, setLikedBooks] = useState<Record<string | number, boolean>>({});
+  const router = useRouter();
+  const { isLoggedIn, openLoginModal } = useAuthStore();
+  const { mutate: toggleLike } = useToggleBookLikeMutation();
 
-  const handleLikeChange = (bookId: string | number, liked: boolean) => {
-    setLikedBooks((prev) => ({
-      ...prev,
-      [bookId]: liked,
-    }));
+  const handleLikeChange = (bookId: string | number) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    toggleLike(String(bookId));
   };
 
   // 모바일: 2개, 태블릿: 4개, 데스크탑: 전체
@@ -45,8 +52,8 @@ export default function TodayRecommendedBooks({
               imgUrl={book.imgUrl}
               title={book.title}
               author={book.author}
-              liked={likedBooks[book.id] || false}
-              onLikeChange={(liked) => handleLikeChange(book.id, liked)}
+              liked={book.likedByMe || false}
+              onLikeChange={() => handleLikeChange(book.id)}
               responsive
             />
           ))}
@@ -60,8 +67,8 @@ export default function TodayRecommendedBooks({
               imgUrl={book.imgUrl}
               title={book.title}
               author={book.author}
-              liked={likedBooks[book.id] || false}
-              onLikeChange={(liked) => handleLikeChange(book.id, liked)}
+              liked={book.likedByMe || false}
+              onLikeChange={() => handleLikeChange(book.id)}
               responsive
             />
           ))}
@@ -75,8 +82,9 @@ export default function TodayRecommendedBooks({
               imgUrl={book.imgUrl}
               title={book.title}
               author={book.author}
-              liked={likedBooks[book.id] || false}
-              onLikeChange={(liked) => handleLikeChange(book.id, liked)}
+              liked={book.likedByMe || false}
+              onLikeChange={() => handleLikeChange(book.id)}
+              onCardClick={() => router.push(`/books/${book.id}`)}
             />
           ))}
         </div>

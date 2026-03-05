@@ -3,6 +3,8 @@
 import Image from "next/image";
 import React from "react";
 
+import { useSearchStore } from "@/store/useSearchStore";
+
 type FloatingFabProps = {
   iconSrc?: string; // 예: "/icons/pencil_white.svg"
   iconAlt?: string; // 접근성/aria용
@@ -20,6 +22,10 @@ export default function FloatingFab({
   iconClassName = "",
   type = "button",
 }: FloatingFabProps) {
+  const { isSearchOpen } = useSearchStore();
+
+  if (isSearchOpen) return null;
+
   return (
     <button
       type={type}

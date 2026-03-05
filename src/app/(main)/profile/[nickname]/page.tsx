@@ -9,10 +9,11 @@ type PageProps = {
 
 export default async function OtherUserProfilePage({ params }: PageProps) {
   const { nickname } = await params;
+  const decodedNickname = decodeURIComponent(nickname);
 
   return (
     <div className="flex flex-col items-center gap-[10px] md:gap-[24px] w-full min-h-screen bg-[#F9F7F6] pb-[100px]">
-      <ProfileBreadcrumb />
+      <ProfileBreadcrumb nickname={decodedNickname} />
 
       <div className="mt-[12px] md:mt-[56px]">
         <ProfileUserInfo nickname={nickname} />

@@ -53,30 +53,33 @@ export default function BookStoryCardLarge({
       w-[336px] h-[380px]"
     >
       {/* 상단 프로필 */}
-      <div
-        className="flex items-center gap-2 px-4 py-3 group cursor-pointer"
-        onClick={(e) => {
-          if (onProfileClick) {
-            e.stopPropagation();
-            onProfileClick();
-          }
-        }}
-      >
-        <div className="relative w-8 h-8 overflow-hidden rounded-full shrink-0">
-          <Image
-            src={profileImgSrc}
-            alt={authorName}
-            fill
-            className="object-cover"
-            sizes="32px"
-          />
+      <div className="flex items-center gap-2 px-4 py-3">
+        <div
+          className="flex items-center gap-2 group cursor-pointer hover:bg-gray-100 transition-colors px-2 py-1 -ml-2 rounded-lg"
+          onClick={(e) => {
+            if (onProfileClick) {
+              e.stopPropagation();
+              onProfileClick();
+            }
+          }}
+        >
+          <div className="relative w-8 h-8 overflow-hidden rounded-full shrink-0">
+            <Image
+              src={profileImgSrc}
+              alt={authorName}
+              fill
+              className="object-cover"
+              sizes="32px"
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="truncate body_1 text-Gray-7">{authorName}</p>
+            <p className="truncate body_2_3 text-Gray-3">
+              {formatTimeAgo(createdAt)} 조회수 {viewCount}
+            </p>
+          </div>
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="truncate body_1 text-Gray-7">{authorName}</p>
-          <p className="truncate body_2_3 text-Gray-3">
-            {formatTimeAgo(createdAt)} 조회수 {viewCount}
-          </p>
-        </div>
+        <div className="flex-1" />
         {!hideSubscribeButton && (
           <button
             type="button"
@@ -84,7 +87,7 @@ export default function BookStoryCardLarge({
               e.stopPropagation();
               onSubscribeClick?.();
             }}
-            className={`h-8 rounded-lg px-[17px] body_2_1 whitespace-nowrap transition-colors ${isFollowing
+            className={`h-8 rounded-lg px-[17px] body_2_1 whitespace-nowrap transition-all hover:brightness-90 active:scale-95 ${isFollowing
               ? "bg-Subbrown-4 text-primary-3"
               : "bg-primary-2 text-White"
               }`}
@@ -95,9 +98,19 @@ export default function BookStoryCardLarge({
       </div>
 
       {/* 책 이미지 */}
-      <div className="relative w-full h-36 shrink-0 bg-Subbrown-4">
+      <div className="relative w-full h-36 shrink-0 bg-Subbrown-4 overflow-hidden flex items-center justify-center">
         {coverImgSrc && (
-          <Image src={coverImgSrc} alt="cover" fill className="object-cover" />
+          <>
+            <Image
+              src={coverImgSrc}
+              alt="cover background"
+              fill
+              className="object-cover opacity-50 blur-xl scale-125"
+            />
+            <div className="relative w-auto h-[90%] aspect-[2/3] shadow-sm z-10 transition-transform hover:scale-105">
+              <Image src={coverImgSrc} alt="cover" fill className="object-contain" />
+            </div>
+          </>
         )}
       </div>
 

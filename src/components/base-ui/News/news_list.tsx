@@ -82,12 +82,12 @@ export default function NewsList({
       {/* 모바일: absolute right-5 bottom-2.5 */}
       {/* 태블릿이상: static block */}
       <div
-        className="flex w-[79px] h-[20px] flex-col justify-center shrink-0
+        className="flex min-w-[85px] h-[20px] flex-col justify-center shrink-0
         absolute right-[20px] bottom-[10px]
         md:static"
       >
         <span
-          className="text-Gray-3 text-right
+          className="text-Gray-3 text-right whitespace-nowrap
           text-[12px] font-normal leading-[145%] tracking-[-0.012px]
           md:body_1_2"
         >

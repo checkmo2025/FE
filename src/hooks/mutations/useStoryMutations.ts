@@ -172,7 +172,7 @@ export const useToggleStoryLikeMutation = () => {
             const previousInfiniteStories = queryClient.getQueryData(storyKeys.infiniteList());
             const previousMyStories = queryClient.getQueryData(storyKeys.myList());
             const previousStories = queryClient.getQueryData(storyKeys.list());
-            const previousStoryDetail = queryClient.getQueryData(storyKeys.detail(bookStoryId));
+            const previousStoryDetail = queryClient.getQueryData<BookStoryDetail>(storyKeys.detail(bookStoryId));
             const previousOtherMemberStories = queryClient.getQueriesData({ queryKey: [...storyKeys.all, "otherMember"] });
 
             // Optimistically update the infinite list
@@ -203,13 +203,13 @@ export const useToggleStoryLikeMutation = () => {
 
             // Optimistically update the detail view
             if (previousStoryDetail) {
+                const isLikedAfterMutation = !previousStoryDetail.likedByMe;
                 queryClient.setQueryData<BookStoryDetail>(storyKeys.detail(bookStoryId), (old) => {
                     if (!old) return old;
-                    const nextLiked = !old.likedByMe;
                     return {
                         ...old,
-                        likedByMe: nextLiked,
-                        likes: nextLiked ? old.likes + 1 : old.likes - 1,
+                        likedByMe: isLikedAfterMutation,
+                        likes: isLikedAfterMutation ? old.likes + 1 : old.likes - 1,
                     };
                 });
             }

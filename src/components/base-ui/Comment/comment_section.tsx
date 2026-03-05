@@ -37,7 +37,8 @@ export default function CommentSection({
 
   // API 데이터를 UI용 Comment 형식으로 변환 및 계층 구조화
   const mapApiToUiComments = (apiComments: CommentInfo[]): Comment[] => {
-    const flatComments: Comment[] = apiComments.map((c) => ({
+    // 1. 재귀적으로 맵핑 (백엔드에서 이미 nested 된 replies 배열을 줄 경우를 대비)
+    const mapNode = (c: CommentInfo): Comment & { parentCommentId?: number | null } => ({
       id: c.commentId,
       authorName: c.authorInfo.nickname,
       profileImgSrc: isValidUrl(c.authorInfo.profileImageUrl)
@@ -47,30 +48,49 @@ export default function CommentSection({
       createdAt: c.createdAt,
       isAuthor: c.authorInfo.nickname === storyAuthorNickname,
       isMine: c.writtenByMe,
-      replies: [],
-    }));
+      replies: c.replies ? c.replies.map(r => mapNode(r)) : [],
+      parentCommentId: c.parentCommentId,
+    });
+
+    const mapped = apiComments.map(mapNode);
 
     const rootComments: Comment[] = [];
-    const commentMap = new Map<number, Comment>();
+    const commentMap = new Map<number, Comment & { parentCommentId?: number | null }>();
 
-    flatComments.forEach(c => commentMap.set(c.id, c));
+    // 맵에 모든 요소 저장
+    const addToMap = (comments: (Comment & { parentCommentId?: number | null })[]) => {
+      comments.forEach(c => {
+        commentMap.set(c.id, c);
+        if (c.replies && c.replies.length > 0) addToMap(c.replies);
+      });
+    };
+    addToMap(mapped);
 
-    apiComments.forEach((c, index) => {
-      const uiComment = flatComments[index];
+    // flat list 로 넘어왔을 경우 수동으로 부모-자식 연결
+    mapped.forEach((c) => {
       if (c.parentCommentId && commentMap.has(c.parentCommentId)) {
-        commentMap.get(c.parentCommentId)!.replies!.push(uiComment);
+        const parent = commentMap.get(c.parentCommentId)!;
+        if (!parent.replies!.find(r => r.id === c.id)) {
+          parent.replies!.push(c);
+        }
       } else {
-        rootComments.push(uiComment);
+        rootComments.push(c);
       }
     });
 
     // 최상위 댓글 최신순(내림차순) 정렬
     rootComments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
-    // 대댓글은 등록순(오름차순) 유지 (일반적인 UI 패턴)
-    rootComments.forEach(c => {
-      c.replies?.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-    });
+    // 대댓글은 등록순(오름차순) 유지
+    const sortReplies = (comments: Comment[]) => {
+      comments.forEach(c => {
+        if (c.replies && c.replies.length > 0) {
+          c.replies.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          sortReplies(c.replies);
+        }
+      });
+    };
+    sortReplies(rootComments);
 
     return rootComments;
   };

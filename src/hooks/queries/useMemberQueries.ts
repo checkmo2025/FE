@@ -8,6 +8,7 @@ export const memberKeys = {
     otherProfile: (nickname: string) => [...memberKeys.all, "profile", nickname] as const,
     followers: () => [...memberKeys.all, "followers"] as const,
     followings: () => [...memberKeys.all, "followings"] as const,
+    followCount: () => [...memberKeys.all, "follow-count"] as const,
 };
 
 export const useRecommendedMembersQuery = (enabled: boolean = true) => {
@@ -34,22 +35,30 @@ export const useOtherProfileQuery = (nickname: string, enabled: boolean = true) 
     });
 };
 
-export const useFollowerListQuery = (enabled: boolean = true) => {
+export const useFollowerListQuery = (nickname?: string, enabled: boolean = true) => {
     return useInfiniteQuery({
-        queryKey: memberKeys.followers(),
-        queryFn: ({ pageParam }) => memberService.getFollowerList(pageParam),
+        queryKey: nickname ? [...memberKeys.followers(), nickname] : memberKeys.followers(),
+        queryFn: ({ pageParam }) => memberService.getFollowerList(nickname, pageParam),
         initialPageParam: undefined as number | undefined,
         getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor : undefined),
         enabled,
     });
 };
 
-export const useFollowingListQuery = (enabled: boolean = true) => {
+export const useFollowingListQuery = (nickname?: string, enabled: boolean = true) => {
     return useInfiniteQuery({
-        queryKey: memberKeys.followings(),
-        queryFn: ({ pageParam }) => memberService.getFollowingList(pageParam),
+        queryKey: nickname ? [...memberKeys.followings(), nickname] : memberKeys.followings(),
+        queryFn: ({ pageParam }) => memberService.getFollowingList(nickname, pageParam),
         initialPageParam: undefined as number | undefined,
         getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor : undefined),
+        enabled,
+    });
+};
+
+export const useFollowCountQuery = (enabled: boolean = true) => {
+    return useQuery({
+        queryKey: memberKeys.followCount(),
+        queryFn: () => memberService.getMyFollowCount(),
         enabled,
     });
 };

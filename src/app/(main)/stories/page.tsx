@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import FloatingFab from "@/components/base-ui/Float";
 import LoginModal from "@/components/base-ui/Login/LoginModal";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useInfiniteStoriesQuery, useFollowingInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
+import { useInfiniteStoriesQuery, useFollowingInfiniteStoriesQuery, useClubInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
 import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 import { useInView } from "react-intersection-observer";
@@ -56,6 +56,17 @@ export default function StoriesPage() {
   } = useFollowingInfiniteStoriesQuery(isLoggedIn);
 
   const isFollowingTab = selectedCategory === "following";
+  const isClubTab = selectedCategory !== "all" && selectedCategory !== "following";
+  const activeClubId = isClubTab ? Number(selectedCategory) : null;
+
+  const {
+    data: clubStoriesData,
+    isLoading: isLoadingClubStories,
+    isError: isErrorClubStories,
+    fetchNextPage: fetchNextClubPage,
+    hasNextPage: hasNextClubPage,
+    isFetchingNextPage: isFetchingNextClubPage,
+  } = useClubInfiniteStoriesQuery(activeClubId, isLoggedIn);
 
   const {
     storiesData,
@@ -75,6 +86,16 @@ export default function StoriesPage() {
         isFetchingNextPage: isFetchingNextFollowingPage,
       };
     }
+    if (isClubTab) {
+      return {
+        storiesData: clubStoriesData,
+        isLoadingStories: isLoadingClubStories,
+        isErrorStories: isErrorClubStories,
+        fetchNextPage: fetchNextClubPage,
+        hasNextPage: hasNextClubPage,
+        isFetchingNextPage: isFetchingNextClubPage,
+      };
+    }
     return {
       storiesData: defaultStoriesData,
       isLoadingStories: isLoadingDefaultStories,
@@ -85,12 +106,19 @@ export default function StoriesPage() {
     };
   }, [
     isFollowingTab,
+    isClubTab,
     followingStoriesData,
     isLoadingFollowingStories,
     isErrorFollowingStories,
     fetchNextFollowingPage,
     hasNextFollowingPage,
     isFetchingNextFollowingPage,
+    clubStoriesData,
+    isLoadingClubStories,
+    isErrorClubStories,
+    fetchNextClubPage,
+    hasNextClubPage,
+    isFetchingNextClubPage,
     defaultStoriesData,
     isLoadingDefaultStories,
     isErrorDefaultStories,
