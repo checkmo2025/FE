@@ -105,9 +105,12 @@ export const useToggleBookLikeMutation = () => {
                             ...old,
                             pages: old.pages.map((page) => ({
                                 ...page,
-                                books: page.books.map((book) =>
-                                    book.isbn === isbn ? { ...book, likedByMe: !book.likedByMe } : book
-                                ),
+                                books: page.books
+                                    .map((book) =>
+                                        book.isbn === isbn ? { ...book, likedByMe: !book.likedByMe } : book
+                                    )
+                                    // '좋아요'를 취소하는 경우(현재 true -> false), 목록에서 즉시 제거
+                                    .filter((book) => book.isbn !== isbn || book.likedByMe),
                             })),
                         };
                     });
@@ -140,7 +143,7 @@ export const useToggleBookLikeMutation = () => {
             }
         },
         onSuccess: (data, isbn) => {
-            // Update cache with the actual response from server
+            // Update simple queries with the actual response from server
             const { liked } = data;
 
             queryClient.setQueryData<BookSearchResponse>(bookKeys.recommend(), (old) => {
@@ -158,48 +161,9 @@ export const useToggleBookLikeMutation = () => {
                 return { ...old, likedByMe: liked };
             });
 
-            const searches = queryClient.getQueriesData<InfiniteData<BookSearchResponse>>({
-                queryKey: [...bookKeys.all, "infiniteSearch"],
-            });
-            const myLikes = queryClient.getQueriesData<InfiniteData<MyLikedBooksResponse>>({
-                queryKey: bookKeys.myLikes(),
-            });
-
-            // Update infinite search lists
-            searches.forEach(([queryKey, oldData]) => {
-                if (oldData) {
-                    queryClient.setQueryData<InfiniteData<BookSearchResponse>>(queryKey, (old) => {
-                        if (!old || !old.pages) return old;
-                        return {
-                            ...old,
-                            pages: old.pages.map(page => ({
-                                ...page,
-                                detailInfoList: page.detailInfoList.map(book =>
-                                    book.isbn === isbn ? { ...book, likedByMe: liked } : book
-                                )
-                            }))
-                        };
-                    });
-                }
-            });
-
-            // Update my likes list
-            myLikes.forEach(([queryKey, oldData]) => {
-                if (oldData) {
-                    queryClient.setQueryData<InfiniteData<MyLikedBooksResponse>>(queryKey, (old) => {
-                        if (!old || !old.pages) return old;
-                        return {
-                            ...old,
-                            pages: old.pages.map(page => ({
-                                ...page,
-                                books: page.books.map(book =>
-                                    book.isbn === isbn ? { ...book, likedByMe: liked } : book
-                                )
-                            }))
-                        };
-                    });
-                }
-            });
+            // Invalidate infinite queries to ensure data consistency
+            queryClient.invalidateQueries({ queryKey: [...bookKeys.all, "infiniteSearch"] });
+            queryClient.invalidateQueries({ queryKey: bookKeys.myLikes() });
         },
     });
 };

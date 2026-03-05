@@ -37,7 +37,7 @@ const LibraryCard = ({ book }: LibraryCardProps) => {
         className="relative z-10 w-[20px] h-[20px] md:w-[24px] md:h-[24px]"
       >
         <Image
-          src={book.likedByMe !== false ? "/red_heart.svg" : "/gray_heart.svg"}
+          src={book.likedByMe ?? false ? "/red_heart.svg" : "/gray_heart.svg"}
           alt="like"
           width={24}
           height={24}
