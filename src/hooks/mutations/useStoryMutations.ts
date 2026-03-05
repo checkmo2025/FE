@@ -172,7 +172,7 @@ export const useToggleStoryLikeMutation = () => {
             const previousInfiniteStories = queryClient.getQueryData(storyKeys.infiniteList());
             const previousMyStories = queryClient.getQueryData(storyKeys.myList());
             const previousStories = queryClient.getQueryData(storyKeys.list());
-            const previousStoryDetail = queryClient.getQueryData(storyKeys.detail(bookStoryId));
+            const previousStoryDetail = queryClient.getQueryData<BookStoryDetail>(storyKeys.detail(bookStoryId));
             const previousOtherMemberStories = queryClient.getQueriesData({ queryKey: [...storyKeys.all, "otherMember"] });
 
             // Optimistically update the infinite list
