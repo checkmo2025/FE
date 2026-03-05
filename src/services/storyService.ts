@@ -73,7 +73,10 @@ export const storyService = {
         const requestBody = parentCommentId ? { ...data, parentCommentId } : data;
         const response = await apiClient.post<ApiResponse<number>>(
             `${STORY_ENDPOINTS.LIST}/${bookStoryId}/comments`,
-            requestBody
+            requestBody,
+            {
+                params: { parentCommentId }
+            }
         );
         return response.result!;
     },
