@@ -34,6 +34,7 @@ export default function NewsPage() {
       imgUrl: book.imgUrl,
       title: book.title,
       author: book.author,
+      likedByMe: book.likedByMe,
     }));
   }, [recommendedData]);
 
