@@ -69,8 +69,8 @@ export const useToggleBookLikeMutation = () => {
                 queryKey: [...bookKeys.all, "infiniteSearch"],
             });
 
-            const previousMyLikes = queryClient.getQueriesData<InfiniteData<MyLikedBooksResponse>>({
-                queryKey: bookKeys.myLikes(),
+            const previousLikedBooks = queryClient.getQueriesData<InfiniteData<MyLikedBooksResponse>>({
+                queryKey: [...bookKeys.all, "likedBooks"],
             });
 
             if (previousRecommended) {
@@ -97,27 +97,37 @@ export const useToggleBookLikeMutation = () => {
                 }
             });
 
-            previousMyLikes.forEach(([queryKey, oldData]) => {
-                if (oldData) {
-                    queryClient.setQueryData<InfiniteData<MyLikedBooksResponse>>(queryKey, (old) => {
-                        if (!old || !old.pages) return old;
-                        return {
-                            ...old,
-                            pages: old.pages.map((page) => ({
-                                ...page,
-                                books: page.books
-                                    .map((book) =>
-                                        book.isbn === isbn ? { ...book, likedByMe: !book.likedByMe } : book
-                                    )
-                                    // '좋아요'를 취소하는 경우(현재 true -> false), 목록에서 즉시 제거
-                                    .filter((book) => book.isbn !== isbn || book.likedByMe),
-                            })),
-                        };
-                    });
-                }
-            });
+            // 위 로직을 좀 더 정교하게 수정: 내 서재에서만 필터링 되도록.
+            const handleLikedBooksUpdate = (queryKey: readonly unknown[], oldData: InfiniteData<MyLikedBooksResponse> | undefined) => {
+                if (!oldData) return;
+                // likedBooks 키의 마지막 요소가 "me" 인 경우 "내 서재" 로 판단
+                const isMyLibrary = queryKey.includes("me");
 
-            return { previousRecommended, previousDetail, previousSearches, previousMyLikes };
+                queryClient.setQueryData<InfiniteData<MyLikedBooksResponse>>(queryKey, (old) => {
+                    if (!old || !old.pages) return old;
+                    return {
+                        ...old,
+                        pages: old.pages.map((page) => ({
+                            ...page,
+                            books: page.books
+                                .map((book) =>
+                                    book.isbn === isbn ? { ...book, likedByMe: !book.likedByMe } : book
+                                )
+                                .filter((book) => {
+                                    if (isMyLibrary) {
+                                        // 내 서재면 좋아요 취소 시 제거
+                                        return book.isbn !== isbn || book.likedByMe;
+                                    }
+                                    return true; // 타인의 서재면 제거하지 않음
+                                }),
+                        })),
+                    };
+                });
+            };
+
+            previousLikedBooks.forEach(([queryKey, oldData]) => handleLikedBooksUpdate(queryKey, oldData));
+
+            return { previousRecommended, previousDetail, previousSearches, previousLikedBooks };
         },
         onError: (err, isbn, context) => {
             if (err.message === "Throttled request") return;
@@ -136,8 +146,8 @@ export const useToggleBookLikeMutation = () => {
                     queryClient.setQueryData(queryKey, oldData);
                 });
             }
-            if (context?.previousMyLikes) {
-                context.previousMyLikes.forEach(([queryKey, oldData]) => {
+            if (context?.previousLikedBooks) {
+                context.previousLikedBooks.forEach(([queryKey, oldData]) => {
                     queryClient.setQueryData(queryKey, oldData);
                 });
             }
@@ -163,7 +173,7 @@ export const useToggleBookLikeMutation = () => {
 
             // Invalidate infinite queries to ensure data consistency
             queryClient.invalidateQueries({ queryKey: [...bookKeys.all, "infiniteSearch"] });
-            queryClient.invalidateQueries({ queryKey: bookKeys.myLikes() });
+            queryClient.invalidateQueries({ queryKey: [...bookKeys.all, "likedBooks"] });
         },
     });
 };

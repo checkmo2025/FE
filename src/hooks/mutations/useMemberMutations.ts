@@ -198,7 +198,12 @@ export const useToggleFollowMutation = () => {
             if (previousOtherProfile) {
                 queryClient.setQueryData<OtherProfileResponse>(memberKeys.otherProfile(nickname), (old) => {
                     if (!old) return old;
-                    return { ...old, following: !isFollowing };
+                    const newFollowing = !isFollowing;
+                    return {
+                        ...old,
+                        following: newFollowing,
+                        followerCount: newFollowing ? old.followerCount + 1 : Math.max(0, old.followerCount - 1)
+                    };
                 });
             }
 
