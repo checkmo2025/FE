@@ -9,6 +9,7 @@ import { useRecommendedBooksQuery } from "@/hooks/queries/useBookQueries";
 import { useInfiniteNewsQuery } from "@/hooks/queries/useNewsQueries";
 import { useInView } from "react-intersection-observer";
 import { EXTERNAL_LINKS } from "@/constants/links";
+import { Book } from "@/types/book";
 
 export default function NewsPage() {
   const { data: recommendedData, isLoading: isLoadingRecommended } = useRecommendedBooksQuery();
@@ -29,7 +30,7 @@ export default function NewsPage() {
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const recommendedBooks = useMemo(() => {
-    return (recommendedData?.detailInfoList || []).map((book: any) => ({
+    return (recommendedData?.detailInfoList || []).map((book: Book) => ({
       id: book.isbn,
       imgUrl: book.imgUrl,
       title: book.title,

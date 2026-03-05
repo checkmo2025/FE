@@ -203,13 +203,13 @@ export const useToggleStoryLikeMutation = () => {
 
             // Optimistically update the detail view
             if (previousStoryDetail) {
+                const isLikedAfterMutation = !previousStoryDetail.likedByMe;
                 queryClient.setQueryData<BookStoryDetail>(storyKeys.detail(bookStoryId), (old) => {
                     if (!old) return old;
-                    const nextLiked = !old.likedByMe;
                     return {
                         ...old,
-                        likedByMe: nextLiked,
-                        likes: nextLiked ? old.likes + 1 : old.likes - 1,
+                        likedByMe: isLikedAfterMutation,
+                        likes: isLikedAfterMutation ? old.likes + 1 : old.likes - 1,
                     };
                 });
             }
