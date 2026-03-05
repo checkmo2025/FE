@@ -65,16 +65,16 @@ export const memberService = {
             throw new Error(response.message || "Failed to report member");
         }
     },
-    getFollowerList: async (cursorId?: number): Promise<FollowListResponse> => {
-        const url = new URL(MEMBER_ENDPOINTS.GET_FOLLOWERS);
+    getFollowerList: async (nickname?: string, cursorId?: number): Promise<FollowListResponse> => {
+        const url = new URL(nickname ? MEMBER_ENDPOINTS.GET_OTHER_FOLLOWERS(nickname) : MEMBER_ENDPOINTS.GET_FOLLOWERS);
         if (cursorId) {
             url.searchParams.append("cursorId", cursorId.toString());
         }
         const response = await apiClient.get<ApiResponse<FollowListResponse>>(url.toString());
         return response.result!;
     },
-    getFollowingList: async (cursorId?: number): Promise<FollowListResponse> => {
-        const url = new URL(MEMBER_ENDPOINTS.GET_FOLLOWINGS);
+    getFollowingList: async (nickname?: string, cursorId?: number): Promise<FollowListResponse> => {
+        const url = new URL(nickname ? MEMBER_ENDPOINTS.GET_OTHER_FOLLOWINGS(nickname) : MEMBER_ENDPOINTS.GET_FOLLOWINGS);
         if (cursorId) {
             url.searchParams.append("cursorId", cursorId.toString());
         }
