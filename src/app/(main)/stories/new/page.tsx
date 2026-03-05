@@ -53,14 +53,7 @@ function StoryNewContent() {
     }
 
     createStoryMutation.mutate({
-      bookInfo: {
-        isbn: selectedBook.isbn,
-        title: selectedBook.title,
-        author: selectedBook.author,
-        imgUrl: selectedBook.imgUrl,
-        publisher: selectedBook.publisher,
-        description: selectedBook.description,
-      },
+      isbn: selectedBook.isbn,
       title,
       description: detail,
     }, {
