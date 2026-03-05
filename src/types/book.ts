@@ -6,10 +6,18 @@ export interface Book {
     publisher: string;
     description: string;
     link: string;
+    likedByMe?: boolean;
 }
 
 export interface BookSearchResponse {
     detailInfoList: Book[];
     hasNext: boolean;
     currentPage: number;
+    nextCursor?: number;
+}
+
+export interface MyLikedBooksResponse {
+    books: Book[];
+    hasNext: boolean;
+    nextCursor?: number;
 }

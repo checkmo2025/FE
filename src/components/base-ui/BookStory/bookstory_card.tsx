@@ -98,9 +98,19 @@ export default function BookStoryCard({
       </div>
 
       {/* 2. 책 이미지 (모바일: flex-1 / 데스크탑: h-36) */}
-      <div className="relative flex-1 w-full shrink-0 bg-Subbrown-4 md:h-36 md:flex-none">
+      <div className="relative flex-1 w-full shrink-0 bg-Subbrown-4 md:h-36 md:flex-none overflow-hidden flex items-center justify-center">
         {coverImgSrc && (
-          <Image src={coverImgSrc} alt="cover" fill className="object-cover" />
+          <>
+            <Image
+              src={coverImgSrc}
+              alt="cover background"
+              fill
+              className="object-cover opacity-50 blur-xl scale-125"
+            />
+            <div className="relative w-auto h-[90%] aspect-[2/3] shadow-sm z-10 transition-transform hover:scale-105">
+              <Image src={coverImgSrc} alt="cover" fill className="object-contain" />
+            </div>
+          </>
         )}
       </div>
 

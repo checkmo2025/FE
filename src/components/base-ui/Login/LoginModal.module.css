@@ -23,6 +23,7 @@
     transform: translateY(20px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -81,7 +82,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%; /* Desktop default */
+  width: 100%;
+  /* Desktop default */
   gap: 24px;
   flex-shrink: 0;
 }
@@ -91,15 +93,18 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 8px; /* Tablet/Desktop Spec */
+  gap: 8px;
+  /* Tablet/Desktop Spec */
   flex-shrink: 0;
 }
 
 /* [Input Field] */
 .input {
   display: flex;
-  width: 300px; /* Desktop width */
-  height: 44px; /* Desktop height */
+  width: 300px;
+  /* Desktop width */
+  height: 44px;
+  /* Desktop height */
   padding: 12px 16px;
   align-items: center;
   border-radius: 8px;
@@ -111,7 +116,7 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 145%;
-  color: var(--Gray_3);
+  color: var(--Gray_7);
   transition: border-color 0.2s ease;
 }
 
@@ -130,7 +135,8 @@
 
 /* [Error State] */
 .inputError {
-  border-color: #d32f2f !important; /* Red color for error */
+  border-color: #d32f2f !important;
+  /* Red color for error */
 }
 
 .errorMessage {
@@ -140,12 +146,38 @@
   text-align: left;
 }
 
+/* [Password Wrapper & Toggle] */
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 16px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #BBB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.passwordToggle:hover {
+  color: #8D8D8D;
+}
+
 /* [Find ID/PW] */
 .findAccount {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px; /* Tablet/Desktop Spec */
+  gap: 12px;
+  /* Tablet/Desktop Spec */
   cursor: pointer;
   opacity: 0.6;
 }
@@ -169,7 +201,8 @@
 /* [Login Button] */
 .loginButton {
   width: 100%;
-  height: 48px; /* Tablet/Desktop Spec */
+  height: 48px;
+  /* Tablet/Desktop Spec */
   border-radius: 8px;
   background-color: var(--Primary_1);
   color: var(--White);
@@ -245,7 +278,8 @@
     height: 430px;
     padding: 20px 40px;
     gap: 24px;
-    justify-content: flex-start; /* Prevent clipping */
+    justify-content: flex-start;
+    /* Prevent clipping */
   }
 
   .closeIcon {
