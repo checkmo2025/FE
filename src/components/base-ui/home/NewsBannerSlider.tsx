@@ -15,7 +15,7 @@ export default function NewsBannerSlider() {
 
   if (isLoading) {
     return (
-      <div className="relative h-[297px] t:h-[424px] w-full max-w-[1040px] d:w-[1040px] overflow-hidden rounded-[10px] bg-gray-100 animate-pulse flex items-center justify-center">
+      <div className="relative h-[297px] t:h-[424px] w-full overflow-hidden rounded-[10px] bg-gray-100 animate-pulse flex items-center justify-center">
         <div className="text-gray-400">소식을 불러오는 중...</div>
       </div>
     );
@@ -23,7 +23,7 @@ export default function NewsBannerSlider() {
 
   if (isError || newsList.length === 0) {
     return (
-      <div className="relative h-[297px] t:h-[424px] w-full max-w-[1040px] d:w-[1040px] overflow-hidden rounded-[10px] bg-gray-50 flex flex-col items-center justify-center gap-2">
+      <div className="relative h-[297px] t:h-[424px] w-full overflow-hidden rounded-[10px] bg-gray-50 flex flex-col items-center justify-center gap-2">
         <div className="text-gray-400 text-lg font-medium">새로운 소식이 아직 없어요!</div>
         <div className="text-gray-400 text-sm">준비 중인 소식을 기다려 주세요.</div>
       </div>
@@ -39,7 +39,7 @@ export default function NewsBannerSlider() {
   const imageSrc = isValidSrc(currentNews.thumbnailUrl) ? currentNews.thumbnailUrl : "/news_sample.svg";
 
   return (
-    <div className="relative h-[297px] t:h-[424px] w-full max-w-[1040px] d:w-[1040px] overflow-hidden rounded-[10px]">
+    <div className="relative h-[297px] t:h-[424px] w-full overflow-hidden rounded-[10px]">
       <div
         className="relative w-full h-full cursor-pointer group"
         onClick={() => router.push(`/news/${currentNews.newsId}`)}
