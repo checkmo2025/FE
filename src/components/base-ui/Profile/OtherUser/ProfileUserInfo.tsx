@@ -138,8 +138,8 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
 
             {/* 통계 그룹 */}
             <div className="flex items-center gap-[12px]">
-              <StatItem label="구독 중" count={0} />
-              <StatItem label="구독자" count={0} />
+              <StatItem label="구독 중" count={profile.followingCount} />
+              <StatItem label="구독자" count={profile.followerCount} />
             </div>
           </div>
 

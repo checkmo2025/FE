@@ -32,7 +32,8 @@ export interface OtherProfileResponse {
     description: string;
     profileImageUrl: string;
     following: boolean;
-    categories: string[];
+    followerCount: number;
+    followingCount: number;
 }
 
 export type ReportType = "GENERAL" | "CLUB_MEETING" | "BOOK_STORY" | "COMMENT";
