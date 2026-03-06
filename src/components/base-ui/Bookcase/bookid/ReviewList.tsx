@@ -199,14 +199,14 @@ export default function ReviewList({
                   <StarSelector
                     value={draftRating}
                     onChange={setDraftRating}
-                    className="shrink-0"
+                    className="shrink-0 py-2"
                     starClassName="w-[18px] h-[18px] d:w-[20px] d:h-[20px] cursor-pointer"
                   />
                 ) : (
                   <div className="py-2">
                     <StarRating
                       value={item.rating}
-                      className="shrink-0"
+                      className="shrink-0 "
                       starClassName="w-[18px] h-[18px] d:w-[20px] d:h-[20px] "
                     />
                   </div>

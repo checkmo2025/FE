@@ -39,7 +39,7 @@ export default function GroupNoticePage() {
 
   const pinnedNotices = data?.pinnedNotices ?? [];
   const notices = data?.normalNotices.notices ?? [];
-  const totalPages = data?.normalNotices.totalPages ?? 1;
+ const totalPages = Math.max(data?.normalNotices.totalPages ?? 0, 1);
 
   const isEmpty = pinnedNotices.length === 0 && notices.length === 0;
 
@@ -76,7 +76,7 @@ export default function GroupNoticePage() {
   };
 
   return (
-    <div className="w-full relative">
+    <div className="w-full relative t:mx-3">
       {/* 비어있을 때 */}
       {isEmpty && (
         <div className="w-full min-h-[240px] flex items-center justify-center">
@@ -84,7 +84,8 @@ export default function GroupNoticePage() {
         </div>
       )}
 
-      {/* 고정 공지 */}
+      <div className="mb-20">
+        {/* 고정 공지 */}
       {pinnedNotices.length > 0 && (
         <div className="mb-3 flex flex-col gap-3">
           {pinnedNotices.map((notice) => (
@@ -118,10 +119,11 @@ export default function GroupNoticePage() {
           ))}
         </div>
       )}
+      </div>
 
       {/* 페이지네이션 (비어있으면 숨김) */}
       {!isEmpty && (
-        <div className="fixed bottom-20 left-0 right-0 t:bottom-24 d:bottom-4 d:left-50 py-4 flex items-center justify-center gap-0 z-50">
+        <div className="fixed bottom-20 left-0 right-0 t:bottom-4 d:bottom-4 d:left-50 py-4 flex items-center justify-center gap-0 z-50">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
