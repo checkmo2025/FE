@@ -26,7 +26,7 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
     setIsLoading(true);
     try {
       await authService.signup({ email, password });
-      await authService.login({ email, password });
+      await authService.login({ identifier: email, password });
       onNext();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "회원가입 중 오류가 발생했습니다.";
