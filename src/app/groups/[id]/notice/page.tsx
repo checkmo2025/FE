@@ -76,7 +76,7 @@ export default function GroupNoticePage() {
   };
 
   return (
-    <div className="w-full relative">
+    <div className="w-full relative mx-3">
       {/* 비어있을 때 */}
       {isEmpty && (
         <div className="w-full min-h-[240px] flex items-center justify-center">
