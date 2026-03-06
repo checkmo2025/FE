@@ -105,18 +105,18 @@ export default function LoginModal({
               {/* 인풋 필드 */}
               <div className={styles.inputWrapper}>
                 <input
-                  name="email"
+                  name="identifier"
                   type="text"
-                  value={form.email}
+                  value={form.identifier}
                   onChange={handleChange}
                   placeholder="이메일"
-                  className={`${styles.input} ${errors?.email ? styles.inputError : ""
+                  className={`${styles.input} ${errors?.identifier ? styles.inputError : ""
                     }`}
                   onKeyDown={handleKeyDown}
                   disabled={isLoading}
                 />
-                {errors?.email && (
-                  <span className={styles.errorMessage}>{errors.email}</span>
+                {errors?.identifier && (
+                  <span className={styles.errorMessage}>{errors.identifier}</span>
                 )}
                 <div className={styles.passwordWrapper}>
                   <input
