@@ -148,14 +148,7 @@ export default function NewBookshelfPage() {
       location: meetingLocation.trim(),
       generation: Number(generation),
       tag: tagString,
-      bookInfo: {
-        isbn: selectedBook.isbn,
-        title: selectedBook.title,
-        author: selectedBook.author,
-        imgUrl: selectedBook.imgUrl,
-        publisher: selectedBook.publisher,
-        description: selectedBook.description,
-      },
+      isbn: selectedBook.isbn,
     };
 
     try {
@@ -269,7 +262,7 @@ export default function NewBookshelfPage() {
                 </button>
                 {isGenerationOpen && (
                   <div className="absolute left-0 mt-1 w-full rounded-[8px] border border-Subbrown-4 bg-White shadow-lg z-10">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((num) => (
                       <button
                         key={num}
                         type="button"

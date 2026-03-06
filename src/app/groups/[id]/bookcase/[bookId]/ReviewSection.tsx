@@ -52,7 +52,7 @@ export default function ReviewSection({
   const [newRating, setNewRating] = useState<number>(0);
 
   const handleSend = (text: string) => {
-    if (newRating < 1) {
+    if (newRating < 0.5) {
       toast.error("별점을 선택해 주세요.");
       return false;
     }

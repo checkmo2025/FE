@@ -57,14 +57,8 @@ export type CreateBookshelfRequest = {
   location: string;
   generation: number;
   tag: string;
-  bookInfo: {
-    isbn: string;
-    title: string;
-    author: string;
-    imgUrl: string;
-    publisher: string;
-    description: string;
-  };
+  isbn: string;
+
 };
 
 export type CreateBookshelfResult = string;
