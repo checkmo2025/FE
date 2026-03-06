@@ -77,8 +77,8 @@ export default function BookcaseCard({
       {/* 3. 정보 및 액션 영역 */}
       <div className="flex flex-col items-start gap-[24px] self-stretch">
         {/* 책 정보 */}
-        <div className="flex w-[115px] flex-col items-start gap-[4px]">
-          <div className="flex w-[61px] flex-col items-start">
+        <div className="flex w-full flex-col items-start gap-[4px]">
+          <div className="flex w-full flex-col items-start">
             <span className="self-stretch truncate body_1 text-Gray-7">
               {title}
             </span>
