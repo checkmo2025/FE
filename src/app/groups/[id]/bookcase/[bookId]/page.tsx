@@ -29,6 +29,8 @@ import {
   useDeleteBookshelfMutation,
 } from "@/hooks/mutations/useClubsBookshelfMutations";
 
+import { useAuthStore } from "@/store/useAuthStore";
+
 function isTabKey(v: string | null): v is TabKey {
   return v === "topic" || v === "review" || v === "meeting";
 }
@@ -46,9 +48,11 @@ export default function BookDetailPage() {
   const meetingId = Number(meetingIdParam);
 
   const [activeTab, setActiveTab] = useState<TabKey>("meeting");
+  
+  const { user } = useAuthStore();
 
-  const [myProfileImageUrl] = useState("/profile4.svg");
-  const [myName] = useState("My_Name");
+  const myName = user?.nickname ?? "My_Name";
+  const myProfileImageUrl = user?.profileImageUrl ?? "/profile4.svg";
 
   const [isDebateWriting, setIsDebateWriting] = useState(false);
   const [isReviewWriting, setIsReviewWriting] = useState(false);

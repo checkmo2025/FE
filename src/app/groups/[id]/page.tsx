@@ -61,7 +61,7 @@ export default function GroupDetailPage() {
   const me = meQuery.data!;
   const home = homeQuery.data!;
   const latestNotice = latestNoticeQuery.data; // null/undefined 가능
-  const nextMeeting = nextMeetingQuery.data; // null/undefined 가능
+  
 
   const isAdmin = me.staff === true;
 
@@ -74,10 +74,11 @@ export default function GroupDetailPage() {
 
   const participantText = (home.participantTypes ?? []).map((p) => p.description).join(", ");
 
-  const joinUrl = nextMeeting?.redirectUrl ?? null;
+  // 다음 모임
+  const nextMeeting = nextMeetingQuery.data; // null 가능
+  const joinMeetingId = nextMeeting?.meetingId ?? null;
+  const joinUrl = joinMeetingId ? `/groups/${groupId}/bookcase/${joinMeetingId}` : null;
 
-  // home.links는 [{link,label}] 형식이라 기존 UI의 contactUrl/modalLinks랑 1:1 매칭이 없음
-  // UI 깨지지 않게: 링크 목록을 contact 모달에 그냥 뿌리는 방식으로 연결
   const modalLinks = useMemo(() => {
     const list = home.links ?? [];
     return list

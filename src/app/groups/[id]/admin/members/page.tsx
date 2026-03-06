@@ -163,12 +163,12 @@ function RoleEditDropdown({
         <div className="flex w-full h-11 items-center gap-3 px-4 body_1_2 text-Gray-4">
           <Image
             src="/leader.svg"
-            alt="소유자"
+            alt="개설자"
             width={24}
             height={24}
             className="object-contain"
           />
-          <span>소유자</span>
+          <span>개설자</span>
         </div>
       </div>
     );
