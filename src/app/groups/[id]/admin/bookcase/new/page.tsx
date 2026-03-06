@@ -359,12 +359,12 @@ export default function NewBookshelfPage() {
 
                     const dt = parseDateDotToLocalDate(next);
                     if (!dt) {
-                      setMeetingDateError('날짜 형식이 아니거나 현재날짜보다 작습니다.');
+                      setMeetingDateError('날짜 형식이 아니거나 현재날짜보다 과거입니다.');
                       return;
                     }
 
                     if (isBeforeTodayLocal(dt)) {
-                      setMeetingDateError('날짜 형식이 아니거나 현재날짜보다 작습니다.');
+                      setMeetingDateError('날짜 형식이 아니거나 현재날짜보다 과거입니다.');
                       return;
                     }
 

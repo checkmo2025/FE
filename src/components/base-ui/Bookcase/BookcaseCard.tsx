@@ -43,10 +43,27 @@ export default function BookcaseCard({
   };
 
   return (
-    // 1. 카드 컨테이너
     <div
-      className="flex flex-col items-center justify-center gap-[16px] rounded-[8px] border border-Subbrown-4 bg-White p-[20px]
-      w-[166px] t:w-[200px]"
+      role="button"
+      tabIndex={0}
+      onClick={onMeetingClick}
+      onKeyDown={(e) => {
+        if (!onMeetingClick) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onMeetingClick();
+        }
+      }}
+      className="
+        flex flex-col items-center justify-center gap-[16px]
+        rounded-[8px] border border-Subbrown-4 bg-White p-[20px]
+        w-[166px] t:w-[200px]
+        shadow-[0_2px_12px_rgba(0,0,0,0.08)]
+        hover:shadow-[0_6px_18px_rgba(0,0,0,0.12)]
+        transition-[box-shadow,transform]
+        hover:-translate-y-[1px]
+        cursor-pointer
+      "
     >
       {/* 2. 이미지 영역 */}
       <div
@@ -86,7 +103,11 @@ export default function BookcaseCard({
 
         {/* 액션 리스트 및 별점 */}
         <div className="flex flex-col items-start gap-[8px] self-stretch">
-          <div className="flex flex-col items-start self-stretch ">
+          <div
+            className="flex flex-col items-start self-stretch"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+          >
             {[
               { label: "발제", onClick: onTopicClick },
               { label: "한줄평", onClick: onReviewClick },
@@ -96,7 +117,11 @@ export default function BookcaseCard({
               .map((item) => (
                 <button
                   key={item.label}
-                  onClick={item.onClick}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    item.onClick?.();
+                  }}
                   className="flex items-center justify-between self-stretch border-b border-Subbrown-4 p-[4px] hover:bg-Gray-1 transition-colors cursor-pointer"
                 >
                   <span className="body_2_2 text-Gray-7">{item.label}</span>
