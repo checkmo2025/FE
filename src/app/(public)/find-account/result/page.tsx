@@ -15,7 +15,7 @@ export default function FindAccountResultPage() {
     };
 
     const handleReissuePassword = () => {
-        console.log("비밀번호 재발급 클릭");
+        router.push("/find-password");
     };
 
     return (
