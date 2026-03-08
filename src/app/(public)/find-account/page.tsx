@@ -25,23 +25,24 @@ export default function FindAccountPage() {
             className="min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat py-12"
             style={{ backgroundImage: "url('/background.png')" }}
         >
-            {/* 세로 길이를 줄이기 위해 고정 높이나 너무 큰 gap을 조정했습니다. */}
             <div
-                className="flex w-[766px] px-[120px] py-[80px] flex-col items-center justify-center gap-[60px] rounded-lg bg-white shadow-xl"
+                className="flex w-[766px] px-[120px] py-[99px] items-center justify-center flex-col gap-[30px] rounded-lg bg-white shadow-xl"
             >
                 {/* 상단 텍스트 및 로고 영역 */}
-                <div className="flex flex-col items-center gap-[24px] w-full">
-                    <LoginLogo />
-                    <h1 className="text-primary-2 text-center subhead_1">
-                        아이디<br />
-                        <span className="text-Gray-[434343] subhead_4_1">(이메일 찾기)</span>
-                    </h1>
-                    <p className="text-Gray-6 text-center subhead_1 mt-[16px]">
+                <div className="flex flex-col items-center gap-[80px] w-full">
+                    <div className="flex flex-col items-center gap-[24px]">
+                        <LoginLogo />
+                        <h1 className="text-primary-2 text-center subhead_1">
+                            아이디<br />
+                            <span className="text-Gray-[434343] subhead_4_1">(이메일 찾기)</span>
+                        </h1>
+                    </div>
+                    <p className="text-Gray-6 text-center subhead_1">
                         이름과 전화번호를 입력해주세요
                     </p>
                 </div>
 
-                <div className="flex flex-col items-center gap-[60px] w-full">
+                <div className="flex flex-col items-center gap-[140px]">
                     {/* 폼 영역 */}
                     <div className="flex flex-col items-start gap-[24px] w-full max-w-[526px]">
                         <div className="flex h-[44px] px-[16px] py-[12px] items-center gap-[10px] self-stretch rounded-lg border border-Subbrown-4 bg-White">

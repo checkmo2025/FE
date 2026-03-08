@@ -23,8 +23,7 @@ export default function FindAccountResultPage() {
             className="min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat py-12"
             style={{ backgroundImage: "url('/background.png')" }}
         >
-            {/* 세로 길이를 줄이기 위해 py를 줄이고 gap을 조정했습니다. */}
-            <div className="flex w-[766px] px-[120px] py-[80px] flex-col items-center justify-center gap-[80px] rounded-lg bg-white shadow-xl">
+            <div className="flex w-[766px] px-[120px] py-[80px] flex-col items-center justify-center gap-[30px] rounded-lg bg-white shadow-xl">
 
                 {/* 상단 텍스트 및 로고 영역 */}
                 <div className="flex flex-col items-center gap-[24px] w-full">
