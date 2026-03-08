@@ -33,7 +33,8 @@ export default function FindAccountPage() {
                     <div className="flex flex-col items-center gap-[24px]">
                         <LoginLogo />
                         <h1 className="text-primary-2 text-center subhead_1">
-                            아이디 (이메일 찾기)
+                            아이디<br />
+                            <span className="text-Gray-[434343] subhead_4_1">(이메일 찾기)</span>
                         </h1>
                     </div>
                     <p className="text-Gray-6 text-center subhead_1">
@@ -50,7 +51,7 @@ export default function FindAccountPage() {
                                 placeholder="이름"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="flex flex-col justify-center flex-1 self-stretch text-Gray-3 body_1_3 outline-none placeholder:text-Gray-3"
+                                className="flex flex-col justify-center flex-1 self-stretch text-Black body_1_3 outline-none placeholder:text-Gray-3"
                             />
                         </div>
 
@@ -60,7 +61,7 @@ export default function FindAccountPage() {
                                 placeholder="전화번호"
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
-                                className="flex flex-col justify-center flex-1 self-stretch text-Gray-3 body_1_3 outline-none placeholder:text-Gray-3"
+                                className="flex flex-col justify-center flex-1 self-stretch text-Black body_1_3 outline-none placeholder:text-Gray-3"
                             />
                         </div>
                     </div>
