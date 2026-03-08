@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/useAuthStore";
 import { LoginForm } from "@/types/auth";
 import { authService } from "@/services/authService";
@@ -8,6 +9,7 @@ import { ApiError } from "@/lib/api/errors";
 
 export default function useLoginForm(onSuccess?: () => void) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const login = useAuthStore((state) => state.login);
   const [form, setForm] = useState<LoginForm>({ identifier: "", password: "" });
 
@@ -66,6 +68,8 @@ export default function useLoginForm(onSuccess?: () => void) {
       }
 
       // 2. Navigation & UI Feedback
+      queryClient.clear();
+      router.refresh();
       toast.success("로그인에 성공했습니다!");
       if (onSuccess) onSuccess();
       router.push("/");
