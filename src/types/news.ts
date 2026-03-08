@@ -3,6 +3,7 @@ export interface NewsBasicInfo {
     title: string;
     description: string;
     thumbnailUrl: string;
+    carousel: "PROMOTION" | "GENERAL";
     publishStartAt: string;
 }
 
