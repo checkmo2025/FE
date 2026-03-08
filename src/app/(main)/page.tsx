@@ -245,7 +245,6 @@ export default function HomePage() {
           onClick={() => openLoginModal()}
           className="fixed bottom-21 right-4 t:bottom-8 t:right-8 z-[60] flex items-center justify-center w-auto h-[48px] px-6 bg-[#7B6154] text-white rounded-full shadow-lg hover:bg-[#5E4A40] transition-colors gap-2"
         >
-          <Image src="/after_home.svg" alt="" width={20} height={20} className="brightness-0 invert" />
           <span className="font-semibold">로그인 하기</span>
         </button>
       )}
