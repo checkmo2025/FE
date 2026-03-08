@@ -17,7 +17,6 @@ export const useAuthGuard = () => {
         // 초기화가 끝났을 때만 로그인 여부를 체크하여 리다이렉트합니다.
         if (isInitialized && !isLoggedIn) {
             if (!toastShownRef.current) {
-                toast.error("로그인이 필요한 서비스입니다.");
                 toastShownRef.current = true;
             }
             openLoginModal();

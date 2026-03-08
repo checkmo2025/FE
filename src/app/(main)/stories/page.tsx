@@ -141,7 +141,6 @@ export default function StoriesPage() {
 
   const handleCreateStory = () => {
     if (!isLoggedIn) {
-      toast.error("글 작성하기는 로그인이 필요한 서비스입니다.", { id: "story-create-auth-error" });
       openLoginModal();
       return;
     }
