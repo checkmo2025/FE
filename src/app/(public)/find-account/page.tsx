@@ -26,10 +26,10 @@ export default function FindAccountPage() {
             style={{ backgroundImage: "url('/background.png')" }}
         >
             <div
-                className="flex w-[766px] px-[120px] py-[99px] items-center justify-center flex-col gap-[40px] rounded-lg bg-white shadow-xl"
+                className="flex w-[766px] px-[120px] py-[99px] items-center justify-center flex-col gap-[30px] rounded-lg bg-white shadow-xl"
             >
                 {/* 상단 텍스트 및 로고 영역 */}
-                <div className="flex flex-col items-center gap-[100px] w-full">
+                <div className="flex flex-col items-center gap-[80px] w-full">
                     <div className="flex flex-col items-center gap-[24px]">
                         <LoginLogo />
                         <h1 className="text-primary-2 text-center subhead_1">
@@ -42,7 +42,7 @@ export default function FindAccountPage() {
                     </p>
                 </div>
 
-                <div className="flex flex-col items-center gap-[180px]">
+                <div className="flex flex-col items-center gap-[140px]">
                     {/* 폼 영역 */}
                     <div className="flex flex-col items-start gap-[24px] w-full">
                         <div className="flex h-[44px] px-[16px] py-[12px] items-center gap-[10px] self-stretch rounded-lg border border-Subbrown-4 bg-White">
