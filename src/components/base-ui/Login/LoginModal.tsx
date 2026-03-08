@@ -146,7 +146,10 @@ export default function LoginModal({
 
               {/* 아이디/비번 찾기 */}
               <div className={styles.findAccount}>
-                <span className={styles.link} onClick={onFindAccount}>
+                <span className={styles.link} onClick={() => {
+                  onClose();
+                  router.push('/find-account');
+                }}>
                   아이디 찾기
                 </span>
                 <span className={styles.divider}>|</span>
