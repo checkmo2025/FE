@@ -1,217 +1,160 @@
 "use client";
 
-import { useId, useState } from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  createAdminNewsWithImages,
+} from "@/lib/api/admin/news";
+import NewsNewForm from "@/components/base-ui/Admin/news/NewForm";
 
 export default function AdminNewsNewPage() {
-  const repImgId = useId();
-  const extraImgId = useId();
+  const router = useRouter();
 
+  // 폼 상태
+  const [requesterEmail, setRequesterEmail] = useState("");
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [originalLink, setOriginalLink] = useState("");
+  const [dateRange, setDateRange] = useState("");
+
+  // 파일 상태(업로드용)
+  const [repFile, setRepFile] = useState<File | null>(null);
+  const [extraFiles, setExtraFiles] = useState<File[]>([]);
+
+  // UI용(미리보기)
   const [repPreview, setRepPreview] = useState<string | null>(null);
-  const [extraPreview, setExtraPreview] = useState<string | null>(null);
+  const [extraPreviews, setExtraPreviews] = useState<string[]>([]);
 
-  const onPickImage =
-    (setter: (v: string | null) => void) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
+  const [submitting, setSubmitting] = useState(false);
 
-      const url = URL.createObjectURL(file);
-      setter(url);
-    };
+  const onPickRepImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // 업로드용 파일 저장
+    setRepFile(file);
+
+    // 미리보기
+    setRepPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
+
+    e.target.value = "";
+  };
+
+  const onPickExtraImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+
+    // ✅ 최대 5장
+    const merged = [...extraFiles, ...files].slice(0, 5);
+
+    // 기존 preview 정리
+    extraPreviews.forEach((u) => URL.revokeObjectURL(u));
+
+    // merged 기준으로 다시 생성
+    const previews = merged.map((f) => URL.createObjectURL(f));
+
+    setExtraFiles(merged);
+    setExtraPreviews(previews);
+
+    e.target.value = "";
+  };
+
+  const removeExtraAt = (idx: number) => {
+    setExtraFiles((prev) => prev.filter((_, i) => i !== idx));
+    setExtraPreviews((prev) => {
+      const target = prev[idx];
+      if (target) URL.revokeObjectURL(target);
+      return prev.filter((_, i) => i !== idx);
+    });
+  };
+
+  const parseDateRange = (v: string) => {
+    const raw = v.trim();
+    const parts = raw.split("~").map((s) => s.trim());
+    if (parts.length !== 2) return null;
+
+    const toISO = (s: string) => s.replaceAll("/", "-");
+    const publishStartAt = toISO(parts[0]);
+    const publishEndAt = toISO(parts[1]);
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(publishStartAt)) return null;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(publishEndAt)) return null;
+
+    return { publishStartAt, publishEndAt };
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (submitting) return;
+
+    if (!requesterEmail.trim()) return alert("회원 이메일을 입력해주세요.");
+    if (!title.trim()) return alert("소식 제목을 입력해주세요.");
+    if (!content.trim()) return alert("소식 내용을 입력해주세요.");
+    if (!originalLink.trim()) return alert("원본 링크를 입력해주세요.");
+
+    const parsed = parseDateRange(dateRange);
+    if (!parsed) {
+      return alert("게시 요청 날짜 형식이 올바르지 않아요. (YYYY/MM/DD~YYYY/MM/DD)");
+    }
+
+    try {
+      setSubmitting(true);
+
+      // S3 업로드 + POST 한번에 처리
+      const res = await createAdminNewsWithImages({
+        title: title.trim(),
+        requesterEmail: requesterEmail.trim(),
+        content: content.trim(),
+        originalLink: originalLink.trim(),
+        publishStartAt: parsed.publishStartAt,
+        publishEndAt: parsed.publishEndAt,
+
+        thumbnailFile: repFile, // 대표이미지
+        imageFiles: extraFiles, // 기타이미지
+        uploadType: "NOTICE",
+      });
+
+      if (!res.isSuccess) throw new Error(res.message || "소식 등록 실패");
+
+      alert(`소식 등록 완료! (ID: ${res.result})`);
+      router.push("/admin/news");
+      router.refresh();
+    } catch (err) {
+      console.error(err);
+      alert("소식 등록 실패");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-[var(--background)]">
-      {/* Content */}
       <section className="mx-auto w-full px-6 py-10">
         <div className="rounded-[12px] bg-transparent">
-          <form className="mx-auto w-full max-w-[1040px] space-y-[40px]">
-            {/* 회원 이메일 */}
-            <div className="space-y-3">
-              <FieldLabel label="회원 이메일" required />
-              <button
-                type="button"
-                className="
-                  h-[56px] w-full
-                  rounded-[6px] border border-[var(--Subbrown_4)] bg-[var(--White)]
-                  text-[18px] font-normal leading-[135%] tracking-[-0.018px]
-                  text-[var(--Black)]
-                  underline text-center
-                  hover:bg-[var(--background)]
-                "
-              >
-                선택하기
-              </button>
-            </div>
-
-            {/* 소식 제목 */}
-            <div className="space-y-3">
-              <FieldLabel label="소식 제목" required />
-              <input
-                className="
-                  h-[56px] w-full rounded-[6px]
-                  border border-[var(--Subbrown_4)] bg-[var(--White)] px-4
-                  body_1_3 text-[var(--Gray_7)]
-                  placeholder:body_1_3 placeholder:text-[var(--Gray_3)]
-                  focus:outline-none focus:ring-2 focus:ring-[var(--Primary_1)]/20
-                "
-                placeholder="소식 제목을 입력해주세요 (최대 40자 이내)"
-              />
-            </div>
-
-            {/* 대표이미지 등록 */}
-            <div className="space-y-3">
-              <FieldLabel label="대표이미지 등록" required />
-              <UploadBox
-                inputId={repImgId}
-                preview={repPreview}
-                onChange={onPickImage(setRepPreview)}
-              />
-            </div>
-
-            {/* 기타이미지 등록 */}
-            <div className="space-y-3">
-              <FieldLabel label="기타이미지 등록" />
-              <UploadBox
-                inputId={extraImgId}
-                preview={extraPreview}
-                onChange={onPickImage(setExtraPreview)}
-              />
-            </div>
-
-            {/* 프로모션 여부 */}
-            <div className="space-y-3">
-              <FieldLabel label="프로모션 여부" className="text-[var(--Gray_6)]" />
-              <div className="flex items-center gap-3 body_1_3 text-[var(--Gray_6)]">
-                <Radio name="promo" label="모임별" />
-                <Radio name="promo" label="지역별" />
-              </div>
-            </div>
-
-            {/* 소식 내용 */}
-            <div className="space-y-3">
-              <FieldLabel label="소식 내용" required />
-              <textarea
-                className="
-                  h-[720px] w-full resize-none rounded-[6px]
-                  border border-[var(--Subbrown_4)] bg-[var(--White)] p-4
-                  body_1_3 text-[var(--Gray_7)]
-                  placeholder:body_1_3 placeholder:text-[var(--Gray_3)]
-                  focus:outline-none focus:ring-2 focus:ring-[var(--Primary_1)]/20
-                "
-                placeholder="행사 일정, 장소, 주최 정보 등 이용자에게 전달하고 싶은 내용을 자유롭게 작성해주세요. (최대 5000자)"
-              />
-            </div>
-
-            {/* 게시 요청 날짜 */}
-            <div className="space-y-3">
-              <FieldLabel label="게시 요청 날짜" required />
-              <input
-                className="
-                  h-[56px] w-full rounded-[6px]
-                  border border-[var(--Subbrown_4)] bg-[var(--White)] px-4
-                  body_1_3 text-[var(--Gray_7)]
-                  placeholder:body_1_3 placeholder:text-[var(--Gray_3)]
-                  focus:outline-none focus:ring-2 focus:ring-[var(--Primary_1)]/20
-                "
-                placeholder="형식 : YYYY/MM/DD~YYYY/MM/DD"
-              />
-            </div>
-
-            {/* Submit */}
-            <div className="flex justify-end pt-2">
-              <button
-                type="submit"
-                className="
-                  h-[48px] w-[148px] rounded-[8px]
-                  bg-[var(--Primary_1)]
-                  body_1 text-[var(--White)]
-                  hover:opacity-95
-                "
-              >
-                소식 등록
-              </button>
-            </div>
-          </form>
+          <NewsNewForm
+            requesterEmail={requesterEmail}
+            title={title}
+            content={content}
+            dateRange={dateRange}
+            originalLink={originalLink}
+            setRequesterEmail={setRequesterEmail}
+            setTitle={setTitle}
+            setContent={setContent}
+            setDateRange={setDateRange}
+            setOriginalLink={setOriginalLink}
+            repPreview={repPreview}
+            extraPreviews={extraPreviews}
+            onPickRepImage={onPickRepImage}
+            onPickExtraImages={onPickExtraImages}
+            removeExtraAt={removeExtraAt}
+            submitting={submitting}
+            onSubmit={onSubmit}
+          />
         </div>
       </section>
     </main>
-  );
-}
-
-function FieldLabel({
-  label,
-  required,
-  className = "",
-}: {
-  label: string;
-  required?: boolean;
-  className?: string;
-}) {
-  return (
-    <div className={`flex items-center gap-1 subhead_4_1 text-[var(--Gray_7)] ${className}`}>
-      <span>{label}</span>
-      {required ? <span className="text-[var(--Red)]">*</span> : null}
-    </div>
-  );
-}
-
-function Radio({ name, label }: { name: string; label: string }) {
-  const id = useId();
-  return (
-    <label htmlFor={id} className="flex cursor-pointer items-center gap-2 body_1_3 text-[var(--Gray_6)]">
-      <input
-        id={id}
-        name={name}
-        type="radio"
-        className="h-4 w-4 accent-[var(--Primary_1)]"
-      />
-      <span>{label}</span>
-    </label>
-  );
-}
-
-function UploadBox({
-  inputId,
-  preview,
-  onChange,
-}: {
-  inputId: string;
-  preview: string | null;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
-  return (
-    <div className="relative">
-      <input id={inputId} type="file" accept="image/*" className="hidden" onChange={onChange} />
-
-      <label
-        htmlFor={inputId}
-        className="
-          flex h-[56px] w-full cursor-pointer items-center justify-center
-          rounded-[8px] border border-[var(--Subbrown_4)] bg-[var(--Gray_1)]
-          hover:opacity-95
-        "
-        title="이미지 선택"
-      >
-        {preview ? (
-          <div className="flex items-center gap-3 px-4">
-            <div className="h-8 w-8 overflow-hidden rounded bg-[var(--White)]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={preview} alt="preview" className="h-full w-full object-cover" />
-            </div>
-            <span className="body_1_3 text-[var(--Gray_7)]">이미지 선택됨 (변경하려면 클릭)</span>
-          </div>
-        ) : (
-          <PlusIcon />
-        )}
-      </label>
-    </div>
-  );
-}
-
-function PlusIcon() {
-  return (
-    <span className="text-[40px] font-thin leading-none text-[var(--Black)]">
-      +
-    </span>
   );
 }

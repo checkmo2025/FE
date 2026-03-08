@@ -1,20 +1,63 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import LoginLogo from "@/components/base-ui/Login/LoginLogo";
 import Toast from "@/components/common/Toast";
 
 export default function AdminLoginPage() {
+  const router = useRouter();
+
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
-  const isDisabled = !id.trim() || !pw.trim();
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isDisabled) return;
-    setToastMsg("토스트 테스트");
-  };
+  const isDisabled = !id.trim() || !pw.trim() || loading;
+
+  const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (isDisabled) return;
+
+  try {
+    setLoading(true);
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email: id, password: pw }),
+      }
+    );
+
+    // JSON 파싱 안전하게
+    let data: { isSuccess?: boolean; message?: string } = {};
+    try {
+      data = await res.json();
+    } catch {
+      // json이 아니면 빈 객체로 처리
+    }
+
+    if (!res.ok) {
+      throw new Error(data.message ?? "로그인 실패");
+    }
+
+    if (!data.isSuccess) {
+      throw new Error(data.message ?? "로그인 실패");
+    }
+
+    setToastMsg("로그인 성공");
+    setTimeout(() => router.push("/admin"), 800);
+
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "로그인 실패";
+    setToastMsg(message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <main className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -42,7 +85,7 @@ export default function AdminLoginPage() {
               bg-White
               body_1_3 outline-none
             "
-            placeholder="아이디"
+            placeholder="이메일"
           />
 
           <input
@@ -76,7 +119,7 @@ export default function AdminLoginPage() {
               }
             `}
           >
-            로그인
+            {loading ? "로그인 중..." : "로그인"}
           </button>
         </form>
 
