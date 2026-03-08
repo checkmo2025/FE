@@ -4,11 +4,12 @@ import { notFound } from "next/navigation";
 import { fetchAdminNewsDetail } from "@/lib/api/admin/news";
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export default async function AdminNewsDetailPage({ params }: Props) {
-  const newsId = Number(params.id);
+  const { id } = await params;
+  const newsId = Number(id);
 
   if (Number.isNaN(newsId)) {
     notFound();

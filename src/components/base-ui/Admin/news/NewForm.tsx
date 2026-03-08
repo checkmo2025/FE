@@ -4,6 +4,8 @@ import React, { useId, useState } from "react";
 import { FieldLabel, UploadBox, UploadBoxMulti } from "./formParts";
 import EmailSelectModal from "@/components/base-ui/Admin/news/EmailSelectModal";
 
+type CarouselType = "PROMOTION" | "GENERAL";
+
 type Props = {
   // 값들
   requesterEmail: string;
@@ -11,6 +13,7 @@ type Props = {
   content: string;
   dateRange: string;
   originalLink: string;
+  carousel: CarouselType;
 
   // (선택) URL 기반 이미지
   thumbnailUrl?: string;
@@ -22,6 +25,7 @@ type Props = {
   setContent: (v: string) => void;
   setDateRange: (v: string) => void;
   setOriginalLink: (v: string) => void;
+  setCarousel: (v: CarouselType) => void;
 
   setThumbnailUrl?: (v: string) => void;
   setImageUrlsText?: (v: string) => void;
@@ -36,6 +40,10 @@ type Props = {
   // submit
   submitting: boolean;
   onSubmit: (e: React.FormEvent) => void;
+
+  // 버튼 문구
+  submitLabel?: string;
+  submittingLabel?: string;
 };
 
 export default function NewForm({
@@ -44,12 +52,14 @@ export default function NewForm({
   content,
   dateRange,
   originalLink,
+  carousel,
 
   setRequesterEmail,
   setTitle,
   setContent,
   setDateRange,
   setOriginalLink,
+  setCarousel,
 
   repPreview,
   extraPreviews,
@@ -59,11 +69,13 @@ export default function NewForm({
 
   submitting,
   onSubmit,
+
+  submitLabel = "소식 등록",
+  submittingLabel = "등록 중...",
 }: Props) {
   const repImgId = useId();
   const extraImgId = useId();
 
-  // 모달 open 상태 (NewForm 내부에서만 관리)
   const [emailModalOpen, setEmailModalOpen] = useState(false);
 
   return (
@@ -72,7 +84,6 @@ export default function NewForm({
         className="mx-auto w-full max-w-[1040px] space-y-[40px]"
         onSubmit={onSubmit}
       >
-        {/* 회원 이메일 */}
         <div className="space-y-3">
           <FieldLabel label="회원 이메일" required />
           <button
@@ -91,7 +102,6 @@ export default function NewForm({
           </button>
         </div>
 
-        {/* 소식 제목 */}
         <div className="space-y-3">
           <FieldLabel label="소식 제목" required />
           <input
@@ -109,7 +119,6 @@ export default function NewForm({
           />
         </div>
 
-        {/* 대표이미지 등록 */}
         <div className="space-y-3">
           <FieldLabel label="대표이미지 등록" />
           <UploadBox
@@ -119,7 +128,6 @@ export default function NewForm({
           />
         </div>
 
-        {/* 기타이미지 등록 */}
         <div className="space-y-3">
           <FieldLabel label="기타이미지 등록" />
           <UploadBoxMulti
@@ -130,7 +138,35 @@ export default function NewForm({
           />
         </div>
 
-        {/* 소식 내용 */}
+        <div className="space-y-3">
+          <FieldLabel label="프로모션 여부" />
+          <div className="flex items-center gap-[32px]">
+            <label className="flex items-center gap-[8px] cursor-pointer text-[18px] font-medium leading-[135%] tracking-[-0.018px] text-[var(--Gray_6)]">
+              <input
+                type="radio"
+                name="carousel"
+                value="PROMOTION"
+                checked={carousel === "PROMOTION"}
+                onChange={() => setCarousel("PROMOTION")}
+                className="h-5 w-5 accent-[var(--Primary_1)]"
+              />
+              <span>모임별</span>
+            </label>
+
+            <label className="flex items-center gap-[8px] cursor-pointer text-[18px] font-medium leading-[135%] tracking-[-0.018px] text-[var(--Gray_6)]">
+              <input
+                type="radio"
+                name="carousel"
+                value="GENERAL"
+                checked={carousel === "GENERAL"}
+                onChange={() => setCarousel("GENERAL")}
+                className="h-5 w-5 accent-[var(--Primary_1)]"
+              />
+              <span>지역별</span>
+            </label>
+          </div>
+        </div>
+
         <div className="space-y-3">
           <FieldLabel label="소식 내용" required />
           <textarea
@@ -148,7 +184,6 @@ export default function NewForm({
           />
         </div>
 
-        {/* 게시 요청 날짜 */}
         <div className="space-y-3">
           <FieldLabel label="게시 요청 날짜" required />
           <input
@@ -165,7 +200,6 @@ export default function NewForm({
           />
         </div>
 
-        {/* 원본 링크 */}
         <div className="space-y-3">
           <FieldLabel label="원본 링크" required />
           <input
@@ -182,7 +216,6 @@ export default function NewForm({
           />
         </div>
 
-        {/* Submit */}
         <div className="flex justify-end pt-2">
           <button
             type="submit"
@@ -195,12 +228,11 @@ export default function NewForm({
               disabled:opacity-50 disabled:cursor-not-allowed
             "
           >
-            {submitting ? "등록 중..." : "소식 등록"}
+            {submitting ? submittingLabel : submitLabel}
           </button>
         </div>
       </form>
 
-      {/* Email 선택 모달 */}
       <EmailSelectModal
         open={emailModalOpen}
         onClose={() => setEmailModalOpen(false)}

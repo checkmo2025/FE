@@ -1,14 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { createAdminNewsWithImages } from "@/lib/api/admin/news";
+import React, { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import NewsNewForm from "@/components/base-ui/Admin/news/NewForm";
+import {
+  fetchAdminNewsDetail,
+  updateAdminNewsWithImages,
+} from "@/lib/api/admin/news";
 
 type CarouselType = "PROMOTION" | "GENERAL";
 
-export default function AdminNewsNewPage() {
+export default function AdminNewsEditPage() {
   const router = useRouter();
+  const params = useParams();
+  const newsId = Number(params.id);
 
   // 폼 상태
   const [requesterEmail, setRequesterEmail] = useState("");
@@ -17,6 +22,10 @@ export default function AdminNewsNewPage() {
   const [originalLink, setOriginalLink] = useState("");
   const [dateRange, setDateRange] = useState("");
   const [carousel, setCarousel] = useState<CarouselType>("PROMOTION");
+
+  // 기존 이미지 URL 상태(서버에 다시 보낼 용도)
+  const [existingThumbnailUrl, setExistingThumbnailUrl] = useState<string | null>(null);
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
 
   // 파일 상태(업로드용)
   const [repFile, setRepFile] = useState<File | null>(null);
@@ -28,6 +37,38 @@ export default function AdminNewsNewPage() {
 
   const [submitting, setSubmitting] = useState(false);
 
+  useEffect(() => {
+    if (Number.isNaN(newsId)) return;
+
+    const loadNewsDetail = async () => {
+      try {
+        const response = await fetchAdminNewsDetail(newsId);
+        const news = response.result;
+
+        setRequesterEmail(news.requesterEmail);
+        setTitle(news.title);
+        setContent(news.content);
+        setOriginalLink(news.originalLink);
+        setDateRange(
+          `${news.publishStartAt.replaceAll("-", "/")}~${news.publishEndAt.replaceAll("-", "/")}`
+        );
+        setCarousel(news.carousel);
+
+        setExistingThumbnailUrl(news.thumbnailUrl || null);
+        setExistingImageUrls(news.imageUrls ?? []);
+
+        setRepPreview(news.thumbnailUrl || null);
+        setExtraPreviews(news.imageUrls ?? []);
+      } catch (err) {
+        console.error(err);
+        alert("소식 상세 조회 실패");
+        router.push("/admin/news");
+      }
+    };
+
+    loadNewsDetail();
+  }, [newsId, router]);
+
   const onPickRepImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -35,7 +76,7 @@ export default function AdminNewsNewPage() {
     setRepFile(file);
 
     setRepPreview((prev) => {
-      if (prev) URL.revokeObjectURL(prev);
+      if (prev && prev.startsWith("blob:")) URL.revokeObjectURL(prev);
       return URL.createObjectURL(file);
     });
 
@@ -48,7 +89,9 @@ export default function AdminNewsNewPage() {
 
     const merged = [...extraFiles, ...files].slice(0, 5);
 
-    extraPreviews.forEach((u) => URL.revokeObjectURL(u));
+    extraPreviews.forEach((u) => {
+      if (u.startsWith("blob:")) URL.revokeObjectURL(u);
+    });
 
     const previews = merged.map((f) => URL.createObjectURL(f));
 
@@ -59,12 +102,17 @@ export default function AdminNewsNewPage() {
   };
 
   const removeExtraAt = (idx: number) => {
+    // 새로 추가한 파일 삭제
     setExtraFiles((prev) => prev.filter((_, i) => i !== idx));
+
+    // 기존 URL/미리보기 삭제도 함께 반영
     setExtraPreviews((prev) => {
       const target = prev[idx];
-      if (target) URL.revokeObjectURL(target);
+      if (target && target.startsWith("blob:")) URL.revokeObjectURL(target);
       return prev.filter((_, i) => i !== idx);
     });
+
+    setExistingImageUrls((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const parseDateRange = (v: string) => {
@@ -90,7 +138,6 @@ export default function AdminNewsNewPage() {
     if (!title.trim()) return alert("소식 제목을 입력해주세요.");
     if (!content.trim()) return alert("소식 내용을 입력해주세요.");
     if (!originalLink.trim()) return alert("원본 링크를 입력해주세요.");
-    if (!carousel) return alert("프로모션 여부를 선택해주세요.");
 
     const parsed = parseDateRange(dateRange);
     if (!parsed) {
@@ -100,7 +147,7 @@ export default function AdminNewsNewPage() {
     try {
       setSubmitting(true);
 
-      const res = await createAdminNewsWithImages({
+      const res = await updateAdminNewsWithImages(newsId, {
         title: title.trim(),
         requesterEmail: requesterEmail.trim(),
         content: content.trim(),
@@ -110,17 +157,19 @@ export default function AdminNewsNewPage() {
         carousel,
         thumbnailFile: repFile,
         imageFiles: extraFiles,
+        existingThumbnailUrl: existingThumbnailUrl ?? undefined,
+        existingImageUrls,
         uploadType: "NOTICE",
       });
 
-      if (!res.isSuccess) throw new Error(res.message || "소식 등록 실패");
+      if (!res.isSuccess) throw new Error(res.message || "소식 수정 실패");
 
-      alert(`소식 등록 완료! (ID: ${res.result})`);
-      router.push("/admin/news");
+      alert("소식 수정 완료!");
+      router.push(`/admin/news/${newsId}`);
       router.refresh();
     } catch (err) {
       console.error(err);
-      alert("소식 등록 실패");
+      alert("소식 수정 실패");
     } finally {
       setSubmitting(false);
     }
@@ -150,6 +199,8 @@ export default function AdminNewsNewPage() {
             removeExtraAt={removeExtraAt}
             submitting={submitting}
             onSubmit={onSubmit}
+            submitLabel="수정하기"
+            submittingLabel="수정 중..."
           />
         </div>
       </section>
