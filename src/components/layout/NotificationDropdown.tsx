@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useNotificationPreviewQuery } from "@/hooks/queries/useNotificationQueries";
 import { useRouter } from "next/navigation";
+import { formatTimeAgo } from "@/utils/time";
 
 export default function NotificationDropdown() {
     const { data: notifications, isLoading } = useNotificationPreviewQuery(5);
@@ -50,11 +51,7 @@ export default function NotificationDropdown() {
                             className={`text-[12px] leading-[145%] tracking-[-0.012px] shrink-0 ${notif.read ? "text-Gray-3 font-normal" : "text-Gray-5 font-normal"
                                 }`}
                         >
-                            {/* 날짜 형식 변환이 필요할 수 있으나 생략하거나 간단히 처리 */}
-                            {new Date(notif.createdAt).toLocaleDateString() ===
-                                new Date().toLocaleDateString()
-                                ? "오늘"
-                                : "과거"}
+                            {formatTimeAgo(notif.createdAt)}
                         </span>
                     </div>
                 ))
