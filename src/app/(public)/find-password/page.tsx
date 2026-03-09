@@ -5,18 +5,30 @@ import { useRouter } from "next/navigation";
 import LoginLogo from "@/components/base-ui/Login/LoginLogo";
 import PrimaryButton from "@/components/common/find-account/PrimaryButton";
 import InputField from "@/components/common/find-account/InputField";
+import { toast } from "react-hot-toast";
+import { useSendTempPasswordMutation } from "@/hooks/mutations/useAuthMutations";
 
 export default function FindPasswordPage() {
     const router = useRouter();
     const [email, setEmail] = useState("");
+
+    const { mutate: sendTempPassword, isPending } = useSendTempPasswordMutation();
 
     const handleBack = () => {
         router.back();
     };
 
     const handleSendTempPassword = () => {
-        // API 연동 전이므로 퍼블리싱(UI) 중심 구현
-        console.log("임시 비밀번호 전송 요청:", { email });
+        if (!email) {
+            toast.error("이메일을 입력해주세요.");
+            return;
+        }
+
+        sendTempPassword(email, {
+            onSuccess: () => {
+                router.push("/");
+            }
+        });
     };
 
     return (
@@ -48,16 +60,17 @@ export default function FindPasswordPage() {
                             placeholder="이메일"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            disabled={isPending}
                         />
                     </div>
 
                     {/* 하단 버튼 그룹 */}
                     <div className="flex items-center gap-[10px] justify-center w-full">
-                        <PrimaryButton onClick={handleBack}>
+                        <PrimaryButton onClick={handleBack} disabled={isPending}>
                             뒤로가기
                         </PrimaryButton>
-                        <PrimaryButton onClick={handleSendTempPassword}>
-                            임시 비밀번호 전송
+                        <PrimaryButton onClick={handleSendTempPassword} disabled={isPending}>
+                            {isPending ? "전송 중..." : "임시 비밀번호 전송"}
                         </PrimaryButton>
                     </div>
                 </div>
