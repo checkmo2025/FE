@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import LoginLogo from "@/components/base-ui/Login/LoginLogo";
+import PrimaryButton from "@/components/common/find-account/PrimaryButton";
+import InputField from "@/components/common/find-account/InputField";
 
 export default function FindAccountPage() {
     const router = useRouter();
@@ -34,7 +36,7 @@ export default function FindAccountPage() {
                         <LoginLogo />
                         <h1 className="text-primary-2 text-center subhead_1">
                             아이디<br />
-                            <span className="text-Gray-[434343] subhead_4_1">(이메일 찾기)</span>
+                            <span className="text-Gray-6 subhead_4_1">(이메일 찾기)</span>
                         </h1>
                     </div>
                     <p className="text-Gray-6 text-center subhead_1">
@@ -45,41 +47,28 @@ export default function FindAccountPage() {
                 <div className="flex flex-col items-center gap-[140px]">
                     {/* 폼 영역 */}
                     <div className="flex flex-col items-start gap-[24px] w-full max-w-[526px]">
-                        <div className="flex h-[44px] px-[16px] py-[12px] items-center gap-[10px] self-stretch rounded-lg border border-Subbrown-4 bg-White">
-                            <input
-                                type="text"
-                                placeholder="이름"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="flex flex-col justify-center flex-1 self-stretch text-Black body_1_3 outline-none placeholder:text-Gray-3"
-                            />
-                        </div>
-
-                        <div className="flex h-[44px] px-[16px] py-[12px] items-center gap-[10px] self-stretch rounded-lg border border-Subbrown-4 bg-White">
-                            <input
-                                type="text"
-                                placeholder="전화번호"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                className="flex flex-col justify-center flex-1 self-stretch text-Black body_1_3 outline-none placeholder:text-Gray-3"
-                            />
-                        </div>
+                        <InputField
+                            type="text"
+                            placeholder="이름"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <InputField
+                            type="tel"
+                            placeholder="전화번호"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                        />
                     </div>
 
                     {/* 하단 버튼 그룹 */}
                     <div className="flex items-center gap-[10px] justify-center w-full">
-                        <button
-                            onClick={handleBack}
-                            className="flex w-[258px] h-[48px] px-[16px] py-[12px] justify-center items-center rounded-lg bg-primary-1 text-White body_1_1 hover:bg-primary-3 transition-colors"
-                        >
+                        <PrimaryButton onClick={handleBack}>
                             뒤로가기
-                        </button>
-                        <button
-                            onClick={handleFindId}
-                            className="flex w-[258px] h-[48px] px-[16px] py-[12px] justify-center items-center rounded-lg bg-primary-1 text-White body_1_1 hover:bg-primary-3 transition-colors"
-                        >
+                        </PrimaryButton>
+                        <PrimaryButton onClick={handleFindId}>
                             아이디 찾기
-                        </button>
+                        </PrimaryButton>
                     </div>
                 </div>
             </div>

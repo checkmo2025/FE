@@ -4,6 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import LoginLogo from "@/components/base-ui/Login/LoginLogo";
 import { useAuthStore } from "@/store/useAuthStore";
+import PrimaryButton from "@/components/common/find-account/PrimaryButton";
 
 export default function FindAccountResultPage() {
     const router = useRouter();
@@ -32,7 +33,7 @@ export default function FindAccountResultPage() {
                         <LoginLogo />
                         <h1 className="text-primary-2 text-center subhead_1">
                             아이디<br />
-                            <span className="text-Gray-[434343] subhead_4_1">(이메일 찾기)</span>
+                            <span className="text-Gray-6 subhead_4_1">(이메일 찾기)</span>
                         </h1>
                     </div>
                     <p className="text-Gray-6 text-center subhead_1 self-stretch">
@@ -52,18 +53,12 @@ export default function FindAccountResultPage() {
 
                     {/* 하단 버튼 그룹 */}
                     <div className="flex items-center gap-[10px] justify-center w-full">
-                        <button
-                            onClick={handleLogin}
-                            className="flex w-[258px] h-[48px] px-[16px] py-[12px] justify-center items-center rounded-lg bg-primary-1 text-White body_1_1 hover:bg-primary-3 transition-colors"
-                        >
+                        <PrimaryButton onClick={handleLogin}>
                             로그인하기
-                        </button>
-                        <button
-                            onClick={handleReissuePassword}
-                            className="flex w-[258px] h-[48px] px-[16px] py-[12px] justify-center items-center rounded-lg bg-primary-1 text-White body_1_1 hover:bg-primary-3 transition-colors"
-                        >
+                        </PrimaryButton>
+                        <PrimaryButton onClick={handleReissuePassword}>
                             비밀번호 재발급
-                        </button>
+                        </PrimaryButton>
                     </div>
                 </div>
             </div>

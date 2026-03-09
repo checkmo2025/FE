@@ -44,13 +44,11 @@ const EyeOffIcon = () => (
 
 type Props = {
   onClose: () => void;
-  onFindAccount?: () => void;
   onSignUp?: () => void;
 };
 
 export default function LoginModal({
   onClose,
-  onFindAccount,
   onSignUp,
 }: Props) {
   const router = useRouter();
