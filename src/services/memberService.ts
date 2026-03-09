@@ -28,6 +28,15 @@ export const memberService = {
             throw new Error(response.message || "Failed to update password");
         }
     },
+    updateEmail: async (data: import("@/types/member").UpdateEmailRequest): Promise<void> => {
+        const response = await apiClient.patch<ApiResponse<unknown>>(
+            MEMBER_ENDPOINTS.UPDATE_EMAIL,
+            data
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "이메일 변경에 실패했습니다.");
+        }
+    },
     getProfile: async (): Promise<ProfileResponse> => {
         const response = await apiClient.get<ApiResponse<ProfileResponse>>(
             MEMBER_ENDPOINTS.GET_PROFILE

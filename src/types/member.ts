@@ -14,6 +14,12 @@ export interface UpdateProfileRequest {
     imgUrl?: string;
 }
 
+export interface UpdateEmailRequest {
+    currentEmail: string;
+    newEmail: string;
+    verificationCode: string;
+}
+
 export interface UpdatePasswordRequest {
     currentPassword?: string;
     newPassword?: string;

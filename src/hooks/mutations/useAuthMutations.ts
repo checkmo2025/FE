@@ -22,3 +22,23 @@ export const useSendTempPasswordMutation = () => {
         },
     });
 };
+
+export const useVerifyEmailMutation = () => {
+    return useMutation({
+        mutationFn: async ({ email, type = "SIGN_UP" }: { email: string; type?: string }) => {
+            const response = await authService.verifyEmail(email, type);
+            if (!response.isSuccess) {
+                throw new Error(response.message || "인증번호 발송에 실패했습니다.");
+            }
+            return response;
+        },
+        onSuccess: () => {
+            toast.success("인증번호가 발송되었습니다.");
+        },
+        onError: (error: any) => {
+            console.error("Failed to send verification email:", error);
+            const errorMessage = error.response?.data?.message || error.message || "인증번호 발송 로직 중 에러가 발생했습니다.";
+            toast.error(errorMessage);
+        },
+    });
+};
