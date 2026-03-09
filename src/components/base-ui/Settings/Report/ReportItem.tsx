@@ -25,14 +25,16 @@ export default function ReportItem({
       xl:w-[1000px]"
     >
       {/* 카테고리 뱃지 */}
-      <div className="flex min-w-[60px] w-fit shrink-0 items-center justify-center gap-[10px] rounded-[4px] bg-Red px-[8px] py-[4px] whitespace-nowrap">
-        <span
-          className="text-White
-          text-[12px] font-medium leading-[145%] tracking-[-0.012px]
-          md:body_2_2"
-        >
-          {category}
-        </span>
+      <div className="w-[84px] md:w-[110px] shrink-0">
+        <div className="flex min-w-[60px] w-fit items-center justify-center gap-[10px] rounded-[4px] bg-Red px-[8px] py-[4px] whitespace-nowrap">
+          <span
+            className="text-White
+            text-[12px] font-medium leading-[145%] tracking-[-0.012px]
+            md:body_2_2"
+          >
+            {category}
+          </span>
+        </div>
       </div>
 
       {/* 컨텐츠 영역 */}
