@@ -1,14 +1,17 @@
 "use client";
 
-import React from "react";
-import { useRouter } from "next/navigation";
+import React, { Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import LoginLogo from "@/components/base-ui/Login/LoginLogo";
 import { useAuthStore } from "@/store/useAuthStore";
 import PrimaryButton from "@/components/common/find-account/PrimaryButton";
 
-export default function FindAccountResultPage() {
+function FindAccountResultContent() {
     const router = useRouter();
     const openLoginModal = useAuthStore((state) => state.openLoginModal);
+
+    const searchParams = useSearchParams();
+    const email = searchParams.get("email") || "이메일 정보 없음";
 
     const handleLogin = () => {
         router.push("/");
@@ -46,7 +49,7 @@ export default function FindAccountResultPage() {
                     <div className="flex flex-col items-start gap-[24px] w-full max-w-[526px]">
                         <div className="flex h-[44px] px-[16px] py-[12px] items-center gap-[10px] self-stretch rounded-lg border border-Subbrown-4 bg-White w-full">
                             <div className="flex flex-col justify-center flex-1 self-stretch text-Black body_1_3">
-                                20자 이내
+                                {email}
                             </div>
                         </div>
                     </div>
@@ -65,3 +68,12 @@ export default function FindAccountResultPage() {
         </div>
     );
 }
+
+export default function FindAccountResultPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen w-full bg-[#FAFAFA]" />}>
+            <FindAccountResultContent />
+        </Suspense>
+    );
+}
+

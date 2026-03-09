@@ -58,7 +58,7 @@ export const useUpdateProfileMutation = () => {
     });
 };
 
-import { UpdatePasswordRequest, RecommendResponse, ReportMemberRequest, FollowListResponse } from "@/types/member";
+import { UpdatePasswordRequest, RecommendResponse, ReportMemberRequest, FollowListResponse, FindEmailRequest } from "@/types/member";
 import { BookStoryListResponse } from "@/types/story";
 import { storyKeys } from "@/hooks/queries/useStoryQueries";
 import { memberKeys } from "@/hooks/queries/useMemberQueries";
@@ -282,6 +282,19 @@ export const useReportMemberMutation = () => {
         onError: (error: any) => {
             console.error("Failed to report member:", error);
             const errorMessage = error.response?.data?.message || error.message || "신고에 실패했습니다.";
+            toast.error(errorMessage);
+        },
+    });
+};
+
+export const useFindEmailMutation = () => {
+    return useMutation({
+        mutationFn: async (payload: FindEmailRequest) => {
+            return await memberService.findEmail(payload);
+        },
+        onError: (error: any) => {
+            console.error("Failed to find email:", error);
+            const errorMessage = error.response?.data?.message || error.message || "해당 회원을 찾을 수 없습니다.";
             toast.error(errorMessage);
         },
     });

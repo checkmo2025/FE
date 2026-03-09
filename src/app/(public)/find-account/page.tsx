@@ -5,21 +5,34 @@ import { useRouter } from "next/navigation";
 import LoginLogo from "@/components/base-ui/Login/LoginLogo";
 import PrimaryButton from "@/components/common/find-account/PrimaryButton";
 import InputField from "@/components/common/find-account/InputField";
+import { toast } from "react-hot-toast";
+import { useFindEmailMutation } from "@/hooks/mutations/useMemberMutations";
 
 export default function FindAccountPage() {
     const router = useRouter();
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
 
+    const { mutate: findEmail, isPending } = useFindEmailMutation();
+
     const handleBack = () => {
         router.back();
     };
 
     const handleFindId = () => {
-        // API 연동 전이므로 퍼블리싱(UI) 중심 구현,
-        // 추후 이름과 전화번호 정보로 아이디 찾기 API 호출 (또는 결과에 넘기기)
-        console.log("아이디 찾기 요청:", { name, phone });
-        router.push("/find-account/result");
+        if (!name || !phone) {
+            toast.error("이름과 전화번호를 모두 입력해주세요.");
+            return;
+        }
+
+        findEmail(
+            { name, phoneNumber: phone },
+            {
+                onSuccess: (data) => {
+                    router.push(`/find-account/result?email=${encodeURIComponent(data.email)}`);
+                }
+            }
+        );
     };
 
     return (
@@ -52,22 +65,24 @@ export default function FindAccountPage() {
                             placeholder="이름"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                            disabled={isPending}
                         />
                         <InputField
                             type="tel"
                             placeholder="전화번호"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
+                            disabled={isPending}
                         />
                     </div>
 
                     {/* 하단 버튼 그룹 */}
                     <div className="flex items-center gap-[10px] justify-center w-full">
-                        <PrimaryButton onClick={handleBack}>
+                        <PrimaryButton onClick={handleBack} disabled={isPending}>
                             뒤로가기
                         </PrimaryButton>
-                        <PrimaryButton onClick={handleFindId}>
-                            아이디 찾기
+                        <PrimaryButton onClick={handleFindId} disabled={isPending}>
+                            {isPending ? "검색 중..." : "아이디 찾기"}
                         </PrimaryButton>
                     </div>
                 </div>

@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
-import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest, FollowListResponse, FollowCountResponse } from "@/types/member";
+import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest, FollowListResponse, FollowCountResponse, FindEmailRequest, FindEmailResponse } from "@/types/member";
 import { ApiResponse } from "@/types/auth";
 
 export const memberService = {
@@ -85,6 +85,17 @@ export const memberService = {
         const response = await apiClient.get<ApiResponse<FollowCountResponse>>(
             MEMBER_ENDPOINTS.GET_FOLLOW_COUNT
         );
+        return response.result!;
+    },
+    findEmail: async (data: FindEmailRequest): Promise<FindEmailResponse> => {
+        const response = await apiClient.post<ApiResponse<FindEmailResponse>>(
+            MEMBER_ENDPOINTS.FIND_EMAIL,
+            data
+        );
+        if (!response.isSuccess) {
+            // Throw the exact error message from backend
+            throw new Error(response.message || "해당 회원을 찾을 수 없습니다.");
+        }
         return response.result!;
     },
 };
