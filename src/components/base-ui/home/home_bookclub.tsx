@@ -65,7 +65,7 @@ export default function HomeBookclub({ groups }: Props) {
             <div
               key={group.clubId}
               onClick={() => router.push(`/groups/${group.clubId}`)}
-              className="flex w-full t:w-[288px] h-[52px] py-3 px-4 items-center rounded-lg bg-white shrink-0 cursor-pointer hover:bg-gray-50 transition-colors"
+              className="flex w-full t:w-[288px] h-[52px] py-3 px-4 items-center rounded-lg bg-white shrink-0 cursor-pointer hover:brightness-98 hover:-translate-y-[1px] transition-all"
             >
               <span className="text-Gray-7 h-6 subhead_4_1 truncate">{group.clubName}</span>
             </div>
