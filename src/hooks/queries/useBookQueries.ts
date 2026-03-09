@@ -7,6 +7,7 @@ export const bookKeys = {
     infiniteSearch: (title: string) => [...bookKeys.all, "infiniteSearch", title] as const,
     recommend: () => [...bookKeys.all, "recommend"] as const,
     detail: (isbn: string) => [...bookKeys.all, "detail", isbn] as const,
+    likedBooks: (nickname?: string) => [...bookKeys.all, "likedBooks", nickname || "me"] as const,
 };
 
 export const useBookSearchQuery = (keyword: string) => {
@@ -43,5 +44,17 @@ export const useBookDetailQuery = (isbn: string) => {
         queryKey: bookKeys.detail(isbn),
         queryFn: () => bookService.getBookDetail(isbn),
         enabled: !!isbn,
+    });
+};
+
+export const useLikedBooksInfiniteQuery = (nickname?: string) => {
+    return useInfiniteQuery({
+        queryKey: bookKeys.likedBooks(nickname),
+        queryFn: ({ pageParam }) => bookService.getLikedBooks(nickname, pageParam),
+        initialPageParam: undefined as number | undefined,
+        getNextPageParam: (lastPage) => {
+            if (!lastPage || !lastPage.hasNext) return undefined;
+            return (lastPage as any).nextCursor;
+        },
     });
 };

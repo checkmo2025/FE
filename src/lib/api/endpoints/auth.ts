@@ -9,4 +9,5 @@ export const AUTH_ENDPOINTS = {
     ADDITIONAL_INFO: `${API_BASE_URL}/members/additional-info`,
     CHECK_NICKNAME: `${API_BASE_URL}/members/check-nickname`,
     PROFILE: `${API_BASE_URL}/members/me`,
+    TEMP_PASSWORD: `${API_BASE_URL}/auth/temp-password`,
 };

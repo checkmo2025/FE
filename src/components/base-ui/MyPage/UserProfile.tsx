@@ -4,19 +4,23 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
 import { DUMMY_USER_PROFILE } from "@/constants/mocks/mypage";
-import { useProfileQuery } from "@/hooks/queries/useMemberQueries";
+import { useProfileQuery, useFollowCountQuery } from "@/hooks/queries/useMemberQueries";
 import FloatingFab from "../Float";
+import { EXTERNAL_LINKS } from "@/constants/links";
 
 const UserProfile = () => {
   const router = useRouter();
-  const { data: profileData, isLoading, isError } = useProfileQuery();
+  const { data: profileData } = useProfileQuery();
+  const { data: followCountData } = useFollowCountQuery();
 
-  // 서버 데이터가 있으면 사용하고, 없으면 더미 데이터 사용 (구독자 수 등은 현재 API에 없음)
+  // 서버 데이터가 있으면 사용하고, 없으면 더미 데이터 사용
   const user = {
     ...DUMMY_USER_PROFILE,
     name: profileData?.nickname || DUMMY_USER_PROFILE.name,
     intro: profileData?.description || DUMMY_USER_PROFILE.intro,
     profileImage: profileData?.profileImageUrl || DUMMY_USER_PROFILE.profileImage,
+    following: followCountData?.followingCount ?? 0,
+    subscribers: followCountData?.followerCount ?? 0,
   };
 
   return (
@@ -113,7 +117,10 @@ const UserProfile = () => {
           >
             내 책 이야기 쓰기
           </JoinButton>
-          <JoinButton className="w-[160px] h-[32px] md:w-[355px] md:h-[48px] p-[12px_16px] gap-[10px] rounded-[8px] font-sans text-[14px] font-semibold md:text-[18px] md:font-medium leading-[135%]">
+          <JoinButton
+            onClick={() => window.open(EXTERNAL_LINKS.INQUIRY_FORM_URL, "_blank")}
+            className="w-[160px] h-[32px] md:w-[355px] md:h-[48px] p-[12px_16px] gap-[10px] rounded-[8px] font-sans text-[14px] font-semibold md:text-[18px] md:font-medium leading-[135%]"
+          >
             소식 문의하기
           </JoinButton>
         </div>

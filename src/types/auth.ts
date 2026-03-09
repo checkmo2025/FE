@@ -8,7 +8,7 @@ export interface User {
 }
 
 export interface LoginForm {
-  email: string;
+  identifier: string;
   password: string;
 }
 
@@ -19,10 +19,7 @@ export interface ApiResponse<T = unknown> {
   result?: T;
 }
 
-export interface LoginResponse extends ApiResponse<{
-  email: string;
-  accessToken?: string; // Optional if using cookies
-}> { }
+export interface LoginResponse extends ApiResponse<string> { }
 
 export interface EmailVerificationConfirm {
   email: string;

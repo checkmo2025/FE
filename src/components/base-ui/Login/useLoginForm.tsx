@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/useAuthStore";
 import { LoginForm } from "@/types/auth";
 import { authService } from "@/services/authService";
@@ -8,8 +9,9 @@ import { ApiError } from "@/lib/api/errors";
 
 export default function useLoginForm(onSuccess?: () => void) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const login = useAuthStore((state) => state.login);
-  const [form, setForm] = useState<LoginForm>({ email: "", password: "" });
+  const [form, setForm] = useState<LoginForm>({ identifier: "", password: "" });
 
   const [errors, setErrors] = useState<Partial<LoginForm>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +29,7 @@ export default function useLoginForm(onSuccess?: () => void) {
   const handleLogin = async () => {
     // 1. Validation (Inline Error)
     const newErrors: Partial<LoginForm> = {};
-    if (!form.email) newErrors.email = "이메일을 입력해주세요.";
+    if (!form.identifier) newErrors.identifier = "이메일을 입력해주세요.";
     if (!form.password) newErrors.password = "비밀번호를 입력해주세요.";
 
     if (Object.keys(newErrors).length > 0) {
@@ -53,26 +55,28 @@ export default function useLoginForm(onSuccess?: () => void) {
           // 전역 상태에 상세 정보 저장
           login({
             ...profileResponse.result,
-            email: form.email
+            email: form.identifier
           });
         } else {
           // 프로필 조회 실패 시에도 최소한의 정보로 로그인 처리
-          login({ email: form.email });
+          login({ email: form.identifier });
         }
       } catch (profileError) {
         console.error("Profile fetch failed during login:", profileError);
         // 프로필 로드 실패해도 로그인은 성공한 상태이므로 최소 정보로 진행
-        login({ email: form.email });
+        login({ email: form.identifier });
       }
 
       // 2. Navigation & UI Feedback
+      queryClient.clear();
+      router.refresh();
       toast.success("로그인에 성공했습니다!");
       if (onSuccess) onSuccess();
       router.push("/");
     } catch (error) {
       if (error instanceof ApiError) {
         // 비즈니스 에러 (예: 비밀번호 불일치)는 인라인 에러로 처리
-        setErrors({ email: error.message });
+        setErrors({ identifier: error.message });
       } else {
         console.error("로그인 실패:", error);
         toast.error("로그인 요청 중 오류가 발생했습니다.");

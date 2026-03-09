@@ -32,7 +32,8 @@ export interface OtherProfileResponse {
     description: string;
     profileImageUrl: string;
     following: boolean;
-    categories: string[];
+    followerCount: number;
+    followingCount: number;
 }
 
 export type ReportType = "GENERAL" | "CLUB_MEETING" | "BOOK_STORY" | "COMMENT";
@@ -53,4 +54,18 @@ export interface FollowListResponse {
     followList: FollowMember[];
     hasNext: boolean;
     nextCursor: number | null;
+}
+
+export interface FollowCountResponse {
+    followerCount: number;
+    followingCount: number;
+}
+
+export interface FindEmailRequest {
+    name: string;
+    phoneNumber: string;
+}
+
+export interface FindEmailResponse {
+    email: string;
 }

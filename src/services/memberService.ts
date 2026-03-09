@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
-import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest, FollowListResponse } from "@/types/member";
+import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest, FollowListResponse, FollowCountResponse, FindEmailRequest, FindEmailResponse } from "@/types/member";
 import { ApiResponse } from "@/types/auth";
 
 export const memberService = {
@@ -65,20 +65,37 @@ export const memberService = {
             throw new Error(response.message || "Failed to report member");
         }
     },
-    getFollowerList: async (cursorId?: number): Promise<FollowListResponse> => {
-        const url = new URL(MEMBER_ENDPOINTS.GET_FOLLOWERS);
+    getFollowerList: async (nickname?: string, cursorId?: number): Promise<FollowListResponse> => {
+        const url = new URL(nickname ? MEMBER_ENDPOINTS.GET_OTHER_FOLLOWERS(nickname) : MEMBER_ENDPOINTS.GET_FOLLOWERS);
         if (cursorId) {
             url.searchParams.append("cursorId", cursorId.toString());
         }
         const response = await apiClient.get<ApiResponse<FollowListResponse>>(url.toString());
         return response.result!;
     },
-    getFollowingList: async (cursorId?: number): Promise<FollowListResponse> => {
-        const url = new URL(MEMBER_ENDPOINTS.GET_FOLLOWINGS);
+    getFollowingList: async (nickname?: string, cursorId?: number): Promise<FollowListResponse> => {
+        const url = new URL(nickname ? MEMBER_ENDPOINTS.GET_OTHER_FOLLOWINGS(nickname) : MEMBER_ENDPOINTS.GET_FOLLOWINGS);
         if (cursorId) {
             url.searchParams.append("cursorId", cursorId.toString());
         }
         const response = await apiClient.get<ApiResponse<FollowListResponse>>(url.toString());
+        return response.result!;
+    },
+    getMyFollowCount: async (): Promise<FollowCountResponse> => {
+        const response = await apiClient.get<ApiResponse<FollowCountResponse>>(
+            MEMBER_ENDPOINTS.GET_FOLLOW_COUNT
+        );
+        return response.result!;
+    },
+    findEmail: async (data: FindEmailRequest): Promise<FindEmailResponse> => {
+        const response = await apiClient.post<ApiResponse<FindEmailResponse>>(
+            MEMBER_ENDPOINTS.FIND_EMAIL,
+            data
+        );
+        if (!response.isSuccess) {
+            // Throw the exact error message from backend
+            throw new Error(response.message || "해당 회원을 찾을 수 없습니다.");
+        }
         return response.result!;
     },
 };

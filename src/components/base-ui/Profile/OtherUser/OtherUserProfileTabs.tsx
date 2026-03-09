@@ -13,7 +13,7 @@ export default function OtherUserProfileTabs({ nickname }: { nickname: string })
 
   const TAB_CONTENT: Record<Tab, React.ReactNode> = {
     "책 이야기": <BookStoryList nickname={nickname} />,
-    서재: <LibraryList />,
+    서재: <LibraryList nickname={nickname} />,
     모임: <MeetingList />,
   };
 

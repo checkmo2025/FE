@@ -6,7 +6,6 @@ import ProfileImageSection from "@/components/base-ui/Settings/EditProfile/Profi
 import SettingsDetailLayout from "@/components/base-ui/Settings/SettingsDetailLayout";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { authService } from "@/services/authService"; // API call
 import { useUpdateProfileMutation } from "@/hooks/mutations/useMemberMutations";
 
 export default function ProfileEditPage() {
@@ -25,8 +24,6 @@ export default function ProfileEditPage() {
     user?.profileImageUrl || null
   );
 
-  // Nickname Duplicate Check State
-  const [isNicknameChecked, setIsNicknameChecked] = useState(true); // default true for existing user
 
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfileMutation();
 
@@ -38,8 +35,7 @@ export default function ProfileEditPage() {
       setName(user.nickname || "");
       setSelectedCategories(user.categories || []);
       setPreviewImage(user.profileImageUrl || null);
-      // Reset check state if it matches original
-      setIsNicknameChecked(true);
+      setPreviewImage(user.profileImageUrl || null);
     }
   }, [user]);
 
@@ -70,54 +66,7 @@ export default function ProfileEditPage() {
     setPreviewImage(null); // or set to default image URL if needed
   };
 
-  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // 회원가입과 동일한 닉네임 필터 로직: 영어 소문자 및 특수문자, 숫자만 사용 가능, 최대 20글자
-    const filteredValue = value.replace(/[^a-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, "").slice(0, 20);
-    setNickname(filteredValue);
-
-    // 만약 원래 닉네임과 같다면 중복 확인 된 것으로 간주
-    if (user && filteredValue === user.nickname) {
-      setIsNicknameChecked(true);
-    } else {
-      setIsNicknameChecked(false);
-    }
-  };
-
-  const handleCheckNickname = async () => {
-    if (!nickname) {
-      toast.error("닉네임을 입력해주세요!");
-      return;
-    }
-
-    // 본인 닉네임과 동일하면 체크할 필요 없음
-    if (user && nickname === user.nickname) {
-      setIsNicknameChecked(true);
-      toast.success("기존 닉네임과 동일하므로 사용 가능합니다.");
-      return;
-    }
-
-    try {
-      const response = await authService.checkNickname(nickname);
-      // Backend Spec: result: false (not duplicated/available), result: true (duplicated/taken)
-      if (response.isSuccess && response.result === false) {
-        setIsNicknameChecked(true);
-        toast.success("사용 가능한 닉네임입니다.");
-      } else {
-        toast.error("이미 사용 중인 닉네임입니다.");
-        setIsNicknameChecked(false);
-      }
-    } catch (error: any) {
-      toast.error(error.message || "닉네임 확인 중 오류가 발생했습니다.");
-    }
-  };
-
   const handleSave = () => {
-    if (!isNicknameChecked) {
-      toast.error("닉네임 중복확인을 해주세요!");
-      return;
-    }
-
     updateProfile({
       description: intro.slice(0, 20),
       categories: selectedCategories,
@@ -157,23 +106,16 @@ export default function ProfileEditPage() {
         {/* 닉네임 */}
         <div className="flex flex-col items-start gap-[12px] self-stretch">
           <label className="self-stretch body_1_2 text-primary-3">닉네임</label>
-          <div className="flex items-center gap-[8px] self-stretch">
-            <div className={`${inputContainerClass} flex-1`}>
+          <div className="flex flex-col gap-[4px] self-stretch">
+            <div className={`${inputContainerClass} !bg-Gray-1 !border-Gray-3`}>
               <input
                 className={inputClass}
                 value={nickname}
-                onChange={handleNicknameChange}
-                placeholder="변경할 닉네임을 입력해주세요"
+                disabled={true}
+                placeholder="닉네임"
               />
             </div>
-            <button
-              className={checkBtnClass}
-              onClick={handleCheckNickname}
-            >
-              <span className={checkBtnTextClass}>
-                {isNicknameChecked ? "확인완료" : "중복확인"}
-              </span>
-            </button>
+            <span className="text-[12px] text-red-500 ml-1">닉네임 수정은 따로 문의해주세요!</span>
           </div>
         </div>
 
