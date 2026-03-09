@@ -1,5 +1,5 @@
-import React from 'react';
 import Image from 'next/image';
+import { isValidUrl } from '@/utils/url';
 
 type ListSubscribeElementProps = {
   name: string;
@@ -24,7 +24,7 @@ export default function ListSubscribeElement({
     <div className="flex w-full t:w-[296px] min-h-[60px] t:h-[66px] px-[14px] py-[8px] gap-[8px] rounded-[8px] border border-Subbrown-4 bg-white">
       <div className="w-[24px] h-[24px] t:w-[32px] t:h-[32px] rounded-full overflow-hidden shrink-0 relative self-center">
         <Image
-          src={profileSrc}
+          src={isValidUrl(profileSrc) ? profileSrc : '/profile2.svg'}
           alt={`${name} profile`}
           fill
           className="object-cover"
