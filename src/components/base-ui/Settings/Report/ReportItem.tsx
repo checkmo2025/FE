@@ -20,7 +20,7 @@ export default function ReportItem({
   return (
     <div
       className="flex items-start rounded-[8px] border border-Subbrown-4 bg-White p-[20px]
-      w-full gap-[40px]
+      w-full gap-[10px]
       md:w-[440px]
       xl:w-[1000px]"
     >
