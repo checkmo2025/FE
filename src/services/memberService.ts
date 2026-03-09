@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
-import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest, FollowListResponse, FollowCountResponse, FindEmailRequest, FindEmailResponse } from "@/types/member";
+import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest, FollowListResponse, FollowCountResponse, FindEmailRequest, FindEmailResponse, ReportListResponse } from "@/types/member";
 import { ApiResponse } from "@/types/auth";
 
 export const memberService = {
@@ -96,6 +96,14 @@ export const memberService = {
             // Throw the exact error message from backend
             throw new Error(response.message || "해당 회원을 찾을 수 없습니다.");
         }
+        return response.result!;
+    },
+    getMyReports: async (cursorId?: number): Promise<ReportListResponse> => {
+        const url = new URL(MEMBER_ENDPOINTS.GET_MY_REPORTS);
+        if (cursorId) {
+            url.searchParams.append("cursorId", cursorId.toString());
+        }
+        const response = await apiClient.get<ApiResponse<ReportListResponse>>(url.toString());
         return response.result!;
     },
 };

@@ -69,3 +69,17 @@ export interface FindEmailRequest {
 export interface FindEmailResponse {
     email: string;
 }
+
+export interface ReportItemData {
+    reportedMemberNickname: string;
+    reportedMemberProfileImageUrl: string;
+    reportType: string;
+    content: string;
+    reportDate: string;
+}
+
+export interface ReportListResponse {
+    reports: ReportItemData[];
+    hasNext: boolean;
+    nextCursor: number | null;
+}

@@ -7,6 +7,7 @@ type Props = {
   reporterName: string;
   content: string;
   date: string;
+  profileImageUrl?: string;
 };
 
 export default function ReportItem({
@@ -14,6 +15,7 @@ export default function ReportItem({
   reporterName,
   content,
   date,
+  profileImageUrl,
 }: Props) {
   return (
     <div
@@ -44,8 +46,8 @@ export default function ReportItem({
           <div className="flex items-center gap-[8px]">
             <div className="relative h-[24px] w-[24px] shrink-0">
               <Image
-                src="/profile2.svg"
-                alt="profile"
+                src={profileImageUrl || "/profile2.svg"}
+                alt={`${reporterName} profile`}
                 fill
                 className="object-cover rounded-full"
               />
