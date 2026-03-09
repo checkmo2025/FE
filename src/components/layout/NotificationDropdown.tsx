@@ -5,7 +5,7 @@ import Image from "next/image";
 export default function NotificationDropdown() {
     return (
         <div
-            className="absolute top-[44px] right-0 z-50 flex w-[364px] flex-col items-start rounded-[8px] bg-White/[0.95] backdrop-blur-sm shadow-[0_4px_8px_0_rgba(0,0,0,0.08)] overflow-hidden"
+            className="absolute top-[44px] right-0 z-50 flex w-[364px] flex-col items-start rounded-[8px] bg-White/50 backdrop-blur-lg shadow-[0_4px_8px_0_rgba(0,0,0,0.08)] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
         >
             {/* 알림 항목 1: 활성/최근 알림 */}
