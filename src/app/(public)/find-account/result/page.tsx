@@ -33,7 +33,7 @@ export default function FindAccountResultPage() {
                         <LoginLogo />
                         <h1 className="text-primary-2 text-center subhead_1">
                             아이디<br />
-                            <span className="text-Gray-6 subhead_4_1">(이메일 찾기)</span>
+                            <span className="text-primary-2 subhead_4_1">(이메일 찾기)</span>
                         </h1>
                     </div>
                     <p className="text-Gray-6 text-center subhead_1 self-stretch">
