@@ -25,7 +25,7 @@ export default function ReportItem({
       xl:w-[1000px]"
     >
       {/* 카테고리 뱃지 */}
-      <div className="flex w-[60px] shrink-0 items-center justify-center gap-[10px] rounded-[4px] bg-Red p-[4px]">
+      <div className="flex min-w-[60px] w-fit shrink-0 items-center justify-center gap-[10px] rounded-[4px] bg-Red px-[8px] py-[4px] whitespace-nowrap">
         <span
           className="text-White
           text-[12px] font-medium leading-[145%] tracking-[-0.012px]
