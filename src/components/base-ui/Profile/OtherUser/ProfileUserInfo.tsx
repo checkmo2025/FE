@@ -120,7 +120,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
           t:h-[138px] t:w-[138px]"
         >
           <Image
-            src={profile.profileImageUrl || "/profile.svg"}
+            src={profile.profileImageUrl || "/profile2.svg"}
             alt={`${profile.nickname}님의 프로필`}
             fill
             className="object-cover"

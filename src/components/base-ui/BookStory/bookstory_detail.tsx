@@ -16,7 +16,7 @@ type BookstoryDetailProps = {
   authorNickname: string;
   authorId: string | number;
 
-  profileImgSrc?: string; // 기본: "/profile.svg"
+  profileImgSrc?: string; // 기본: "/profile2.svg"
   subscribeText?: string; // 기본: "구독"
   isFollowing?: boolean;
   onSubscribeClick?: () => void;

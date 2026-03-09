@@ -38,7 +38,7 @@ export default function ProfileImageSection({
           h-[100px] w-[100px] xl:h-[138px] xl:w-[138px]"
         >
           <Image
-            src={previewImage || "/profile.svg"}
+            src={previewImage || "/profile2.svg"}
             alt="프로필 이미지"
             fill
             className="object-cover rounded-full"

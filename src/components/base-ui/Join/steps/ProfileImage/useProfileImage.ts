@@ -34,7 +34,7 @@ export const useProfileImage = () => {
   };
 
   const handleResetImage = () => {
-    setProfileImage("/profile.svg");
+    setProfileImage("/profile2.svg");
     setIsProfileImageSet(true);
     setSelectedFile(null);
   };
@@ -74,7 +74,7 @@ export const useProfileImage = () => {
           return;
         }
       } else if (imgUrl && !imgUrl.startsWith("blob:")) {
-        // Includes uploaded S3 URL or default image path (e.g. /profile.svg)
+        // Includes uploaded S3 URL or default image path (e.g. /profile2.svg)
         finalImageUrl = imgUrl;
       }
 

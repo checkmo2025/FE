@@ -126,7 +126,7 @@ export default function Header() {
               className="relative hidden w-6 h-6 t:block"
             >
               <Image
-                src={user?.profileImageUrl || "/profile.svg"}
+                src={user?.profileImageUrl || "/profile2.svg"}
                 alt="프로필"
                 fill
                 className={`object-cover ${user?.profileImageUrl ? "rounded-full" : "object-contain"}`}
