@@ -44,13 +44,11 @@ const EyeOffIcon = () => (
 
 type Props = {
   onClose: () => void;
-  onFindAccount?: () => void;
   onSignUp?: () => void;
 };
 
 export default function LoginModal({
   onClose,
-  onFindAccount,
   onSignUp,
 }: Props) {
   const router = useRouter();
@@ -146,11 +144,17 @@ export default function LoginModal({
 
               {/* 아이디/비번 찾기 */}
               <div className={styles.findAccount}>
-                <span className={styles.link} onClick={onFindAccount}>
+                <span className={styles.link} onClick={() => {
+                  onClose();
+                  router.push('/find-account');
+                }}>
                   아이디 찾기
                 </span>
                 <span className={styles.divider}>|</span>
-                <span className={styles.link} onClick={onFindAccount}>
+                <span className={styles.link} onClick={() => {
+                  onClose();
+                  router.push('/find-password');
+                }}>
                   비밀번호 찾기
                 </span>
               </div>

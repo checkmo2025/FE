@@ -60,3 +60,12 @@ export interface FollowCountResponse {
     followerCount: number;
     followingCount: number;
 }
+
+export interface FindEmailRequest {
+    name: string;
+    phoneNumber: string;
+}
+
+export interface FindEmailResponse {
+    email: string;
+}

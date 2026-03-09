@@ -79,5 +79,13 @@ export const authService = {
       useAuthStore.getState().logout();
     }
   },
+
+  sendTempPassword: async (email: string): Promise<ApiResponse<string>> => {
+    return await apiClient.post<ApiResponse<string>>(
+      AUTH_ENDPOINTS.TEMP_PASSWORD,
+      null,
+      { params: { email } }
+    );
+  },
 };
 
