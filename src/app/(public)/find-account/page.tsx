@@ -7,6 +7,7 @@ import PrimaryButton from "@/components/common/find-account/PrimaryButton";
 import InputField from "@/components/common/find-account/InputField";
 import { toast } from "react-hot-toast";
 import { useFindEmailMutation } from "@/hooks/mutations/useMemberMutations";
+import { formatPhoneNumber } from "@/utils/phone";
 
 export default function FindAccountPage() {
     const router = useRouter();
@@ -26,7 +27,7 @@ export default function FindAccountPage() {
         }
 
         findEmail(
-            { name, phoneNumber: phone },
+            { name, phoneNumber: phone.replace(/-/g, "") },
             {
                 onSuccess: (data) => {
                     router.push(`/find-account/result?email=${encodeURIComponent(data.email)}`);
@@ -71,7 +72,8 @@ export default function FindAccountPage() {
                             type="tel"
                             placeholder="전화번호"
                             value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
+                            onChange={(e) => setPhone(formatPhoneNumber(e.target.value))}
+                            maxLength={13}
                             disabled={isPending}
                         />
                     </div>
