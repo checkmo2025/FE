@@ -232,6 +232,13 @@ export const useToggleFollowMutation = () => {
 
             return { previousRecommendations, previousInfiniteStories, previousStories, previousOtherProfile, previousFollowers, previousFollowings, previousFollowCount };
         },
+        onSuccess: (_data, { isFollowing }) => {
+            if (isFollowing) {
+                toast.success("구독이 취소되었습니다.");
+            } else {
+                toast.success("구독이 완료되었습니다.");
+            }
+        },
         onError: (error: any, variables, context) => {
             console.error("Failed to toggle follow:", error);
             toast.error("팔로우 상태 업데이트에 실패했습니다.");
