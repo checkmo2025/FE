@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useInfiniteNewsQuery } from "@/hooks/queries/useNewsQueries";
@@ -12,6 +12,17 @@ export default function NewsBannerSlider() {
   const { data, isLoading, isError } = useInfiniteNewsQuery();
 
   const newsList = data?.pages.flatMap((page) => page.basicInfoList) || [];
+
+  // 5초 자동 슬라이드 로직
+  useEffect(() => {
+    if (newsList.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setIndex((prevIndex) => (prevIndex + 1) % newsList.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [newsList.length]);
 
   if (isLoading) {
     return (
