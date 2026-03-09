@@ -318,7 +318,7 @@ export default function BookstoryDetail({
             <button
               type="button"
               onClick={onSubscribeClick}
-              className={`flex px-[17px] py-[8px] justify-center items-center rounded-lg bg-primary-2 text-White body_2_1 shrink-0 whitespace-nowrap cursor-pointer transition-colors ${isFollowing
+              className={`flex px-[17px] py-[8px] justify-center items-center rounded-lg body_2_1 shrink-0 whitespace-nowrap cursor-pointer transition-colors ${isFollowing
                 ? "bg-Subbrown-4 text-primary-3"
                 : "bg-primary-2 text-White"
                 }`}

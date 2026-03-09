@@ -42,7 +42,7 @@ export default function FollowItem({ user, onToggleFollow }: FollowItemProps) {
                     }`}
             >
                 <span className="font-sans text-[12px] font-semibold leading-[100%] tracking-[-0.012px]">
-                    {user.isFollowing ? "구독 중" : "구독"}
+                    {user.isFollowing ? "구독중" : "구독"}
                 </span>
             </button>
         </div>

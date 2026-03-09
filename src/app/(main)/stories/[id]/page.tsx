@@ -112,7 +112,7 @@ export default function StoryDetailPage() {
             likeCount={story.likes}
             likedByMe={story.likedByMe}
             onLikeClick={handleToggleLike}
-            subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+            subscribeText={story.authorInfo.following ? "구독중" : "구독"}
             isFollowing={story.authorInfo.following}
             onSubscribeClick={handleToggleFollow}
             hideSubscribeButton={story.writtenByMe}

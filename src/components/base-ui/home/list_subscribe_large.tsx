@@ -106,7 +106,7 @@ export default function ListSubscribeLarge({
               subscribersCount={u.subscribersCount}
               profileSrc={u.profileImageUrl}
               isFollowing={u.isFollowing}
-              buttonText={u.isFollowing ? "구독 중" : "구독"}
+              buttonText={u.isFollowing ? "구독중" : "구독"}
               onSubscribeClick={() => onSubscribeClick?.(u.nickname, u.isFollowing || false)}
             />
           ))}

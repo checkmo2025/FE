@@ -141,7 +141,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
             {/* 통계 그룹 */}
             <div className="flex items-center gap-[12px]">
               <StatItem
-                label="구독 중"
+                label="구독중"
                 count={profile.followingCount}
                 href={`/profile/${profile.nickname}/follows?tab=following`}
               />
@@ -164,7 +164,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
       <div className="flex w-full justify-center items-center gap-[19px] t:gap-[24px]">
         <ActionButton
           variant={profile.following ? "following" : "primary"}
-          label={profile.following ? "구독 중" : "구독하기"}
+          label={profile.following ? "구독중" : "구독하기"}
           onClick={handleToggleFollow}
         />
         <ActionButton
