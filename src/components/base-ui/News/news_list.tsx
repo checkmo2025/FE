@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { isValidUrl } from "@/utils/url";
 
 type NewsListProps = {
   id?: number;
@@ -46,7 +47,7 @@ export default function NewsList({
           w-[80px] h-[116px] 
           md:w-[100px] md:h-[145px]"
         >
-          <Image src={imageUrl} alt={title} fill className="object-cover" />
+          <Image src={isValidUrl(imageUrl) ? imageUrl : "/news_sample.svg"} alt={title} fill className="object-cover" />
         </div>
 
         {/* 텍스트 컬럼 */}
