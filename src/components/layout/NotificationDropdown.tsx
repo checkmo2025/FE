@@ -4,13 +4,18 @@ import Image from "next/image";
 import { useNotificationPreviewQuery } from "@/hooks/queries/useNotificationQueries";
 import { useRouter } from "next/navigation";
 import { formatTimeAgo } from "@/utils/time";
+import { useReadNotificationMutation } from "@/hooks/mutations/useNotificationMutations";
 
 export default function NotificationDropdown() {
     const { data: notifications, isLoading } = useNotificationPreviewQuery(5);
+    const { mutate: readNotification } = useReadNotificationMutation();
     const router = useRouter();
 
-    const handleNotificationClick = () => {
-        router.push("/profile/mypage");
+    const handleNotificationClick = (notificationId: number, isRead: boolean) => {
+        if (!isRead) {
+            readNotification(notificationId);
+        }
+        router.push("/profile/mypage?tab=notifications");
     };
 
     return (
@@ -26,7 +31,7 @@ export default function NotificationDropdown() {
                 notifications.map((notif) => (
                     <div
                         key={notif.notificationId}
-                        onClick={handleNotificationClick}
+                        onClick={() => handleNotificationClick(notif.notificationId, notif.read)}
                         className="flex w-full items-center justify-between border-b border-Subbrown-4 px-[16px] py-[15px] transition-colors hover:bg-black/5 cursor-pointer"
                     >
                         <div className="flex items-center gap-[12px] pr-[10px]">
@@ -63,7 +68,7 @@ export default function NotificationDropdown() {
 
             {/* 전체보기 버튼 */}
             <div
-                onClick={() => router.push("/profile/mypage")}
+                onClick={() => router.push("/profile/mypage?tab=notifications")}
                 className="flex w-full items-center justify-center py-[16px] cursor-pointer hover:bg-black/5 transition-colors"
             >
                 <span className="text-Gray-7 font-normal text-[18px] leading-[135%] tracking-[-0.018px]">

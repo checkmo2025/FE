@@ -28,6 +28,7 @@ export const useReadNotificationMutation = () => {
         mutationFn: (notificationId: number) => notificationService.readNotification(notificationId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: notificationKeys.infiniteList() });
+            queryClient.invalidateQueries({ queryKey: notificationKeys.preview() });
         },
     });
 };
