@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { isValidUrl } from '@/utils/url';
 
 type ListSubscribeElementLargeProps = {
   name: string;
@@ -25,7 +26,7 @@ function ListSubscribeElementLarge({
     <div className="flex w-[296px] h-[66px] px-[14px] py-[8px] gap-[8px] rounded-[8px] border border-Subbrown-4 bg-white">
       <div className="w-[32px] h-[32px] rounded-full overflow-hidden shrink-0 relative self-center">
         <Image
-          src={profileSrc}
+          src={isValidUrl(profileSrc) ? profileSrc : '/profile2.svg'}
           alt={`${name} profile`}
           fill
           className="object-cover"
@@ -48,8 +49,8 @@ function ListSubscribeElementLarge({
           type="button"
           onClick={onSubscribeClick}
           className={`flex px-[17px] py-[8px] justify-center items-center gap-[10px] rounded-[8px] text-[12px] font-semibold leading-[100%] tracking-[-0.012px] whitespace-nowrap shrink-0 transition-colors ${isFollowing
-              ? "bg-Subbrown-4 text-primary-3"
-              : "bg-primary-2 text-white"
+            ? "bg-Subbrown-4 text-primary-3"
+            : "bg-primary-2 text-white"
             }`}
         >
           {buttonText}
@@ -105,7 +106,7 @@ export default function ListSubscribeLarge({
               subscribersCount={u.subscribersCount}
               profileSrc={u.profileImageUrl}
               isFollowing={u.isFollowing}
-              buttonText={u.isFollowing ? "구독 중" : "구독"}
+              buttonText={u.isFollowing ? "구독중" : "구독"}
               onSubscribeClick={() => onSubscribeClick?.(u.nickname, u.isFollowing || false)}
             />
           ))}

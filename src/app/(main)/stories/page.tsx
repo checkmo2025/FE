@@ -228,7 +228,7 @@ export default function StoriesPage() {
                   commentCount={story.commentCount}
                   likedByMe={story.likedByMe}
                   coverImgSrc={story.bookInfo.imgUrl}
-                  subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+                  subscribeText={story.authorInfo.following ? "구독중" : "구독"}
                   isFollowing={story.authorInfo.following}
                   onSubscribeClick={() => handleToggleFollow(story.authorInfo.nickname, story.authorInfo.following)}
                   hideSubscribeButton={story.writtenByMe}
@@ -266,7 +266,7 @@ export default function StoriesPage() {
                   commentCount={story.commentCount}
                   likedByMe={story.likedByMe}
                   coverImgSrc={story.bookInfo.imgUrl}
-                  subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+                  subscribeText={story.authorInfo.following ? "구독중" : "구독"}
                   isFollowing={story.authorInfo.following}
                   onSubscribeClick={() => handleToggleFollow(story.authorInfo.nickname, story.authorInfo.following)}
                   hideSubscribeButton={story.writtenByMe}

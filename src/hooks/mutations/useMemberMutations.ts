@@ -135,6 +135,22 @@ export const useUpdatePasswordMutation = () => {
     });
 };
 
+export const useUpdateEmailMutation = () => {
+    return useMutation({
+        mutationFn: async (payload: import("@/types/member").UpdateEmailRequest) => {
+            await memberService.updateEmail(payload);
+        },
+        onSuccess: () => {
+            toast.success("이메일이 성공적으로 변경되었습니다.");
+        },
+        onError: (error: any) => {
+            console.error("Failed to update email:", error);
+            const errorMessage = error.response?.data?.message || error.message || "이메일 변경에 실패했습니다.";
+            toast.error(errorMessage);
+        },
+    });
+};
+
 export const useToggleFollowMutation = () => {
     const queryClient = useQueryClient();
 
@@ -231,6 +247,13 @@ export const useToggleFollowMutation = () => {
             }
 
             return { previousRecommendations, previousInfiniteStories, previousStories, previousOtherProfile, previousFollowers, previousFollowings, previousFollowCount };
+        },
+        onSuccess: (_data, { isFollowing }) => {
+            if (isFollowing) {
+                toast.success("구독이 취소되었습니다.");
+            } else {
+                toast.success("구독이 완료되었습니다.");
+            }
         },
         onError: (error: any, variables, context) => {
             console.error("Failed to toggle follow:", error);

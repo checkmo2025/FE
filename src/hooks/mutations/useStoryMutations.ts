@@ -169,11 +169,31 @@ export const useToggleStoryLikeMutation = () => {
             await queryClient.cancelQueries({ queryKey: storyKeys.all });
 
             // Snapshot the previous values
-            const previousInfiniteStories = queryClient.getQueryData(storyKeys.infiniteList());
-            const previousMyStories = queryClient.getQueryData(storyKeys.myList());
-            const previousStories = queryClient.getQueryData(storyKeys.list());
+            const previousInfiniteStories = queryClient.getQueryData<InfiniteData<BookStoryListResponse>>(storyKeys.infiniteList());
+            const previousMyStories = queryClient.getQueryData<InfiniteData<BookStoryListResponse>>(storyKeys.myList());
+            const previousStories = queryClient.getQueryData<BookStoryListResponse>(storyKeys.list());
             const previousStoryDetail = queryClient.getQueryData<BookStoryDetail>(storyKeys.detail(bookStoryId));
-            const previousOtherMemberStories = queryClient.getQueriesData({ queryKey: [...storyKeys.all, "otherMember"] });
+            const previousOtherMemberStories = queryClient.getQueriesData<InfiniteData<BookStoryListResponse>>({ queryKey: [...storyKeys.all, "otherMember"] });
+
+            // Find current like state from cache to determine toast message
+            let currentLikeState = false;
+            if (previousStoryDetail) {
+                currentLikeState = previousStoryDetail.likedByMe;
+            } else if (previousInfiniteStories) {
+                for (const page of previousInfiniteStories.pages) {
+                    const found = page.basicInfoList.find(s => s.bookStoryId === bookStoryId);
+                    if (found) {
+                        currentLikeState = found.likedByMe;
+                        break;
+                    }
+                }
+            } else if (previousStories) {
+                const found = previousStories.basicInfoList.find(s => s.bookStoryId === bookStoryId);
+                if (found) {
+                    currentLikeState = found.likedByMe;
+                }
+            }
+            const isLikedAfterMutation = !currentLikeState;
 
             // Optimistically update the infinite list
             if (previousInfiniteStories) {
@@ -220,7 +240,15 @@ export const useToggleStoryLikeMutation = () => {
                 previousStories,
                 previousStoryDetail,
                 previousOtherMemberStories,
+                isLikedAfterMutation,
             };
+        },
+        onSuccess: (_data, _variables, context) => {
+            if (context?.isLikedAfterMutation) {
+                toast.success("좋아요가 반영되었습니다.");
+            } else {
+                toast.success("좋아요가 취소되었습니다.");
+            }
         },
         onError: (err, bookStoryId, context) => {
             console.error("Failed to toggle like:", err);

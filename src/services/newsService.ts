@@ -15,4 +15,15 @@ export const newsService = {
         );
         return response.result!;
     },
+    getMyNewsList: async (cursorId?: number): Promise<NewsListResponse> => {
+        const url = new URL(NEWS_ENDPOINTS.GET_MY_NEWS);
+        if (cursorId !== undefined && cursorId !== null) {
+            url.searchParams.append("cursorId", cursorId.toString());
+        }
+
+        const response = await apiClient.get<ApiResponse<NewsListResponse>>(
+            url.toString()
+        );
+        return response.result!;
+    },
 };

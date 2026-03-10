@@ -7,7 +7,7 @@ import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { TeamMember } from "@/types/groups/bookcasedetail";
 
-const DEFAULT_PROFILE = "/profile.svg";
+const DEFAULT_PROFILE = "/profile2.svg";
 
 type Props = {
   unassigned: TeamMember[];

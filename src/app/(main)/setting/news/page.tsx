@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import NewsList from "@/components/base-ui/News/news_list";
 import SettingsDetailLayout from "@/components/base-ui/Settings/SettingsDetailLayout";
-import { useInfiniteNewsQuery } from "@/hooks/queries/useNewsQueries";
+import { useMyNewsQuery } from "@/hooks/queries/useNewsQueries";
 import { useInView } from "react-intersection-observer";
 
 export default function MyNewsPage() {
@@ -14,7 +14,7 @@ export default function MyNewsPage() {
     isFetchingNextPage,
     isLoading,
     isError,
-  } = useInfiniteNewsQuery();
+  } = useMyNewsQuery();
 
   const { ref, inView } = useInView();
 

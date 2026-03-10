@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import { NOTIFICATION_ENDPOINTS } from "@/lib/api/endpoints/notification";
-import { NotificationSettings, NotificationSettingType, NotificationListResponse } from "@/types/notification";
+import { NotificationSettings, NotificationSettingType, NotificationListResponse, NotificationBasicInfo } from "@/types/notification";
 import { ApiResponse } from "@/types/auth";
 
 export const notificationService = {
@@ -28,6 +28,12 @@ export const notificationService = {
             url.toString()
         );
         return response.result!;
+    },
+    getNotificationPreview: async (size?: number): Promise<NotificationBasicInfo[]> => {
+        const response = await apiClient.get<ApiResponse<{ notifications: NotificationBasicInfo[] }>>(
+            NOTIFICATION_ENDPOINTS.GET_PREVIEW(size)
+        );
+        return response.result?.notifications || [];
     },
     readNotification: async (notificationId: number): Promise<void> => {
         const response = await apiClient.patch<ApiResponse<number>>(
