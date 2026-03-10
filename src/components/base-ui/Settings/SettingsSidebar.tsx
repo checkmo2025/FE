@@ -4,6 +4,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { SETTINGS_MENU } from "@/constants/setting/setting";
 import { EXTERNAL_LINKS } from "@/constants/links";
+import toast from "react-hot-toast";
 import SettingsMenuItem from "./Items/SettingsMenuItem";
 
 export default function SettingsSidebar() {
@@ -47,6 +48,21 @@ export default function SettingsSidebar() {
                     onClick={isExternal ? (e) => {
                       e.preventDefault();
                       window.open(href, "_blank", "noopener,noreferrer");
+                      toast((t) => (
+                        <span className="flex items-center gap-2">
+                          문의 폼을 새 창으로 열었습니다. 열리지 않았다면
+                          <button
+                            onClick={() => {
+                              window.open(href, "_blank", "noopener,noreferrer");
+                              toast.dismiss(t.id);
+                            }}
+                            className="font-bold underline text-primary-3"
+                          >
+                            [여기]
+                          </button>
+                          를 클릭해 주세요.
+                        </span>
+                      ), { duration: 5000, position: 'bottom-center' });
                     } : undefined}
                   />
                 );
