@@ -189,7 +189,7 @@ export default function NewsPage() {
                   </td>
                   <td className="pl-[12px] py-0">
                     <Link
-                      href={`/admin/news/${n.id}`}
+                      href={`/news/${n.id}`}
                       className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
                     >
                       상세보기
