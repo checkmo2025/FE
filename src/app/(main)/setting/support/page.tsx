@@ -32,7 +32,7 @@ export default function SupportPage() {
                     <h1 className="subhead_2 text-Gray-7">소중한 의견을 기다립니다</h1>
                     <p className="body_1_3 text-Gray-4 leading-relaxed">
                         서비스 이용 중 불편한 점이나 제안하고 싶은 내용이 있으신가요? <br className="hidden md:block" />
-                        보내주시는 소중한 의견을 바탕으로 더욱 성장하는 체크모가 되겠습니다.
+                        보내주시는 소중한 의견을 바탕으로 더욱 성장하는 책모가 되겠습니다.
                     </p>
                 </div>
 
