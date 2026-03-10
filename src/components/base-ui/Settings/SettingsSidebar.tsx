@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { SETTINGS_MENU } from "@/constants/setting/setting";
+import { EXTERNAL_LINKS } from "@/constants/links";
 import SettingsMenuItem from "./Items/SettingsMenuItem";
 
 export default function SettingsSidebar() {
@@ -33,14 +34,23 @@ export default function SettingsSidebar() {
 
             {/* 세부 메뉴 리스트 */}
             <div className="flex flex-col items-start gap-[2px] self-stretch">
-              {group.items.map((item) => (
-                <SettingsMenuItem
-                  key={item.href}
-                  label={item.label}
-                  href={item.href}
-                  isActive={pathname === item.href}
-                />
-              ))}
+              {group.items.map((item) => {
+                const isExternal = item.label === "고객센터/문의하기";
+                const href = isExternal ? EXTERNAL_LINKS.INQUIRY_FORM_URL : item.href;
+
+                return (
+                  <SettingsMenuItem
+                    key={item.href}
+                    label={item.label}
+                    href={href}
+                    isActive={pathname === item.href}
+                    onClick={isExternal ? (e) => {
+                      e.preventDefault();
+                      window.open(href, "_blank", "noopener,noreferrer");
+                    } : undefined}
+                  />
+                );
+              })}
             </div>
           </div>
         ))}

@@ -93,18 +93,7 @@ const UserProfile = () => {
               {/* Right Side: Edit Button & Settings */}
               <div className="flex items-center gap-[8px]">
                 {/* Edit Button: Hidden on Mobile, Block on Tablet+ */}
-                <button
-                  type="button"
-                  className="items-center justify-center hidden md:flex"
-                >
-                  <Image
-                    src="/mypage_button.svg"
-                    alt="프로필 편집"
-                    width={144}
-                    height={48}
-                    className="object-contain"
-                  />
-                </button>
+
                 {/* Settings Icon: Absolute on Mobile, Static on Tablet+ */}
                 <Link
                   href={settingsHref}
