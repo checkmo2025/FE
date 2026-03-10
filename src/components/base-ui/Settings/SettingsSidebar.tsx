@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { SETTINGS_MENU } from "@/constants/setting/setting";
+import { EXTERNAL_LINKS } from "@/constants/links";
 import SettingsMenuItem from "./Items/SettingsMenuItem";
 
 export default function SettingsSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <aside className="hidden md:flex md:w-[180px] xl:w-[236px] shrink-0 flex-col items-start bg-transparent transition-all duration-300">
@@ -33,14 +35,26 @@ export default function SettingsSidebar() {
 
             {/* 세부 메뉴 리스트 */}
             <div className="flex flex-col items-start gap-[2px] self-stretch">
-              {group.items.map((item) => (
-                <SettingsMenuItem
-                  key={item.href}
-                  label={item.label}
-                  href={item.href}
-                  isActive={pathname === item.href}
-                />
-              ))}
+              {group.items.map((item: any) => {
+                const isExternal = !!item.isExternal;
+                const href = isExternal ? EXTERNAL_LINKS.INQUIRY_FORM_URL : item.href;
+
+                return (
+                  <SettingsMenuItem
+                    key={item.href}
+                    label={item.label}
+                    href={href}
+                    isActive={pathname === item.href}
+                    onClick={isExternal ? (e) => {
+                      e.preventDefault();
+                      // 1. 새 창 띄우기
+                      window.open(href, "_blank", "noopener,noreferrer");
+                      // 2. 안내 페이지로 이동
+                      router.push("/setting/support");
+                    } : undefined}
+                  />
+                );
+              })}
             </div>
           </div>
         ))}

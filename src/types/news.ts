@@ -13,3 +13,14 @@ export interface NewsListResponse {
     nextCursor: number | null;
     pageSize: number;
 }
+
+export interface NewsDetail {
+    newsId: number;
+    title: string;
+    content: string;
+    thumbnailUrl: string;
+    originalLink: string;
+    carousel: "PROMOTION" | "GENERAL";
+    imageUrls: string[];
+    publishStartAt: string;
+}

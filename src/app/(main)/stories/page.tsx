@@ -14,6 +14,8 @@ import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations"
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 import { toast } from "react-hot-toast";
 
+import CategorySlider from "@/components/base-ui/BookStory/CategorySlider";
+
 export default function StoriesPage() {
   const router = useRouter();
   const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
@@ -164,39 +166,17 @@ export default function StoriesPage() {
   const allStories = storiesData?.pages.flatMap((page) => page.basicInfoList) || [];
   const recommendedMembers = membersData?.friends || [];
 
-  const getCategoryClassName = (categoryId: string) => {
-    return `text-center body_1 t:subhead_2 leading-7 cursor-pointer hover:text-zinc-600 shrink-0 ${selectedCategory === categoryId ? "text-Gray-7 font-semibold" : "text-Gray-3"
-      }`;
-  };
-
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4">
       {isLoginModalOpen && (
         <LoginModal onClose={() => closeLoginModal()} />
       )}
-      <div className="t:mt-3 h-[44px] d:h-[54px] flex gap-14 items-center border-b border-zinc-300 overflow-x-auto scrollbar-hide">
-        <div
-          onClick={() => setSelectedCategory("all")}
-          className={getCategoryClassName("all")}
-        >
-          전체
-        </div>
-        <div
-          onClick={() => setSelectedCategory("following")}
-          className={getCategoryClassName("following")}
-        >
-          구독중
-        </div>
-        {myClubsData?.clubList.map((club) => (
-          <div
-            key={club.clubId}
-            onClick={() => setSelectedCategory(club.clubId.toString())}
-            className={getCategoryClassName(club.clubId.toString())}
-          >
-            {club.clubName}
-          </div>
-        ))}
-      </div>
+      <CategorySlider
+        selectedCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
+        myClubsData={myClubsData}
+      />
+
 
       {/* 메인 콘텐츠 영역 */}
       <div>
