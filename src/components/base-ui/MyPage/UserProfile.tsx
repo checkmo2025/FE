@@ -23,6 +23,23 @@ const UserProfile = () => {
     subscribers: followCountData?.followerCount ?? 0,
   };
 
+  const [settingsHref, setSettingsHref] = React.useState("/setting/profile");
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      // t: "768px" 가 tailwind.config.js 에 정의되어 있음
+      if (window.innerWidth < 768) {
+        setSettingsHref("/setting");
+      } else {
+        setSettingsHref("/setting/profile");
+      }
+    };
+
+    handleResize(); // 초기 실행
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <div className="flex flex-col items-start w-full max-w-[1440px] gap-[24px] md:gap-[80px] px-[18px] md:px-[40px] lg:px-0 mx-auto">
       {/* Inner Content (Center Aligned) */}
@@ -90,7 +107,7 @@ const UserProfile = () => {
                 </button>
                 {/* Settings Icon: Absolute on Mobile, Static on Tablet+ */}
                 <Link
-                  href="/setting/profile"
+                  href={settingsHref}
                   className="absolute right-0 top-0 md:static flex items-center justify-center w-[24px] h-[24px]"
                 >
                   <Image
