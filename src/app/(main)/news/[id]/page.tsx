@@ -64,7 +64,24 @@ export default function NewsDetailPage() {
     return null;
   }
 
-  const imageUrls = news.imageUrls && news.imageUrls.length > 0 ? news.imageUrls : [news.thumbnailUrl || "/news_sample4.svg"];
+  const isValidSrc = (src: string) => {
+    return (
+      src &&
+      src !== "string" &&
+      (src.startsWith("/") || src.startsWith("http://") || src.startsWith("https://"))
+    );
+  };
+
+  const rawImageUrls =
+    news.imageUrls && news.imageUrls.length > 0
+      ? news.imageUrls
+      : [news.thumbnailUrl];
+
+  // 유효한 URL만 필터링하고 없으면 기본 이미지 사용
+  const imageUrls = rawImageUrls.filter(isValidSrc);
+  if (imageUrls.length === 0) {
+    imageUrls.push("/news_sample4.svg");
+  }
 
   return (
     <>
