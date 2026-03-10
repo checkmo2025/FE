@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { EXTERNAL_LINKS } from "@/constants/links";
+import SettingsDetailLayout from "@/components/base-ui/Settings/SettingsDetailLayout";
 
 export default function SupportPage() {
     const handleOpenForm = () => {
@@ -9,8 +10,12 @@ export default function SupportPage() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center w-full min-h-[500px] px-6 py-12 bg-white md:rounded-[12px]">
-            <div className="flex flex-col items-center max-w-[400px] text-center gap-8">
+        <SettingsDetailLayout
+            title="고객센터/문의하기"
+            mode="wide"
+            className="!items-center !px-0 flex-1"
+        >
+            <div className="flex flex-col items-center justify-center w-full flex-1 min-h-[500px] text-center gap-8">
                 {/* 아이콘/이미지 영역 */}
                 <div className="relative w-[120px] h-[120px] bg-Subbrown-4 rounded-full flex items-center justify-center shadow-inner">
                     <Image
@@ -32,7 +37,7 @@ export default function SupportPage() {
                 </div>
 
                 {/* 액션 버튼 영역 */}
-                <div className="flex flex-col w-full gap-4">
+                <div className="flex flex-col w-[320px] md:w-[400px] gap-4">
                     <button
                         onClick={handleOpenForm}
                         className="w-full h-[56px] bg-primary-3 text-white rounded-[12px] subhead_4_1 hover:bg-primary-2 transition-colors shadow-md active:scale-[0.98]"
@@ -53,6 +58,6 @@ export default function SupportPage() {
                     </div>
                 </div>
             </div>
-        </div>
+        </SettingsDetailLayout>
     );
 }
