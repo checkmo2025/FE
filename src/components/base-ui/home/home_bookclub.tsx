@@ -47,9 +47,9 @@ export default function HomeBookclub({ groups }: Props) {
       <aside
         ref={containerRef}
         className={[
-          'flex flex-col w-full pt-[40px] px-5 pb-5 t:p-5 rounded-[8px] bg-Subbrown-4 transition-all duration-300 z-10',
+          'flex flex-col w-full pt-[40px] px-5 pb-5 t:p-5 rounded-[8px] bg-Subbrown-4 transition-all duration-300 z-50',
           open
-            ? 'absolute top-0 left-0 h-auto max-h-[500px] t:max-h-[814px] shadow-xl border border-Subbrown-3'
+            ? 'absolute top-0 left-0 h-auto max-h-[500px] t:max-h-[814px] shadow-2xl border border-Subbrown-3 opacity-100'
             : 'h-full overflow-hidden'
         ].join(' ')}
       >
