@@ -97,7 +97,7 @@ const CategorySlider = ({
             <div
                 ref={scrollRef}
                 onScroll={checkScroll}
-                className="t:mt-3 h-[44px] d:h-[54px] flex gap-8 t:gap-14 items-center border-b border-zinc-300 overflow-x-auto scrollbar-hide scroll-smooth"
+                className="t:mt-3 h-[44px] d:h-[54px] flex gap-8 t:gap-14 items-center border-b border-zinc-300 overflow-x-auto no-scrollbar scroll-smooth"
             >
                 <div
                     onClick={() => onCategoryChange("all")}

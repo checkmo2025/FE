@@ -46,7 +46,7 @@ export default function NewsPage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-[1400px] px-4 overflow-x-hidden scrollbar-hide pb-20">
+    <div className="mx-auto w-full max-w-[1400px] px-4 overflow-x-hidden no-scrollbar pb-20">
       {/* 캐러셀 배너 섹션 */}
       <div className="flex justify-center items-center mt-7 mb-3 t:mb-6">
         <NewsListBanner />
@@ -71,7 +71,7 @@ export default function NewsPage() {
           </div>
         ) : (
           <div
-            className="flex flex-col gap-4 overflow-y-auto scrollbar-hide pr-2"
+            className="flex flex-col gap-4 overflow-y-auto no-scrollbar pr-2"
             style={{ maxHeight: "calc(100vh - 400px)", minHeight: "400px" }}
           >
             {newsList.map((news) => (
