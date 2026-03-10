@@ -5,39 +5,14 @@ import TodayRecommendedBooks from "@/components/base-ui/News/today_recommended_b
 import Image from "next/image";
 import { notFound, useParams } from "next/navigation";
 import { useNewsDetailQuery } from "@/hooks/queries/useNewsQueries";
-import { useState, useEffect } from "react";
-
-const DUMMY_BOOKS = [
-  {
-    id: 1,
-    imgUrl: "/booksample.svg",
-    title: "책 제목",
-    author: "작가작가작가",
-  },
-  {
-    id: 2,
-    imgUrl: "/booksample.svg",
-    title: "책 제목",
-    author: "작가작가작가",
-  },
-  {
-    id: 3,
-    imgUrl: "/booksample.svg",
-    title: "책 제목",
-    author: "작가작가작가",
-  },
-  {
-    id: 4,
-    imgUrl: "/booksample.svg",
-    title: "책 제목",
-    author: "작가작가작가",
-  },
-];
+import { useRecommendedBooksQuery } from "@/hooks/queries/useBookQueries";
+import { useState, useEffect, useMemo } from "react";
 
 export default function NewsDetailPage() {
   const params = useParams();
   const id = params?.id;
-  const { data: news, isLoading, isError } = useNewsDetailQuery(Number(id));
+  const { data: news, isLoading: isNewsLoading, isError: isNewsError } = useNewsDetailQuery(Number(id));
+  const { data: recommendedData, isLoading: isBooksLoading } = useRecommendedBooksQuery();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // 5초 자동 슬라이드 로직
@@ -51,7 +26,17 @@ export default function NewsDetailPage() {
     return () => clearInterval(timer);
   }, [news?.imageUrls?.length]);
 
-  if (isLoading) {
+  const recommendedBooks = useMemo(() => {
+    return (recommendedData?.detailInfoList || []).map((book) => ({
+      id: book.isbn,
+      imgUrl: book.imgUrl,
+      title: book.title,
+      author: book.author,
+      likedByMe: book.likedByMe,
+    }));
+  }, [recommendedData]);
+
+  if (isNewsLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="animate-pulse text-Gray-4 subhead_3">소식을 불러오는 중...</div>
@@ -59,7 +44,7 @@ export default function NewsDetailPage() {
     );
   }
 
-  if (isError || !news) {
+  if (isNewsError || !news) {
     notFound();
     return null;
   }
@@ -85,7 +70,8 @@ export default function NewsDetailPage() {
 
   return (
     <>
-      <div className="relative w-screen h-[297px] t:h-[468px] overflow-hidden">
+      {/* 상단 이미지 영역 - Option C: w-full 및 레이아웃 개선 */}
+      <div className="relative w-full h-[297px] t:h-[468px] overflow-hidden bg-Gray-1 flex items-center justify-center">
         {imageUrls.map((url, idx) => (
           <div
             key={idx}
@@ -103,26 +89,29 @@ export default function NewsDetailPage() {
           </div>
         ))}
 
-        {/* Breadcrumb Overlay (Desktop) */}
-        <div className="absolute top-0 left-0 right-0 hidden d:flex h-[44px] d:h-[64px] border-b border-zinc-300 z-20">
-          <div className="px-4 t:px-6 d:px-3 h-full flex gap-5 items-center justify-start w-full ml-5.5 max-w-[1440px] mx-auto">
-            <div className="d:subhead_4_1 text-Gray-3">전체</div>
-            <div className="relative w-[12px] h-[12px] d:w-[18px] d:h-[18px]">
-              <Image src="/triangle.svg" alt="next" fill className="object-contain" />
+        {/* Breadcrumb Overlay (Desktop) - 프리미엄 스타일 적용 */}
+        <div className="absolute top-0 left-0 right-0 hidden d:flex h-[64px] border-b border-white/10 bg-gradient-to-b from-black/20 to-transparent z-20">
+          <div className="px-6 h-full flex gap-4 items-center justify-start w-full max-w-[1040px] mx-auto">
+            <div className="subhead_4_1 text-white/60">전체</div>
+            <div className="relative w-[14px] h-[14px] opacity-60">
+              <Image src="/triangle.svg" alt="next" fill className="object-contain brightness-0 invert" />
             </div>
-            <div className="d:subhead_4_1 text-Gray-7">글 상세보기</div>
+            <div className="subhead_4_1 text-white font-medium">글 상세보기</div>
           </div>
         </div>
 
         {/* Indicator (Carousel Dots) */}
         {imageUrls.length > 1 && (
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
             {imageUrls.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentImageIndex(idx)}
-                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${idx === currentImageIndex ? "bg-white w-6" : "bg-white/50"
+                className={`transition-all duration-300 ${idx === currentImageIndex
+                    ? "w-8 h-2 rounded-[100px] bg-white shadow-sm"
+                    : "w-2 h-2 rounded-full bg-white/40 hover:bg-white/60"
                   }`}
+                aria-label={`이미지 ${idx + 1}`}
               />
             ))}
           </div>
@@ -130,38 +119,46 @@ export default function NewsDetailPage() {
       </div>
 
       {/* 메인 콘텐츠 */}
-      <div className="mx-auto w-full max-w-[1400px] px-9 t:px-[200px] mt-6 t:mt-10">
-        <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
-          <h1 className="subhead_1 t:headline_3 text-Gray-7">{news.title}</h1>
+      <div className="mx-auto w-full max-w-[1040px] px-4 t:px-0 mt-8 t:mt-12">
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-4 border-b border-Gray-1 pb-6">
+          <h1 className="subhead_1 t:headline_3 text-Gray-7 leading-tight">{news.title}</h1>
           <p className="body_1_2 text-Gray-3">{news.publishStartAt}</p>
         </div>
 
         {/* 본문 */}
-        <div className="w-full max-w-[1040px] mt-10 t:mt-22">
-          <p className="body_1_3 t:subhead_3 text-Gray-6 whitespace-pre-wrap leading-relaxed">
+        <div className="w-full mt-6 t:mt-10">
+          <p className="body_1_3 t:subhead_3 text-Gray-6 whitespace-pre-wrap leading-[1.8] tracking-[-0.01em]">
             {news.content}
           </p>
         </div>
 
         {/* 원문 링크 버튼 */}
         {news.originalLink && (
-          <div className="mt-12 flex justify-start">
+          <div className="mt-16 flex justify-start">
             <a
               href={news.originalLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 rounded-[8px] border border-Subbrown-4 text-Gray-7 subhead_4 hover:bg-Subbrown-1 transition-colors flex items-center gap-2"
+              className="px-8 py-3.5 rounded-[8px] border border-Subbrown-4 text-Gray-7 subhead_4 hover:bg-Subbrown-1 transition-all flex items-center gap-3 active:scale-95 shadow-sm"
             >
               원문 보러가기
-              <Image src="/triangle.svg" alt="icon" width={12} height={12} className="rotate-0" />
+              <div className="relative w-3 h-3">
+                <Image src="/triangle.svg" alt="icon" fill className="object-contain" />
+              </div>
             </a>
           </div>
         )}
       </div>
 
-      <div className="w-screen -mx-4 my-8 border-b-4 border-Gray-1 mt-25"></div>
+      <div className="w-full border-b-4 border-Gray-1 mt-20"></div>
 
-      <TodayRecommendedBooks books={DUMMY_BOOKS} className="mt-10" />
+      {isBooksLoading ? (
+        <div className="w-full flex justify-center py-24">
+          <div className="animate-pulse text-Gray-3 subhead_4">추천 책을 불러오는 중...</div>
+        </div>
+      ) : (
+        <TodayRecommendedBooks books={recommendedBooks} className="mt-12" />
+      )}
 
       <FloatingFab
         iconSrc="/icons_calling.svg"
