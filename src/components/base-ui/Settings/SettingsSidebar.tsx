@@ -1,14 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { SETTINGS_MENU } from "@/constants/setting/setting";
 import { EXTERNAL_LINKS } from "@/constants/links";
-import toast from "react-hot-toast";
 import SettingsMenuItem from "./Items/SettingsMenuItem";
 
 export default function SettingsSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <aside className="hidden md:flex md:w-[180px] xl:w-[236px] shrink-0 flex-col items-start bg-transparent transition-all duration-300">
@@ -47,22 +47,10 @@ export default function SettingsSidebar() {
                     isActive={pathname === item.href}
                     onClick={isExternal ? (e) => {
                       e.preventDefault();
+                      // 1. 새 창 띄우기
                       window.open(href, "_blank", "noopener,noreferrer");
-                      toast((t) => (
-                        <span className="flex items-center gap-2">
-                          문의 폼을 새 창으로 열었습니다. 열리지 않았다면
-                          <button
-                            onClick={() => {
-                              window.open(href, "_blank", "noopener,noreferrer");
-                              toast.dismiss(t.id);
-                            }}
-                            className="font-bold underline text-primary-3"
-                          >
-                            [여기]
-                          </button>
-                          를 클릭해 주세요.
-                        </span>
-                      ), { duration: 5000, position: 'bottom-center' });
+                      // 2. 안내 페이지로 이동
+                      router.push("/setting/support");
                     } : undefined}
                   />
                 );

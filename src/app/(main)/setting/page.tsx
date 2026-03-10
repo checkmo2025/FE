@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { SETTINGS_MENU } from "@/constants/setting/setting";
 import { EXTERNAL_LINKS } from "@/constants/links";
-import toast from "react-hot-toast";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -54,22 +53,10 @@ export default function SettingsPage() {
                     href={href}
                     onClick={isExternal ? (e) => {
                       e.preventDefault();
+                      // 1. 새 창 띄우기
                       window.open(href, "_blank", "noopener,noreferrer");
-                      toast((t) => (
-                        <span className="flex items-center gap-2">
-                          문의 폼을 새 창으로 열었습니다. 열리지 않았다면
-                          <button
-                            onClick={() => {
-                              window.open(href, "_blank", "noopener,noreferrer");
-                              toast.dismiss(t.id);
-                            }}
-                            className="font-bold underline text-primary-3"
-                          >
-                            [여기]
-                          </button>
-                          를 클릭해 주세요.
-                        </span>
-                      ), { duration: 5000, position: 'bottom-center' });
+                      // 2. 안내 페이지로 이동
+                      router.push("/setting/support");
                     } : undefined}
                     className="flex items-center gap-[10px] rounded-[8px] px-[20px] py-[8px] self-stretch transition-colors hover:bg-Gray-1"
                   >
