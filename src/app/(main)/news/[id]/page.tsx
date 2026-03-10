@@ -10,8 +10,14 @@ import { useState, useEffect, useMemo } from "react";
 
 export default function NewsDetailPage() {
   const params = useParams();
-  const id = params?.id;
-  const { data: news, isLoading: isNewsLoading, isError: isNewsError } = useNewsDetailQuery(Number(id));
+  const rawId = params?.id;
+  const newsId = typeof rawId === "string" ? parseInt(rawId, 10) : NaN;
+
+  const {
+    data: news,
+    isLoading: isNewsLoading,
+    isError: isNewsError,
+  } = useNewsDetailQuery(newsId, { enabled: !isNaN(newsId) });
   const { data: recommendedData, isLoading: isBooksLoading } = useRecommendedBooksQuery();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -63,10 +69,8 @@ export default function NewsDetailPage() {
       : [news.thumbnailUrl];
 
   // 유효한 URL만 필터링하고 없으면 기본 이미지 사용
-  const imageUrls = rawImageUrls.filter(isValidSrc);
-  if (imageUrls.length === 0) {
-    imageUrls.push("/news_sample4.svg");
-  }
+  const filteredUrls = rawImageUrls.filter(isValidSrc);
+  const imageUrls = filteredUrls.length > 0 ? filteredUrls : ["/news_sample4.svg"];
 
   return (
     <>
@@ -108,8 +112,8 @@ export default function NewsDetailPage() {
                 key={idx}
                 onClick={() => setCurrentImageIndex(idx)}
                 className={`transition-all duration-300 ${idx === currentImageIndex
-                    ? "w-8 h-2 rounded-[100px] bg-white shadow-sm"
-                    : "w-2 h-2 rounded-full bg-white/40 hover:bg-white/60"
+                  ? "w-8 h-2 rounded-[100px] bg-white shadow-sm"
+                  : "w-2 h-2 rounded-full bg-white/40 hover:bg-white/60"
                   }`}
                 aria-label={`이미지 ${idx + 1}`}
               />
@@ -133,7 +137,7 @@ export default function NewsDetailPage() {
         </div>
 
         {/* 원문 링크 버튼 */}
-        {news.originalLink && (
+        {news.originalLink && isValidSrc(news.originalLink) && (
           <div className="mt-16 flex justify-start">
             <a
               href={news.originalLink}

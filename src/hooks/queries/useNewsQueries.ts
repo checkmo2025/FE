@@ -35,9 +35,10 @@ export const useMyNewsQuery = () => {
     });
 };
 
-export const useNewsDetailQuery = (newsId: number) => {
+export const useNewsDetailQuery = (newsId: number, options?: { enabled?: boolean }) => {
     return useQuery({
         queryKey: newsKeys.detail(newsId),
         queryFn: () => newsService.getNewsDetail(newsId),
+        ...options,
     });
 };

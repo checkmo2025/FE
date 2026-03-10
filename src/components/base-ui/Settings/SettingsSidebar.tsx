@@ -35,8 +35,8 @@ export default function SettingsSidebar() {
 
             {/* 세부 메뉴 리스트 */}
             <div className="flex flex-col items-start gap-[2px] self-stretch">
-              {group.items.map((item) => {
-                const isExternal = item.label === "고객센터/문의하기";
+              {group.items.map((item: any) => {
+                const isExternal = !!item.isExternal;
                 const href = isExternal ? EXTERNAL_LINKS.INQUIRY_FORM_URL : item.href;
 
                 return (
