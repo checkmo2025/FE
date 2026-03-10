@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import Image from "next/image";
 import NewsList from "@/components/base-ui/News/news_list";
 import TodayRecommendedBooks from "@/components/base-ui/News/today_recommended_books";
 import FloatingFab from "@/components/base-ui/Float";
@@ -10,6 +9,7 @@ import { useInfiniteNewsQuery } from "@/hooks/queries/useNewsQueries";
 import { useInView } from "react-intersection-observer";
 import { EXTERNAL_LINKS } from "@/constants/links";
 import { Book } from "@/types/book";
+import NewsListBanner from "@/components/base-ui/News/NewsListBanner";
 
 export default function NewsPage() {
   const { data: recommendedData, isLoading: isLoadingRecommended } = useRecommendedBooksQuery();
@@ -47,20 +47,9 @@ export default function NewsPage() {
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 overflow-x-hidden scrollbar-hide pb-20">
+      {/* 캐러셀 배너 섹션 */}
       <div className="flex justify-center items-center mt-7 mb-3 t:mb-6">
-        <div
-          className="relative w-full h-[297px] t:h-[468px]"
-          style={{ maxWidth: "clamp(339px, 100%, 1040px)" }}
-        >
-          <Image
-            src="/news_sample.svg"
-            alt="소식 배너"
-            fill
-            className="object-cover rounded-lg"
-            sizes="(max-width: 768px) 339px, (max-width: 1440px) 688px, 1040px"
-            priority
-          />
-        </div>
+        <NewsListBanner />
       </div>
 
       {/* 오늘의 추천 (모바일) */}
