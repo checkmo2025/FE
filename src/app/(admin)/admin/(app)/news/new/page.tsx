@@ -116,7 +116,7 @@ export default function AdminNewsNewPage() {
       if (!res.isSuccess) throw new Error(res.message || "소식 등록 실패");
 
       alert(`소식 등록 완료! (ID: ${res.result})`);
-      router.push("/news");
+      router.push("/admin/news");
       router.refresh();
     } catch (err) {
       console.error(err);
