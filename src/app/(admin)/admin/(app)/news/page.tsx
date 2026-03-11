@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import AdminSearchHeader from "@/components/layout/AdminSearchHeader";
+import { fetchAdminNews } from "@/lib/api/admin/news";
 
 type NewsRow = {
   id: number;
@@ -16,45 +17,64 @@ export default function NewsPage() {
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
 
+  const [newsList, setNewsList] = useState<NewsRow[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+
   const handleKeywordChange = (v: string) => {
     setKeyword(v);
     setPage(1);
   };
 
-  // 더미 데이터 (테스트용) - 100개 생성
-  const newsList: NewsRow[] = useMemo(() => {
-    const base = [
-      { title: "서비스 업데이트 안내", authorEmail: "yh9839@naver.com" },
-      { title: "이벤트 오픈 공지", authorEmail: "minsu@test.com" },
-      { title: "점검 일정 안내", authorEmail: "jieun@test.com" },
-      { title: "신규 기능 출시", authorEmail: "seoyeon@test.com" },
-      { title: "운영 정책 변경", authorEmail: "daeun@test.com" },
-    ];
+  // API 호출: page 바뀔 때마다 새로 조회
+  useEffect(() => {
+    let alive = true;
 
-    const toDate = (i: number, offsetDays = 0) => {
-      const y = i % 2 === 0 ? 2025 : 2026;
-      const m = y === 2025 ? 10 + (i % 3) : 1 + (i % 2);
-      const d = 1 + ((i + offsetDays) % 28);
-      return `${y}.${String(m).padStart(2, "0")}.${String(d).padStart(2, "0")}`;
+    const run = async () => {
+      try {
+        setLoading(true);
+
+        const apiPage = Math.max(0, page - 1); // UI(1-based) -> API(0-based)
+        const data = await fetchAdminNews(apiPage);
+
+        if (!data.isSuccess) {
+          throw new Error(data.message || "관리자 소식 목록 조회 실패");
+        }
+
+        const rows: NewsRow[] = (data.result.basicInfoList ?? []).map((item) => ({
+          id: item.newsId,
+          title: item.title,
+          authorEmail: item.requesterEmail,
+          createdAt: item.createdAt,
+          postedAt: `${item.publishStartAt} - ${item.publishEndAt}`,
+        }));
+
+        if (!alive) return;
+
+        setNewsList(rows);
+        setTotalPages(data.result.totalPages ?? 1);
+      } catch (e) {
+        console.error(e);
+        if (!alive) return;
+        setNewsList([]);
+        setTotalPages(1);
+      } finally {
+        if (!alive) return;
+        setLoading(false);
+      }
     };
 
-    return Array.from({ length: 100 }).map((_, i) => {
-      const b = base[i % base.length];
-      const start = toDate(i, 0);
-      const end = toDate(i, 7);
+    run();
 
-      return {
-        id: 1 + i,
-        title: `${b.title} ${i + 1}`,
-        authorEmail: b.authorEmail,
-        createdAt: toDate(i, 0),
-        postedAt: `${start} - ${end}`,
-      };
-    });
-  }, []);
+    return () => {
+      alive = false;
+    };
+  }, [page]);
 
-  const pageSize = 20;
-
+  /**
+   * 검색 처리
+   * - 현재 페이지 데이터 안에서만 필터링됨(서버 검색 아님)
+   */
   const filtered = useMemo(() => {
     const q = keyword.trim().toLowerCase();
     if (!q) return newsList;
@@ -68,15 +88,7 @@ export default function NewsPage() {
     });
   }, [newsList, keyword]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-
-  const pageItems = useMemo(() => {
-    const start = (page - 1) * pageSize;
-    return filtered.slice(start, start + pageSize);
-  }, [filtered, page, pageSize]);
-
   const handleSearch = () => {
-    console.log("검색:", keyword);
     setPage(1);
   };
 
@@ -89,10 +101,12 @@ export default function NewsPage() {
     const max = 5;
     let start = Math.max(1, page - Math.floor(max / 2));
     let end = start + max - 1;
+
     if (end > totalPages) {
       end = totalPages;
       start = Math.max(1, end - max + 1);
     }
+
     return Array.from({ length: end - start + 1 }).map((_, idx) => start + idx);
   }, [page, totalPages]);
 
@@ -155,7 +169,7 @@ export default function NewsPage() {
             </thead>
 
             <tbody>
-              {pageItems.map((n) => (
+              {filtered.map((n) => (
                 <tr
                   key={n.id}
                   className="h-[48px] border-b border-Subbrown-4 body_1_2"
@@ -167,11 +181,15 @@ export default function NewsPage() {
                   <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
                     {n.authorEmail}
                   </td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{n.createdAt}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{n.postedAt}</td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                    {n.createdAt}
+                  </td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                    {n.postedAt}
+                  </td>
                   <td className="pl-[12px] py-0">
                     <Link
-                      href={`/admin/news/${n.id}`}
+                      href={`/news/${n.id}`}
                       className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
                     >
                       상세보기
@@ -179,8 +197,25 @@ export default function NewsPage() {
                   </td>
                 </tr>
               ))}
+
+              {/* 빈 상태 */}
+              {!loading && filtered.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="py-10 text-center body_1_2 text-Gray-4"
+                  >
+                    표시할 소식이 없습니다.
+                  </td>
+                </tr>
+              ) : null}
             </tbody>
           </table>
+
+          {/* 로딩 표시 */}
+          {loading ? (
+            <div className="py-6 text-center body_1_2 text-Gray-4">로딩중...</div>
+          ) : null}
 
           {/* 페이지네이션 */}
           <div className="mt-6 flex items-center justify-center gap-4 body_2_2">
@@ -188,7 +223,9 @@ export default function NewsPage() {
               onClick={() => goTo(page - 1)}
               disabled={isFirst}
               className={`flex items-center ${
-                isFirst ? "cursor-default opacity-30" : "cursor-pointer hover:opacity-70"
+                isFirst
+                  ? "cursor-default opacity-30"
+                  : "cursor-pointer hover:opacity-70"
               }`}
               aria-label="이전 페이지"
               type="button"
@@ -221,7 +258,9 @@ export default function NewsPage() {
               onClick={() => goTo(page + 1)}
               disabled={isLast}
               className={`flex items-center ${
-                isLast ? "cursor-default opacity-30" : "cursor-pointer hover:opacity-70"
+                isLast
+                  ? "cursor-default opacity-30"
+                  : "cursor-pointer hover:opacity-70"
               }`}
               aria-label="다음 페이지"
               type="button"
