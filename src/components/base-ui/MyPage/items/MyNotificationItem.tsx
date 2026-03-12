@@ -5,30 +5,12 @@ import Image from "next/image";
 import { NotificationBasicInfo } from "@/types/notification";
 import { formatTimeAgo } from "@/utils/time";
 import { useReadNotificationMutation } from "@/hooks/mutations/useNotificationMutations";
+import { getNotificationText } from "@/utils/notification";
 
 interface MyNotificationItemProps {
   notification: NotificationBasicInfo;
 }
 
-const getNotificationText = (notification: NotificationBasicInfo): string => {
-  const name = notification.displayName;
-  switch (notification.notificationType) {
-    case "LIKE":
-      return `${name}님이 회원의 책 이야기에 좋아요를 남기셨습니다.`;
-    case "COMMENT":
-      return `${name}님이 회원의 책 이야기에 댓글을 작성했습니다.`;
-    case "FOLLOW":
-      return `${name}님이 나를 팔로우하기 시작했습니다.`;
-    case "JOIN_CLUB":
-      return `${name}님이 나를 독서 모임에 초대했습니다.`;
-    case "CLUB_MEETING_CREATED":
-      return `${name} 독서 모임에 새로운 일정이 생성되었습니다.`;
-    case "CLUB_NOTICE_CREATED":
-      return `${name} 독서 모임에 새로운 공지가 등록되었습니다.`;
-    default:
-      return "새로운 알림이 도착했습니다.";
-  }
-};
 
 const MyNotificationItem = ({ notification }: MyNotificationItemProps) => {
   const { mutate: readNotification } = useReadNotificationMutation();
