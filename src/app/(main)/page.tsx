@@ -34,7 +34,8 @@ export default function HomePage() {
   const groups = myClubsData?.clubList || [];
   const stories = storiesData?.pages.flatMap((page) => page.basicInfoList) || [];
   const recommendedUsers = membersData?.friends || [];
-  const isLoading = isLoadingStories || (isLoggedIn && isLoadingMembers) || (isLoggedIn && isLoadingClubs);
+  // 개별 로딩 상태를 섹션에 전달하기 위해 통합 isLoading 제거
+  // const isLoading = isLoadingStories || (isLoggedIn && isLoadingMembers) || (isLoggedIn && isLoadingClubs);
 
   const { ref, inView } = useInView({ threshold: 0 });
 
@@ -44,101 +45,54 @@ export default function HomePage() {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7B6154]"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 t:px-6">
       {isLoginModalOpen && <LoginModal onClose={() => closeLoginModal()} />}
 
-      {/* 모바일 */}
-      <div className="flex flex-col gap-6 t:hidden">
-        <HomeNewsSection deviceType="mobile" />
-
-        <section className="w-full">
-          <div className="flex gap-4">
-            <HomeClubSection deviceType="mobile" groups={groups} />
-            <HomeRecommendationSection
-              deviceType="mobile"
-              users={recommendedUsers}
-              isError={isErrorMembers}
-              onSubscribeClick={handleToggleFollow}
-            />
+      <div className="flex flex-col gap-6 w-full">
+        {/* 상단 영역: 뉴스, 독서모임, 추천 (기기별 배치 자동 조정) */}
+        <div className="flex flex-col d:flex-row gap-6 w-full pt-0 d:pt-6">
+          
+          {/* 뉴스 섹션 */}
+          <div className="order-1 d:order-2 d:flex-1">
+            <HomeNewsSection isLoading={false} /> {/* 뉴스 데이터는 현재 정적 혹은 내부 처리 중이므로 false 또는 관련 상태 연결 */}
           </div>
-        </section>
 
-
-        <HomeStoryList
-          deviceType="mobile"
-          stories={stories}
-          isError={isErrorStories}
-          handleToggleLike={handleToggleLike}
-          handleToggleFollow={handleToggleFollow}
-        />
-      </div>
-
-      {/* 태블릿 */}
-      <div className="hidden t:flex flex-col gap-6 d:hidden">
-        <HomeNewsSection deviceType="tablet" />
-
-        <section className="w-full pt-6">
-          <div className="flex gap-6 justify-center">
-            <div className="flex flex-col">
-              <HomeClubSection deviceType="tablet" groups={groups} />
+          {/* 독서모임 & 추천 섹션 그룹 */}
+          <div className="order-2 d:order-1 flex flex-row gap-4 t:gap-6 d:gap-0 justify-center d:justify-start d:w-full d:max-w-[332px]">
+            <HomeClubSection 
+              groups={groups} 
+              isLoading={isLoadingClubs} 
+            />
+            
+            <div className="flex-1 t:flex-none d:hidden">
+              <HomeRecommendationSection
+                users={recommendedUsers}
+                isError={isErrorMembers}
+                isLoading={isLoadingMembers}
+                onSubscribeClick={handleToggleFollow}
+              />
             </div>
-            <HomeRecommendationSection
-              deviceType="tablet"
-              users={recommendedUsers}
-              isError={isErrorMembers}
-              onSubscribeClick={handleToggleFollow}
-            />
           </div>
-        </section>
-
-
-        <HomeStoryList
-          deviceType="tablet"
-          stories={stories}
-          isError={isErrorStories}
-          handleToggleLike={handleToggleLike}
-          handleToggleFollow={handleToggleFollow}
-        />
-      </div>
-
-      {/* 데스크톱 */}
-      <div className="hidden d:flex flex-col gap-6 w-full">
-        <div className="flex flex-row gap-6 w-full pt-6">
-          <HomeClubSection deviceType="desktop" groups={groups} />
-          <HomeNewsSection deviceType="desktop" />
         </div>
 
-
+        {/* 스토리 리스트: 무한 스크롤 및 로딩 상태 전달 */}
         <HomeStoryList
-          deviceType="desktop"
           stories={stories}
           isError={isErrorStories}
+          isLoading={isLoadingStories}
           handleToggleLike={handleToggleLike}
           handleToggleFollow={handleToggleFollow}
           recommendedUsers={recommendedUsers}
           isErrorMembers={isErrorMembers}
+          isLoadingMembers={isLoadingMembers}
+          // 무한 스크롤 Props (차후 단계에서 내부로 캡슐화 예정)
+          fetchNextPage={fetchNextPage}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          observerRef={ref}
         />
       </div>
-
-      {!isErrorStories && hasNextPage && (
-        <div ref={ref} className="w-full flex justify-center py-10">
-          {isFetchingNextPage ? (
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-2"></div>
-          ) : (
-            <div className="h-8"></div>
-          )}
-        </div>
-      )}
 
       {!isLoggedIn && (
         <button

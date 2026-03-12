@@ -1,23 +1,31 @@
 import ListSubscribeElement from "./list_subscribe_element";
 import ListSubscribeLarge from "./list_subscribe_large";
+import { RecommendationSkeleton } from "../shared/HomeSkeleton";
 
 interface HomeRecommendationSectionProps {
-  deviceType: "mobile" | "tablet" | "desktop";
   users: any[];
   isError: boolean;
+  isLoading?: boolean;
   onSubscribeClick: (nickname: string, isFollowing: boolean) => void;
 }
 
 export default function HomeRecommendationSection({
-  deviceType,
   users,
   isError,
+  isLoading,
   onSubscribeClick,
 }: HomeRecommendationSectionProps) {
-  if (deviceType === "mobile") {
-    return (
-      <div className="flex-1">
-        <h2 className="pb-2 body_1 leading-7 text-zinc-800">사용자 추천</h2>
+  if (isLoading) {
+    return <RecommendationSkeleton />;
+  }
+
+  const mobileTitleClasses = "pb-2 body_1 leading-7 text-zinc-800";
+
+  return (
+    <>
+      {/* 모바일 버전 */}
+      <div className="t:hidden flex-1">
+        <h2 className={mobileTitleClasses}>사용자 추천</h2>
         <div className="flex flex-col gap-3">
           {isError ? (
             <div className="flex flex-1 items-center justify-center py-4">
@@ -40,27 +48,16 @@ export default function HomeRecommendationSection({
           )}
         </div>
       </div>
-    );
-  }
 
-  if (deviceType === "tablet") {
-    return (
-      <ListSubscribeLarge
-        height="h-[424px]"
-        users={users}
-        isError={isError}
-        onSubscribeClick={onSubscribeClick}
-      />
-    );
-  }
-
-  // desktop
-  return (
-    <ListSubscribeLarge
-      height="h-[380px]"
-      users={users}
-      isError={isError}
-      onSubscribeClick={onSubscribeClick}
-    />
+      {/* 태블릿 & 데스크톱 버전 */}
+      <div className="hidden t:block">
+        <ListSubscribeLarge
+          height="h-[424px] d:h-[380px]"
+          users={users}
+          isError={isError}
+          onSubscribeClick={onSubscribeClick}
+        />
+      </div>
+    </>
   );
 }
