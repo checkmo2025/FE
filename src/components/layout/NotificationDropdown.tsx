@@ -5,6 +5,7 @@ import { useNotificationPreviewQuery } from "@/hooks/queries/useNotificationQuer
 import { useRouter } from "next/navigation";
 import { formatTimeAgo } from "@/utils/time";
 import { useReadNotificationMutation } from "@/hooks/mutations/useNotificationMutations";
+import { getNotificationText } from "@/utils/notification";
 
 export default function NotificationDropdown() {
     const { data: notifications, isLoading } = useNotificationPreviewQuery(5);
@@ -49,7 +50,7 @@ export default function NotificationDropdown() {
                                 className={`text-[14px] leading-[145%] tracking-[-0.014px] break-keep ${notif.read ? "text-Gray-3 font-medium" : "text-Gray-7 font-medium"
                                     }`}
                             >
-                                {notif.displayName}
+                                {getNotificationText(notif)}
                             </span>
                         </div>
                         <span
