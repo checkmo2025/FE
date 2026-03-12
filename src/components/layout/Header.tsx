@@ -126,7 +126,7 @@ export default function Header() {
               />
             </button>
 
-            <div className="relative" ref={notificationRef}>
+            <div className="relative flex items-center" ref={notificationRef}>
               <button
                 onClick={() => setIsNotificationOpen(!isNotificationOpen)}
                 aria-label="알림"
