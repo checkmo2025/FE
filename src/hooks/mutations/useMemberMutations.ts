@@ -1,7 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { memberService } from "@/services/memberService";
 import { authService } from "@/services/authService";
 import { useAuthStore } from "@/store/useAuthStore";
+import { ReportMemberRequest } from "@/types/member";
+import { memberKeys } from "../queries/useMemberQueries";
 
 interface UpdateProfilePayload {
     description: string;
@@ -58,12 +61,9 @@ export const useUpdateProfileMutation = () => {
     });
 };
 
-import { UpdatePasswordRequest, RecommendResponse, ReportMemberRequest, FollowListResponse, FindEmailRequest } from "@/types/member";
+import { UpdatePasswordRequest, RecommendResponse, FollowListResponse, FindEmailRequest, OtherProfileResponse, FollowCountResponse } from "@/types/member";
 import { BookStoryListResponse } from "@/types/story";
 import { storyKeys } from "@/hooks/queries/useStoryQueries";
-import { memberKeys } from "@/hooks/queries/useMemberQueries";
-import { OtherProfileResponse, FollowCountResponse } from "@/types/member";
-import { toast } from "react-hot-toast";
 import { InfiniteData } from "@tanstack/react-query";
 
 // Optimistic update helpers
@@ -290,6 +290,31 @@ export const useToggleFollowMutation = () => {
             queryClient.invalidateQueries({ queryKey: memberKeys.followers() });
             queryClient.invalidateQueries({ queryKey: memberKeys.followings() });
             queryClient.invalidateQueries({ queryKey: memberKeys.followCount() });
+        },
+    });
+};
+
+export const useDeleteFollowerMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (nickname: string) => {
+            await memberService.deleteFollower(nickname);
+        },
+        onSuccess: () => {
+            toast.success("구독자가 삭제되었습니다.");
+            // Mark the follower list as stale, but don't refetch immediately.
+            // This ensures that deleted items are only removed when the user navigates
+            // away and back to the tab.
+            queryClient.invalidateQueries({
+                queryKey: memberKeys.followers(),
+                refetchType: "none",
+            });
+        },
+        onError: (error: any) => {
+            console.error("Failed to delete follower:", error);
+            const errorMessage = error.response?.data?.message || error.message || "구독자 삭제에 실패했습니다.";
+            toast.error(errorMessage);
         },
     });
 };

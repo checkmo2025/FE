@@ -10,6 +10,7 @@ export const MEMBER_ENDPOINTS = {
     FOLLOW: (nickname: string) => `${API_BASE_URL}/members/${encodeURIComponent(nickname)}/following`,
     REPORT: `${API_BASE_URL}/members/report`,
     GET_FOLLOWERS: `${API_BASE_URL}/members/me/follower`,
+    DELETE_FOLLOWER: (nickname: string) => `${API_BASE_URL}/members/${encodeURIComponent(nickname)}/follower`,
     GET_FOLLOWINGS: `${API_BASE_URL}/members/me/following`,
     GET_OTHER_FOLLOWERS: (nickname: string) => `${API_BASE_URL}/members/${encodeURIComponent(nickname)}/followers`,
     GET_OTHER_FOLLOWINGS: (nickname: string) => `${API_BASE_URL}/members/${encodeURIComponent(nickname)}/followings`,

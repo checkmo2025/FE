@@ -65,6 +65,14 @@ export const memberService = {
             throw new Error(response.message || "Failed to unfollow member");
         }
     },
+    deleteFollower: async (nickname: string): Promise<void> => {
+        const response = await apiClient.delete<ApiResponse<unknown>>(
+            MEMBER_ENDPOINTS.DELETE_FOLLOWER(nickname)
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "Failed to delete follower");
+        }
+    },
     reportMember: async (data: ReportMemberRequest): Promise<void> => {
         const response = await apiClient.post<ApiResponse<unknown>>(
             MEMBER_ENDPOINTS.REPORT,
