@@ -3,6 +3,7 @@ import { bookService } from "@/services/bookService";
 import { bookKeys } from "../queries/useBookQueries";
 import { Book, BookSearchResponse, MyLikedBooksResponse } from "@/types/book";
 import { toast } from "react-hot-toast";
+import { BOOK_MESSAGES } from "@/constants/messages";
 
 // Throttle map to prevent spam clicking (per isbn)
 const likeThrottleMap: Record<string, number> = {};
@@ -203,11 +204,7 @@ export const useToggleBookLikeMutation = () => {
             // Update simple queries with the actual response from server
             const { liked } = data;
 
-            if (liked) {
-                toast.success("관심 도서에 추가되었습니다.");
-            } else {
-                toast.success("관심 도서에서 삭제되었습니다.");
-            }
+            toast.success(liked ? BOOK_MESSAGES.LIKE_SUCCESS : BOOK_MESSAGES.UNLIKE_SUCCESS);
 
             queryClient.setQueryData<BookSearchResponse>(bookKeys.recommend(), (old) => {
                 if (!old || !old.detailInfoList) return old;
