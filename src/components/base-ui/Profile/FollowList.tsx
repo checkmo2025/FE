@@ -9,6 +9,7 @@ type FollowListProps = {
     followingCount: number;
     users: FollowUser[];
     onToggleFollow: (id: string | number, isFollowing: boolean) => void;
+    onDelete?: (nickname: string) => void;
     hasMore?: boolean;
     onLoadMore?: () => void;
     isFetching?: boolean;
@@ -21,6 +22,7 @@ export default function FollowList({
     followingCount,
     users,
     onToggleFollow,
+    onDelete,
     hasMore,
     onLoadMore,
     isFetching,
@@ -75,6 +77,7 @@ export default function FollowList({
                             key={user.id}
                             user={user}
                             onToggleFollow={onToggleFollow}
+                            onDelete={activeTab === "follower" ? onDelete : undefined}
                         />
                     ))
                 ) : (
