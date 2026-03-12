@@ -1,24 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import BookStoryCard from "@/components/base-ui/BookStory/bookstory_card";
-import NewsBannerSlider from "@/components/base-ui/home/NewsBannerSlider";
-import HomeBookclub from "@/components/base-ui/home/home_bookclub";
-import ListSubscribeLarge from "@/components/base-ui/home/list_subscribe_large";
-import ListSubscribeElement from "@/components/base-ui/home/list_subscribe_element";
 import LoginModal from "@/components/base-ui/Login/LoginModal";
-import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
+import HomeNewsSection from "@/components/base-ui/home/News/HomeNewsSection";
+import HomeClubSection from "@/components/base-ui/home/Club/HomeClubSection";
+import HomeRecommendationSection from "@/components/base-ui/home/Recommendation/HomeRecommendationSection";
+import HomeStoryList from "@/components/base-ui/home/Story/HomeStoryList";
 
 import { useAuthStore } from "@/store/useAuthStore";
 import { useInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useInView } from "react-intersection-observer";
 import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
 import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
-import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
-import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
-import { BookStory } from "@/types/story";
+import { useHomeInteractions } from "@/hooks/useHomeInteractions";
 
 export default function HomePage() {
   const router = useRouter();
@@ -34,24 +29,7 @@ export default function HomePage() {
   } = useInfiniteStoriesQuery();
   const { data: membersData, isLoading: isLoadingMembers, isError: isErrorMembers } = useRecommendedMembersQuery(isLoggedIn);
   const { data: myClubsData, isLoading: isLoadingClubs } = useMyClubsQuery(isLoggedIn);
-  const { mutate: toggleLike } = useToggleStoryLikeMutation();
-  const { mutate: toggleFollow } = useToggleFollowMutation();
-
-  const handleToggleLike = (bookStoryId: number) => {
-    if (!isLoggedIn) {
-      openLoginModal();
-      return;
-    }
-    toggleLike(bookStoryId);
-  };
-
-  const handleToggleFollow = (nickname: string, isFollowing: boolean) => {
-    if (!isLoggedIn) {
-      openLoginModal();
-      return;
-    }
-    toggleFollow({ nickname, isFollowing });
-  };
+  const { handleToggleLike, handleToggleFollow } = useHomeInteractions();
 
   const groups = myClubsData?.clubList || [];
   const stories = storiesData?.pages.flatMap((page) => page.basicInfoList) || [];
@@ -66,34 +44,6 @@ export default function HomePage() {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // Helper for rendering story cards
-  const renderStory = (story: BookStory, isLarge = true) => {
-    const CardComponent = isLarge ? BookStoryCardLarge : BookStoryCard;
-    return (
-      <div key={story.bookStoryId} className="shrink-0 w-full flex justify-center">
-        <CardComponent
-          id={story.bookStoryId}
-          authorName={story.authorInfo.nickname}
-          profileImgSrc={story.authorInfo.profileImageUrl}
-          createdAt={story.createdAt}
-          viewCount={story.viewCount}
-          title={story.bookStoryTitle}
-          content={story.description}
-          likeCount={story.likes}
-          commentCount={story.commentCount}
-          likedByMe={story.likedByMe}
-          coverImgSrc={story.bookInfo.imgUrl}
-          subscribeText={story.authorInfo.following ? "구독중" : "구독"}
-          isFollowing={story.authorInfo.following}
-          onSubscribeClick={() => handleToggleFollow(story.authorInfo.nickname, story.authorInfo.following)}
-          hideSubscribeButton={story.writtenByMe}
-          {...(isLarge && { onProfileClick: () => router.push(`/profile/${story.authorInfo.nickname}`) })}
-          onClick={() => router.push(`/stories/${story.bookStoryId}`)}
-          onLikeClick={() => handleToggleLike(story.bookStoryId)}
-        />
-      </div>
-    );
-  };
 
   if (isLoading) {
     return (
@@ -109,125 +59,75 @@ export default function HomePage() {
 
       {/* 모바일 */}
       <div className="flex flex-col gap-6 t:hidden">
-        <section className="pt-6">
-          <h2 className="pb-4 body_1 leading-7 text-zinc-800">소식</h2>
-          <NewsBannerSlider />
-        </section>
+        <HomeNewsSection deviceType="mobile" />
 
         <section className="w-full">
           <div className="flex gap-4">
-            <div className="flex-1">
-              <h2 className="pb-2 body_1 leading-7 text-zinc-800">독서모임</h2>
-              <HomeBookclub groups={groups} />
-            </div>
-            <div className="flex-1">
-              <h2 className="pb-2 body_1 leading-7 text-zinc-800">사용자 추천</h2>
-              <div className="flex flex-col gap-3">
-                {isErrorMembers ? (
-                  <div className="flex flex-1 items-center justify-center py-4">
-                    <p className="text-Gray-4 text-[14px]">추천 목록을 불러오지 못했어요.</p>
-                  </div>
-                ) : recommendedUsers.length === 0 ? (
-                  <div className="flex flex-1 items-center justify-center py-4">
-                    <p className="text-Gray-4 text-[14px]">사용자 추천이 없습니다.</p>
-                  </div>
-                ) : (
-                  recommendedUsers.slice(0, 3).map((u) => (
-                    <ListSubscribeElement
-                      key={u.nickname}
-                      name={u.nickname}
-                      profileSrc={u.profileImageUrl}
-                      isFollowing={u.isFollowing}
-                      onSubscribeClick={() => handleToggleFollow(u.nickname, u.isFollowing)}
-                    />
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="pt-6">
-          <div className="flex flex-col gap-5 items-center">
-            {isErrorStories ? (
-              <div className="text-Gray-4 text-[14px]">책 이야기 리스트를 불러오지 못했어요.</div>
-            ) : stories.length === 0 ? (
-              <div className="text-Gray-4 text-[14px]">책 이야기 리스트가 없습니다.</div>
-            ) : (
-              stories.map((s) => renderStory(s, true))
-            )}
-          </div>
-        </section>
-      </div>
-
-      {/* 태블릿 */}
-      <div className="hidden t:flex flex-col gap-6 d:hidden">
-        <section className="pt-6">
-          <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">소식</h2>
-          <NewsBannerSlider />
-        </section>
-
-        <section className="w-full pt-6">
-          <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">독서모임</h2>
-          <div className="flex gap-6 justify-center">
-            <HomeBookclub groups={groups} />
-            <ListSubscribeLarge
-              height="h-[424px]"
+            <HomeClubSection deviceType="mobile" groups={groups} />
+            <HomeRecommendationSection
+              deviceType="mobile"
               users={recommendedUsers}
               isError={isErrorMembers}
-              onSubscribeClick={(nickname, isFollowing) => handleToggleFollow(nickname, isFollowing)}
+              onSubscribeClick={handleToggleFollow}
             />
           </div>
         </section>
 
-        <section className="pt-6">
-          <div className="flex flex-wrap gap-5 justify-center">
-            {isErrorStories ? (
-              <div className="text-Gray-4 text-[14px]">책 이야기 리스트를 불러오지 못했어요.</div>
-            ) : stories.length === 0 ? (
-              <div className="text-Gray-4 text-[14px]">책 이야기 리스트가 없습니다.</div>
-            ) : (
-              stories.map((s) => renderStory(s, false))
-            )}
+
+        <HomeStoryList
+          deviceType="mobile"
+          stories={stories}
+          isError={isErrorStories}
+          handleToggleLike={handleToggleLike}
+          handleToggleFollow={handleToggleFollow}
+        />
+      </div>
+
+      {/* 태블릿 */}
+      <div className="hidden t:flex flex-col gap-6 d:hidden">
+        <HomeNewsSection deviceType="tablet" />
+
+        <section className="w-full pt-6">
+          <div className="flex gap-6 justify-center">
+            <div className="flex flex-col">
+              <HomeClubSection deviceType="tablet" groups={groups} />
+            </div>
+            <HomeRecommendationSection
+              deviceType="tablet"
+              users={recommendedUsers}
+              isError={isErrorMembers}
+              onSubscribeClick={handleToggleFollow}
+            />
           </div>
         </section>
+
+
+        <HomeStoryList
+          deviceType="tablet"
+          stories={stories}
+          isError={isErrorStories}
+          handleToggleLike={handleToggleLike}
+          handleToggleFollow={handleToggleFollow}
+        />
       </div>
 
       {/* 데스크톱 */}
       <div className="hidden d:flex flex-col gap-6 w-full">
         <div className="flex flex-row gap-6 w-full pt-6">
-          <section className="w-[332px] shrink-0">
-            <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">독서모임</h2>
-            <HomeBookclub groups={groups} />
-          </section>
-          <section className="flex-1">
-            <h2 className="pb-5 text-xl font-semibold leading-7 text-zinc-800">소식</h2>
-            <NewsBannerSlider />
-          </section>
+          <HomeClubSection deviceType="desktop" groups={groups} />
+          <HomeNewsSection deviceType="desktop" />
         </div>
 
-        <section className="w-full pt-6">
-          <div className="d:grid d:grid-cols-4 gap-5 d:justify-items-center">
-            {isErrorStories ? (
-              <div className="col-span-4 text-center text-Gray-4 text-[14px]">책 이야기 리스트를 불러오지 못했어요.</div>
-            ) : stories.length === 0 ? (
-              <div className="col-span-4 text-center text-Gray-4 text-[14px]">책 이야기 리스트가 없습니다.</div>
-            ) : (
-              <>
-                {stories.slice(0, 4).map((s) => renderStory(s, true))}
-                {recommendedUsers.length > 0 && (
-                  <ListSubscribeLarge
-                    height="h-[380px]"
-                    users={recommendedUsers}
-                    isError={isErrorMembers}
-                    onSubscribeClick={(nickname, isFollowing) => handleToggleFollow(nickname, isFollowing)}
-                  />
-                )}
-                {stories.slice(4).map((s) => renderStory(s, true))}
-              </>
-            )}
-          </div>
-        </section>
+
+        <HomeStoryList
+          deviceType="desktop"
+          stories={stories}
+          isError={isErrorStories}
+          handleToggleLike={handleToggleLike}
+          handleToggleFollow={handleToggleFollow}
+          recommendedUsers={recommendedUsers}
+          isErrorMembers={isErrorMembers}
+        />
       </div>
 
       {!isErrorStories && hasNextPage && (
