@@ -203,6 +203,12 @@ export const useToggleBookLikeMutation = () => {
             // Update simple queries with the actual response from server
             const { liked } = data;
 
+            if (liked) {
+                toast.success("관심 도서에 추가되었습니다.");
+            } else {
+                toast.success("관심 도서에서 삭제되었습니다.");
+            }
+
             queryClient.setQueryData<BookSearchResponse>(bookKeys.recommend(), (old) => {
                 if (!old || !old.detailInfoList) return old;
                 return {
