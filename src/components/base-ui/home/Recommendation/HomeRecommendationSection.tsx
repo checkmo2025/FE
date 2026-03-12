@@ -1,13 +1,16 @@
+import { RecommendedMember } from "@/types/member";
 import ListSubscribeElement from "./list_subscribe_element";
 import ListSubscribeLarge from "./list_subscribe_large";
 import { RecommendationSkeleton } from "../shared/HomeSkeleton";
 
 interface HomeRecommendationSectionProps {
-  users: any[];
+  users: RecommendedMember[];
   isError: boolean;
   isLoading?: boolean;
   onSubscribeClick: (nickname: string, isFollowing: boolean) => void;
 }
+
+const MOBILE_LIMIT = 3;
 
 export default function HomeRecommendationSection({
   users,
@@ -36,7 +39,7 @@ export default function HomeRecommendationSection({
               <p className="text-Gray-4 text-[14px]">사용자 추천이 없습니다.</p>
             </div>
           ) : (
-            users.slice(0, 3).map((u) => (
+            users.slice(0, MOBILE_LIMIT).map((u) => (
               <ListSubscribeElement
                 key={u.nickname}
                 name={u.nickname}

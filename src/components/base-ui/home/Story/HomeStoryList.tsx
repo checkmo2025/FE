@@ -1,6 +1,7 @@
 "use client";
 
 import { BookStory } from "@/types/story";
+import { RecommendedMember } from "@/types/member";
 import BookStoryCard from "@/components/base-ui/BookStory/bookstory_card";
 import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
 import { useRouter } from "next/navigation";
@@ -15,7 +16,7 @@ interface HomeStoryListProps {
   handleToggleLike: (id: number) => void;
   handleToggleFollow: (nickname: string, isFollowing: boolean) => void;
   // Desktop 전용 추천 섹션 Props
-  recommendedUsers?: any[];
+  recommendedUsers?: RecommendedMember[];
   isErrorMembers?: boolean;
   isLoadingMembers?: boolean;
   // 무한 스크롤 관련 Props
@@ -24,6 +25,9 @@ interface HomeStoryListProps {
   isFetchingNextPage: boolean;
   observerRef: (node?: Element | null | undefined) => void;
 }
+
+// 렌더링 관련 상수
+const STORY_THRESHOLD = 4;
 
 export default function HomeStoryList({
   stories,
@@ -62,10 +66,10 @@ export default function HomeStoryList({
   }
 
   // 카드 렌더링 헬퍼 (통합 버전)
-  const renderStoryCard = (story: BookStory, isLarge: boolean, deviceClass: string) => {
+  const renderStoryCard = (story: BookStory, isLarge: boolean, deviceClass: string, keySuffix: string) => {
     const CardComponent = isLarge ? BookStoryCardLarge : BookStoryCard;
     return (
-      <div key={`${story.bookStoryId}-${isLarge}`} className={`shrink-0 w-full flex justify-center ${deviceClass}`}>
+      <div key={`${story.bookStoryId}-${keySuffix}`} className={`shrink-0 w-full flex justify-center ${deviceClass}`}>
         <CardComponent
           id={story.bookStoryId}
           authorName={story.authorInfo.nickname}
@@ -98,7 +102,7 @@ export default function HomeStoryList({
         {stories.map((story, index) => (
           <React.Fragment key={story.bookStoryId}>
             {/* 데스크톱 전용: 4번째 스토리 이후 추천 섹션 삽입 */}
-            {index === 4 && (recommendedUsers || isLoadingMembers) && (
+            {index === STORY_THRESHOLD && (recommendedUsers || isLoadingMembers) && (
               <div className="hidden d:block w-full">
                 <HomeRecommendationSection
                   users={recommendedUsers || []}
@@ -110,13 +114,13 @@ export default function HomeStoryList({
             )}
 
             {/* 모바일: Large Card */}
-            {renderStoryCard(story, true, "t:hidden")}
+            {renderStoryCard(story, true, "t:hidden", "mobile")}
 
             {/* 태블릿: Small Card */}
-            {renderStoryCard(story, false, "hidden t:flex d:hidden")}
+            {renderStoryCard(story, false, "hidden t:flex d:hidden", "tablet")}
 
             {/* 데스크톱: Large Card */}
-            {renderStoryCard(story, true, "hidden d:flex")}
+            {renderStoryCard(story, true, "hidden d:flex", "desktop")}
           </React.Fragment>
         ))}
       </section>
