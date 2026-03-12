@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useMemo } from "react";
 import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
-import ListSubscribeLarge from "@/components/base-ui/home/list_subscribe_large";
+import ListSubscribeLarge from "@/components/base-ui/home/Recommendation/list_subscribe_large";
 import { useRouter } from "next/navigation";
 import FloatingFab from "@/components/base-ui/Float";
 import LoginModal from "@/components/base-ui/Login/LoginModal";
