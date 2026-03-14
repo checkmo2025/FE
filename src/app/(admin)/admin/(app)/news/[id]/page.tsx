@@ -90,7 +90,7 @@ export default function AdminNewsDetailPage() {
   }, [news?.thumbnailUrl]);
 
   if (loading) {
-    return null;
+  return <div className="text-center py-20">Loading...</div>;
   }
 
   if (isInvalid || !news) {

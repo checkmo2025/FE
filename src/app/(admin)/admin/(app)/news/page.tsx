@@ -197,11 +197,21 @@ export default function NewsPage() {
               onClick={() => goTo(page - 1)}
               disabled={isFirst}
               className={`flex items-center ${
-                isFirst ? "cursor-default opacity-30" : "cursor-pointer hover:opacity-70"
+                isFirst
+                  ? "cursor-default opacity-30"
+                  : "cursor-pointer hover:opacity-70"
               }`}
-              type="button"
+              aria-label="이전 페이지"
             >
-              ◀
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M15 18L9 12L15 6"
+                  stroke={isFirst ? "var(--Gray_4)" : "var(--Gray_7)"}
+                  strokeWidth="1"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </button>
 
             {pageButtons.map((p) => (
@@ -211,7 +221,6 @@ export default function NewsPage() {
                 className={`cursor-pointer ${
                   p === page ? "text-Gray-7" : "text-Gray-4"
                 } hover:opacity-70`}
-                type="button"
               >
                 {p}
               </button>
@@ -221,11 +230,21 @@ export default function NewsPage() {
               onClick={() => goTo(page + 1)}
               disabled={isLast}
               className={`flex items-center ${
-                isLast ? "cursor-default opacity-30" : "cursor-pointer hover:opacity-70"
+                isLast
+                  ? "cursor-default opacity-30"
+                  : "cursor-pointer hover:opacity-70"
               }`}
-              type="button"
+              aria-label="다음 페이지"
             >
-              ▶
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M9 6L15 12L9 18"
+                  stroke={isLast ? "var(--Gray_4)" : "var(--Gray_7)"}
+                  strokeWidth="1"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </button>
           </div>
         </div>
