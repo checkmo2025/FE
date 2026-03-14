@@ -6,7 +6,7 @@ import AdminSearchHeader from "@/components/layout/AdminSearchHeader";
 import { fetchAdminNews } from "@/lib/api/admin/news";
 
 type NewsRow = {
-  id: number;
+  newsId: number;
   title: string;
   authorEmail: string;
   createdAt: string;
@@ -26,7 +26,7 @@ export default function NewsPage() {
     setPage(1);
   };
 
-  // API 호출: page 바뀔 때마다 새로 조회
+  // API 호출
   useEffect(() => {
     let alive = true;
 
@@ -42,7 +42,7 @@ export default function NewsPage() {
         }
 
         const rows: NewsRow[] = (data.result.basicInfoList ?? []).map((item) => ({
-          id: item.newsId,
+          newsId: item.newsId,
           title: item.title,
           authorEmail: item.requesterEmail,
           createdAt: item.createdAt,
@@ -71,17 +71,14 @@ export default function NewsPage() {
     };
   }, [page]);
 
-  /**
-   * 검색 처리
-   * - 현재 페이지 데이터 안에서만 필터링됨(서버 검색 아님)
-   */
+  // 검색 필터
   const filtered = useMemo(() => {
     const q = keyword.trim().toLowerCase();
     if (!q) return newsList;
 
     return newsList.filter((n) => {
       return (
-        String(n.id).includes(q) ||
+        String(n.newsId).includes(q) ||
         n.title.toLowerCase().includes(q) ||
         n.authorEmail.toLowerCase().includes(q)
       );
@@ -133,7 +130,7 @@ export default function NewsPage() {
           }
         />
 
-        {/* 라인형 테이블 */}
+        {/* 테이블 */}
         <div className="w-full">
           <table className="w-[1040px] table-fixed">
             <colgroup>
@@ -147,49 +144,29 @@ export default function NewsPage() {
 
             <thead>
               <tr className="border-b border-Subbrown-3">
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
-                  소식 ID
-                </th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
-                  소식 제목
-                </th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
-                  등록자 이메일
-                </th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
-                  등록 일자
-                </th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
-                  게시날짜
-                </th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
-                  상세보기
-                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">소식 ID</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">소식 제목</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">등록자 이메일</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">등록 일자</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">게시날짜</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">상세보기</th>
               </tr>
             </thead>
 
             <tbody>
               {filtered.map((n) => (
                 <tr
-                  key={n.id}
+                  key={n.newsId}
                   className="h-[48px] border-b border-Subbrown-4 body_1_2"
                 >
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{n.id}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
-                    {n.title}
-                  </td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
-                    {n.authorEmail}
-                  </td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
-                    {n.createdAt}
-                  </td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
-                    {n.postedAt}
-                  </td>
+                  <td className="pl-[12px] py-0 text-Gray-7">{n.newsId}</td>
+                  <td className="pl-[12px] py-0 text-Gray-7 truncate">{n.title}</td>
+                  <td className="pl-[12px] py-0 text-Gray-7 truncate">{n.authorEmail}</td>
+                  <td className="pl-[12px] py-0 text-Gray-7">{n.createdAt}</td>
+                  <td className="pl-[12px] py-0 text-Gray-7">{n.postedAt}</td>
                   <td className="pl-[12px] py-0">
                     <Link
-                      href={`/news/${n.id}`}
+                      href={`/admin/news/${n.newsId}`}
                       className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
                     >
                       상세보기
@@ -198,24 +175,21 @@ export default function NewsPage() {
                 </tr>
               ))}
 
-              {/* 빈 상태 */}
-              {!loading && filtered.length === 0 ? (
+              {!loading && filtered.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={6}
-                    className="py-10 text-center body_1_2 text-Gray-4"
-                  >
+                  <td colSpan={6} className="py-10 text-center body_1_2 text-Gray-4">
                     표시할 소식이 없습니다.
                   </td>
                 </tr>
-              ) : null}
+              )}
             </tbody>
           </table>
 
-          {/* 로딩 표시 */}
-          {loading ? (
-            <div className="py-6 text-center body_1_2 text-Gray-4">로딩중...</div>
-          ) : null}
+          {loading && (
+            <div className="py-6 text-center body_1_2 text-Gray-4">
+              로딩중...
+            </div>
+          )}
 
           {/* 페이지네이션 */}
           <div className="mt-6 flex items-center justify-center gap-4 body_2_2">
@@ -228,7 +202,6 @@ export default function NewsPage() {
                   : "cursor-pointer hover:opacity-70"
               }`}
               aria-label="이전 페이지"
-              type="button"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
@@ -248,7 +221,6 @@ export default function NewsPage() {
                 className={`cursor-pointer ${
                   p === page ? "text-Gray-7" : "text-Gray-4"
                 } hover:opacity-70`}
-                type="button"
               >
                 {p}
               </button>
@@ -263,7 +235,6 @@ export default function NewsPage() {
                   : "cursor-pointer hover:opacity-70"
               }`}
               aria-label="다음 페이지"
-              type="button"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
