@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, Suspense } from "react";
-import MyPageBreadcrumb from "@/components/base-ui/MyPage/MyPageBreadcrumb";
-import UserProfile from "@/components/base-ui/MyPage/UserProfile";
-import MyPageTabs from "@/components/base-ui/MyPage/MyPageTabs";
-import MyBookStoryList from "@/components/base-ui/MyPage/MyBookStoryList";
-import MyMeetingList from "@/components/base-ui/MyPage/MyMeetingList";
-import MyNotificationList from "@/components/base-ui/MyPage/MyNotificationList";
-import MyLibraryList from "@/components/base-ui/Profile/LibraryList";
+import MyPageBreadcrumb from "@/components/base-ui/MyPage/ProfileSection/MyPageBreadcrumb";
+import UserProfile from "@/components/base-ui/MyPage/ProfileSection/UserProfile";
+import MyPageTabs from "@/components/base-ui/MyPage/ProfileSection/MyPageTabs";
+import MyBookStoryList from "@/components/base-ui/MyPage/Lists/MyBookStoryList";
+import MyMeetingList from "@/components/base-ui/MyPage/Lists/MyMeetingList";
+import MyNotificationList from "@/components/base-ui/MyPage/Lists/MyNotificationList";
+import MyLibraryList from "@/components/base-ui/Profile/Lists/LibraryList";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useSearchParams } from "next/navigation";
 

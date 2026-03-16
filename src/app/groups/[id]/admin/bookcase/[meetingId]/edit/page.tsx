@@ -7,7 +7,7 @@ import Image from 'next/image';
 import toast from 'react-hot-toast';
 
 import BookSelectModal from '@/components/layout/BookSelectModal';
-import BookstoryChoosebook from '@/components/base-ui/BookStory/bookstory_choosebook';
+import BookstoryChoosebook from '@/components/base-ui/BookStory/Editor/bookstory_choosebook';
 import { useHeaderTitle } from '@/contexts/HeaderTitleContext';
 
 
@@ -108,7 +108,7 @@ export default function EditBookshelfPage() {
 
   // 모바일 헤더 타이틀 설정
   useEffect(() => {
-    setCustomTitle('책장 수정'); 
+    setCustomTitle('책장 수정');
     return () => setCustomTitle(null);
   }, [setCustomTitle]);
 
@@ -138,7 +138,7 @@ export default function EditBookshelfPage() {
     setMeetingLocation(meetingInfo.location ?? '');
     setGeneration(String(meetingInfo.generation ?? 1));
 
-    const tag = (meetingInfo.tag ??  "") as (typeof TAG_LABELS)[number] | "";
+    const tag = (meetingInfo.tag ?? "") as (typeof TAG_LABELS)[number] | "";
     const idx = TAG_LABELS.indexOf(tag as (typeof TAG_LABELS)[number]);
     setSelectedTags(idx >= 0 ? [idx] : []);
 
@@ -310,11 +310,10 @@ export default function EditBookshelfPage() {
                           setGeneration(num.toString());
                           setIsGenerationOpen(false);
                         }}
-                        className={`w-22 h-8 px-3 text-left subhead_4_1 cursor-pointer ${
-                          generation === num.toString()
+                        className={`w-22 h-8 px-3 text-left subhead_4_1 cursor-pointer ${generation === num.toString()
                             ? 'bg-Subbrown-4 text-Gray-7'
                             : 'bg-White text-Gray-7 hover:bg-Subbrown-4'
-                        }`}
+                          }`}
                       >
                         {num}
                       </button>
@@ -335,11 +334,10 @@ export default function EditBookshelfPage() {
                       key={index}
                       type="button"
                       onClick={() => handleTagToggle(index)}
-                      className={`h-10 px-4 py-1 rounded-[8px] body_2_2 cursor-pointer transition-colors ${
-                        isSelected
+                      className={`h-10 px-4 py-1 rounded-[8px] body_2_2 cursor-pointer transition-colors ${isSelected
                           ? `${getTagBgColor(index)} text-White`
                           : 'bg-transparent text-Gray-4 border border-Gray-2'
-                      }`}
+                        }`}
                     >
                       {label}
                     </button>
@@ -426,11 +424,10 @@ export default function EditBookshelfPage() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={!canSubmit || patchMutation.isPending}
-                className={`flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg body_1_2 transition-opacity ${
-                  !canSubmit || patchMutation.isPending
+                className={`flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg body_1_2 transition-opacity ${!canSubmit || patchMutation.isPending
                     ? 'bg-Subbrown-4 text-Gray-4 cursor-not-allowed opacity-70'
                     : 'bg-primary-2 text-White hover:opacity-90'
-                }`}
+                  }`}
               >
                 수정
               </button>

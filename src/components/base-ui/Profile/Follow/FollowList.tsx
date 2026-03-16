@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import FollowItem, { FollowUser } from "./FollowItem";
+import FollowItem, { FollowUser } from "./Follow/FollowItem";
 
 type FollowListProps = {
     activeTab: "follower" | "following";

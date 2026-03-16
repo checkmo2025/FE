@@ -1,6 +1,6 @@
 'use client';
 
-import ListSubscribeElement from './list_subscribe_element';
+import ListSubscribeElement from './Subscription/list_subscribe_element';
 
 type ListSubscribeProps = {
   height?: string;
