@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import AdminSearchHeader from "@/components/layout/AdminSearchHeader";
 import { fetchAdminBookStories } from "@/lib/api/admin/stories";
 
@@ -14,6 +15,8 @@ type BookStoryRow = {
 };
 
 export default function BookStoriesPage() {
+  const router = useRouter();
+
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
   const [stories, setStories] = useState<BookStoryRow[]>([]);
@@ -113,9 +116,9 @@ export default function BookStoriesPage() {
           <table className="w-[1040px] table-fixed">
             <colgroup>
               <col className="w-[112px]" />
+              <col className="w-[250px]" />
+              <col className="w-[146px]" />
               <col className="w-[200px]" />
-              <col className="w-[246px]" />
-              <col className="w-[180px]" />
               <col className="w-[112px]" />
               <col className="w-[72px]" />
               <col className="w-[112px]" />
@@ -146,7 +149,10 @@ export default function BookStoriesPage() {
                   <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{s.postedAt}</td>
                   <td className="py-0 body_1_2 text-Gray-7 text-center">{s.status}</td>
                   <td className="pl-[12px] py-0">
-                    <button className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70">
+                    <button
+                      onClick={() => router.push(`/admin/stories/${s.id}`)}
+                      className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
+                    >
                       상세보기
                     </button>
                   </td>

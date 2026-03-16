@@ -25,7 +25,7 @@ type AdminBookStoryListResponse = {
   result: AdminBookStoryListResult;
 };
 
-export async function fetchAdminBookStories(page = 0, size = 10) {
+export async function fetchAdminBookStories(page = 0, size = 20) {
   const res = await fetch(ADMIN_STORIES.list(page, size), {
     method: "GET",
     credentials: "include",
@@ -37,5 +37,63 @@ export async function fetchAdminBookStories(page = 0, size = 10) {
   }
 
   const data: AdminBookStoryListResponse = await res.json();
+  return data.result;
+}
+
+export type AdminBookStoryDetail = {
+  bookStoryId: number;
+  bookInfo: {
+    bookId: string;
+    title: string;
+    author: string;
+    imgUrl: string;
+  };
+  authorInfo: {
+    nickname: string;
+    profileImageUrl: string;
+    following: boolean;
+  };
+  bookStoryTitle: string;
+  description: string;
+  likes: number;
+  likedByMe: boolean;
+  createdAt: string;
+  writtenByMe: boolean;
+  viewCount: number;
+  commentCount: number;
+  comments: {
+    commentId: number;
+    content: string;
+    authorInfo: {
+      nickname: string;
+      profileImageUrl: string;
+    };
+    createdAt: string;
+    writtenByMe: boolean;
+    deleted: boolean;
+  }[];
+  prevBookStoryId: number;
+  nextBookStoryId: number;
+};
+
+type AdminBookStoryDetailResponse = {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: AdminBookStoryDetail;
+};
+
+export async function fetchAdminBookStoryDetail(bookStoryId: number) {
+  const res = await fetch(ADMIN_STORIES.detail(bookStoryId), {
+    method: "GET",
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`책 이야기 상세 조회 실패: ${res.status} ${text}`);
+  }
+
+  const data: AdminBookStoryDetailResponse = await res.json();
   return data.result;
 }
