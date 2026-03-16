@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo } from "react";
-import MyNotificationItem from "./items/MyNotificationItem";
+import MyNotificationItem from "../items/MyNotificationItem";
 import { useInfiniteNotificationsQuery } from "@/hooks/queries/useNotificationQueries";
 import { useInView } from "react-intersection-observer";
 

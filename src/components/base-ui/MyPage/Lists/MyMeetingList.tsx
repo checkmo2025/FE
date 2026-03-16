@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import MyMeetingCard from "./items/MyMeetingCard";
+import MyMeetingCard from "../items/MyMeetingCard";
 import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 
 const MyMeetingList = () => {
