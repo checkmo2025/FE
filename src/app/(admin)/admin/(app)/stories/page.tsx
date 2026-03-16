@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AdminSearchHeader from "@/components/layout/AdminSearchHeader";
+import { fetchAdminBookStories } from "@/lib/api/admin/stories";
 
 type BookStoryRow = {
   id: number;
   title: string;
-  authorEmail: string;
+  authorNickname: string;
   bookTitle: string;
   postedAt: string;
   status: "등록" | "임시저장";
@@ -15,63 +16,43 @@ type BookStoryRow = {
 export default function BookStoriesPage() {
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
+  const [stories, setStories] = useState<BookStoryRow[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
 
   const handleKeywordChange = (v: string) => {
     setKeyword(v);
     setPage(1);
   };
 
-  // 더미 데이터 (테스트용) - 100개 생성
-  const stories: BookStoryRow[] = useMemo(() => {
-    const base = [
-      {
-        title: "삶을 바꾸는 문장들",
-        authorEmail: "yh9839@naver.com",
-        bookTitle: "어린 왕자",
-      },
-      {
-        title: "끝까지 읽게 되는 이유",
-        authorEmail: "minsu@test.com",
-        bookTitle: "데미안",
-      },
-      {
-        title: "마음이 가벼워지는 독서",
-        authorEmail: "jieun@test.com",
-        bookTitle: "미움받을 용기",
-      },
-      {
-        title: "기록하는 독서 습관",
-        authorEmail: "seoyeon@test.com",
-        bookTitle: "아토믹 해빗",
-      },
-      {
-        title: "다시 시작하는 용기",
-        authorEmail: "daeun@test.com",
-        bookTitle: "나미야 잡화점의 기적",
-      },
-    ];
+  const pageSize = 20;
 
-    const toDate = (i: number) => {
-      const y = i % 2 === 0 ? 2025 : 2026;
-      const m = y === 2025 ? 10 + (i % 3) : 1 + (i % 2);
-      const d = 1 + (i % 28);
-      return `${y}.${String(m).padStart(2, "0")}.${String(d).padStart(2, "0")}`;
+  useEffect(() => {
+    const loadStories = async () => {
+      try {
+        const result = await fetchAdminBookStories(page - 1, pageSize);
+
+        const mapped: BookStoryRow[] = result.basicInfoList.map((item) => ({
+          id: item.bookStoryId,
+          title: item.bookStoryTitle,
+          authorNickname: item.authorNickname,
+          bookTitle: item.bookTitle,
+          postedAt: new Date(item.createdAt)
+            .toLocaleDateString("ko-KR")
+            .replace(/\s/g, ""),
+          status: "등록",
+        }));
+
+        setStories(mapped);
+        setTotalPages(Math.max(1, result.totalPages));
+      } catch (error) {
+        console.error("책 이야기 목록 조회 실패:", error);
+        setStories([]);
+        setTotalPages(1);
+      }
     };
 
-    return Array.from({ length: 100 }).map((_, i) => {
-      const b = base[i % base.length];
-      return {
-        id: 100 + i,
-        title: `${b.title} ${i + 1}`,
-        authorEmail: b.authorEmail,
-        bookTitle: b.bookTitle,
-        postedAt: toDate(i),
-        status: i % 4 === 0 ? "임시저장" : "등록",
-      };
-    });
-  }, []);
-
-  const pageSize = 20;
+    loadStories();
+  }, [page]);
 
   const filtered = useMemo(() => {
     const q = keyword.trim().toLowerCase();
@@ -81,19 +62,16 @@ export default function BookStoriesPage() {
       return (
         String(s.id).includes(q) ||
         s.title.toLowerCase().includes(q) ||
-        s.authorEmail.toLowerCase().includes(q) ||
+        s.authorNickname.toLowerCase().includes(q) ||
         s.bookTitle.toLowerCase().includes(q) ||
         s.status.toLowerCase().includes(q)
       );
     });
   }, [stories, keyword]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-
   const pageItems = useMemo(() => {
-    const start = (page - 1) * pageSize;
-    return filtered.slice(start, start + pageSize);
-  }, [filtered, page, pageSize]);
+    return filtered;
+  }, [filtered]);
 
   const handleSearch = () => {
     console.log("검색:", keyword);
@@ -131,7 +109,6 @@ export default function BookStoriesPage() {
           inputWidthClassName="w-[1040px]"
         />
 
-        {/* 라인형 테이블 */}
         <div className="w-full">
           <table className="w-[1040px] table-fixed">
             <colgroup>
@@ -148,7 +125,7 @@ export default function BookStoriesPage() {
               <tr className="border-b border-Subbrown-3">
                 <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">책이야기 ID</th>
                 <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">책이야기 제목</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">등록자 이메일</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">닉네임</th>
                 <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">책 제목</th>
                 <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">게시날짜</th>
                 <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">등록여부</th>
@@ -164,7 +141,7 @@ export default function BookStoriesPage() {
                 >
                   <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{s.id}</td>
                   <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{s.title}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{s.authorEmail}</td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{s.authorNickname}</td>
                   <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{s.bookTitle}</td>
                   <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{s.postedAt}</td>
                   <td className="py-0 body_1_2 text-Gray-7 text-center">{s.status}</td>
@@ -178,7 +155,6 @@ export default function BookStoriesPage() {
             </tbody>
           </table>
 
-          {/* 페이지네이션 */}
           <div className="mt-6 flex items-center justify-center gap-4 body_2_2">
             <button
               onClick={() => goTo(page - 1)}
