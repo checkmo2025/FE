@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import ProfileBreadcrumb from "@/components/base-ui/Profile/OtherUser/ProfileBreadcrumb";
-import FollowList from "@/components/base-ui/Profile/FollowList";
+import FollowList from "@/components/base-ui/Profile/Follow/FollowList";
 import { FollowUser } from "@/components/base-ui/Profile/Follow/FollowItem";
 import { useOtherProfileQuery, useFollowerListQuery, useFollowingListQuery } from "@/hooks/queries/useMemberQueries";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";

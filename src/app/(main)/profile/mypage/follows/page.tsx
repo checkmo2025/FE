@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import MyPageBreadcrumb from "@/components/base-ui/MyPage/ProfileSection/MyPageBreadcrumb";
-import FollowList from "@/components/base-ui/Profile/FollowList";
+import FollowList from "@/components/base-ui/Profile/Follow/FollowList";
 import { FollowUser } from "@/components/base-ui/Profile/Follow/FollowItem";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useProfileQuery, useFollowerListQuery, useFollowingListQuery, useFollowCountQuery } from "@/hooks/queries/useMemberQueries";
