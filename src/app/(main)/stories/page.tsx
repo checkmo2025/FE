@@ -1,7 +1,8 @@
 "use client";
 import { useState, useMemo } from "react";
 import BookStoryInfiniteList from "@/components/base-ui/BookStory/Common/BookStoryInfiniteList";
-import ListSubscribeLarge from "@/components/base-ui/home/Subscription/list_subscribe_large";
+import ListSubscribeLarge from "@/components/base-ui/home/Recommendation/list_subscribe_large";
+
 import { useRouter } from "next/navigation";
 import FloatingFab from "@/components/base-ui/Float";
 import LoginModal from "@/components/base-ui/Login/LoginModal";

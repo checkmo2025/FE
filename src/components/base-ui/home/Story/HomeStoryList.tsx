@@ -2,7 +2,7 @@
 
 import React from "react";
 import BookStoryInfiniteList from "@/components/base-ui/BookStory/Common/BookStoryInfiniteList";
-import ListSubscribeLarge from "@/components/base-ui/home/Subscription/list_subscribe_large";
+import ListSubscribeLarge from "@/components/base-ui/home/Recommendation/list_subscribe_large";
 import { useInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -13,12 +13,14 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 interface HomeStoryListProps {
   recommendedUsers: RecommendedMember[];
   isErrorMembers: boolean;
+  isLoadingMembers?: boolean;
   onToggleFollow: (nickname: string, isFollowing: boolean) => void;
 }
 
 const HomeStoryList: React.FC<HomeStoryListProps> = ({
   recommendedUsers,
   isErrorMembers,
+  isLoadingMembers,
   onToggleFollow,
 }) => {
   const { isLoggedIn, openLoginModal } = useAuthStore();
@@ -52,17 +54,17 @@ const HomeStoryList: React.FC<HomeStoryListProps> = ({
   // Determine props based on screen size
   const cardLayoutType = isTablet && !isDesktop ? "responsive" : "large-fixed";
   
-  const injectedComponent = isDesktop && recommendedUsers.length > 0 ? (
+  const injectedComponent = isDesktop && (recommendedUsers.length > 0 || isLoadingMembers) ? (
     <ListSubscribeLarge
       height="h-[380px]"
       users={recommendedUsers}
       isError={isErrorMembers}
+      isLoading={isLoadingMembers}
       onSubscribeClick={onToggleFollow}
     />
   ) : undefined;
 
   // Combine responsive classes
-  // Mobile: flex-col, Tablet: flex-row flex-wrap, Desktop: grid-cols-4
   const gridClassName = "flex flex-col gap-5 items-center w-full t:flex-row t:flex-wrap t:justify-center d:grid d:grid-cols-4 d:justify-items-center";
 
   return (
@@ -88,3 +90,4 @@ const HomeStoryList: React.FC<HomeStoryListProps> = ({
 };
 
 export default HomeStoryList;
+
