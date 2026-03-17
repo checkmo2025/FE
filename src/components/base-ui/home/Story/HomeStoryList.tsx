@@ -8,6 +8,7 @@ import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations"
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { RecommendedMember } from "@/types/member";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 interface HomeStoryListProps {
   recommendedUsers: RecommendedMember[];
@@ -22,6 +23,10 @@ const HomeStoryList: React.FC<HomeStoryListProps> = ({
 }) => {
   const { isLoggedIn, openLoginModal } = useAuthStore();
   const router = useRouter();
+
+  // Breakpoints from tailwind.config.js
+  const isTablet = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery("(min-width: 1440px)");
 
   const {
     data: storiesData,
@@ -44,75 +49,41 @@ const HomeStoryList: React.FC<HomeStoryListProps> = ({
 
   const stories = storiesData?.pages.flatMap((page) => page.basicInfoList) || [];
 
+  // Determine props based on screen size
+  const cardLayoutType = isTablet && !isDesktop ? "responsive" : "large-fixed";
+  
+  const injectedComponent = isDesktop && recommendedUsers.length > 0 ? (
+    <ListSubscribeLarge
+      height="h-[380px]"
+      users={recommendedUsers}
+      isError={isErrorMembers}
+      onSubscribeClick={onToggleFollow}
+    />
+  ) : undefined;
+
+  // Combine responsive classes
+  // Mobile: flex-col, Tablet: flex-row flex-wrap, Desktop: grid-cols-4
+  const gridClassName = "flex flex-col gap-5 items-center w-full t:flex-row t:flex-wrap t:justify-center d:grid d:grid-cols-4 d:justify-items-center";
+
   return (
-    <>
-      {/* 모바일: 1열 리스트 */}
-      <div className="t:hidden flex flex-col gap-5 items-center w-full">
-        <BookStoryInfiniteList
-          stories={stories}
-          isLoading={isLoadingStories}
-          isError={isErrorStories}
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage}
-          fetchNextPage={fetchNextPage}
-          onToggleLike={handleToggleLike}
-          onToggleFollow={onToggleFollow}
-          cardLayoutType="large-fixed"
-          gridClassName="flex flex-col gap-5 items-center w-full"
-          errorMessage="책 이야기 리스트를 불러오지 못했어요."
-          emptyMessage="책 이야기 리스트가 없습니다."
-        />
-      </div>
-
-      {/* 태블릿: 2열/3열 리스트 */}
-      <div className="hidden t:flex d:hidden w-full">
-        <BookStoryInfiniteList
-          stories={stories}
-          isLoading={isLoadingStories}
-          isError={isErrorStories}
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage}
-          fetchNextPage={fetchNextPage}
-          onToggleLike={handleToggleLike}
-          onToggleFollow={onToggleFollow}
-          cardLayoutType="responsive"
-          gridClassName="flex flex-wrap gap-5 justify-center"
-          errorMessage="책 이야기 리스트를 불러오지 못했어요."
-          emptyMessage="책 이야기 리스트가 없습니다."
-        />
-      </div>
-
-      {/* 데스크톱: 추천 섹션 포함 그리드 */}
-      <div className="hidden d:flex w-full">
-        <BookStoryInfiniteList
-          stories={stories}
-          isLoading={isLoadingStories}
-          isError={isErrorStories}
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage}
-          fetchNextPage={fetchNextPage}
-          onToggleLike={handleToggleLike}
-          onToggleFollow={onToggleFollow}
-          onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
-          cardLayoutType="large-fixed"
-          containerClassName="flex flex-col items-center w-full max-w-full gap-[20px]"
-          gridClassName="d:grid d:grid-cols-4 gap-5 d:justify-items-center w-full"
-          injectedComponent={
-            recommendedUsers.length > 0 && (
-              <ListSubscribeLarge
-                height="h-[380px]"
-                users={recommendedUsers}
-                isError={isErrorMembers}
-                onSubscribeClick={onToggleFollow}
-              />
-            )
-          }
-          injectedIndex={4}
-          errorMessage="책 이야기 리스트를 불러오지 못했어요."
-          emptyMessage="책 이야기 리스트가 없습니다."
-        />
-      </div>
-    </>
+    <BookStoryInfiniteList
+      stories={stories}
+      isLoading={isLoadingStories}
+      isError={isErrorStories}
+      hasNextPage={hasNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+      fetchNextPage={fetchNextPage}
+      onToggleLike={handleToggleLike}
+      onToggleFollow={onToggleFollow}
+      onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
+      cardLayoutType={cardLayoutType}
+      containerClassName="flex flex-col items-center w-full max-w-full gap-[20px]"
+      gridClassName={gridClassName}
+      injectedComponent={injectedComponent}
+      injectedIndex={4}
+      errorMessage="책 이야기 리스트를 불러오지 못했어요."
+      emptyMessage="책 이야기 리스트가 없습니다."
+    />
   );
 };
 
