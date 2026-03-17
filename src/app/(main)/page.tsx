@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LoginModal from "@/components/base-ui/Login/LoginModal";
 import HomeNewsSection from "@/components/base-ui/home/News/HomeNewsSection";
@@ -9,41 +8,23 @@ import HomeRecommendationSection from "@/components/base-ui/home/Recommendation/
 import HomeStoryList from "@/components/base-ui/home/Story/HomeStoryList";
 
 import { useAuthStore } from "@/store/useAuthStore";
-import { useInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
-import { useInView } from "react-intersection-observer";
 import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
 import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 import { useHomeInteractions } from "@/hooks/useHomeInteractions";
 
-export default function HomePage() {
-  const router = useRouter();
-  const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
 
-  const {
-    data: storiesData,
-    isLoading: isLoadingStories,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isError: isErrorStories,
-  } = useInfiniteStoriesQuery();
+export default function HomePage() {
+  const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
+  const { handleToggleFollow } = useHomeInteractions();
+
   const { data: membersData, isLoading: isLoadingMembers, isError: isErrorMembers } = useRecommendedMembersQuery(isLoggedIn);
   const { data: myClubsData, isLoading: isLoadingClubs } = useMyClubsQuery(isLoggedIn);
-  const { handleToggleLike, handleToggleFollow } = useHomeInteractions();
+
 
   const groups = myClubsData?.clubList || [];
-  const stories = storiesData?.pages.flatMap((page) => page.basicInfoList) || [];
   const recommendedUsers = membersData?.friends || [];
-  // 개별 로딩 상태를 섹션에 전달하기 위해 통합 isLoading 제거
-  // const isLoading = isLoadingStories || (isLoggedIn && isLoadingMembers) || (isLoggedIn && isLoadingClubs);
 
-  const { ref, inView } = useInView({ threshold: 0 });
 
-  useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 t:px-6">
@@ -55,8 +36,9 @@ export default function HomePage() {
           
           {/* 뉴스 섹션 */}
           <div className="order-1 d:order-2 d:flex-1">
-            <HomeNewsSection isLoading={false} /> {/* 뉴스 데이터는 현재 정적 혹은 내부 처리 중이므로 false 또는 관련 상태 연결 */}
+            <HomeNewsSection isLoading={false} />
           </div>
+
 
           {/* 독서모임 & 추천 섹션 그룹 */}
           <div className="order-2 d:order-1 flex flex-row gap-4 t:gap-6 d:gap-0 justify-center d:justify-start d:w-full d:max-w-[332px]">
@@ -76,22 +58,16 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* 스토리 리스트: 무한 스크롤 및 로딩 상태 전달 */}
-        <HomeStoryList
-          stories={stories}
-          isError={isErrorStories}
-          isLoading={isLoadingStories}
-          handleToggleLike={handleToggleLike}
-          handleToggleFollow={handleToggleFollow}
-          recommendedUsers={recommendedUsers}
-          isErrorMembers={isErrorMembers}
-          isLoadingMembers={isLoadingMembers}
-          // 무한 스크롤 Props (차후 단계에서 내부로 캡슐화 예정)
-          fetchNextPage={fetchNextPage}
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage}
-          observerRef={ref}
-        />
+        {/* 스토리 리스트: 최적화된 단일 렌더링 리스트 */}
+        <section className="pt-6">
+          <HomeStoryList
+            recommendedUsers={recommendedUsers}
+            isErrorMembers={isErrorMembers}
+            isLoadingMembers={isLoadingMembers}
+            onToggleFollow={handleToggleFollow}
+          />
+        </section>
+
       </div>
 
       {!isLoggedIn && (

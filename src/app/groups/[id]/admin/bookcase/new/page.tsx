@@ -6,7 +6,7 @@ import Image from 'next/image';
 import toast from 'react-hot-toast';
 
 import BookSelectModal from '@/components/layout/BookSelectModal';
-import BookstoryChoosebook from '@/components/base-ui/BookStory/bookstory_choosebook';
+import BookstoryChoosebook from '@/components/base-ui/BookStory/Editor/bookstory_choosebook';
 import { useBookDetailQuery } from '@/hooks/queries/useBookQueries';
 import { useHeaderTitle } from '@/contexts/HeaderTitleContext';
 import { useCreateBookshelfMutation } from '@/hooks/mutations/useClubsBookshelfMutations';
@@ -213,31 +213,31 @@ export default function NewBookshelfPage() {
                 책 선택<span className="text-[#FF5151]">*</span>
               </label>
               {selectedBook ? (
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={() => setIsBookSelectModalOpen(true)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") setIsBookSelectModalOpen(true);
-                }}
-                className="cursor-pointer"
-              >
-                <BookstoryChoosebook
-                  bookUrl={selectedBook.imgUrl}
-                  bookName={selectedBook.title}
-                  author={selectedBook.author}
-                  bookDetail={selectedBook.description}
-                />
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setIsBookSelectModalOpen(true)}
-                className="w-full px-4 py-3 rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 subhead_4 d:body_1_2 text-center underline underline-offset-3 cursor-pointer"
-              >
-                선택하기
-              </button>
-            )}
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setIsBookSelectModalOpen(true)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") setIsBookSelectModalOpen(true);
+                  }}
+                  className="cursor-pointer"
+                >
+                  <BookstoryChoosebook
+                    bookUrl={selectedBook.imgUrl}
+                    bookName={selectedBook.title}
+                    author={selectedBook.author}
+                    bookDetail={selectedBook.description}
+                  />
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsBookSelectModalOpen(true)}
+                  className="w-full px-4 py-3 rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 subhead_4 d:body_1_2 text-center underline underline-offset-3 cursor-pointer"
+                >
+                  선택하기
+                </button>
+              )}
             </div>
 
             {/* 기수 */}
@@ -262,7 +262,7 @@ export default function NewBookshelfPage() {
                 </button>
                 {isGenerationOpen && (
                   <div className="absolute left-0 mt-1 w-full rounded-[8px] border border-Subbrown-4 bg-White shadow-lg z-10">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((num) => (
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((num) => (
                       <button
                         key={num}
                         type="button"
@@ -270,11 +270,10 @@ export default function NewBookshelfPage() {
                           setGeneration(num.toString());
                           setIsGenerationOpen(false);
                         }}
-                        className={`w-22 h-8 px-3 text-left subhead_4_1 cursor-pointer ${
-                          generation === num.toString()
+                        className={`w-22 h-8 px-3 text-left subhead_4_1 cursor-pointer ${generation === num.toString()
                             ? 'bg-Subbrown-4 text-Gray-7'
                             : 'bg-White text-Gray-7 hover:bg-Subbrown-4'
-                        }`}
+                          }`}
                       >
                         {num}
                       </button>
@@ -295,11 +294,10 @@ export default function NewBookshelfPage() {
                       key={index}
                       type="button"
                       onClick={() => handleTagToggle(index)}
-                      className={`h-10 px-4 py-1 rounded-[8px] body_2_2 cursor-pointer transition-colors ${
-                        isSelected
+                      className={`h-10 px-4 py-1 rounded-[8px] body_2_2 cursor-pointer transition-colors ${isSelected
                           ? `${getTagBgColor(index)} text-White`
                           : 'bg-transparent text-Gray-4 border border-Gray-2'
-                      }`}
+                        }`}
                     >
                       {label}
                     </button>
@@ -387,11 +385,10 @@ export default function NewBookshelfPage() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={!canSubmit || createBookshelfMutation.isPending}
-                className={`flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg body_1_2 transition-opacity ${
-                  !canSubmit || createBookshelfMutation.isPending
+                className={`flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg body_1_2 transition-opacity ${!canSubmit || createBookshelfMutation.isPending
                     ? 'bg-Subbrown-4 text-Gray-4 cursor-not-allowed opacity-70'
                     : 'bg-primary-2 text-White hover:opacity-90'
-                }`}
+                  }`}
               >
                 등록
               </button>
@@ -400,7 +397,7 @@ export default function NewBookshelfPage() {
         </div>
       </div>
 
-      {/* 책 선택 모달 */}  
+      {/* 책 선택 모달 */}
       <BookSelectModal
         isOpen={isBookSelectModalOpen}
         onClose={() => setIsBookSelectModalOpen(false)}

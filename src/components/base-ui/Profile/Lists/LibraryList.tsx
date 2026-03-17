@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo } from "react";
-import LibraryCard from "./items/LibraryCard";
+import LibraryCard from "../items/LibraryCard";
 import { useLikedBooksInfiniteQuery } from "@/hooks/queries/useBookQueries";
 import { useInView } from "react-intersection-observer";
 

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import LibraryList from "@/components/base-ui/Profile/LibraryList";
-import MeetingList from "@/components/base-ui/Profile/MeetingList";
-import BookStoryList from "@/components/base-ui/Profile/BookStoryList";
+import LibraryList from "@/components/base-ui/Profile/Lists/LibraryList";
+import MeetingList from "@/components/base-ui/Profile/Lists/MeetingList";
+import BookStoryList from "@/components/base-ui/Profile/Lists/BookStoryList";
 
 const TABS = ["책 이야기", "서재", "모임"] as const;
 type Tab = (typeof TABS)[number];

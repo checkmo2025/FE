@@ -23,6 +23,7 @@ type Props = {
   hideSubscribeButton?: boolean;
   onClick?: () => void;
   onProfileClick?: () => void;
+  layoutType?: "responsive" | "large-fixed";
 };
 
 export default function BookStoryCard({
@@ -44,20 +45,23 @@ export default function BookStoryCard({
   hideSubscribeButton = false,
   onClick,
   onProfileClick,
+  layoutType = "responsive",
 }: Props) {
   const heartIcon = likedByMe ? "/red_heart.svg" : "/gray_heart.svg";
+  
+  const isLargeFixed = layoutType === "large-fixed";
 
   return (
     <div
       onClick={onClick}
-      className="flex flex-col overflow-hidden rounded-lg border-2 border-Subbrown-4 bg-White hover:border-primary-2 transition-colors cursor-pointer
-      /* 모바일: 161px x 243px */
-      w-[161px] h-[243px]
-      /* 데스크탑(md 이상): 336px x 380px */
-      md:w-[336px] md:h-[380px]"
+      className={`flex flex-col overflow-hidden rounded-lg border-2 border-Subbrown-4 bg-White hover:border-primary-2 transition-colors cursor-pointer
+      ${isLargeFixed 
+        ? "w-full max-w-[336px] h-[380px]" // 고정형 (기존 BookStoryCardLarge)
+        : "w-[161px] h-[243px] md:w-full md:max-w-[336px] md:h-[380px]" // 반응형
+      }`}
     >
-      {/* 1. 상단 프로필 (모바일 숨김 / 데스크탑 노출) */}
-      <div className="items-center hidden gap-2 px-4 py-3 md:flex">
+      {/* 1. 상단 프로필 */}
+      <div className={`items-center gap-2 px-4 py-3 ${isLargeFixed ? "flex" : "hidden md:flex"}`}>
         <div
           className="flex items-center gap-2 group cursor-pointer hover:bg-gray-100 transition-colors px-2 py-1 -ml-2 rounded-lg"
           onClick={(e) => {
@@ -101,8 +105,8 @@ export default function BookStoryCard({
         )}
       </div>
 
-      {/* 2. 책 이미지 (모바일: flex-1 / 데스크탑: h-36) */}
-      <div className="relative flex-1 w-full shrink-0 bg-Subbrown-4 md:h-36 md:flex-none overflow-hidden flex items-center justify-center">
+      {/* 2. 책 이미지 */}
+      <div className={`relative w-full shrink-0 bg-Subbrown-4 overflow-hidden flex items-center justify-center ${isLargeFixed ? "h-36" : "flex-1 md:h-36 md:flex-none"}`}>
         {coverImgSrc && (
           <>
             <Image
@@ -120,56 +124,57 @@ export default function BookStoryCard({
 
       {/* 3. 제목 + 내용 */}
       <div
-        className="flex flex-col px-[16px] md:px-4 md:pt-4"
+        className={`flex flex-col ${isLargeFixed ? "px-4 pt-4" : "px-[16px] md:px-4 md:pt-4"}`}
       >
         {/* 제목 */}
         <p
-          className="text-Gray-7 truncate
-          /* 모바일: 중앙 정렬, mt-3, 14px */
-          text-center mt-[12px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px]
-          /* 데스크탑: 좌측 정렬, subhead_2 */
-          md:text-left md:mt-0 md:subhead_2 md:pb-1"
+          className={`text-Gray-7 truncate ${isLargeFixed
+            ? "text-left subhead_2 pb-1"
+            : "text-center mt-[12px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px] md:text-left md:mt-0 md:subhead_2 md:pb-1"
+          }`}
         >
           {title}
         </p>
 
         {/* 내용 */}
         <div
-          className="text-Gray-5 overflow-hidden
-          /* 모바일: mt-1, 12px */
-          mt-[4px] text-center text-[12px] font-medium leading-[145%] tracking-[-0.012px] line-clamp-2 md:line-clamp-3
-          /* 데스크탑: h-16, block, body_1_3 */
-          md:block md:h-16 md:pt-1 md:text-left md:body_1_3"
+          className={`text-Gray-5 overflow-hidden ${isLargeFixed
+            ? "h-16 pt-1 text-left body_1_3 line-clamp-3"
+            : "mt-[4px] text-center text-[12px] font-medium leading-[145%] tracking-[-0.012px] line-clamp-2 md:line-clamp-3 md:block md:h-16 md:pt-1 md:text-left md:body_1_3"
+          }`}
         >
           {content}
         </div>
       </div>
 
       {/* 4. 하단 통계 (좋아요/댓글) */}
-      {/* 모바일 버전 Footer */}
-      <div className="flex md:hidden h-[37px] items-start border-t border-Subbrown-4 pt-[4px] pb-[12px]">
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            onLikeClick?.(e);
-          }}
-          className="flex flex-1 items-center justify-center gap-[6px] border-r-2 border-Gray-2 h-[32px] hover:bg-gray-100 transition-colors"
-        >
-          <Image src={heartIcon} alt="좋아요" width={20} height={20} />
-          <span className={`text-[12px] font-medium ${likedByMe ? 'text-primary-2' : 'text-Gray-4'}`}>
-            {likeCount}
-          </span>
+      {/* 모바일 버전 Footer (responsive 타입일 때만) */}
+      {!isLargeFixed && (
+        <div className="flex md:hidden h-[37px] items-start border-t border-Subbrown-4 pt-[4px] pb-[12px]">
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              onLikeClick?.(e);
+            }}
+            className="flex flex-1 items-center justify-center gap-[6px] border-r-2 border-Gray-2 h-[32px] hover:bg-gray-100 transition-colors"
+          >
+            <Image src={heartIcon} alt="좋아요" width={20} height={20} />
+            <span className={`text-[12px] font-medium ${likedByMe ? 'text-primary-2' : 'text-Gray-4'}`}>
+              {likeCount}
+            </span>
+          </div>
+          <div className="flex flex-1 items-center justify-center gap-[6px] h-[32px]">
+            <Image src="/comment.svg" alt="댓글" width={20} height={20} />
+            <span className="text-[12px] font-medium text-Gray-4">
+              {commentCount}
+            </span>
+          </div>
         </div>
-        <div className="flex flex-1 items-center justify-center gap-[6px] h-[32px]">
-          <Image src="/comment.svg" alt="댓글" width={20} height={20} />
-          <span className="text-[12px] font-medium text-Gray-4">
-            {commentCount}
-          </span>
-        </div>
-      </div>
+      )}
 
       {/* 데스크탑 버전 Footer */}
-      <div className="hidden md:grid mt-1 grid-cols-[1fr_auto_1fr] items-center px-2 pb-[10px]">
+      <div className={`${isLargeFixed ? "grid" : "hidden md:grid"} mt-1 grid-cols-[1fr_auto_1fr] items-center px-2 pb-[10px]`}>
+
         <div className="flex justify-center items-center">
           <div
             onClick={(e) => {

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
 import { DUMMY_USER_PROFILE } from "@/constants/mocks/mypage";
 import { useProfileQuery, useFollowCountQuery } from "@/hooks/queries/useMemberQueries";
-import FloatingFab from "../Float";
+import FloatingFab from "@/components/base-ui/Float";
 import { EXTERNAL_LINKS } from "@/constants/links";
 
 const UserProfile = () => {
