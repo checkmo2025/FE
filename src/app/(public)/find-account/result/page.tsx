@@ -1,8 +1,8 @@
 "use client";
 
 import React, { Suspense } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import LoginLogo from "@/components/base-ui/Login/LoginLogo";
 import { useAuthStore } from "@/store/useAuthStore";
 import PrimaryButton from "@/components/common/find-account/PrimaryButton";
 
@@ -33,7 +33,13 @@ function FindAccountResultContent() {
                 {/* 상단 텍스트 및 로고 영역 */}
                 <div className="flex flex-col items-center gap-[80px] w-full">
                     <div className="flex flex-col items-center gap-[24px]">
-                        <LoginLogo />
+                        <Image
+                            src="/Vector.svg"
+                            alt="CheckMo Logo"
+                            width={76}
+                            height={46}
+                            className="w-[76.607px] h-[46.815px] shrink-0"
+                        />
                         <h1 className="text-primary-2 text-center subhead_1">
                             아이디<br />
                             <span className="text-primary-2 subhead_4_1">(이메일 찾기)</span>

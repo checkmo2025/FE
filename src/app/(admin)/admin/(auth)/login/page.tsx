@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import LoginLogo from "@/components/base-ui/Login/LoginLogo";
 import Toast from "@/components/common/Toast";
 
 export default function AdminLoginPage() {
@@ -64,9 +64,13 @@ export default function AdminLoginPage() {
       <section className="w-[429px] text-center">
 
         <div className="flex flex-col items-center">
-          <div className="w-[76px] h-[46px]">
-            <LoginLogo />
-          </div>
+          <Image
+            src="/Vector.svg"
+            alt="CheckMo Logo"
+            width={76}
+            height={46}
+            className="w-[76.607px] h-[46.815px] shrink-0"
+          />
 
           <div className="mt-[24px] subhead_1 text-primary-1">
             관리자 로그인

@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import LoginLogo from "@/components/base-ui/Login/LoginLogo";
 import PrimaryButton from "@/components/common/find-account/PrimaryButton";
 import InputField from "@/components/common/find-account/InputField";
 import { toast } from "react-hot-toast";
@@ -42,7 +42,13 @@ export default function FindPasswordPage() {
                 {/* 상단 텍스트 및 로고 영역 */}
                 <div className="flex flex-col items-center gap-[80px] w-full">
                     <div className="flex flex-col items-center gap-[24px]">
-                        <LoginLogo />
+                        <Image
+                            src="/Vector.svg"
+                            alt="CheckMo Logo"
+                            width={76}
+                            height={46}
+                            className="w-[76.607px] h-[46.815px] shrink-0"
+                        />
                         <h1 className="text-primary-2 text-center subhead_1">
                             비밀번호 재발급
                         </h1>
