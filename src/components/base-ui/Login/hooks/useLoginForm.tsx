@@ -88,8 +88,28 @@ export default function useLoginForm(onSuccess?: () => void) {
 
   const handleSocialLogin = (provider: string) => {
     if (isLoading) return;
-    console.log(`${provider} 로그인 시도`);
-    // TODO: 소셜 로그인(OAuth) 리다이렉트 로직 구현
+
+    let authUrl = "";
+    switch (provider) {
+      case "google":
+        authUrl = process.env.NEXT_PUBLIC_GOOGLE_AUTH_URL || "";
+        break;
+      case "kakao":
+        authUrl = process.env.NEXT_PUBLIC_KAKAO_AUTH_URL || "";
+        break;
+      case "naver":
+        authUrl = process.env.NEXT_PUBLIC_NAVER_AUTH_URL || "";
+        break;
+      default:
+        toast.error("지원하지 않는 로그인 방식입니다.");
+        return;
+    }
+
+    if (authUrl) {
+      window.location.href = authUrl;
+    } else {
+      toast.error("로그인 주소 설정이 누락되었습니다.");
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
