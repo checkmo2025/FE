@@ -73,8 +73,10 @@ const BookStoryInfiniteList: React.FC<BookStoryInfiniteListProps> = ({
 
   if (stories.length === 0) {
     return (
-      <div className="flex justify-center flex-col items-center py-20 text-Gray-4 body_1 w-full min-h-[200px] border border-Subbrown-4 rounded-[12px] bg-white gap-2">
-        <span>{emptyMessage}</span>
+      <div className="flex flex-col items-center justify-center py-20 w-full">
+        <p className="text-Gray-4 body_1_2 text-center whitespace-pre-wrap">
+          {emptyMessage}
+        </p>
       </div>
     );
   }
@@ -97,8 +99,9 @@ const BookStoryInfiniteList: React.FC<BookStoryInfiniteListProps> = ({
       subscribeText={story.authorInfo.following ? "구독중" : "구독"}
       isFollowing={story.authorInfo.following}
       onSubscribeClick={() => onToggleFollow?.(story.authorInfo.nickname, story.authorInfo.following)}
-      hideSubscribeButton={hideSubscribeButton}
+      hideSubscribeButton={hideSubscribeButton || story.writtenByMe}
       onProfileClick={() => onProfileClick?.(story.authorInfo.nickname)}
+
       onClick={() => router.push(`/stories/${story.bookStoryId}`)}
       onLikeClick={(e) => {
         e.stopPropagation();
