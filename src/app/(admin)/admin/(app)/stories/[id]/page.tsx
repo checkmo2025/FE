@@ -6,7 +6,7 @@ import StoryNavigation from "@/components/base-ui/Admin/stories/story_navigation
 import CommentSection from "@/components/base-ui/Comment/comment_section";
 import Image from "next/image";
 import { isValidUrl } from "@/utils/url";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import LoginModal from "@/components/base-ui/Login/LoginModal";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
@@ -18,6 +18,7 @@ import {
 
 export default function StoryDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const id = Number(params?.id);
 
   const [story, setStory] = useState<AdminBookStoryDetail | null>(null);
@@ -30,6 +31,11 @@ export default function StoryDetailPage() {
     useAuthStore();
 
   useEffect(() => {
+    if (Number.isNaN(id)) {
+      router.push("/admin/stories");
+      return;
+    }
+
     const loadStory = async () => {
       try {
         setIsLoading(true);
@@ -45,10 +51,8 @@ export default function StoryDetailPage() {
       }
     };
 
-    if (id) {
-      loadStory();
-    }
-  }, [id]);
+    loadStory();
+  }, [id, router]);
 
   const handleToggleLike = () => {
     if (!story) return;
@@ -97,9 +101,7 @@ export default function StoryDetailPage() {
 
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4">
-      {isLoginModalOpen && (
-        <LoginModal onClose={() => closeLoginModal()} />
-      )}
+      {isLoginModalOpen && <LoginModal onClose={() => closeLoginModal()} />}
 
       <div className="t:hidden w-screen -mx-4 border-b border-zinc-300">
         <div className="px-4 h-[44px] flex gap-5 items-center">
@@ -176,15 +178,9 @@ export default function StoryDetailPage() {
         <div className="border-t-2 border-Gray-1 w-full max-w-[1040px] mx-auto px-5 mt-10 pt-6 pb-10">
           <CommentSection
             storyId={story.bookStoryId}
-            initialComments={story.comments.map((comment) => ({
-            ...comment,
-            authorInfo: {
-                ...comment.authorInfo,
-                following: false,
-            },
-        }))}
-        storyAuthorNickname={story.authorInfo.nickname}
-        />
+            initialComments={story.comments}
+            storyAuthorNickname={story.authorInfo.nickname}
+          />
         </div>
       </div>
     </div>

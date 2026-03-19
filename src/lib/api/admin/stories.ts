@@ -1,4 +1,5 @@
 import { ADMIN_STORIES } from "./endpoints/stories";
+import type { CommentInfo } from "@/types/story";
 
 export type AdminBookStoryItem = {
   bookStoryId: number;
@@ -61,17 +62,7 @@ export type AdminBookStoryDetail = {
   writtenByMe: boolean;
   viewCount: number;
   commentCount: number;
-  comments: {
-    commentId: number;
-    content: string;
-    authorInfo: {
-      nickname: string;
-      profileImageUrl: string;
-    };
-    createdAt: string;
-    writtenByMe: boolean;
-    deleted: boolean;
-  }[];
+  comments: CommentInfo[];
   prevBookStoryId: number;
   nextBookStoryId: number;
 };
