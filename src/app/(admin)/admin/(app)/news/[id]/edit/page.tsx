@@ -10,6 +10,10 @@ import {
 
 type CarouselType = "PROMOTION" | "GENERAL";
 
+type ExtraImageItem =
+  | { type: "existing"; url: string }
+  | { type: "new"; file: File; previewUrl: string };
+
 export default function AdminNewsEditPage() {
   const router = useRouter();
   const params = useParams();
@@ -23,17 +27,13 @@ export default function AdminNewsEditPage() {
   const [dateRange, setDateRange] = useState("");
   const [carousel, setCarousel] = useState<CarouselType>("PROMOTION");
 
-  // 기존 이미지 URL 상태(서버에 다시 보낼 용도)
+  // 대표 이미지 상태
   const [existingThumbnailUrl, setExistingThumbnailUrl] = useState<string | null>(null);
-  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
-
-  // 파일 상태(업로드용)
   const [repFile, setRepFile] = useState<File | null>(null);
-  const [extraFiles, setExtraFiles] = useState<File[]>([]);
-
-  // UI용(미리보기)
   const [repPreview, setRepPreview] = useState<string | null>(null);
-  const [extraPreviews, setExtraPreviews] = useState<string[]>([]);
+
+  // 추가 이미지 상태 통합
+  const [extraImages, setExtraImages] = useState<ExtraImageItem[]>([]);
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -55,10 +55,14 @@ export default function AdminNewsEditPage() {
         setCarousel(news.carousel);
 
         setExistingThumbnailUrl(news.thumbnailUrl || null);
-        setExistingImageUrls(news.imageUrls ?? []);
-
         setRepPreview(news.thumbnailUrl || null);
-        setExtraPreviews(news.imageUrls ?? []);
+
+        setExtraImages(
+          (news.imageUrls ?? []).map((url: string) => ({
+            type: "existing",
+            url,
+          }))
+        );
       } catch (err) {
         console.error(err);
         alert("소식 상세 조회 실패");
@@ -69,6 +73,20 @@ export default function AdminNewsEditPage() {
     loadNewsDetail();
   }, [newsId, router]);
 
+  useEffect(() => {
+    return () => {
+      if (repPreview && repPreview.startsWith("blob:")) {
+        URL.revokeObjectURL(repPreview);
+      }
+
+      extraImages.forEach((image) => {
+        if (image.type === "new") {
+          URL.revokeObjectURL(image.previewUrl);
+        }
+      });
+    };
+  }, [repPreview, extraImages]);
+
   const onPickRepImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -76,7 +94,9 @@ export default function AdminNewsEditPage() {
     setRepFile(file);
 
     setRepPreview((prev) => {
-      if (prev && prev.startsWith("blob:")) URL.revokeObjectURL(prev);
+      if (prev && prev.startsWith("blob:")) {
+        URL.revokeObjectURL(prev);
+      }
       return URL.createObjectURL(file);
     });
 
@@ -87,32 +107,32 @@ export default function AdminNewsEditPage() {
     const files = Array.from(e.target.files ?? []);
     if (!files.length) return;
 
-    const merged = [...extraFiles, ...files].slice(0, 5);
+    setExtraImages((prev) => {
+      const remaining = Math.max(0, 5 - prev.length);
+      const selected = files.slice(0, remaining);
 
-    extraPreviews.forEach((u) => {
-      if (u.startsWith("blob:")) URL.revokeObjectURL(u);
+      const newItems: ExtraImageItem[] = selected.map((file) => ({
+        type: "new",
+        file,
+        previewUrl: URL.createObjectURL(file),
+      }));
+
+      return [...prev, ...newItems];
     });
-
-    const previews = merged.map((f) => URL.createObjectURL(f));
-
-    setExtraFiles(merged);
-    setExtraPreviews(previews);
 
     e.target.value = "";
   };
 
   const removeExtraAt = (idx: number) => {
-    // 새로 추가한 파일 삭제
-    setExtraFiles((prev) => prev.filter((_, i) => i !== idx));
-
-    // 기존 URL/미리보기 삭제도 함께 반영
-    setExtraPreviews((prev) => {
+    setExtraImages((prev) => {
       const target = prev[idx];
-      if (target && target.startsWith("blob:")) URL.revokeObjectURL(target);
+
+      if (target?.type === "new") {
+        URL.revokeObjectURL(target.previewUrl);
+      }
+
       return prev.filter((_, i) => i !== idx);
     });
-
-    setExistingImageUrls((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const parseDateRange = (v: string) => {
@@ -144,6 +164,14 @@ export default function AdminNewsEditPage() {
       return alert("게시 요청 날짜 형식이 올바르지 않아요. (YYYY/MM/DD~YYYY/MM/DD)");
     }
 
+    const existingImageUrls = extraImages
+      .filter((image): image is { type: "existing"; url: string } => image.type === "existing")
+      .map((image) => image.url);
+
+    const imageFiles = extraImages
+      .filter((image): image is { type: "new"; file: File; previewUrl: string } => image.type === "new")
+      .map((image) => image.file);
+
     try {
       setSubmitting(true);
 
@@ -156,7 +184,7 @@ export default function AdminNewsEditPage() {
         publishEndAt: parsed.publishEndAt,
         carousel,
         thumbnailFile: repFile,
-        imageFiles: extraFiles,
+        imageFiles,
         existingThumbnailUrl: existingThumbnailUrl ?? undefined,
         existingImageUrls,
         uploadType: "NOTICE",
@@ -174,6 +202,10 @@ export default function AdminNewsEditPage() {
       setSubmitting(false);
     }
   };
+
+  const extraPreviews = extraImages.map((image) =>
+    image.type === "existing" ? image.url : image.previewUrl
+  );
 
   return (
     <main className="min-h-screen bg-[var(--background)]">

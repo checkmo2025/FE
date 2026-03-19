@@ -2,17 +2,27 @@
 
 import React from "react";
 import BookStoryInfiniteList from "@/components/base-ui/BookStory/Common/BookStoryInfiniteList";
-import { useOtherMemberInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
+import { useOtherMemberInfiniteStoriesQuery, useMyInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 import { useAuthStore } from "@/store/useAuthStore";
 
-export default function BookStoryList({ nickname }: { nickname: string }) {
+interface BookStoryListProps {
+  nickname?: string; // If provided, fetch other member's stories. Otherwise, fetch "my" stories.
+}
+
+export default function BookStoryList({ nickname }: BookStoryListProps) {
   const { isLoggedIn, openLoginModal } = useAuthStore();
   const { mutate: toggleLike } = useToggleStoryLikeMutation();
   const { mutate: toggleFollow } = useToggleFollowMutation();
 
-  const decodedNickname = decodeURIComponent(nickname);
+  const isMyPage = !nickname;
+
+  // Dynamic Query Selection
+  const myQuery = useMyInfiniteStoriesQuery();
+  const otherQuery = useOtherMemberInfiniteStoriesQuery(nickname || "");
+  
+  const queryResult = isMyPage ? myQuery : otherQuery;
 
   const {
     data,
@@ -21,7 +31,7 @@ export default function BookStoryList({ nickname }: { nickname: string }) {
     hasNextPage,
     isFetchingNextPage,
     isError
-  } = useOtherMemberInfiniteStoriesQuery(decodedNickname);
+  } = queryResult;
 
   const handleToggleLike = (bookStoryId: number) => {
     if (!isLoggedIn) {
@@ -50,9 +60,10 @@ export default function BookStoryList({ nickname }: { nickname: string }) {
       isFetchingNextPage={isFetchingNextPage}
       fetchNextPage={fetchNextPage}
       onToggleLike={handleToggleLike}
-      onToggleFollow={handleToggleFollow}
-      emptyMessage="작성된 책 이야기가 없습니다."
-      errorMessage="책 이야기를 불러오는 중 오류가 발생했습니다."
+      onToggleFollow={isMyPage ? undefined : handleToggleFollow}
+      hideSubscribeButton={isMyPage}
+      emptyMessage={isMyPage ? "작성한 책 이야기가 없습니다." : "작성된 책 이야기가 없습니다."}
+      errorMessage={isMyPage ? "책 이야기를 불러오는 데 실패했습니다." : "책 이야기를 불러오는 중 오류가 발생했습니다."}
     />
   );
 }

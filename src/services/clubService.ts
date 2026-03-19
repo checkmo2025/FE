@@ -26,6 +26,13 @@ export const clubService = {
     return res.result;
   },
 
+  getMemberClubs: async (memberNickname: string) => {
+    const res = await apiClient.get<MyClubsResponse>(CLUBS.memberClubs, {
+      params: { memberNickname },
+    });
+    return res.result;
+  },
+
   getRecommendations: async () => {
     const res = await apiClient.get<RecommendationsResponse>(
       CLUBS.recommendations
