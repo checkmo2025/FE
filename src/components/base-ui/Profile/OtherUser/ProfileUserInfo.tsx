@@ -106,86 +106,86 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
       <div
         className="flex flex-col items-start w-full max-w-[734px] gap-[24px] t:gap-[40px] mx-auto"
       >
-      {/* 1. 상단 정보 섹션 (이미지 + 텍스트) */}
-      <div
-        className="flex w-full items-start
+        {/* 1. 상단 정보 섹션 (이미지 + 텍스트) */}
+        <div
+          className="flex w-full items-start
         flex-row gap-[24px]
         t:items-center t:gap-[38px]"
-      >
-        {/* 프로필 이미지 */}
-        <div
-          className="relative shrink-0 overflow-hidden rounded-full border border-Subbrown-3 bg-background
+        >
+          {/* 프로필 이미지 */}
+          <div
+            className="relative shrink-0 overflow-hidden rounded-full border border-Subbrown-3 bg-background
           h-[80px] w-[80px]
           t:h-[138px] t:w-[138px]"
-        >
-          <Image
-            src={profile.profileImageUrl || "/profile2.svg"}
-            alt={`${profile.nickname}님의 프로필`}
-            fill
-            className="object-cover"
+          >
+            <Image
+              src={profile.profileImageUrl || "/profile2.svg"}
+              alt={`${profile.nickname}님의 프로필`}
+              fill
+              className="object-cover"
+            />
+          </div>
+
+          {/* 텍스트 정보 영역 */}
+          <div
+            className="flex flex-col items-start
+          w-[189px] gap-[12px]
+          t:w-[512px] t:items-center d:w-[558px]"
+          >
+            {/* 닉네임 & 통계 */}
+            <div className="flex w-full flex-col gap-[8px] items-start t:items-start">
+              {/* 닉네임 */}
+              <h1 className="text-Gray-7 subhead_3 t:subhead_1">{profile.nickname}</h1>
+
+              {/* 통계 그룹 */}
+              <div className="flex items-center gap-[12px]">
+                <StatItem
+                  label="구독중"
+                  count={profile.followingCount}
+                  href={`/profile/${profile.nickname}/follows?tab=following`}
+                />
+                <StatItem
+                  label="구독자"
+                  count={profile.followerCount}
+                  href={`/profile/${profile.nickname}/follows?tab=follower`}
+                />
+              </div>
+            </div>
+
+            {/* 소개글 */}
+            <p className="w-full text-left break-keep text-Gray-4 body_2_3 t:body_1_2 line-clamp-3 t:line-clamp-none">
+              {profile.description || "이 사용자는 소개를 작성하지 않았습니다."}
+            </p>
+          </div>
+        </div>
+
+        {/* 2. 하단 버튼 그룹 */}
+        <div className="flex w-full justify-center t:justify-start items-center gap-[19px] t:gap-[24px]">
+          <ActionButton
+            variant={profile.following ? "following" : "primary"}
+            label={profile.following ? "구독중" : "구독하기"}
+            onClick={handleToggleFollow}
+          />
+          <ActionButton
+            variant="secondary"
+            label="신고하기"
+            onClick={() => {
+              if (!isLoggedIn) {
+                openLoginModal();
+                return;
+              }
+              setIsReportModalOpen(true);
+            }}
           />
         </div>
 
-        {/* 텍스트 정보 영역 */}
-        <div
-          className="flex flex-col items-start
-          w-[189px] gap-[12px]
-          t:w-[512px] t:items-center d:w-[558px]"
-        >
-          {/* 닉네임 & 통계 */}
-          <div className="flex w-full flex-col gap-[8px] items-start t:items-start">
-            {/* 닉네임 */}
-            <h1 className="text-Gray-7 subhead_3 t:subhead_1">{profile.nickname}</h1>
-
-            {/* 통계 그룹 */}
-            <div className="flex items-center gap-[12px]">
-              <StatItem
-                label="구독중"
-                count={profile.followingCount}
-                href={`/profile/${profile.nickname}/follows?tab=following`}
-              />
-              <StatItem
-                label="구독자"
-                count={profile.followerCount}
-                href={`/profile/${profile.nickname}/follows?tab=follower`}
-              />
-            </div>
-          </div>
-
-          {/* 소개글 */}
-          <p className="w-full text-left break-keep text-Gray-4 body_2_3 t:body_1_2 line-clamp-3 t:line-clamp-none">
-            {profile.description || "이 사용자는 소개를 작성하지 않았습니다."}
-          </p>
-        </div>
-      </div>
-
-      {/* 2. 하단 버튼 그룹 */}
-      <div className="flex w-full justify-center t:justify-start items-center gap-[19px] t:gap-[24px]">
-        <ActionButton
-          variant={profile.following ? "following" : "primary"}
-          label={profile.following ? "구독중" : "구독하기"}
-          onClick={handleToggleFollow}
+        {/* Report Modal */}
+        <ReportModal
+          isOpen={isReportModalOpen}
+          onClose={() => setIsReportModalOpen(false)}
+          onSubmit={handleReportSubmit}
+          defaultReportType="일반"
         />
-        <ActionButton
-          variant="secondary"
-          label="신고하기"
-          onClick={() => {
-            if (!isLoggedIn) {
-              openLoginModal();
-              return;
-            }
-            setIsReportModalOpen(true);
-          }}
-        />
-      </div>
-
-      {/* Report Modal */}
-      <ReportModal
-        isOpen={isReportModalOpen}
-        onClose={() => setIsReportModalOpen(false)}
-        onSubmit={handleReportSubmit}
-        defaultReportType="일반"
-      />
       </div>
     </div>
   );

@@ -1,26 +1,52 @@
 "use client";
 
-import MeetingCard from "@/components/base-ui/Profile/items/MeetingCard";
 import React from "react";
+import MeetingCard from "@/components/base-ui/Profile/items/MeetingCard";
+import { useMemberClubsQuery } from "@/hooks/queries/useClubQueries";
 
-// Mock Data
-const MOCK_MEETINGS = [
-  { id: 1, title: "북적북적" },
-  { id: 2, title: "고요한 밤의 독서" },
-  { id: 3, title: "SF 소설 마니아" },
-  { id: 4, title: "주말 아침 필사 모임" },
-];
+export default function MeetingList({ nickname }: { nickname: string }) {
+  const { data, isLoading, isError } = useMemberClubsQuery(nickname);
+  const clubs = data?.clubList || [];
 
-export default function MeetingList() {
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-10 w-full text-Gray-4 text-sm font-medium">
+        불러오는 중...
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-10 w-full text-red-500 text-sm font-medium">
+        독서 모임을 불러오는 데 실패했습니다.
+      </div>
+    );
+  }
+
+  if (clubs.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 w-full">
+        <p className="text-Gray-4 text-sm font-medium whitespace-pre-wrap text-center">
+          작성된 소속 모임이 없습니다.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div
       className="flex w-full max-w-[1048px] flex-col items-center
       gap-[12px]
-      px-[18px] md:px-[40px] lg:px-0 mx-auto
-      md:items-start md:gap-[8px]"
+      px-4 t:px-0 mx-auto
+      t:items-start t:gap-[8px]"
     >
-      {MOCK_MEETINGS.map((meeting) => (
-        <MeetingCard key={meeting.id} title={meeting.title} />
+      {clubs.map((club) => (
+        <MeetingCard
+          key={club.clubId}
+          title={club.clubName}
+          showMoreIcon={false}
+        />
       ))}
     </div>
   );
