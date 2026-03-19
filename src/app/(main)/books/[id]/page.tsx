@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import SearchBookResult from "@/components/base-ui/Search/search_bookresult";
 import { DUMMY_STORIES } from "@/data/dummyStories";
-import BookStoryCardLarge from "@/components/base-ui/BookStory/bookstory_card_large";
+import BookStoryCard from "@/components/base-ui/BookStory/Common/bookstory_card";
 import { useBookDetailQuery } from "@/hooks/queries/useBookQueries";
 import { useToggleBookLikeMutation } from "@/hooks/mutations/useBookMutations";
 
@@ -75,7 +75,8 @@ export default function BookDetailPage() {
                             onClick={() => router.push(`/stories/${story.id}`)}
                             className="cursor-pointer"
                         >
-                            <BookStoryCardLarge
+                            <BookStoryCard
+                                layoutType="large-fixed"
                                 id={story.id}
                                 authorName={story.authorName}
                                 createdAt={story.createdAt}

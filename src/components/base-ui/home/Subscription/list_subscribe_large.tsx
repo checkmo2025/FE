@@ -70,7 +70,6 @@ type ListSubscribeLargeProps = {
     isFollowing?: boolean;
   }>;
   isError?: boolean;
-  isLoading?: boolean;
   onSubscribeClick?: (nickname: string, isFollowing: boolean) => void;
 };
 
@@ -78,7 +77,6 @@ export default function ListSubscribeLarge({
   height = "h-[380px]",
   users = [],
   isError = false,
-  isLoading = false,
   onSubscribeClick,
 }: ListSubscribeLargeProps) {
 
@@ -89,22 +87,17 @@ export default function ListSubscribeLarge({
       <h3 className="subhead_2 text-Gray-7">사용자 추천</h3>
 
       <div className="mt-3 flex flex-col gap-3 h-full">
-        {isLoading && (
-          <div className="flex flex-1 items-center justify-center pt-10">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-2"></div>
-          </div>
-        )}
-        {isError && !isLoading && (
+        {isError && (
           <div className="flex flex-1 items-center justify-center pt-10">
             <p className="text-Gray-4 text-[14px] text-center">추천 목록을 불러오지 못했어요.</p>
           </div>
         )}
-        {!isError && !isLoading && users.length === 0 && (
+        {!isError && users.length === 0 && (
           <div className="flex flex-1 items-center justify-center pt-10">
             <p className="text-Gray-4 text-[14px] text-center">사용자 추천이 없습니다.</p>
           </div>
         )}
-        {!isError && !isLoading && users.length > 0 &&
+        {!isError && users.length > 0 &&
           users.map((u) => (
             <ListSubscribeElementLarge
               key={u.nickname}

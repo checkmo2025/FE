@@ -18,9 +18,10 @@ export type AdminNewsBasicInfo = {
   newsId: number;
   title: string;
   requesterEmail: string;
-  createdAt: string; // "2026-01-22"
-  publishStartAt: string; // "2026-01-22"
-  publishEndAt: string; // "2026-02-10"
+  carousel: CarouselType;
+  createdAt: string;
+  publishStartAt: string;
+  publishEndAt: string;
 };
 
 /** GET /api/admin/news 응답 result */

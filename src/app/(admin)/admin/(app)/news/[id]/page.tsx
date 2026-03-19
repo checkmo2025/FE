@@ -1,26 +1,99 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { fetchAdminNewsDetail } from "@/lib/api/admin/news";
+import { notFound, useParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import {
+  fetchAdminNewsDetail,
+  type AdminNewsDetailResult,
+} from "@/lib/api/admin/news";
 
-type Props = {
-  params: Promise<{ id: string }>;
-};
+function getSafeImageSrc(
+  src?: string | null,
+  fallback: string = "/news_sample4.svg"
+) {
+  if (!src) return fallback;
 
-export default async function AdminNewsDetailPage({ params }: Props) {
-  const { id } = await params;
-  const newsId = Number(id);
+  const trimmed = src.trim();
 
-  if (Number.isNaN(newsId)) {
-    notFound();
+  if (!trimmed) return fallback;
+
+  // Swagger 예시값이나 잘못된 문자열 방어
+  if (
+    trimmed === "string" ||
+    trimmed === "null" ||
+    trimmed === "undefined"
+  ) {
+    return fallback;
   }
 
-  let news;
+  // next/image 에서 허용 가능한 경로만 통과
+  if (
+    trimmed.startsWith("/") ||
+    trimmed.startsWith("http://") ||
+    trimmed.startsWith("https://")
+  ) {
+    return trimmed;
+  }
 
-  try {
-    const response = await fetchAdminNewsDetail(newsId);
-    news = response.result;
-  } catch (error) {
+  return fallback;
+}
+
+export default function AdminNewsDetailPage() {
+  const params = useParams();
+  const newsId = Number(params.id);
+
+  const [news, setNews] = useState<AdminNewsDetailResult | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isInvalid, setIsInvalid] = useState(false);
+
+  useEffect(() => {
+    if (Number.isNaN(newsId)) {
+      setIsInvalid(true);
+      setLoading(false);
+      return;
+    }
+
+    let alive = true;
+
+    const run = async () => {
+      try {
+        const response = await fetchAdminNewsDetail(newsId);
+
+        if (!alive) return;
+
+        if (!response.isSuccess) {
+          setIsInvalid(true);
+          return;
+        }
+
+        setNews(response.result);
+      } catch (error) {
+        if (!alive) return;
+        setIsInvalid(true);
+      } finally {
+        if (!alive) return;
+        setLoading(false);
+      }
+    };
+
+    run();
+
+    return () => {
+      alive = false;
+    };
+  }, [newsId]);
+
+  const thumbnailSrc = useMemo(() => {
+    return getSafeImageSrc(news?.thumbnailUrl, "/news_sample4.svg");
+  }, [news?.thumbnailUrl]);
+
+  if (loading) {
+  return <div className="text-center py-20">Loading...</div>;
+  }
+
+  if (isInvalid || !news) {
     notFound();
   }
 
@@ -29,8 +102,8 @@ export default async function AdminNewsDetailPage({ params }: Props) {
       {/* Hero */}
       <div className="relative w-screen h-[297px] t:h-[468px] overflow-hidden">
         <Image
-          src={news.thumbnailUrl || "/news_sample4.svg"}
-          alt={news.title}
+          src={thumbnailSrc}
+          alt={news.title || "소식 썸네일"}
           fill
           className="object-cover"
           sizes="100vw"
@@ -45,9 +118,7 @@ export default async function AdminNewsDetailPage({ params }: Props) {
         </p>
 
         <div className="flex items-center justify-between mb-4">
-          <h1 className="subhead_1 t:headline_3 text-Gray-7">
-            {news.title}
-          </h1>
+          <h1 className="subhead_1 t:headline_3 text-Gray-7">{news.title}</h1>
           <p className="body_1_2 text-Gray-3">{news.createdAt}</p>
         </div>
 
