@@ -102,11 +102,10 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
   };
 
   return (
-    <div
-      className="flex flex-col items-center
-      w-[339px] gap-[24px]
-      t:w-[688px] t:gap-[40px] d:w-[734px]"
-    >
+    <div className="flex flex-col items-start w-full max-w-[1440px] gap-[24px] t:gap-[80px] px-[18px] t:px-[40px] d:px-0 mx-auto">
+      <div
+        className="flex flex-col items-start w-full max-w-[734px] gap-[24px] t:gap-[40px] mx-auto"
+      >
       {/* 1. 상단 정보 섹션 (이미지 + 텍스트) */}
       <div
         className="flex w-full items-start
@@ -161,7 +160,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
       </div>
 
       {/* 2. 하단 버튼 그룹 */}
-      <div className="flex w-full justify-center items-center gap-[19px] t:gap-[24px]">
+      <div className="flex w-full justify-center t:justify-start items-center gap-[19px] t:gap-[24px]">
         <ActionButton
           variant={profile.following ? "following" : "primary"}
           label={profile.following ? "구독중" : "구독하기"}
@@ -187,6 +186,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
         onSubmit={handleReportSubmit}
         defaultReportType="일반"
       />
+      </div>
     </div>
   );
 }

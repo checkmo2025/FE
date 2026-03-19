@@ -18,10 +18,10 @@ export default function OtherUserProfileTabs({ nickname }: { nickname: string })
   };
 
   return (
-    <div className="flex w-full flex-col items-center gap-[24px] t:gap-[40px]">
+    <div className="flex w-full flex-col items-center gap-[24px]">
       {/* 탭 헤더 */}
-      <div className="w-full border-b-2 border-Gray-2">
-        <div className="mx-auto flex w-full t:w-[688px] d:w-[1048px]">
+      <div className="flex items-center w-full t:w-[768px] d:w-[1440px] px-0 t:px-[60px] d:px-[197px] border-b-2 border-Gray-2">
+        <div className="flex w-full">
           {TABS.map((tab) => (
             <button
               key={tab}
@@ -40,7 +40,7 @@ export default function OtherUserProfileTabs({ nickname }: { nickname: string })
       </div>
 
       {/* 컨텐츠 영역 */}
-      <div className="flex justify-center w-full px-[18px] t:px-0">
+      <div className="flex justify-center w-full px-4 t:px-0">
         {TAB_CONTENT[activeTab]}
       </div>
     </div>
