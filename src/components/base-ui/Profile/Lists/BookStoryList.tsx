@@ -17,11 +17,10 @@ export default function BookStoryList({ nickname }: BookStoryListProps) {
   const { mutate: toggleFollow } = useToggleFollowMutation();
 
   const isMyPage = !nickname;
-  const decodedNickname = nickname ? decodeURIComponent(nickname) : "";
 
   // Dynamic Query Selection
   const myQuery = useMyInfiniteStoriesQuery();
-  const otherQuery = useOtherMemberInfiniteStoriesQuery(decodedNickname);
+  const otherQuery = useOtherMemberInfiniteStoriesQuery(nickname || "");
   
   const queryResult = isMyPage ? myQuery : otherQuery;
 

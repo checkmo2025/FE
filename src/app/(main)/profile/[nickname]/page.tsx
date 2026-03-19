@@ -18,13 +18,13 @@ export default function OtherUserProfilePage({ params }: PageProps) {
 }
 
 function OtherUserProfileContent({ params }: PageProps) {
-  const { nickname } = React.use(params);
-  const decodedNickname = nickname ? decodeURIComponent(nickname) : "";
+  const { nickname: encodedNickname } = React.use(params);
+  const nickname = encodedNickname ? decodeURIComponent(encodedNickname) : "";
   const [activeTab, setActiveTab] = useState<OtherProfileTabId>("stories");
 
   return (
     <div className="flex flex-col items-center gap-[10px] md:gap-[24px] w-full min-h-screen bg-[#F9F7F6] pb-[100px]">
-      <ProfileBreadcrumb nickname={decodedNickname} />
+      <ProfileBreadcrumb nickname={nickname} />
 
       <div className="mt-[12px] md:mt-[56px]">
         <ProfileUserInfo nickname={nickname} />

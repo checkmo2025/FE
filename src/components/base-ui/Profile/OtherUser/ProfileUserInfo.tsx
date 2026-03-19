@@ -56,8 +56,7 @@ function StatItem({ label, count, href }: { label: string; count: number, href: 
 }
 
 export default function ProfileUserInfo({ nickname }: { nickname: string }) {
-  const decodedNickname = nickname ? decodeURIComponent(nickname) : "";
-  const { data: profile, isLoading } = useOtherProfileQuery(decodedNickname);
+  const { data: profile, isLoading } = useOtherProfileQuery(nickname);
   const { isLoggedIn, openLoginModal } = useAuthStore();
   const { mutate: toggleFollow } = useToggleFollowMutation();
   const { mutate: reportMember } = useReportMemberMutation();
@@ -84,7 +83,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
       openLoginModal();
       return;
     }
-    toggleFollow({ nickname: decodedNickname, isFollowing: profile.following });
+    toggleFollow({ nickname, isFollowing: profile.following });
   };
 
   const handleReportSubmit = (type: string, content: string) => {
@@ -94,7 +93,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
     if (type === "책모임 내부") mappedType = "CLUB_MEETING";
 
     reportMember({
-      reportedMemberNickname: decodedNickname,
+      reportedMemberNickname: nickname,
       reportType: mappedType,
       content,
     });
