@@ -43,8 +43,8 @@ const BookStoryInfiniteList: React.FC<BookStoryInfiniteListProps> = ({
   cardLayoutType = "responsive",
   injectedComponent,
   injectedIndex = 4,
-  containerClassName = "flex flex-col items-center w-full max-w-[1048px] mx-auto gap-[20px]",
-  gridClassName = "grid grid-cols-2 min-[540px]:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-[20px] md:gap-[12px] lg:gap-[20px] w-fit",
+  containerClassName = "flex flex-col items-center w-full max-w-[342px] min-[540px]:max-w-[523px] md:max-w-[684px] lg:max-w-[1048px] mx-auto gap-[20px]",
+  gridClassName = "grid grid-cols-2 min-[540px]:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-[20px] md:gap-[12px] lg:gap-[20px] w-full",
 }) => {
   const router = useRouter();
   const { ref, inView } = useInView({ threshold: 0 });
