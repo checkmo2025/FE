@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import styles from "./SignupTerms.module.css";
-import LoginLogo from "@/components/base-ui/Login/LoginLogo";
 
 const TERMS_DATA = [
   {
@@ -57,7 +56,13 @@ export default function SignupTerms() {
 
       {/* 헤더 */}
       <div className={styles.header}>
-        <LoginLogo />
+        <Image
+          src="/Vector.svg"
+          alt="CheckMo Logo"
+          width={76}
+          height={46}
+          className="w-[76.607px] h-[46.815px] shrink-0"
+        />
         <h2 className={styles.title}>약관 동의</h2>
       </div>
 
