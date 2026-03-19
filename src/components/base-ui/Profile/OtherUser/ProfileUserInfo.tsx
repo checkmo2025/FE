@@ -8,6 +8,7 @@ import { ReportType } from "@/types/member";
 import { useState } from "react";
 import ReportModal from "@/components/common/ReportModal";
 import { useAuthStore } from "@/store/useAuthStore";
+import Link from "next/link";
 
 // [보조 컴포넌트] 액션 버튼 (구독하기 / 신고하기)
 function ActionButton({
@@ -24,16 +25,16 @@ function ActionButton({
 
   const variants = {
     primary:
-      "bg-primary-1 text-White font-semibold t:font-medium w-[220px] h-[32px] t:w-[486px] t:h-[48px] d:w-[532px]",
+      "bg-primary-1 text-White font-semibold md:font-medium w-[220px] h-[32px] md:w-[486px] md:h-[48px] lg:w-[532px]",
 
     following:
-      "bg-[var(--Subbrown_4)] text-primary-3 font-semibold t:font-medium w-[220px] h-[32px] t:w-[486px] t:h-[48px] d:w-[532px]",
+      "bg-[var(--Subbrown_4)] text-primary-3 font-semibold md:font-medium w-[220px] h-[32px] md:w-[486px] md:h-[48px] lg:w-[532px]",
 
     secondary:
-      "bg-White border border-Subbrown-3 text-Gray-4 font-medium hover:bg-gray-50 w-[100px] h-[32px] t:w-[178px] t:h-[48px]",
+      "bg-White border border-Subbrown-3 text-Gray-4 font-medium hover:bg-gray-50 w-[100px] h-[32px] md:w-[178px] md:h-[48px]",
   };
 
-  const textStyles = "body_1_2 t:subhead_4_1";
+  const textStyles = "body_1_2 md:subhead_4_1";
 
   return (
     <button type="button" onClick={onClick} className={`${baseStyles} ${variants[variant]}`}>
@@ -42,22 +43,20 @@ function ActionButton({
   );
 }
 
-import Link from "next/link";
-
 // [보조 컴포넌트] 통계 아이템 (구독 중 / 구독자)
 function StatItem({ label, count, href }: { label: string; count: number, href: string }) {
   return (
     <Link href={href} className="flex items-center gap-[4px] hover:opacity-70 transition-opacity">
       {/* Label: Gray-4 */}
-      <span className="text-Gray-4 body_1_2 t:subhead_4_1">{label}</span>
+      <span className="text-Gray-4 body_1_2 md:subhead_4_1">{label}</span>
       {/* Count: primary-1 */}
-      <span className="text-primary-1 body_1_2 t:subhead_4_1">{count}</span>
+      <span className="text-primary-1 body_1_2 md:subhead_4_1">{count}</span>
     </Link>
   );
 }
 
 export default function ProfileUserInfo({ nickname }: { nickname: string }) {
-  const decodedNickname = decodeURIComponent(nickname);
+  const decodedNickname = nickname ? decodeURIComponent(nickname) : "";
   const { data: profile, isLoading } = useOtherProfileQuery(decodedNickname);
   const { isLoggedIn, openLoginModal } = useAuthStore();
   const { mutate: toggleFollow } = useToggleFollowMutation();
@@ -102,21 +101,21 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
   };
 
   return (
-    <div className="flex flex-col items-start w-full max-w-[1440px] gap-[24px] t:gap-[80px] px-[18px] t:px-[40px] d:px-0 mx-auto">
+    <div className="flex flex-col items-start w-full max-w-[1440px] gap-[24px] md:gap-[80px] px-[18px] md:px-[40px] lg:px-0 mx-auto">
       <div
-        className="flex flex-col items-start w-full max-w-[734px] gap-[24px] t:gap-[40px] mx-auto"
+        className="flex flex-col items-start w-full max-w-[734px] gap-[24px] md:gap-[40px] mx-auto"
       >
         {/* 1. 상단 정보 섹션 (이미지 + 텍스트) */}
         <div
           className="flex w-full items-start
-        flex-row gap-[24px]
-        t:items-center t:gap-[38px]"
+          flex-row gap-[24px]
+          md:items-center md:gap-[38px]"
         >
           {/* 프로필 이미지 */}
           <div
             className="relative shrink-0 overflow-hidden rounded-full border border-Subbrown-3 bg-background
-          h-[80px] w-[80px]
-          t:h-[138px] t:w-[138px]"
+            h-[80px] w-[80px]
+            md:h-[138px] md:w-[138px]"
           >
             <Image
               src={profile.profileImageUrl || "/profile2.svg"}
@@ -129,13 +128,13 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
           {/* 텍스트 정보 영역 */}
           <div
             className="flex flex-col items-start
-          w-[189px] gap-[12px]
-          t:w-[512px] t:items-center d:w-[558px]"
+            w-[189px] gap-[12px]
+            md:w-[512px] md:items-center lg:w-[558px]"
           >
             {/* 닉네임 & 통계 */}
-            <div className="flex w-full flex-col gap-[8px] items-start t:items-start">
+            <div className="flex w-full flex-col gap-[8px] items-start md:items-start">
               {/* 닉네임 */}
-              <h1 className="text-Gray-7 subhead_3 t:subhead_1">{profile.nickname}</h1>
+              <h1 className="text-Gray-7 subhead_3 md:subhead_1">{profile.nickname}</h1>
 
               {/* 통계 그룹 */}
               <div className="flex items-center gap-[12px]">
@@ -153,14 +152,14 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
             </div>
 
             {/* 소개글 */}
-            <p className="w-full text-left break-keep text-Gray-4 body_2_3 t:body_1_2 line-clamp-3 t:line-clamp-none">
+            <p className="w-full text-left break-keep text-Gray-4 body_2_3 md:body_1_2 line-clamp-3 md:line-clamp-none">
               {profile.description || "이 사용자는 소개를 작성하지 않았습니다."}
             </p>
           </div>
         </div>
 
         {/* 2. 하단 버튼 그룹 */}
-        <div className="flex w-full justify-center t:justify-start items-center gap-[19px] t:gap-[24px]">
+        <div className="flex w-full justify-center md:justify-start items-center gap-[19px] md:gap-[24px]">
           <ActionButton
             variant={profile.following ? "following" : "primary"}
             label={profile.following ? "구독중" : "구독하기"}

@@ -1,48 +1,38 @@
 "use client";
 
-import { useState } from "react";
-import LibraryList from "@/components/base-ui/Profile/Lists/LibraryList";
-import MeetingList from "@/components/base-ui/Profile/Lists/MeetingList";
-import BookStoryList from "@/components/base-ui/Profile/Lists/BookStoryList";
+import React from "react";
 
-const TABS = ["책 이야기", "서재", "모임"] as const;
-type Tab = (typeof TABS)[number];
+export const OTHER_PROFILE_TABS = [
+  { id: "stories", label: "책 이야기" },
+  { id: "library", label: "서재" },
+  { id: "meetings", label: "모임" },
+] as const;
 
-export default function OtherUserProfileTabs({ nickname }: { nickname: string }) {
-  const [activeTab, setActiveTab] = useState<Tab>("책 이야기");
+export type OtherProfileTabId = (typeof OTHER_PROFILE_TABS)[number]["id"];
 
-  const TAB_CONTENT: Record<Tab, React.ReactNode> = {
-    "책 이야기": <BookStoryList nickname={nickname} />,
-    서재: <LibraryList nickname={nickname} />,
-    모임: <MeetingList nickname={nickname} />,
-  };
+interface OtherUserProfileTabsProps {
+  activeTab: OtherProfileTabId;
+  onTabChange: (id: OtherProfileTabId) => void;
+}
 
+const OtherUserProfileTabs = ({ activeTab, onTabChange }: OtherUserProfileTabsProps) => {
   return (
-    <div className="flex w-full flex-col items-center gap-[24px]">
-      {/* 탭 헤더 */}
-      <div className="flex items-center w-full t:w-[768px] d:w-[1440px] px-0 t:px-[60px] d:px-[197px] border-b-2 border-Gray-2">
-        <div className="flex w-full">
-          {TABS.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-[10px] text-center transition-colors
-                body_1_2 t:subhead_3
-                ${activeTab === tab
-                  ? "border-b-2 border-primary-3 text-primary-3 -mb-[2px]"
-                  : "text-Gray-3 border-b-2 border-transparent"
-                }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* 컨텐츠 영역 */}
-      <div className="flex justify-center w-full px-4 t:px-0">
-        {TAB_CONTENT[activeTab]}
-      </div>
+    <div className="flex items-center w-full md:w-[768px] lg:w-[1440px] px-0 md:px-[60px] lg:px-[197px] border-b-2 border-[#DADADA]">
+      {OTHER_PROFILE_TABS.map((tab) => (
+        <button
+          key={tab.id}
+          onClick={() => onTabChange(tab.id)}
+          className={`flex-1 flex justify-center items-center gap-[10px] p-[10px] text-[14px] font-medium md:text-[20px] md:font-semibold leading-[135%] tracking-[-0.02px] transition-colors ${
+            activeTab === tab.id
+              ? "text-[#5E4A40] border-b-2 border-[#5E4A40] -mb-[2px]"
+              : "text-[#BBB] border-b-2 border-transparent"
+          }`}
+        >
+          {tab.label}
+        </button>
+      ))}
     </div>
   );
-}
+};
+
+export default OtherUserProfileTabs;

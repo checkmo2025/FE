@@ -38,8 +38,8 @@ export default function MeetingList({ nickname }: { nickname: string }) {
     <div
       className="flex w-full max-w-[1048px] flex-col items-center
       gap-[12px]
-      px-4 t:px-0 mx-auto
-      t:items-start t:gap-[8px]"
+      px-0 mx-auto
+      md:gap-[8px]"
     >
       {clubs.map((club) => (
         <MeetingCard
