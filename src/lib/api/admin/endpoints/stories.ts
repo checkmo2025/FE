@@ -5,5 +5,8 @@ export const ADMIN_STORIES = {
     `${API_BASE_URL}/api/admin/book-stories?page=${page}&size=${size}`,
   detail: (bookStoryId: number) =>
     `${API_BASE_URL}/api/admin/book-stories/${bookStoryId}`,
-
+  delete: (bookStoryId: number) =>
+    `${API_BASE_URL}/api/admin/book-stories/${bookStoryId}`,
+  deleteComment: (bookStoryId: number, commentId: number) =>
+    `${API_BASE_URL}/api/admin/book-stories/${bookStoryId}/comments/${commentId}`,
 };
