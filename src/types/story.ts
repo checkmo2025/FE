@@ -45,7 +45,7 @@ export interface AuthorInfo {
 export interface CommentInfo {
     commentId: number;
     content: string;
-    authorInfo: AuthorInfo;
+    authorInfo: AuthorInfo | null;
     createdAt: string;
     writtenByMe: boolean;
     deleted: boolean;

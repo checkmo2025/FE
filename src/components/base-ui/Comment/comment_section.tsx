@@ -42,7 +42,7 @@ export default function CommentSection({
       id: c.commentId,
       authorName: c.authorInfo?.nickname ?? "(알 수 없음)",
       profileImgSrc: isValidUrl(c.authorInfo?.profileImageUrl)
-        ? c.authorInfo!.profileImageUrl
+        ? c.authorInfo?.profileImageUrl as string
         : "/profile2.svg",
       content: c.content,
       createdAt: c.createdAt,
