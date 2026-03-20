@@ -89,3 +89,10 @@ export interface ReportListResponse {
     hasNext: boolean;
     nextCursor: number | null;
 }
+
+export type LoginProvider = "LOCAL" | "GOOGLE" | "KAKAO" | "NAVER";
+
+export interface LoginStatusResponse {
+    provider: LoginProvider;
+    email: string;
+}
