@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import CommentInput from "./comment_input";
 import CommentItem from "./comment_item";
 
@@ -10,17 +11,24 @@ export type Comment = {
   profileImgSrc?: string;
   content: string;
   createdAt: string;
-  isAuthor?: boolean; // 글 작성자
-  isMine?: boolean; // 내가 쓴 댓글인지
+
+  isAuthor?: boolean;
+  isMine?: boolean;
+
+  canEdit?: boolean;
+  canDelete?: boolean;
+  canReport?: boolean;
 };
 
 type CommentListNoticeProps = {
   comments: Comment[];
-  onAddComment: (content: string) => void;
-  onEditComment?: (id: number, content: string) => void;
-  onDeleteComment?: (id: number) => void;
+  onAddComment: (content: string) => void | Promise<void>;
+  onEditComment?: (id: number, content: string) => void | Promise<void>;
+  onDeleteComment?: (id: number) => void | Promise<void>;
   onReportComment?: (id: number) => void;
-  isAdminView?: boolean;
+  onLoadMore?: () => void;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
 };
 
 export default function CommentListNotice({
@@ -29,8 +37,33 @@ export default function CommentListNotice({
   onEditComment,
   onDeleteComment,
   onReportComment,
-  isAdminView = false,
+  onLoadMore,
+  hasNextPage = false,
+  isFetchingNextPage = false,
 }: CommentListNoticeProps) {
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const node = loadMoreRef.current;
+    if (!node || !onLoadMore || !hasNextPage) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first?.isIntersecting && !isFetchingNextPage) {
+          onLoadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(node);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [onLoadMore, hasNextPage, isFetchingNextPage]);
+
   return (
     <div className="w-full">
       <h3 className="subhead_4_1 t:subhead_1 text-Gray-7 mb-4">댓글</h3>
@@ -48,13 +81,17 @@ export default function CommentListNotice({
             createdAt={comment.createdAt}
             isAuthor={comment.isAuthor}
             isMine={comment.isMine}
-            isAdminView={isAdminView}
+            canEdit={comment.canEdit}
+            canDelete={comment.canDelete}
+            canReport={comment.canReport}
             onEdit={onEditComment}
             onDelete={onDeleteComment}
             onReport={onReportComment}
           />
         ))}
       </div>
+
+      <div ref={loadMoreRef} className="h-2" />
     </div>
   );
 }
