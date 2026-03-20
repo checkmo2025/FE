@@ -287,7 +287,7 @@ export default function EditNoticePage() {
               localFiles.map((file) => imageService.uploadClubImage(file))
             )
           : [];
-
+                     
       const body: UpdateClubNoticeRequest = {
         title,
         content,

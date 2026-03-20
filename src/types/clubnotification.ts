@@ -135,7 +135,7 @@ export interface UpdateClubNoticeVoteRequest {
 export interface UpdateClubNoticeRequest {
   title: string;
   content: string;
-  meetingId: number;
+  meetingId: number | null;
   imageUrls: string[];
   vote?: UpdateClubNoticeVoteRequest;
   isPinned: boolean;
