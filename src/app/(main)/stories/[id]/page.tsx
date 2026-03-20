@@ -2,7 +2,7 @@
 
 import BookstoryDetail from "@/components/base-ui/BookStory/bookstory_detail";
 import StoryNavigation from "@/components/base-ui/BookStory/story_navigation";
-import CommentSection from "@/components/base-ui/Comment/comment_section";
+
 import Image from "next/image";
 import { isValidUrl } from "@/utils/url";
 import { useParams } from "next/navigation";
@@ -11,6 +11,7 @@ import LoginModal from "@/components/base-ui/Login/LoginModal";
 import { useStoryDetailQuery } from "@/hooks/queries/useStoryQueries";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
+import CommentSection from "@/components/base-ui/Comment/comment_section_bookcase";
 
 export default function StoryDetailPage() {
   const params = useParams();
