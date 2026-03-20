@@ -78,12 +78,10 @@ export interface ClubNoticeDetailBookInfo {
 
 export interface ClubNoticeMeetingDetail {
   meetingId: number;
-  title: string;
-  meetingTime: string; // ISO
   location: string;
   generation: number;
   tag: string;
-  content: string | null;
+  averageRate: number;
   bookInfo: ClubNoticeDetailBookInfo;
 }
 

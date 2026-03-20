@@ -141,6 +141,7 @@ export default function EditNoticePage() {
   useEffect(() => {
     if (!noticeData || initializedRef.current) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTitle(noticeData.title);
     setContent(noticeData.content);
     setIsPinned(noticeData.isPinned);
@@ -154,8 +155,8 @@ export default function EditNoticePage() {
           generation: `${noticeData.meetingDetail.generation}기`,
           genre: noticeData.meetingDetail.tag,
         },
-        rating: noticeData.meetingDetail.generation,
-        description: noticeData.meetingDetail.content ?? "",
+        rating: noticeData.meetingDetail.averageRate,
+        description: "",
         imageUrl: noticeData.meetingDetail.bookInfo.imgUrl ?? null,
       });
     }

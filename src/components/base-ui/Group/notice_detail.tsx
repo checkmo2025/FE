@@ -187,7 +187,7 @@ const handleRevote = () => {
           generation: `${meetingDetail.generation}기`,
           genre: meetingDetail.tag,
         }}
-        rating={meetingDetail.generation}
+        rating={meetingDetail.averageRate}
         onTopicClick={() => handleGoToDetail(meetingDetail.meetingId, 'topic')}
         onReviewClick={() => handleGoToDetail(meetingDetail.meetingId, 'review')}
         onMeetingClick={() => handleGoToDetail(meetingDetail.meetingId, 'meeting')}
