@@ -9,6 +9,7 @@ export const memberKeys = {
     followers: () => [...memberKeys.all, "followers"] as const,
     followings: () => [...memberKeys.all, "followings"] as const,
     followCount: () => [...memberKeys.all, "follow-count"] as const,
+    reports: () => [...memberKeys.all, "reports"] as const,
 };
 
 export const useRecommendedMembersQuery = (enabled: boolean = true) => {
@@ -59,6 +60,16 @@ export const useFollowCountQuery = (enabled: boolean = true) => {
     return useQuery({
         queryKey: memberKeys.followCount(),
         queryFn: () => memberService.getMyFollowCount(),
+        enabled,
+    });
+};
+
+export const useMyReportsQuery = (enabled: boolean = true) => {
+    return useInfiniteQuery({
+        queryKey: memberKeys.reports(),
+        queryFn: ({ pageParam }) => memberService.getMyReports(pageParam),
+        initialPageParam: undefined as number | undefined,
+        getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor : undefined),
         enabled,
     });
 };

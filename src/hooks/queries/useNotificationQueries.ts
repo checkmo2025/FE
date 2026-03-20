@@ -5,6 +5,7 @@ export const notificationKeys = {
     all: ["notifications"] as const,
     settings: () => [...notificationKeys.all, "settings"] as const,
     infiniteList: () => [...notificationKeys.all, "infiniteList"] as const,
+    preview: (size?: number) => [...notificationKeys.all, "preview", size] as const,
 };
 
 export const useNotificationSettingsQuery = () => {
@@ -23,5 +24,12 @@ export const useInfiniteNotificationsQuery = () => {
             if (!lastPage || !lastPage.hasNext) return undefined;
             return lastPage.nextCursor;
         },
+    });
+};
+
+export const useNotificationPreviewQuery = (size?: number) => {
+    return useQuery({
+        queryKey: notificationKeys.preview(size),
+        queryFn: () => notificationService.getNotificationPreview(size),
     });
 };

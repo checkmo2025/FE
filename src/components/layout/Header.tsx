@@ -4,9 +4,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { NavItem } from "./NavItem";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import SearchModal from "./SearchModal";
 import LoginModal from "../base-ui/Login/LoginModal";
+import NotificationDropdown from "./NotificationDropdown";
 import { useHeaderTitle } from "@/contexts/HeaderTitleContext";
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -36,6 +37,26 @@ export default function Header() {
   const { user, isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
   const pageTitle = customTitle || defaultTitle;
   const { isSearchOpen, toggleSearch, closeSearch } = useSearchStore();
+
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const notificationRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target as Node)
+      ) {
+        setIsNotificationOpen(false);
+      }
+    };
+    if (isNotificationOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isNotificationOpen]);
 
   const handleNavClick = (href: string, label: string) => {
     if (label === "모임" && !isLoggedIn) {
@@ -105,19 +126,22 @@ export default function Header() {
               />
             </button>
 
-            <Link
-              href="/notification"
-              aria-label="알림"
-              className="relative w-6 h-6"
-            >
-              <Image
-                src="/notification.svg"
-                alt="알림"
-                fill
-                className="object-contain"
-                priority
-              />
-            </Link>
+            <div className="relative flex items-center" ref={notificationRef}>
+              <button
+                onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                aria-label="알림"
+                className="relative w-6 h-6 cursor-pointer"
+              >
+                <Image
+                  src="/notification.svg"
+                  alt="알림"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </button>
+              {isNotificationOpen && <NotificationDropdown />}
+            </div>
 
             {/* 태블릿부터 프로필 표시 */}
             <Link
@@ -126,7 +150,7 @@ export default function Header() {
               className="relative hidden w-6 h-6 t:block"
             >
               <Image
-                src={user?.profileImageUrl || "/profile.svg"}
+                src={user?.profileImageUrl || "/profile2.svg"}
                 alt="프로필"
                 fill
                 className={`object-cover ${user?.profileImageUrl ? "rounded-full" : "object-contain"}`}

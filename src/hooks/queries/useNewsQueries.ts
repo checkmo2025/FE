@@ -6,6 +6,8 @@ export const newsKeys = {
     all: ["news"] as const,
     list: () => [...newsKeys.all, "list"] as const,
     infiniteList: () => [...newsKeys.all, "infiniteList"] as const,
+    myNews: () => [...newsKeys.all, "myNews"] as const,
+    detail: (newsId: number) => [...newsKeys.all, "detail", newsId] as const,
 };
 
 export const useInfiniteNewsQuery = () => {
@@ -18,5 +20,25 @@ export const useInfiniteNewsQuery = () => {
             if (!lastPage || !lastPage.hasNext) return undefined;
             return lastPage.nextCursor;
         },
+    });
+};
+
+export const useMyNewsQuery = () => {
+    return useInfiniteQuery({
+        queryKey: newsKeys.myNews(),
+        queryFn: ({ pageParam }) => newsService.getMyNewsList(pageParam ?? undefined),
+        initialPageParam: null as number | null,
+        getNextPageParam: (lastPage) => {
+            if (!lastPage || !lastPage.hasNext) return undefined;
+            return lastPage.nextCursor;
+        },
+    });
+};
+
+export const useNewsDetailQuery = (newsId: number, options?: { enabled?: boolean }) => {
+    return useQuery({
+        queryKey: newsKeys.detail(newsId),
+        queryFn: () => newsService.getNewsDetail(newsId),
+        ...options,
     });
 };

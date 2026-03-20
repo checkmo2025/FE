@@ -3,12 +3,12 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import MyPageBreadcrumb from "@/components/base-ui/MyPage/MyPageBreadcrumb";
-import FollowList from "@/components/base-ui/Profile/FollowList";
-import { FollowUser } from "@/components/base-ui/Profile/FollowItem";
+import MyPageBreadcrumb from "@/components/base-ui/MyPage/ProfileSection/MyPageBreadcrumb";
+import FollowList from "@/components/base-ui/Profile/Follow/FollowList";
+import { FollowUser } from "@/components/base-ui/Profile/Follow/FollowItem";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useProfileQuery, useFollowerListQuery, useFollowingListQuery, useFollowCountQuery } from "@/hooks/queries/useMemberQueries";
-import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
+import { useToggleFollowMutation, useDeleteFollowerMutation } from "@/hooks/mutations/useMemberMutations";
 
 function FollowsContent() {
     const router = useRouter();
@@ -41,6 +41,8 @@ function FollowsContent() {
         router.replace(`?tab=${activeTab}`, { scroll: false });
     }, [activeTab, router]);
     const { mutate: toggleFollow } = useToggleFollowMutation();
+    const { mutate: deleteFollower } = useDeleteFollowerMutation();
+
     if (!isInitialized || !isLoggedIn) {
         return null;
     }
@@ -64,6 +66,10 @@ function FollowsContent() {
 
     const handleToggleFollow = (id: string | number, currentIsFollowing: boolean) => {
         toggleFollow({ nickname: String(id), isFollowing: currentIsFollowing });
+    };
+
+    const handleDeleteFollower = (nickname: string) => {
+        deleteFollower(nickname);
     };
 
     const hasMore = activeTab === "follower" ? hasNextFollower : hasNextFollowing;
@@ -105,6 +111,7 @@ function FollowsContent() {
                     followingCount={user.following || 0} // UserProfile에서 쓰는 값 임시 유지 (API 미제공)
                     users={users}
                     onToggleFollow={handleToggleFollow}
+                    onDelete={handleDeleteFollower}
                     hasMore={hasMore}
                     onLoadMore={handleLoadMore}
                     isFetching={isFetching}

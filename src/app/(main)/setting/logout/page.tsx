@@ -2,14 +2,18 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { authService } from "@/services/authService";
 
 export default function LogoutPage() {
     const router = useRouter();
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         const performLogout = async () => {
             await authService.logout();
+            queryClient.clear();
+            router.refresh();
             router.push("/");
         };
 

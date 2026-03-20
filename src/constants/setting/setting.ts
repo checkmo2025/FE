@@ -22,7 +22,7 @@ export const SETTINGS_MENU = [
     category: "기타",
     icon: "/Category.svg",
     items: [
-      { label: "고객센터/문의하기", href: "/setting/support" },
+      { label: "고객센터/문의하기", href: "/setting/support", isExternal: true },
       { label: "이용약관", href: "/setting/terms" },
       { label: "버전 정보", href: "/setting/version" },
       { label: "로그아웃", href: "/setting/logout" },

@@ -1,168 +1,172 @@
+"use client";
+
 import FloatingFab from "@/components/base-ui/Float";
 import TodayRecommendedBooks from "@/components/base-ui/News/today_recommended_books";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
+import { useNewsDetailQuery } from "@/hooks/queries/useNewsQueries";
+import { useRecommendedBooksQuery } from "@/hooks/queries/useBookQueries";
+import { useState, useEffect, useMemo } from "react";
 
-const DUMMY_NEWS = [
-  {
-    id: 1,
-    imageUrl: "/news_sample4.svg",
-    title: "책 읽는 한강공원",
-    content: "소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용",
-    date: "2025-10-09",
-    fullContent: `📚✨ 책읽는 한강공원이 📖
+export default function NewsDetailPage() {
+  const params = useParams();
+  const rawId = params?.id;
+  const newsId = typeof rawId === "string" ? parseInt(rawId, 10) : NaN;
 
-25년 하반기에 다시 돌아옵니다 🎶💃🏼🎺
-반짝이는 강물과 따스한 햇살 아래,특별한 프로그램들이 여러분을 기다립니다.
+  const {
+    data: news,
+    isLoading: isNewsLoading,
+    isError: isNewsError,
+  } = useNewsDetailQuery(newsId, { enabled: !isNaN(newsId) });
+  const { data: recommendedData, isLoading: isBooksLoading } = useRecommendedBooksQuery();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-자연 속에서 즐기는 여유, 모두가 함께 만드는 즐거움, 그리고 한강에서만 느낄 수 있는 특별한 순간까지! 한강에서 가족, 친구, 연인과 함께 소중한 추억을 만들어 보세요. 💐🌺🍀🌷
+  // 5초 자동 슬라이드 로직
+  useEffect(() => {
+    if (!news || !news.imageUrls || news.imageUrls.length <= 1) return;
 
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % news.imageUrls.length);
+    }, 5000);
 
-특색 있는 공간조성과 콘텐츠로 업그레이드 되었습니다 ♥️
-기대하시라 🎺개봉박두~~~~~
+    return () => clearInterval(timer);
+  }, [news?.imageUrls?.length]);
 
+  const recommendedBooks = useMemo(() => {
+    return (recommendedData?.detailInfoList || []).map((book) => ({
+      id: book.isbn,
+      imgUrl: book.imgUrl,
+      title: book.title,
+      author: book.author,
+      likedByMe: book.likedByMe,
+    }));
+  }, [recommendedData]);
 
-✨일정✨
-
-
-📅 9월 6일 부터 매주토요일~
-
-⏰ 13:00~20:00
-
-
-📍여의도 한강공원 멀티프라자
-
-하반기 : 2025.9.6..~10.25. 매주 토요일
-
-
-#캘박필수❤️
-
-
-다채로운 축제가 가득한 한강, 하반기에도 책읽는 한강공원에서 만나요 💖💗💝
-
-
-#서울 #한강 #축제 #한강공원 #한강데이트 #데이트 #서울 #한강 #책읽는한강공원 #여의도한강공원 #책
-
-#서울핫플 #위대한가이드 #잠원한강공원 #여의도한강공원 #광나루 #서울핫플추천 #서울팝업 #팝업스토어추천 #무료공연 #서울무료공연`,
-  },
-  {
-    id: 2,
-    imageUrl: "/news_sample4.svg",
-    title: "책 읽는 한강공원",
-    content: "소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용",
-    date: "2025-10-09",
-    fullContent: "소식 상세 내용.",
-  },
-  {
-    id: 3,
-    imageUrl: "/news_sample4.svg",
-    title: "책 읽는 한강공원",
-    content: "소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용",
-    date: "2025-10-09",
-    fullContent: "소식 상세 내용.",
-  },
-  {
-    id: 4,
-    imageUrl: "/news_sample4.svg",
-    title: "책 읽는 한강공원",
-    content: "소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용소식내용",
-    date: "2025-10-09",
-    fullContent: "소식 상세 내용.",
-  },
-];
-
-const DUMMY_BOOKS = [
-  {
-    id: 1,
-    imgUrl: "/booksample.svg",
-    title: "책 제목",
-    author: "작가작가작가",
-  },
-  {
-    id: 2,
-    imgUrl: "/booksample.svg",
-    title: "책 제목",
-    author: "작가작가작가",
-  },
-  {
-    id: 3,
-    imgUrl: "/booksample.svg",
-    title: "책 제목",
-    author: "작가작가작가",
-  },
-  {
-    id: 4,
-    imgUrl: "/booksample.svg",
-    title: "책 제목",
-    author: "작가작가작가",
-  },
-];
-
-function getNewsById(id: number) {
-  return DUMMY_NEWS.find((news) => news.id === id);
-}
-
-type Props = {
-  params: Promise<{ id: string }>;
-};
-
-export default async function NewsDetailPage({ params }: Props) {
-  const { id } = await params;
-  const news = getNewsById(Number(id));
-
-  if (!news) {
-    notFound();
+  if (isNewsLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="animate-pulse text-Gray-4 subhead_3">소식을 불러오는 중...</div>
+      </div>
+    );
   }
+
+  if (isNewsError || !news) {
+    notFound();
+    return null;
+  }
+
+  const isValidSrc = (src: string) => {
+    return (
+      src &&
+      src !== "string" &&
+      (src.startsWith("/") || src.startsWith("http://") || src.startsWith("https://"))
+    );
+  };
+
+  const rawImageUrls =
+    news.imageUrls && news.imageUrls.length > 0
+      ? news.imageUrls
+      : [news.thumbnailUrl];
+
+  // 유효한 URL만 필터링하고 없으면 기본 이미지 사용
+  const filteredUrls = rawImageUrls.filter(isValidSrc);
+  const imageUrls = filteredUrls.length > 0 ? filteredUrls : ["/news_sample4.svg"];
 
   return (
     <>
-      <div className="relative w-screen h-[297px] t:h-[468px]">
-        <Image
-          src={news.imageUrl}
-          alt={news.title}
-          fill
-          className="object-cover"
-          sizes="100vw"
-          priority
-        />
-        
-        
-        <div className="absolute top-0 left-0 right-0 hidden d:flex h-[44px] d:h-[64px] border-b border-zinc-300">
-          <div className="px-4 t:px-6 d:px-3 h-full flex gap-5 items-center justify-start w-full ml-5.5  max-w-[1440px] mx-auto">
-            <div className="d:subhead_4_1 text-Gray-3">전체</div>
-            <div className="relative w-[12px] h-[12px] d:w-[18px] d:h-[18px]">
-              <Image
-                src="/triangle.svg"
-                alt="next"
-                fill
-                className="object-contain"
-              />
+      {/* 상단 이미지 영역 - Option C: w-full 및 레이아웃 개선 */}
+      <div className="relative w-full h-[297px] t:h-[468px] overflow-hidden bg-Gray-1 flex items-center justify-center">
+        {imageUrls.map((url, idx) => (
+          <div
+            key={idx}
+            className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out ${idx === currentImageIndex ? "opacity-100 z-10" : "opacity-0 z-0"
+              }`}
+          >
+            <Image
+              src={url}
+              alt={`${news.title} - ${idx + 1}`}
+              fill
+              className="object-cover"
+              sizes="100vw"
+              priority={idx === 0}
+            />
+          </div>
+        ))}
+
+        {/* Breadcrumb Overlay (Desktop) - 프리미엄 스타일 적용 */}
+        <div className="absolute top-0 left-0 right-0 hidden d:flex h-[64px] border-b border-white/10 bg-gradient-to-b from-black/20 to-transparent z-20">
+          <div className="px-6 h-full flex gap-4 items-center justify-start w-full max-w-[1040px] mx-auto">
+            <div className="subhead_4_1 text-white/60">전체</div>
+            <div className="relative w-[14px] h-[14px] opacity-60">
+              <Image src="/triangle.svg" alt="next" fill className="object-contain brightness-0 invert" />
             </div>
-            <div className="d:subhead_4_1 text-Gray-7">글 상세보기</div>
+            <div className="subhead_4_1 text-white font-medium">글 상세보기</div>
           </div>
         </div>
+
+        {/* Indicator (Carousel Dots) */}
+        {imageUrls.length > 1 && (
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+            {imageUrls.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentImageIndex(idx)}
+                className={`transition-all duration-300 ${idx === currentImageIndex
+                  ? "w-8 h-2 rounded-[100px] bg-white shadow-sm"
+                  : "w-2 h-2 rounded-full bg-white/40 hover:bg-white/60"
+                  }`}
+                aria-label={`이미지 ${idx + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* 메인  */}
-      <div className="mx-auto w-full max-w-[1400px] px-9 t:px-[200px] mt-6 t:mt-10">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="subhead_1 t:headline_3 text-Gray-7">{news.title}</h1>
-          <p className="body_1_2 text-Gray-3">{news.date}</p>
+      {/* 메인 콘텐츠 */}
+      <div className="mx-auto w-full max-w-[1040px] px-4 t:px-0 mt-8 t:mt-12">
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-4 border-b border-Gray-1 pb-6">
+          <h1 className="subhead_1 t:headline_3 text-Gray-7 leading-tight">{news.title}</h1>
+          <p className="body_1_2 text-Gray-3">{news.publishStartAt}</p>
         </div>
 
-        {/* 본문  */}
-        <div className="w-full max-w-[1040px] mt-22">
-          <p className="body_1_3 t:subhead_3 text-Gray-6 whitespace-pre-wrap">
-            {news.fullContent || news.content}
+        {/* 본문 */}
+        <div className="w-full mt-6 t:mt-10">
+          <p className="body_1_3 t:subhead_3 text-Gray-6 whitespace-pre-wrap leading-[1.8] tracking-[-0.01em]">
+            {news.content}
           </p>
         </div>
+
+        {/* 원문 링크 버튼 */}
+        {news.originalLink && isValidSrc(news.originalLink) && (
+          <div className="mt-16 flex justify-start">
+            <a
+              href={news.originalLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-8 py-3.5 rounded-[8px] border border-Subbrown-4 text-Gray-7 subhead_4 hover:bg-Subbrown-1 transition-all flex items-center gap-3 active:scale-95 shadow-sm"
+            >
+              원문 보러가기
+              <div className="relative w-3 h-3">
+                <Image src="/triangle.svg" alt="icon" fill className="object-contain" />
+              </div>
+            </a>
+          </div>
+        )}
       </div>
-      <div className="w-screen -mx-4 my-8 border-b-4 border-Gray-1 mt-25"></div>
-      <TodayRecommendedBooks books={DUMMY_BOOKS} className="mt-10" />
-      
+
+      <div className="w-full border-b-4 border-Gray-1 mt-20"></div>
+
+      {isBooksLoading ? (
+        <div className="w-full flex justify-center py-24">
+          <div className="animate-pulse text-Gray-3 subhead_4">추천 책을 불러오는 중...</div>
+        </div>
+      ) : (
+        <TodayRecommendedBooks books={recommendedBooks} className="mt-12" />
+      )}
+
       <FloatingFab
-              iconSrc="/icons_calling.svg"
-              iconAlt="문의하기"
+        iconSrc="/icons_calling.svg"
+        iconAlt="문의하기"
       />
     </>
   );
