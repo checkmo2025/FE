@@ -7,10 +7,12 @@ import SocialLoginCard from "@/components/base-ui/Settings/SocialLogin/SocialLog
 import WithdrawalNotice from "@/components/base-ui/Settings/SocialLogin/WithdrawalNotice";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import { useWithdrawMutation } from "@/hooks/mutations/useMemberMutations";
+import { useLoginStatusQuery } from "@/hooks/queries/useMemberQueries";
 
 export default function AccountStatusPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const withdrawMutation = useWithdrawMutation();
+  const { data: loginStatus, isLoading } = useLoginStatusQuery();
 
   const handleWithdrawClick = () => {
     setIsModalOpen(true);
@@ -29,7 +31,16 @@ export default function AccountStatusPage() {
     >
       {/* 1. 소셜 로그인 카드 */}
       <div className="flex justify-center w-full md:block">
-        <SocialLoginCard provider="kakao" email="yhi9839@gmail.com" />
+        {isLoading ? (
+          <div className="w-full max-w-[420px] h-[64px] rounded-[8px] bg-Gray-2 animate-pulse" />
+        ) : loginStatus ? (
+          <SocialLoginCard
+            provider={loginStatus.provider.toLowerCase() as any}
+            email={loginStatus.email}
+          />
+        ) : (
+          <div className="text-Gray-5 text-sm">연동 정보를 불러올 수 없습니다.</div>
+        )}
       </div>
 
       {/* 2. 탈퇴/비활성화 섹션 */}

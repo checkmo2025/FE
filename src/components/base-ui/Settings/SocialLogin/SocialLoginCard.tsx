@@ -2,17 +2,21 @@
 import Image from "next/image";
 
 type Props = {
-  provider: "kakao" | "google" | "naver"; // 확장성을 위해 타입 정의
+  provider: "local" | "kakao" | "google" | "naver"; // 확장성을 위해 타입 정의
   email: string;
 };
 
 const PROVIDER_STYLES = {
+  local: {
+    bgColor: "bg-White border border-Gray-2",
+    icon: "/profile10.svg",
+  },
   kakao: {
     bgColor: "bg-[#FAE100]",
     icon: "/kakaoImage.svg",
   },
   // 추후 google, naver 등 추가 가능
-  google: { bgColor: "bg-white border border-Gray-2", icon: "/google.svg" },
+  google: { bgColor: "bg-White border border-Gray-2", icon: "/google.svg" },
   naver: { bgColor: "bg-[#03C75A]", icon: "/naver.svg" },
 };
 
