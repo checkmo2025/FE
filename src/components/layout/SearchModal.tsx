@@ -173,7 +173,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
               {isSearching ? (
                 <div className="py-4 text-center text-white/60 body_1">검색 중...</div>
               ) : booksToDisplay.length > 0 ? (
-                <div className="flex flex-col gap-2 py-2 max-h-[520px] overflow-y-auto scrollbar-hide">
+                <div className="flex flex-col gap-2 py-2 max-h-[520px] overflow-y-auto no-scrollbar">
                   {booksToDisplay.map((book: Book) => (
                     <div
                       key={book.isbn}

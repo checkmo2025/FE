@@ -44,7 +44,7 @@ export default function ReportItem({
           <div className="flex items-center gap-[8px]">
             <div className="relative h-[24px] w-[24px] shrink-0">
               <Image
-                src="/profile.svg"
+                src="/profile2.svg"
                 alt="profile"
                 fill
                 className="object-cover rounded-full"

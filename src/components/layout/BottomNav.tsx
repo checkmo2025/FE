@@ -33,7 +33,7 @@ const NAV_ITEMS = [
   },
   {
     label: "마이페이지",
-    href: "/setting",
+    href: "/profile/mypage",
     iconBefore: "/before_my.svg",
     iconAfter: "/after_my.svg",
   },

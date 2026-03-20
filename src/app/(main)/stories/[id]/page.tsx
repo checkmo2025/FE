@@ -1,7 +1,7 @@
 "use client";
 
-import BookstoryDetail from "@/components/base-ui/BookStory/bookstory_detail";
-import StoryNavigation from "@/components/base-ui/BookStory/story_navigation";
+import BookstoryDetail from "@/components/base-ui/BookStory/Detatil/bookstory_detail";
+import StoryNavigation from "@/components/base-ui/BookStory/Detatil/story_navigation";
 import CommentSection from "@/components/base-ui/Comment/comment_section";
 import Image from "next/image";
 import { isValidUrl } from "@/utils/url";
@@ -112,7 +112,7 @@ export default function StoryDetailPage() {
             likeCount={story.likes}
             likedByMe={story.likedByMe}
             onLikeClick={handleToggleLike}
-            subscribeText={story.authorInfo.following ? "구독 중" : "구독"}
+            subscribeText={story.authorInfo.following ? "구독중" : "구독"}
             isFollowing={story.authorInfo.following}
             onSubscribeClick={handleToggleFollow}
             hideSubscribeButton={story.writtenByMe}

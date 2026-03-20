@@ -3,6 +3,7 @@ export interface NewsBasicInfo {
     title: string;
     description: string;
     thumbnailUrl: string;
+    carousel: "PROMOTION" | "GENERAL";
     publishStartAt: string;
 }
 
@@ -11,4 +12,15 @@ export interface NewsListResponse {
     hasNext: boolean;
     nextCursor: number | null;
     pageSize: number;
+}
+
+export interface NewsDetail {
+    newsId: number;
+    title: string;
+    content: string;
+    thumbnailUrl: string;
+    originalLink: string;
+    carousel: "PROMOTION" | "GENERAL";
+    imageUrls: string[];
+    publishStartAt: string;
 }

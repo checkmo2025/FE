@@ -2,7 +2,7 @@
 type Props = {
   label: string;
   placeholder: string;
-  type?: "text" | "password";
+  type?: "text" | "password" | "email";
   value?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
 };

@@ -1,7 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { memberService } from "@/services/memberService";
 import { authService } from "@/services/authService";
 import { useAuthStore } from "@/store/useAuthStore";
+import { ReportMemberRequest } from "@/types/member";
+import { memberKeys } from "../queries/useMemberQueries";
 
 interface UpdateProfilePayload {
     description: string;
@@ -58,12 +61,9 @@ export const useUpdateProfileMutation = () => {
     });
 };
 
-import { UpdatePasswordRequest, RecommendResponse, ReportMemberRequest, FollowListResponse } from "@/types/member";
+import { UpdatePasswordRequest, RecommendResponse, FollowListResponse, FindEmailRequest, OtherProfileResponse, FollowCountResponse } from "@/types/member";
 import { BookStoryListResponse } from "@/types/story";
 import { storyKeys } from "@/hooks/queries/useStoryQueries";
-import { memberKeys } from "@/hooks/queries/useMemberQueries";
-import { OtherProfileResponse, FollowCountResponse } from "@/types/member";
-import { toast } from "react-hot-toast";
 import { InfiniteData } from "@tanstack/react-query";
 
 // Optimistic update helpers
@@ -131,6 +131,22 @@ export const useUpdatePasswordMutation = () => {
         },
         onError: (error: any) => {
             console.error("Failed to update password:", error);
+        },
+    });
+};
+
+export const useUpdateEmailMutation = () => {
+    return useMutation({
+        mutationFn: async (payload: import("@/types/member").UpdateEmailRequest) => {
+            await memberService.updateEmail(payload);
+        },
+        onSuccess: () => {
+            toast.success("이메일이 성공적으로 변경되었습니다.");
+        },
+        onError: (error: any) => {
+            console.error("Failed to update email:", error);
+            const errorMessage = error.response?.data?.message || error.message || "이메일 변경에 실패했습니다.";
+            toast.error(errorMessage);
         },
     });
 };
@@ -232,6 +248,13 @@ export const useToggleFollowMutation = () => {
 
             return { previousRecommendations, previousInfiniteStories, previousStories, previousOtherProfile, previousFollowers, previousFollowings, previousFollowCount };
         },
+        onSuccess: (_data, { isFollowing }) => {
+            if (isFollowing) {
+                toast.success("구독이 취소되었습니다.");
+            } else {
+                toast.success("구독이 완료되었습니다.");
+            }
+        },
         onError: (error: any, variables, context) => {
             console.error("Failed to toggle follow:", error);
             toast.error("팔로우 상태 업데이트에 실패했습니다.");
@@ -271,6 +294,31 @@ export const useToggleFollowMutation = () => {
     });
 };
 
+export const useDeleteFollowerMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (nickname: string) => {
+            await memberService.deleteFollower(nickname);
+        },
+        onSuccess: () => {
+            toast.success("구독자가 삭제되었습니다.");
+            // Mark the follower list as stale, but don't refetch immediately.
+            // This ensures that deleted items are only removed when the user navigates
+            // away and back to the tab.
+            queryClient.invalidateQueries({
+                queryKey: memberKeys.followers(),
+                refetchType: "none",
+            });
+        },
+        onError: (error: any) => {
+            console.error("Failed to delete follower:", error);
+            const errorMessage = error.response?.data?.message || error.message || "구독자 삭제에 실패했습니다.";
+            toast.error(errorMessage);
+        },
+    });
+};
+
 export const useReportMemberMutation = () => {
     return useMutation({
         mutationFn: async (payload: ReportMemberRequest) => {
@@ -282,6 +330,19 @@ export const useReportMemberMutation = () => {
         onError: (error: any) => {
             console.error("Failed to report member:", error);
             const errorMessage = error.response?.data?.message || error.message || "신고에 실패했습니다.";
+            toast.error(errorMessage);
+        },
+    });
+};
+
+export const useFindEmailMutation = () => {
+    return useMutation({
+        mutationFn: async (payload: FindEmailRequest) => {
+            return await memberService.findEmail(payload);
+        },
+        onError: (error: any) => {
+            console.error("Failed to find email:", error);
+            const errorMessage = error.response?.data?.message || error.message || "해당 회원을 찾을 수 없습니다.";
             toast.error(errorMessage);
         },
     });

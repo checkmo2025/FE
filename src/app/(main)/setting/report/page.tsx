@@ -1,44 +1,76 @@
+"use client";
+
 import ReportItem from "@/components/base-ui/Settings/Report/ReportItem";
 import SettingsDetailLayout from "@/components/base-ui/Settings/SettingsDetailLayout";
+import { useMyReportsQuery } from "@/hooks/queries/useMemberQueries";
+import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
 
-// UI 확인을 위한 Mock Data
-const MOCK_REPORTS = [
-  {
-    id: 1,
-    category: "일반",
-    reporterName: "hy_0716",
-    content:
-      "아무 의미 없이 분량을 채우기 위해 작성된 글자 더미입니다. 이 문장은 특정한 정보를 전달하거나 메시지를 담고 있지 않으며, 오직 글의 길이와 흐름을 확인하기 위한 용도로 사용됩니다. 디자인 작업이나 편집 과정에서 실제 콘텐츠가 준비되기 전까지 임시로 배치하는 텍스트라고 생각하면 됩니다. 문장은 자연스럽게 이어지지만 내용은 중요하지 않고, 읽는 사람에게 특별한 해석을 요구하지 않습니다. 글자의 밀도, 줄 간격, 문단의 균형을 확인하는 데 적합하며 필요에 따라 자유롭게 수정하거나 삭제할 수 있습니다.",
-    date: "2025.01.01",
-  },
-  {
-    id: 2,
-    category: "스팸",
-    reporterName: "book_lover",
-    content: "지속적으로 광고성 댓글을 달고 있습니다. 확인 부탁드립니다.",
-    date: "2025.01.02",
-  },
-  {
-    id: 3,
-    category: "욕설",
-    reporterName: "reading_cat",
-    content: "모임 채팅방에서 부적절한 언어를 사용했습니다.",
-    date: "2025.01.03",
-  },
-];
+const REPORT_TYPE_MAP: Record<string, string> = {
+  GENERAL: "일반",
+  BOOK_STORY: "책 이야기",
+  COMMENT: "책 이야기(댓글)",
+  CLUB_MEETING: "책모임 내부",
+};
 
 export default function ReportPage() {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } = useMyReportsQuery();
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  if (isLoading) {
+    return (
+      <SettingsDetailLayout title="신고 관리" mode="wide" className="gap-[8px]">
+        <div className="flex h-[200px] w-full items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary-2"></div>
+        </div>
+      </SettingsDetailLayout>
+    );
+  }
+
+  if (isError) {
+    return (
+      <SettingsDetailLayout title="신고 관리" mode="wide" className="gap-[8px]">
+        <div className="flex h-[200px] w-full items-center justify-center text-Gray-5">
+          신고 목록을 불러오는 데 실패했습니다.
+        </div>
+      </SettingsDetailLayout>
+    );
+  }
+
+  const reports = data?.pages.flatMap((page) => page.reports) ?? [];
+
   return (
     <SettingsDetailLayout title="신고 관리" mode="wide" className="gap-[8px]">
-      {MOCK_REPORTS.map((report) => (
-        <ReportItem
-          key={report.id}
-          category={report.category}
-          reporterName={report.reporterName}
-          content={report.content}
-          date={report.date}
-        />
-      ))}
+      {reports.length === 0 ? (
+        <div className="flex h-[200px] w-full items-center justify-center text-Gray-5">
+          신고 내역이 없습니다.
+        </div>
+      ) : (
+        reports.map((report, idx) => (
+          <ReportItem
+            key={`${report.reportDate}-${idx}`}
+            category={REPORT_TYPE_MAP[report.reportType] || "일반"}
+            reporterName={report.reportedMemberNickname}
+            content={report.content}
+            date={report.reportDate.substring(0, 10).replace(/-/g, ".")}
+            profileImageUrl={report.reportedMemberProfileImageUrl}
+          />
+        ))
+      )}
+
+      {/* Infinite Scroll Trigger */}
+      <div ref={ref} className="h-4 w-full" />
+      {isFetchingNextPage && (
+        <div className="flex justify-center p-4">
+          <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-primary-2"></div>
+        </div>
+      )}
     </SettingsDetailLayout>
   );
 }

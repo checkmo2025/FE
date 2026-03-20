@@ -1,0 +1,130 @@
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/useAuthStore";
+import { LoginForm } from "@/types/auth";
+import { authService } from "@/services/authService";
+import { ApiError } from "@/lib/api/errors";
+
+export default function useLoginForm(onSuccess?: () => void) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const login = useAuthStore((state) => state.login);
+  const [form, setForm] = useState<LoginForm>({ identifier: "", password: "" });
+
+  const [errors, setErrors] = useState<Partial<LoginForm>>({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+
+    // 사용자가 다시 입력하면 에러 메시지 초기화 (Reset Logic)
+    if (errors[name as keyof LoginForm]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleLogin = async () => {
+    // 1. Validation (Inline Error)
+    const newErrors: Partial<LoginForm> = {};
+    if (!form.identifier) newErrors.identifier = "이메일을 입력해주세요.";
+    if (!form.password) newErrors.password = "비밀번호를 입력해주세요.";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    if (isLoading) return;
+
+    // 2. Submission Logic
+    setIsLoading(true);
+    setErrors({});
+
+    try {
+      // Service Layer 호출
+      const loginData = await authService.login(form);
+
+      // 상세 프로필 정보 가져오기
+      try {
+        const profileResponse = await authService.getProfile();
+
+        if (profileResponse.isSuccess && profileResponse.result) {
+          // 전역 상태에 상세 정보 저장
+          login({
+            ...profileResponse.result,
+            email: form.identifier
+          });
+        } else {
+          // 프로필 조회 실패 시에도 최소한의 정보로 로그인 처리
+          login({ email: form.identifier });
+        }
+      } catch (profileError) {
+        console.error("Profile fetch failed during login:", profileError);
+        // 프로필 로드 실패해도 로그인은 성공한 상태이므로 최소 정보로 진행
+        login({ email: form.identifier });
+      }
+
+      // 2. Navigation & UI Feedback
+      queryClient.clear();
+      router.refresh();
+      toast.success("로그인에 성공했습니다!");
+      if (onSuccess) onSuccess();
+      router.push("/");
+    } catch (error) {
+      if (error instanceof ApiError) {
+        // 비즈니스 에러 (예: 비밀번호 불일치)는 인라인 에러로 처리
+        setErrors({ identifier: error.message });
+      } else {
+        console.error("로그인 실패:", error);
+        toast.error("로그인 요청 중 오류가 발생했습니다.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSocialLogin = (provider: string) => {
+    if (isLoading) return;
+
+    let authUrl = "";
+    switch (provider) {
+      case "google":
+        authUrl = process.env.NEXT_PUBLIC_GOOGLE_AUTH_URL || "";
+        break;
+      case "kakao":
+        authUrl = process.env.NEXT_PUBLIC_KAKAO_AUTH_URL || "";
+        break;
+      case "naver":
+        authUrl = process.env.NEXT_PUBLIC_NAVER_AUTH_URL || "";
+        break;
+      default:
+        toast.error("지원하지 않는 로그인 방식입니다.");
+        return;
+    }
+
+    if (authUrl) {
+      window.location.href = authUrl;
+    } else {
+      toast.error("로그인 주소 설정이 누락되었습니다.");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleLogin();
+    }
+  };
+
+  return {
+    form,
+    errors,
+    isLoading,
+    handleChange,
+    handleLogin,
+    handleSocialLogin,
+    handleKeyDown,
+  };
+}
