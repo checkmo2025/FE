@@ -1,81 +1,71 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import AdminSearchHeader from "@/components/layout/AdminSearchHeader";
-
-type GroupRow = {
-  id: number;
-  name: string;
-  ownerEmail: string;
-  createdAt: string;
-  memberCount: number;
-};
+import {
+  fetchAdminClubs,
+  type AdminClubListItem,
+} from "@/lib/api/admin/clubs";
 
 export default function GroupsPage() {
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
+
+  const [groups, setGroups] = useState<AdminClubListItem[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const pageSize = 20;
+
+  const loadGroups = async (targetPage: number) => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const data = await fetchAdminClubs(targetPage - 1, pageSize);
+
+      setGroups(data.clubs ?? []);
+      setTotalPages(Math.max(1, data.totalPages ?? 1));
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "모임 목록을 불러오지 못했습니다.",
+      );
+      setGroups([]);
+      setTotalPages(1);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadGroups(page);
+  }, [page]);
 
   const handleKeywordChange = (v: string) => {
     setKeyword(v);
     setPage(1);
   };
 
-  // 더미 데이터 (테스트용) - 100개 모임 생성
-  const groups: GroupRow[] = useMemo(() => {
-    const base = [
-      { name: "러닝 크루", ownerEmail: "run@club.com" },
-      { name: "독서 모임", ownerEmail: "book@club.com" },
-      { name: "헬스 메이트", ownerEmail: "gym@club.com" },
-      { name: "맛집 탐방", ownerEmail: "foodie@club.com" },
-      { name: "여행 동행", ownerEmail: "trip@club.com" },
-    ];
+  const handleSearch = () => {
+    setPage(1);
+  };
 
-    const toDate = (i: number) => {
-      const y = i % 2 === 0 ? 2025 : 2026;
-      const m = y === 2025 ? 10 + (i % 3) : 1 + (i % 2);
-      const d = 1 + (i % 28);
-      return `${y}.${String(m).padStart(2, "0")}.${String(d).padStart(2, "0")}`;
-    };
-
-    return Array.from({ length: 100 }).map((_, i) => {
-      const b = base[i % base.length];
-      return {
-        id: 100 + i,
-        name: `${b.name} ${i + 1}`,
-        ownerEmail: b.ownerEmail,
-        createdAt: toDate(i),
-        memberCount: 5 + (i % 97), // 5~101
-      };
-    });
-  }, []);
-
-  const pageSize = 20;
-
-  const filtered = useMemo(() => {
+  const filteredGroups = useMemo(() => {
     const q = keyword.trim().toLowerCase();
     if (!q) return groups;
 
     return groups.filter((g) => {
       return (
-        String(g.id).includes(q) ||
-        g.name.toLowerCase().includes(q) ||
+        String(g.clubId).includes(q) ||
+        g.clubName.toLowerCase().includes(q) ||
         g.ownerEmail.toLowerCase().includes(q)
       );
     });
   }, [groups, keyword]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-
-  const pageItems = useMemo(() => {
-    const start = (page - 1) * pageSize;
-    return filtered.slice(start, start + pageSize);
-  }, [filtered, page, pageSize]);
-
-  const handleSearch = () => {
-    console.log("검색:", keyword);
-    setPage(1);
-  };
 
   const goTo = (p: number) => {
     const next = Math.min(Math.max(1, p), totalPages);
@@ -109,7 +99,6 @@ export default function GroupsPage() {
           inputWidthClassName="w-[1040px]"
         />
 
-        {/* 라인형 테이블 */}
         <div className="w-full">
           <table className="w-[1040px] table-fixed">
             <colgroup>
@@ -133,30 +122,66 @@ export default function GroupsPage() {
             </thead>
 
             <tbody>
-              {pageItems.map((g) => (
-                <tr
-                  key={g.id}
-                  className="h-[48px] border-b border-Subbrown-4 body_1_2"
-                >
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{g.id}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{g.name}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{g.ownerEmail}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{g.createdAt}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{g.memberCount}</td>
-                  <td className="pl-[12px] py-0">
-                     <Link
-                      href={`/admin/groups/${g.id}`}
-                      className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
-                    >
-                      상세보기
-                    </Link>
+              {loading ? (
+                <tr className="h-[48px] border-b border-Subbrown-4">
+                  <td
+                    colSpan={6}
+                    className="pl-[12px] py-0 body_1_2 text-Gray-7 text-center"
+                  >
+                    로딩 중...
                   </td>
                 </tr>
-              ))}
+              ) : error ? (
+                <tr className="h-[48px] border-b border-Subbrown-4">
+                  <td
+                    colSpan={6}
+                    className="pl-[12px] py-0 body_1_2 text-center text-red-500"
+                  >
+                    {error}
+                  </td>
+                </tr>
+              ) : filteredGroups.length === 0 ? (
+                <tr className="h-[48px] border-b border-Subbrown-4">
+                  <td
+                    colSpan={6}
+                    className="pl-[12px] py-0 body_1_2 text-Gray-7 text-center"
+                  >
+                    조회된 모임이 없습니다.
+                  </td>
+                </tr>
+              ) : (
+                filteredGroups.map((g) => (
+                  <tr
+                    key={g.clubId}
+                    className="h-[48px] border-b border-Subbrown-4 body_1_2"
+                  >
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{g.clubId}</td>
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
+                      {g.clubName}
+                    </td>
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
+                      {g.ownerEmail}
+                    </td>
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                      {g.createdAt.slice(0, 10).replace(/-/g, ".")}
+                    </td>
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                      {g.memberCount}
+                    </td>
+                    <td className="pl-[12px] py-0">
+                      <Link
+                        href={`/admin/groups/${g.clubId}`}
+                        className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
+                      >
+                        상세보기
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
 
-          {/* 페이지네이션 */}
           <div className="mt-6 flex items-center justify-center gap-4 body_2_2">
             <button
               onClick={() => goTo(page - 1)}

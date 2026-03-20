@@ -2,26 +2,35 @@
 
 import Chip from "./Chips";
 
+type CategoryItem = {
+  label: string;
+  selected: boolean;
+};
+
 type Props = {
   title?: string;
-  items: string[];
+  items: CategoryItem[];
+  onToggle?: (label: string) => void;
 };
 
 export default function Category({
   title = "선호하는 독서 카테고리",
   items,
+  onToggle,
 }: Props) {
   return (
     <section className="w-full">
-      <h2 className="text-[18px] subhead_2 text-Gray-7 mb-[10px]">{title}</h2>
+      <h2 className="text-[18px] subhead_2 text-Gray-7 mb-[10px]">
+        {title}
+      </h2>
 
       <div className="flex flex-wrap gap-x-[28px] gap-y-[12px]">
-        {items.map((label, idx) => (
+        {items.map((item, idx) => (
           <Chip
-            key={`${label}-${idx}`}
-            label={label}
-            selected={false}
-            onClick={() => {}}
+            key={`${item.label}-${idx}`}
+            label={item.label}
+            selected={item.selected}
+            onClick={() => onToggle?.(item.label)} // 👈 핵심
           />
         ))}
       </div>
