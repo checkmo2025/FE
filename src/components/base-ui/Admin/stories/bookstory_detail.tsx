@@ -3,8 +3,10 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import ReportModal from "@/components/common/ReportModal";
 import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
+import { deleteAdminBookStory } from "@/lib/api/admin/stories";
 import { ReportType } from "@/types/member";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-hot-toast";
@@ -73,6 +75,7 @@ export default function BookstoryDetail({
   onLikeClick,
   hideSubscribeButton = false,
 }: BookstoryDetailProps) {
+  const router = useRouter();
   const href = authorHref ?? `/profile/${authorId}`;
   const [menuOpen, setMenuOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -115,6 +118,27 @@ export default function BookstoryDetail({
     setMenuOpen(false);
   };
 
+  const handleDelete = async () => {
+    if (!id) {
+      toast.error("삭제할 책이야기 ID가 없습니다.");
+      return;
+    }
+
+    const ok = window.confirm("정말 삭제하시겠습니까?");
+    if (!ok) return;
+
+    try {
+      await deleteAdminBookStory(id);
+      toast.success("삭제되었습니다.");
+      setMenuOpen(false);
+      router.push("/admin/stories");
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "삭제에 실패했습니다.";
+      toast.error(message);
+    }
+  };
+
   return (
     <div
       className={`flex flex-col t:flex-row w-full px-[20px] items-start gap-4 t:gap-[28px] bg-Background ${className}`}
@@ -146,10 +170,11 @@ export default function BookstoryDetail({
           <button
             type="button"
             onClick={onSubscribeClick}
-            className={`flex px-4 py-1.5 justify-center items-center rounded-lg text-White text-[12px] font-medium shrink-0 transition-colors ${isFollowing
-              ? "bg-Subbrown-4 text-primary-3"
-              : "bg-primary-2 text-White"
-              }`}
+            className={`flex px-4 py-1.5 justify-center items-center rounded-lg text-White text-[12px] font-medium shrink-0 transition-colors ${
+              isFollowing
+                ? "bg-Subbrown-4 text-primary-3"
+                : "bg-primary-2 text-White"
+            }`}
           >
             {subscribeText}
           </button>
@@ -226,7 +251,13 @@ export default function BookstoryDetail({
             className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1 rounded-full transition-colors"
           >
             <Image src={heartIcon} alt="heart" width={20} height={20} />
-            <span className={`body_1_2 ${likedByMe ? 'text-primary-2' : 'text-Gray-5'}`}>좋아요 {likeCount}</span>
+            <span
+              className={`body_1_2 ${
+                likedByMe ? "text-primary-2" : "text-Gray-5"
+              }`}
+            >
+              좋아요 {likeCount}
+            </span>
           </div>
           <div
             className="flex items-center gap-2 cursor-pointer"
@@ -288,7 +319,11 @@ export default function BookstoryDetail({
                 className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1.5 rounded-full transition-colors group"
               >
                 <Image src={heartIcon} alt="heart" width={24} height={24} />
-                <span className={`subhead_4_1 ${likedByMe ? 'text-primary-2' : 'text-Gray-5'}`}>
+                <span
+                  className={`subhead_4_1 ${
+                    likedByMe ? "text-primary-2" : "text-Gray-5"
+                  }`}
+                >
                   좋아요 {likeCount}
                 </span>
               </div>
@@ -318,10 +353,11 @@ export default function BookstoryDetail({
             <button
               type="button"
               onClick={onSubscribeClick}
-              className={`flex px-[17px] py-[8px] justify-center items-center rounded-lg body_2_1 shrink-0 whitespace-nowrap cursor-pointer transition-colors ${isFollowing
-                ? "bg-Subbrown-4 text-primary-3"
-                : "bg-primary-2 text-White"
-                }`}
+              className={`flex px-[17px] py-[8px] justify-center items-center rounded-lg body_2_1 shrink-0 whitespace-nowrap cursor-pointer transition-colors ${
+                isFollowing
+                  ? "bg-Subbrown-4 text-primary-3"
+                  : "bg-primary-2 text-White"
+              }`}
             >
               {subscribeText}
             </button>
@@ -358,12 +394,12 @@ export default function BookstoryDetail({
                 <div className="mx-2 border-b border-Subbrown-4" />
                 <button
                   type="button"
-                  onClick={handleShare}
+                  onClick={handleDelete}
                   className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
                 >
                   <Image
                     src="/gray_share.svg"
-                    alt="공유"
+                    alt="삭제"
                     width={20}
                     height={20}
                   />
@@ -374,6 +410,7 @@ export default function BookstoryDetail({
           </div>
         </div>
       </div>
+
       {/* Report Modal */}
       <ReportModal
         isOpen={isReportModalOpen}

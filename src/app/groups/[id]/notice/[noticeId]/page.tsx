@@ -4,11 +4,9 @@ import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
 
 import NoticeDetail from '@/components/base-ui/Group/notice_detail';
-import VoteNoticeDetail from '@/components/base-ui/Group/vote_notice_detail';
 import CommentSectionNotice from '@/components/base-ui/Comment/comment_section_notice';
-
 import { useClubNoticeDetailQuery } from '@/hooks/queries/useClubNotificationQueries';
-
+import { useClubMeQuery } from '@/hooks/queries/useClubhomeQueries';
 
 function formatKoreanDate(input: string) {
   const y = input.slice(0, 4);
@@ -30,51 +28,33 @@ function mapTags(code?: string): readonly ('vote' | 'meeting')[] {
   }
 }
 
-export default function AdminNoticeDetailPage() {
+export default function NoticeDetailPage() {
   const params = useParams();
 
-  const clubId = Number((params as any).id);
-  const noticeId = Number((params as any).noticeId);
+  const clubId = Number(params.id);
+  const noticeId = Number(params.noticeId);
 
   const noticeQuery = useClubNoticeDetailQuery(clubId, noticeId);
+  const { data: meData } = useClubMeQuery(clubId);
+
+  const isAdmin = !!meData?.staff;
 
   const viewModel = useMemo(() => {
     const data = noticeQuery.data;
     if (!data) return null;
-
-    const tags = mapTags(data.tag?.code);
-    const hasVote = !!data.voteDetail;
-
-    // VoteNoticeDetail에 맞게 voteOptions 변환
-    const voteOptions =
-      data.voteDetail?.items?.map((it) => ({
-        id: it.itemNumber,
-        text: it.item,
-        count: it.voteCount,
-      })) ?? [];
-
-    // VoteNoticeDetail prop 매핑 (duplication/anonymity)
-    const allowMultiple = data.voteDetail?.duplication ?? false;
-    const isPublic = data.voteDetail ? !data.voteDetail.anonymity : false; // 익명이 아니면 공개로 간주
-    const voteEndDate = data.voteDetail?.deadline ?? '';
 
     return {
       title: data.title,
       content: data.content,
       date: formatKoreanDate(data.createdAt),
       isPinned: data.isPinned,
-      tags,
+      tags: mapTags(data.tag?.code),
       images: data.imageUrls ?? [],
-      hasVote,
-
-      voteOptions,
-      voteEndDate,
-      allowMultiple,
-      isPublic,
+      meetingDetail: data.meetingDetail ?? null,
+      voteDetail: data.voteDetail ?? null,
     };
   }, [noticeQuery.data]);
 
-  // ---- 상태 처리 ----
   if (!Number.isFinite(clubId) || !Number.isFinite(noticeId)) {
     return <div>잘못된 접근입니다.</div>;
   }
@@ -91,41 +71,28 @@ export default function AdminNoticeDetailPage() {
     return <div>공지사항을 찾을 수 없습니다.</div>;
   }
 
-  // 이 페이지는 admin 라우트니까 일단 true 고정
-  const isAdmin = true;
-
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-[18px]">
       <div>
         <div className="w-full max-w-[1040px] px-0 t:mx-auto pt-6">
-          {viewModel.hasVote ? (
-            <VoteNoticeDetail
-              title={viewModel.title}
-              content={viewModel.content}
-              date={viewModel.date}
-              isPinned={viewModel.isPinned}
-              tags={viewModel.tags}
-              voteOptions={viewModel.voteOptions}
-              voteEndDate={viewModel.voteEndDate}
-              allowMultiple={viewModel.allowMultiple}
-              isPublic={viewModel.isPublic}
-              images={viewModel.images}
-              isAdmin={isAdmin}
-            />
-          ) : (
-            <NoticeDetail
-              title={viewModel.title}
-              content={viewModel.content}
-              date={viewModel.date}
-              isPinned={viewModel.isPinned}
-              tags={viewModel.tags}
-              images={viewModel.images}
-            />
-          )}
+          <NoticeDetail
+            clubId={clubId}
+            noticeId={noticeId}
+            title={viewModel.title}
+            content={viewModel.content}
+            date={viewModel.date}
+            isPinned={viewModel.isPinned}
+            tags={viewModel.tags}
+            images={viewModel.images}
+            isAdmin={isAdmin}
+            meetingDetail={viewModel.meetingDetail}
+            voteDetail={viewModel.voteDetail}
+            editPath={`/groups/${clubId}/admin/notice/${noticeId}`}
+          />
         </div>
 
         <div className="border-t-2 border-Gray-1 w-full max-w-[1040px] mx-auto px-[18px] mt-10 pt-6 pb-10">
-          <CommentSectionNotice noticeId={noticeId} isAdminView />
+          <CommentSectionNotice noticeId={noticeId} isAdminView={isAdmin} />
         </div>
       </div>
     </div>

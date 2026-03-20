@@ -1,15 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { clubNotificationService } from "@/services/clubNotificationService";
-import { GetClubNoticeDetailResponseResult, GetClubNoticesResponseResult } from "@/types/clubnotification";
-
-
+import {
+  GetClubNoticeDetailResponseResult,
+  GetClubNoticesResponseResult,
+} from "@/types/clubnotification";
 
 export const clubNoticeQueryKeys = {
-  list: (clubId: number, page: number) =>
-    ["clubs", clubId, "notices", "list", page] as const,
+  root: (clubId: number) => ["clubs", clubId, "notices"] as const,
 
-  detail: (clubId: number, noticeId: number) =>
-    ["clubs", clubId, "notices", noticeId, "detail"] as const,
+  lists: (clubId: number) => ["clubs", clubId, "notices", "list"] as const,
+
+  list: (clubId: number, page: number) => ["clubs", clubId, "notices", "list", page] as const,
+
+  detail: (clubId: number, noticeId: number) => ["clubs", clubId, "notices", noticeId, "detail"] as const,
+
+  comments: (clubId: number, noticeId: number) =>  ["clubs", clubId, "notices", noticeId, "comments"] as const,
 };
 
 export function useClubNoticesQuery(clubId: number, page: number = 1) {
@@ -19,7 +24,6 @@ export function useClubNoticesQuery(clubId: number, page: number = 1) {
     queryFn: () => clubNotificationService.getNotices({ clubId, page }),
   });
 }
-
 
 export function useClubNoticeDetailQuery(clubId: number, noticeId: number) {
   return useQuery<GetClubNoticeDetailResponseResult>({
