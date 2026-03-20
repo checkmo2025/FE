@@ -208,15 +208,14 @@ export default function CommentSection({
     if (commentToDelete === null) return;
 
     try {
-      await deleteAdminComment(storyId, commentToDelete);
-      setComments((prev) => removeCommentById(prev, commentToDelete));
-      toast.success("댓글이 삭제되었습니다.");
-      setIsConfirmOpen(false);
-      setCommentToDelete(null);
-    } catch (error) {
-      toast.error("댓글 삭제에 실패했습니다.");
-      setIsConfirmOpen(false);
-      setCommentToDelete(null);
+        await deleteAdminComment(storyId, commentToDelete);
+        setComments((prev) => removeCommentById(prev, commentToDelete));
+        toast.success("댓글이 삭제되었습니다.");
+    }   catch (error) {
+        toast.error("댓글 삭제에 실패했습니다.");
+    }   finally {
+        setIsConfirmOpen(false);
+        setCommentToDelete(null);
     }
   };
 
