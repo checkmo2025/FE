@@ -1,9 +1,26 @@
+"use client";
+
+import { useState } from "react";
 import SettingsDetailLayout from "@/components/base-ui/Settings/SettingsDetailLayout";
 import SettingsTitle from "@/components/base-ui/Settings/SettingsTitle";
 import SocialLoginCard from "@/components/base-ui/Settings/SocialLogin/SocialLoginCard";
 import WithdrawalNotice from "@/components/base-ui/Settings/SocialLogin/WithdrawalNotice";
+import ConfirmModal from "@/components/common/ConfirmModal";
+import { useWithdrawMutation } from "@/hooks/mutations/useMemberMutations";
 
 export default function AccountStatusPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const withdrawMutation = useWithdrawMutation();
+
+  const handleWithdrawClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmWithdraw = () => {
+    withdrawMutation.mutate();
+    setIsModalOpen(false);
+  };
+
   return (
     <SettingsDetailLayout
       title="소셜 로그인 연동 관리"
@@ -27,6 +44,7 @@ export default function AccountStatusPage() {
 
           <div className="flex w-full pt-[10px] justify-center xl:justify-end">
             <button
+              onClick={handleWithdrawClick}
               className="flex items-center justify-center gap-[10px] rounded-[8px] transition-colors
                w-full h-[40px] bg-[#3D3D3D]
                md:w-[420px]
@@ -39,6 +57,13 @@ export default function AccountStatusPage() {
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={isModalOpen}
+        message="정말 탈퇴하시겠습니까? 탈퇴 시 모든 데이터가 삭제되며 복구할 수 없습니다."
+        onConfirm={handleConfirmWithdraw}
+        onCancel={() => setIsModalOpen(false)}
+      />
     </SettingsDetailLayout>
   );
 }

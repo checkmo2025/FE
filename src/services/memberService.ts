@@ -123,4 +123,12 @@ export const memberService = {
         const response = await apiClient.get<ApiResponse<ReportListResponse>>(url.toString());
         return response.result!;
     },
+    withdraw: async (): Promise<void> => {
+        const response = await apiClient.post<ApiResponse<unknown>>(
+            MEMBER_ENDPOINTS.WITHDRAWAL
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "회원 탈퇴에 실패했습니다.");
+        }
+    },
 };
