@@ -10,11 +10,13 @@ type TargetItem = {
 type Props = {
   title?: string;
   items: TargetItem[];
+  onToggle?: (label: string) => void; // 👈 추가
 };
 
 export default function TargetSection({
   title = "모임 대상",
   items,
+  onToggle,
 }: Props) {
   return (
     <section className="w-full">
@@ -28,7 +30,7 @@ export default function TargetSection({
             key={`${item.label}-${idx}`}
             label={item.label}
             selected={item.selected}
-            onClick={() => {}}
+            onClick={() => onToggle?.(item.label)}
           />
         ))}
       </div>

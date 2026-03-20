@@ -6,4 +6,7 @@ export const ADMIN_CLUBS = {
 
   detail: (clubId: number) =>
     `${API_BASE_URL}/admin/clubs/${clubId}`,
+
+  activeMembers: (clubId: number, page = 0, size = 20) =>
+    `${API_BASE_URL}/admin/clubs/${clubId}/active-members?page=${page}&size=${size}`,
 };
