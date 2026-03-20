@@ -20,7 +20,6 @@ export default function AccountStatusPage() {
 
   const handleConfirmWithdraw = () => {
     withdrawMutation.mutate();
-    setIsModalOpen(false);
   };
 
   return (
@@ -35,7 +34,7 @@ export default function AccountStatusPage() {
           <div className="w-full max-w-[420px] h-[64px] rounded-[8px] bg-Gray-2 animate-pulse" />
         ) : loginStatus ? (
           <SocialLoginCard
-            provider={loginStatus.provider.toLowerCase() as any}
+            provider={loginStatus.provider.toLowerCase() as "local" | "kakao" | "google" | "naver"}
             email={loginStatus.email}
           />
         ) : (
