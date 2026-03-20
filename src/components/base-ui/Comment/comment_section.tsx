@@ -40,13 +40,13 @@ export default function CommentSection({
     // 1. 재귀적으로 맵핑 (백엔드에서 이미 nested 된 replies 배열을 줄 경우를 대비)
     const mapNode = (c: CommentInfo): Comment & { parentCommentId?: number | null } => ({
       id: c.commentId,
-      authorName: c.authorInfo.nickname,
-      profileImgSrc: isValidUrl(c.authorInfo.profileImageUrl)
-        ? c.authorInfo.profileImageUrl
+      authorName: c.authorInfo?.nickname ?? "(알 수 없음)",
+      profileImgSrc: isValidUrl(c.authorInfo?.profileImageUrl)
+        ? c.authorInfo!.profileImageUrl
         : "/profile2.svg",
       content: c.content,
       createdAt: c.createdAt,
-      isAuthor: c.authorInfo.nickname === storyAuthorNickname,
+      isAuthor: c.authorInfo?.nickname === storyAuthorNickname,
       isMine: c.writtenByMe,
       replies: c.replies ? c.replies.map(r => mapNode(r)) : [],
       parentCommentId: c.parentCommentId,
