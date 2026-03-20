@@ -4,9 +4,8 @@ export type ClubNoticeTagCode = "GENERAL" | "MEETING" | "VOTE" | "VOTE_MEETING";
 
 export interface ClubNoticeTagItem {
   code: ClubNoticeTagCode;
-  description: string; 
+  description: string;
 }
-
 
 export interface ClubNoticeItem {
   id: number;
@@ -54,18 +53,16 @@ export interface CreateClubNoticeVote {
 export interface CreateClubNoticeRequest {
   title: string;
   content: string;
-  meetingId?: number;        
+  meetingId?: number;
   imageUrls?: string[];
-  vote?: CreateClubNoticeVote; 
-
+  vote?: CreateClubNoticeVote;
   isPinned: boolean;
 }
 
-/** POST /clubs/{clubId}/notices response.result = "string" */
 export type CreateClubNoticeResponse = ApiResponse<string>;
 export type CreateClubNoticeResponseResult = CreateClubNoticeResponse["result"];
 
-/** -------------------- Notice Detail (GET /clubs/{clubId}/notices/{noticeId}) -------------------- */
+/** -------------------- Notice Detail -------------------- */
 
 export interface ClubNoticeDetailTag {
   code: ClubNoticeTagCode;
@@ -81,18 +78,16 @@ export interface ClubNoticeDetailBookInfo {
 
 export interface ClubNoticeMeetingDetail {
   meetingId: number;
-  title: string;
-  meetingTime: string; // ISO
   location: string;
   generation: number;
   tag: string;
-  content: string;
+  averageRate: number;
   bookInfo: ClubNoticeDetailBookInfo;
 }
 
 export interface ClubNoticeVoteMember {
   nickname: string;
-  profileImageUrl: string;
+  profileImageUrl: string | null;
 }
 
 export interface ClubNoticeVoteItem {
@@ -104,7 +99,7 @@ export interface ClubNoticeVoteItem {
 }
 
 export interface ClubNoticeVoteDetail {
-  id: number;
+  id: number; // voteId
   title: string;
   content: string;
   anonymity: boolean;
@@ -118,23 +113,18 @@ export interface GetClubNoticeDetailResult {
   id: number;
   title: string;
   content: string;
-
-  // 목록은 tagItem, 상세는 tag로 오니까 따로 둠
   tag: ClubNoticeDetailTag;
-
   imageUrls: string[];
   createdAt: string; // ISO
-
-  meetingDetail: ClubNoticeMeetingDetail | null;
-  voteDetail: ClubNoticeVoteDetail | null;
-
+  meetingDetail?: ClubNoticeMeetingDetail | null;
+  voteDetail?: ClubNoticeVoteDetail | null;
   isPinned: boolean;
 }
 
 export type GetClubNoticeDetailResponse = ApiResponse<GetClubNoticeDetailResult>;
 export type GetClubNoticeDetailResponseResult = GetClubNoticeDetailResponse["result"];
 
-/** -------------------- Notice Update (PATCH /clubs/{clubId}/notices/{noticeId}) -------------------- */
+/** -------------------- Notice Update -------------------- */
 
 export interface UpdateClubNoticeVoteRequest {
   deadline: string; // ISO
@@ -143,18 +133,70 @@ export interface UpdateClubNoticeVoteRequest {
 export interface UpdateClubNoticeRequest {
   title: string;
   content: string;
-  meetingId: number;
+  meetingId: number | null;
   imageUrls: string[];
   vote?: UpdateClubNoticeVoteRequest;
   isPinned: boolean;
 }
 
-/** PATCH response.result = "string" */
 export type UpdateClubNoticeResponse = ApiResponse<string>;
 export type UpdateClubNoticeResponseResult = UpdateClubNoticeResponse["result"];
 
-/** -------------------- Notice Delete (DELETE /clubs/{clubId}/notices/{noticeId}) -------------------- */
+/** -------------------- Notice Delete -------------------- */
 
-/** DELETE response.result = "string" */
 export type DeleteClubNoticeResponse = ApiResponse<string>;
 export type DeleteClubNoticeResponseResult = DeleteClubNoticeResponse["result"];
+
+/** -------------------- Vote Submit -------------------- */
+
+export interface VoteClubNoticeRequest {
+  selectedItemNumbers: number[];
+}
+
+export type VoteClubNoticeResponse = ApiResponse<string>;
+export type VoteClubNoticeResponseResult = VoteClubNoticeResponse["result"];
+
+/** -------------------- Notice Comments -------------------- */
+
+export interface ClubNoticeCommentAuthorInfo {
+  nickname: string;
+  profileImageUrl: string;
+}
+
+export interface ClubNoticeCommentItem {
+  commentId: number;
+  authorInfo: ClubNoticeCommentAuthorInfo;
+  content: string;
+  createdAt: string; // ISO
+  updatedAt: string; // ISO
+}
+
+export interface GetClubNoticeCommentsResult {
+  comments: ClubNoticeCommentItem[];
+  hasNext: boolean;
+  nextCursor: number;
+}
+
+export type GetClubNoticeCommentsResponse = ApiResponse<GetClubNoticeCommentsResult>;
+export type GetClubNoticeCommentsResponseResult =
+  GetClubNoticeCommentsResponse["result"];
+
+export interface CreateClubNoticeCommentRequest {
+  content: string;
+}
+
+export type CreateClubNoticeCommentResponse = ApiResponse<string>;
+export type CreateClubNoticeCommentResponseResult =
+  CreateClubNoticeCommentResponse["result"];
+
+export interface UpdateClubNoticeCommentRequest {
+  content: string;
+}
+
+export type UpdateClubNoticeCommentResponse = ApiResponse<string>;
+export type UpdateClubNoticeCommentResponseResult =
+  UpdateClubNoticeCommentResponse["result"];
+
+export type DeleteClubNoticeCommentResponse = ApiResponse<string>;
+export type DeleteClubNoticeCommentResponseResult =
+  DeleteClubNoticeCommentResponse["result"];

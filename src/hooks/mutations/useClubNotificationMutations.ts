@@ -1,8 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { clubNotificationService } from "@/services/clubNotificationService";
 import { clubNoticeQueryKeys } from "@/hooks/queries/useClubNotificationQueries";
-import { CreateClubNoticeRequest, UpdateClubNoticeRequest } from "@/types/clubnotification";
-
+import {
+  CreateClubNoticeRequest,
+  UpdateClubNoticeRequest,
+  VoteClubNoticeRequest,
+} from "@/types/clubnotification";
 
 type CreateNoticeVariables = {
   clubId: number;
@@ -17,11 +20,8 @@ export function useCreateClubNoticeMutation() {
       clubNotificationService.createNotice({ clubId, body }),
 
     onSuccess: async (_result, variables) => {
-      // ✅ 작성 성공 시: 목록 갱신
-      // 페이지네이션이라 “현재 보고 있는 page”를 UI가 알지만,
-      // 여기서는 안전하게 list 전체 prefix로 invalidate 때림.
       await qc.invalidateQueries({
-        queryKey: ["clubs", variables.clubId, "notices"],
+        queryKey: clubNoticeQueryKeys.lists(variables.clubId),
       });
     },
   });
@@ -41,13 +41,62 @@ export function useUpdateClubNoticeMutation() {
       clubNotificationService.updateNotice({ clubId, noticeId, body }),
 
     onSuccess: async (_result, variables) => {
-      //  상세 갱신
       await qc.invalidateQueries({
         queryKey: clubNoticeQueryKeys.detail(variables.clubId, variables.noticeId),
       });
-      // 목록도 갱신
+
       await qc.invalidateQueries({
-        queryKey: ["clubs", variables.clubId, "notices"],
+        queryKey: clubNoticeQueryKeys.lists(variables.clubId),
+      });
+    },
+  });
+}
+
+type DeleteNoticeVariables = {
+  clubId: number;
+  noticeId: number;
+};
+
+export function useDeleteClubNoticeMutation() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ clubId, noticeId }: DeleteNoticeVariables) =>
+      clubNotificationService.deleteNotice({ clubId, noticeId }),
+
+    onSuccess: async (_result, variables) => {
+      qc.removeQueries({
+        queryKey: clubNoticeQueryKeys.detail(variables.clubId, variables.noticeId),
+      });
+
+      qc.removeQueries({
+        queryKey: clubNoticeQueryKeys.comments(variables.clubId, variables.noticeId),
+      });
+
+      await qc.invalidateQueries({
+        queryKey: clubNoticeQueryKeys.lists(variables.clubId),
+      });
+    },
+  });
+}
+
+type VoteNoticeVariables = {
+  clubId: number;
+  noticeId: number;
+  voteId: number;
+  body: VoteClubNoticeRequest;
+};
+
+export function useVoteClubNoticeMutation() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ clubId, noticeId, voteId, body }: VoteNoticeVariables) =>
+      clubNotificationService.voteNotice({ clubId, noticeId, voteId, body }),
+
+    onSuccess: async (_result, variables) => {
+      await qc.invalidateQueries({
+        queryKey: clubNoticeQueryKeys.detail(variables.clubId, variables.noticeId),
       });
     },
   });

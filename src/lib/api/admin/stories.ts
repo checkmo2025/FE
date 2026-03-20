@@ -88,3 +88,53 @@ export async function fetchAdminBookStoryDetail(bookStoryId: number) {
   const data: AdminBookStoryDetailResponse = await res.json();
   return data.result;
 }
+
+type DeleteAdminBookStoryResponse = {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: string;
+};
+
+export async function deleteAdminBookStory(bookStoryId: number) {
+  const res = await fetch(ADMIN_STORIES.delete(bookStoryId), {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  const data: DeleteAdminBookStoryResponse = await res.json();
+
+  if (!res.ok || !data.isSuccess) {
+    throw new Error(data.message || "책 이야기 삭제에 실패했습니다.");
+  }
+
+  return data.result;
+}
+
+type DeleteAdminCommentResponse = {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: number;
+};
+
+export async function deleteAdminComment(
+  bookStoryId: number,
+  commentId: number
+) {
+  const res = await fetch(
+    ADMIN_STORIES.deleteComment(bookStoryId, commentId),
+    {
+      method: "DELETE",
+      credentials: "include",
+    }
+  );
+
+  const data: DeleteAdminCommentResponse = await res.json();
+
+  if (!res.ok || !data.isSuccess) {
+    throw new Error(data.message || "댓글 삭제에 실패했습니다.");
+  }
+
+  return data.result;
+}

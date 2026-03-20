@@ -347,3 +347,22 @@ export const useFindEmailMutation = () => {
         },
     });
 };
+
+export const useWithdrawMutation = () => {
+    const { logout } = useAuthStore();
+    return useMutation({
+        mutationFn: async () => {
+            await memberService.withdraw();
+        },
+        onSuccess: () => {
+            toast.success("회원 탈퇴가 완료되었습니다.");
+            logout(); // Clear auth state
+            window.location.href = "/"; // Redirect to home page mapping
+        },
+        onError: (error: any) => {
+            console.error("Failed to withdraw:", error);
+            const errorMessage = error.response?.data?.message || error.message || "회원 탈퇴에 실패했습니다.";
+            toast.error(errorMessage);
+        },
+    });
+};

@@ -1,259 +1,268 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import CommentList, { Comment } from "./comment_list";
-import { CommentInfo } from "@/types/story";
-import { isValidUrl } from "@/utils/url";
-import {
-  useCreateCommentMutation,
-  useUpdateCommentMutation,
-  useDeleteCommentMutation
-} from "@/hooks/mutations/useStoryMutations";
-import { toast } from "react-hot-toast";
-import ConfirmModal from "@/components/common/ConfirmModal";
-import ReportModal from "@/components/common/ReportModal";
-import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
-import { ReportType } from "@/types/member";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 
-// 어떤 글의 댓글인지 구분
-type CommentSectionProps = {
-  storyId: number;
-  initialComments?: CommentInfo[];
-  storyAuthorNickname?: string;
+// 댓글 1개 컴포넌트
+type CommentItemProps = {
+  id: number;
+  authorName: string;
+  profileImgSrc?: string;
+  content: string;
+  createdAt: string;
+  isAuthor?: boolean;
+  isMine?: boolean;
+  isReply?: boolean;
+
+  canEdit?: boolean;
+  canDelete?: boolean;
+  canReport?: boolean;
+
+  onReply?: (id: number) => void;
+  onEdit?: (id: number, content: string) => void | Promise<void>;
+  onDelete?: (id: number) => void | Promise<void>;
+  onReport?: (id: number) => void;
 };
 
-
-export default function CommentSection({
-  storyId,
-  initialComments = [],
-  storyAuthorNickname
-}: CommentSectionProps) {
-  const createCommentMutation = useCreateCommentMutation(storyId);
-  const updateCommentMutation = useUpdateCommentMutation(storyId);
-  const deleteCommentMutation = useDeleteCommentMutation(storyId);
-  const { mutate: reportMember } = useReportMemberMutation();
-  const { isLoggedIn, openLoginModal } = useAuthStore();
-
-  // API 데이터를 UI용 Comment 형식으로 변환 및 계층 구조화
-  const mapApiToUiComments = (apiComments: CommentInfo[]): Comment[] => {
-    // 1. 재귀적으로 맵핑 (백엔드에서 이미 nested 된 replies 배열을 줄 경우를 대비)
-    const mapNode = (c: CommentInfo): Comment & { parentCommentId?: number | null } => ({
-      id: c.commentId,
-      authorName: c.authorInfo.nickname,
-      profileImgSrc: isValidUrl(c.authorInfo.profileImageUrl)
-        ? c.authorInfo.profileImageUrl
-        : "/profile2.svg",
-      content: c.content,
-      createdAt: c.createdAt,
-      isAuthor: c.authorInfo.nickname === storyAuthorNickname,
-      isMine: c.writtenByMe,
-      replies: c.replies ? c.replies.map(r => mapNode(r)) : [],
-      parentCommentId: c.parentCommentId,
-    });
-
-    const mapped = apiComments.map(mapNode);
-
-    const rootComments: Comment[] = [];
-    const commentMap = new Map<number, Comment & { parentCommentId?: number | null }>();
-
-    // 맵에 모든 요소 저장
-    const addToMap = (comments: (Comment & { parentCommentId?: number | null })[]) => {
-      comments.forEach(c => {
-        commentMap.set(c.id, c);
-        if (c.replies && c.replies.length > 0) addToMap(c.replies);
-      });
-    };
-    addToMap(mapped);
-
-    // flat list 로 넘어왔을 경우 수동으로 부모-자식 연결
-    mapped.forEach((c) => {
-      if (c.parentCommentId && commentMap.has(c.parentCommentId)) {
-        const parent = commentMap.get(c.parentCommentId)!;
-        if (!parent.replies!.find(r => r.id === c.id)) {
-          parent.replies!.push(c);
-        }
-      } else {
-        rootComments.push(c);
-      }
-    });
-
-    // 최상위 댓글 최신순(내림차순) 정렬
-    rootComments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-    // 대댓글은 등록순(오름차순) 유지
-    const sortReplies = (comments: Comment[]) => {
-      comments.forEach(c => {
-        if (c.replies && c.replies.length > 0) {
-          c.replies.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-          sortReplies(c.replies);
-        }
-      });
-    };
-    sortReplies(rootComments);
-
-    return rootComments;
-  };
-
-  const [comments, setComments] = useState<Comment[]>(() => mapApiToUiComments(initialComments));
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [commentToDelete, setCommentToDelete] = useState<number | null>(null);
-
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const [reportTargetNickname, setReportTargetNickname] = useState<string>("");
-
-  // 데이터가 변경되면 상태 업데이트
-  useEffect(() => {
-    setComments(mapApiToUiComments(initialComments));
-  }, [initialComments, storyAuthorNickname]);
-
-  // 댓글 추가
-  const handleAddComment = (content: string) => {
-    if (!isLoggedIn) {
-      openLoginModal();
-      return;
-    }
-    createCommentMutation.mutate(
-      { content },
-      {
-        onSuccess: () => {
-          toast.success("댓글이 등록되었습니다.");
-        },
-        onError: () => {
-          toast.error("댓글 등록에 실패했습니다.");
-        }
-      }
-    );
-  };
-
-  // 답글 추가
-  const handleAddReply = (parentId: number, content: string) => {
-    if (!isLoggedIn) {
-      openLoginModal();
-      return;
-    }
-    createCommentMutation.mutate(
-      { content, parentCommentId: parentId },
-      {
-        onSuccess: () => {
-          toast.success("답글이 등록되었습니다.");
-        },
-        onError: () => {
-          toast.error("답글 등록에 실패했습니다.");
-        }
-      }
-    );
-  };
-
-  const handleEditComment = (id: number, content: string) => {
-    updateCommentMutation.mutate(
-      { commentId: id, content },
-      {
-        onSuccess: () => {
-          toast.success("댓글이 수정되었습니다.");
-        },
-        onError: () => {
-          toast.error("댓글 수정에 실패했습니다.");
-        }
-      }
-    );
-  };
-
-  const handleDeleteComment = (id: number) => {
-    setCommentToDelete(id);
-    setIsConfirmOpen(true);
-  };
-
-  const confirmDelete = () => {
-    if (commentToDelete === null) return;
-    deleteCommentMutation.mutate(commentToDelete, {
-      onSuccess: () => {
-        toast.success("댓글이 삭제되었습니다.");
-        setIsConfirmOpen(false);
-        setCommentToDelete(null);
-      },
-      onError: () => {
-        toast.error("댓글 삭제에 실패했습니다.");
-        setIsConfirmOpen(false);
-        setCommentToDelete(null);
-      }
-    });
-  };
-
-  const handleReportComment = (id: number) => {
-    if (!isLoggedIn) {
-      openLoginModal();
-      return;
-    }
-    // 찾기: 최상단 댓글과 대댓글 모두 탐색
-    let targetComment: Comment | undefined;
-
-    for (const c of comments) {
-      if (c.id === id) {
-        targetComment = c;
-        break;
-      }
-      if (c.replies) {
-        const found = c.replies.find(r => r.id === id);
-        if (found) {
-          targetComment = found;
-          break;
-        }
-      }
-    }
-
-    if (targetComment) {
-      setReportTargetNickname(targetComment.authorName);
-      setIsReportModalOpen(true);
-    }
-  };
-
-  const handleReportSubmit = (type: string, content: string) => {
-    let mappedType: ReportType = "GENERAL";
-    if (type === "책 이야기") mappedType = "BOOK_STORY";
-    if (type === "책이야기(댓글)") mappedType = "COMMENT";
-    if (type === "책모임 내부") mappedType = "CLUB_MEETING";
-
-    if (reportTargetNickname) {
-      reportMember({
-        reportedMemberNickname: reportTargetNickname,
-        reportType: mappedType,
-        content,
-      });
-    }
-  };
-
-  return (
-    <>
-      <CommentList
-        comments={comments}
-        onAddComment={handleAddComment}
-        onAddReply={handleAddReply}
-        onEditComment={handleEditComment}
-        onDeleteComment={handleDeleteComment}
-        onReportComment={handleReportComment}
-      />
-      <ConfirmModal
-        isOpen={isConfirmOpen}
-        message="댓글을 삭제하시겠습니까?"
-        onConfirm={confirmDelete}
-        onCancel={() => {
-          setIsConfirmOpen(false);
-          setCommentToDelete(null);
-        }}
-      />
-
-      {/* Report Modal */}
-      <ReportModal
-        isOpen={isReportModalOpen}
-        onClose={() => {
-          setIsReportModalOpen(false);
-          setReportTargetNickname("");
-        }}
-        onSubmit={handleReportSubmit}
-        defaultReportType="책이야기(댓글)"
-      />
-    </>
-  );
+function formatDate(iso: string) {
+  const date = new Date(iso);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}.${month}.${day}`;
 }
 
+export default function CommentItem({
+  id,
+  authorName,
+  profileImgSrc = "/profile2.svg",
+  content,
+  createdAt,
+  isAuthor = false,
+  isReply = false,
+  canEdit = false,
+  canDelete = false,
+  canReport = false,
+  onReply,
+  onEdit,
+  onDelete,
+  onReport,
+}: CommentItemProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(content);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setEditContent(content);
+  }, [content]);
+
+  // 바깥 클릭 시 메뉴 닫기
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSaveEdit = () => {
+    if (editContent.trim() && editContent !== content) {
+      onEdit?.(id, editContent);
+    }
+    setIsEditing(false);
+  };
+
+  const handleCancelEdit = () => {
+    setEditContent(content);
+    setIsEditing(false);
+  };
+
+  const hasReplyAction = !isReply && !!onReply;
+  const hasManageAction = canDelete || canEdit;
+  const hasMenuAction = hasReplyAction || hasManageAction || canReport;
+
+  // 댓글 본체 (프로필 + 이름 + 작성자 + 날짜 + 내용 + 메뉴)
+  const commentBody = (
+    <div className="flex flex-col gap-2 flex-1">
+      {/* 상단: 프로필 + 이름 + 작성자 + 날짜 */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          {/* 프로필 이미지 */}
+          <div className="relative w-8 h-8 shrink-0 rounded-full overflow-hidden">
+            <Image
+              src={profileImgSrc}
+              alt={authorName}
+              fill
+              className="object-cover"
+              sizes="32px"
+            />
+          </div>
+          <span className="Subhead_4_1 text-Gray-7">{authorName}</span>
+          {isAuthor && (
+            <span className="px-2 py-0.5 Subhead_4 text-Gray-3">작성자</span>
+          )}
+        </div>
+        <span className="Body_1_2 text-Gray-3">{formatDate(createdAt)}</span>
+      </div>
+
+      {/* 댓글 내용 + 메뉴 (같은 줄) */}
+      {!isEditing ? (
+        <div className="flex items-start justify-between gap-2">
+          <p className="Body_1_2 text-Gray-5 flex-1 whitespace-pre-wrap">
+            {content}
+          </p>
+
+          {hasMenuAction && (
+            <div className="relative shrink-0" ref={menuRef}>
+              <button
+                type="button"
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="p-1 cursor-pointer"
+              >
+                <Image src="/menu_dots.svg" alt="메뉴" width={20} height={20} />
+              </button>
+
+              {/* 드롭다운 메뉴 */}
+              {menuOpen && (
+                <div className="absolute right-0 top-full mt-1 w-[137px] rounded-lg bg-White shadow-lg z-10 overflow-hidden">
+                  {/* 답글달기 - onReply가 있을 때만 표시 */}
+                  {hasReplyAction && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onReply?.(id);
+                          setMenuOpen(false);
+                        }}
+                        className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+                      >
+                        <Image src="/reply2.svg" alt="답글" width={24} height={24} />
+                        답글달기
+                      </button>
+                      {(hasManageAction || canReport) && (
+                        <div className="mx-2 border-b border-Subbrown-4" />
+                      )}
+                    </>
+                  )}
+
+                  {hasManageAction ? (
+                    <>
+                      {canDelete && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onDelete?.(id);
+                            setMenuOpen(false);
+                          }}
+                          className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+                        >
+                          <Image
+                            src="/delete.svg"
+                            alt="삭제"
+                            width={24}
+                            height={24}
+                          />
+                          삭제하기
+                        </button>
+                      )}
+
+                      {canEdit && canDelete && (
+                        <div className="mx-2 border-b border-Subbrown-4" />
+                      )}
+
+                      {canEdit && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsEditing(true);
+                            setMenuOpen(false);
+                          }}
+                          className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+                        >
+                          <Image
+                            src="/edit2.svg"
+                            alt="수정"
+                            width={24}
+                            height={24}
+                          />
+                          수정하기
+                        </button>
+                      )}
+                    </>
+                  ) : (
+                    canReport && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onReport?.(id);
+                          setMenuOpen(false);
+                        }}
+                        className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+                      >
+                        <Image
+                          src="/report.svg"
+                          alt="신고"
+                          width={24}
+                          height={24}
+                        />
+                        신고하기
+                      </button>
+                    )
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      ) : (
+        /* 수정 모드 */
+        <div className="flex flex-col gap-2 mt-2">
+          <textarea
+            value={editContent}
+            onChange={(e) => setEditContent(e.target.value)}
+            className="w-full min-h-[80px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White Body_1_2 text-Gray-7 outline-none focus:border-primary-3 resize-none whitespace-pre-wrap"
+            autoFocus
+          />
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={handleCancelEdit}
+              className="px-4 py-2 rounded-lg bg-Gray-2 text-Gray-6 subhead_4_1"
+            >
+              취소
+            </button>
+            <button
+              type="button"
+              onClick={handleSaveEdit}
+              className="px-4 py-2 rounded-lg bg-primary-3 text-White subhead_4_1"
+            >
+              저장
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  // 대댓글이면 reply 아이콘 + 댓글 본체
+  if (isReply) {
+    return (
+      <div className="flex items-center gap-4 t:gap-8 py-4">
+        <Image
+          src="/reply.svg"
+          alt="대댓글"
+          width={40}
+          height={40}
+          className="shrink-0 w-6 h-6 t:w-10 t:h-10 self-start mt-1"
+        />
+        {commentBody}
+      </div>
+    );
+  }
+
+  // 일반 댓글
+  return <div className="py-4">{commentBody}</div>;
+}

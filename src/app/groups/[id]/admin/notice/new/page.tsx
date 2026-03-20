@@ -191,7 +191,10 @@ export default function NewNoticePage() {
         return;
       }
     }
-
+    if (content.length > 1000) {
+      toast.error("공지사항은 1000자 이내로 작성 가능합니다.");
+      return;
+    }
     // inned 5개 제한 “사전 차단”은 pinned 개수를 알아야 가능
     const tid = toast.loading("공지사항 등록 중...");
 
@@ -296,22 +299,29 @@ export default function NewNoticePage() {
                     />
                   </div>
 
-                  <div className="px-6 py-4">
-                    <textarea
-                      ref={contentRef}
-                      value={content}
-                      onChange={(e) => setContent(e.target.value)}
-                      onInput={adjustContentHeight}
-                      placeholder="내용을 입력해주세요"
-                      rows={1}
-                      className="
-                        w-full min-w-0 resize-none bg-transparent outline-none
-                        overflow-hidden
-                        text-Gray-7 body_1_3 placeholder:text-Gray-3
-                        whitespace-pre-wrap
-                      "
-                    />
+                 <div className="px-6 py-4">
+                  <textarea
+                    ref={contentRef}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value.slice(0, 1000))}
+                    onInput={adjustContentHeight}
+                    placeholder="내용을 입력해주세요"
+                    rows={1}
+                    maxLength={1000}
+                    className="
+                      w-full min-w-0 resize-none bg-transparent outline-none
+                      overflow-hidden
+                      text-Gray-7 body_1_3 placeholder:text-Gray-3
+                      whitespace-pre-wrap
+                    "
+                  />
+
+                  <div className="mt-2 flex justify-end">
+                    <span className="text-[12px] leading-[16px] text-Gray-3">
+                      {content.length}/1000
+                    </span>
                   </div>
+                </div>
 
                   {isVoteEnabled && (
                     <div className="px-6 pb-4">

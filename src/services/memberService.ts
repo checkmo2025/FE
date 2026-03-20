@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
-import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest, FollowListResponse, FollowCountResponse, FindEmailRequest, FindEmailResponse, ReportListResponse } from "@/types/member";
+import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest, FollowListResponse, FollowCountResponse, FindEmailRequest, FindEmailResponse, ReportListResponse, LoginStatusResponse, UpdateEmailRequest } from "@/types/member";
 import { ApiResponse } from "@/types/auth";
 
 export const memberService = {
@@ -28,7 +28,7 @@ export const memberService = {
             throw new Error(response.message || "Failed to update password");
         }
     },
-    updateEmail: async (data: import("@/types/member").UpdateEmailRequest): Promise<void> => {
+    updateEmail: async (data: UpdateEmailRequest): Promise<void> => {
         const response = await apiClient.patch<ApiResponse<unknown>>(
             MEMBER_ENDPOINTS.UPDATE_EMAIL,
             data
@@ -121,6 +121,20 @@ export const memberService = {
             url.searchParams.append("cursorId", cursorId.toString());
         }
         const response = await apiClient.get<ApiResponse<ReportListResponse>>(url.toString());
+        return response.result!;
+    },
+    withdraw: async (): Promise<void> => {
+        const response = await apiClient.post<ApiResponse<unknown>>(
+            MEMBER_ENDPOINTS.WITHDRAWAL
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "회원 탈퇴에 실패했습니다.");
+        }
+    },
+    getLoginStatus: async (): Promise<LoginStatusResponse> => {
+        const response = await apiClient.get<ApiResponse<LoginStatusResponse>>(
+            MEMBER_ENDPOINTS.GET_LOGIN_STATUS
+        );
         return response.result!;
     },
 };
