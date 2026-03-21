@@ -12,7 +12,7 @@ export type ExistingTeamItem = {
 
 export type MeetingMemberInfo = {
   nickname: string;
-  profileImageUrl: string;
+  profileImageUrl: string | null;
 };
 
 export type MeetingTeamMemberItem = {
@@ -29,7 +29,7 @@ export type MeetingTeamMembersGroup = {
 export type GetMeetingDetailResult = {
   meetingId: number;
   title: string;
-  meetingTime: string; // "2027-11-06T15:00:00"
+  meetingTime: string;
   location: string;
   existingTeams: ExistingTeamItem[];
   teamMembers: MeetingTeamMembersGroup[];
