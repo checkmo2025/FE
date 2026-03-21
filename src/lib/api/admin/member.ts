@@ -18,7 +18,7 @@ export async function fetchMemberEmails(
   limit = 20
 ): Promise<MemberEmailsResponse> {
   const params = new URLSearchParams({
-    keyword,
+    keyword: keyword.trim(),
     limit: String(limit),
   });
 
@@ -36,6 +36,135 @@ export async function fetchMemberEmails(
 
   if (!res.ok) {
     throw new Error(`회원 이메일 검색 실패 (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export type AdminMemberListItem = {
+  memberId: string;
+  nickname: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+};
+
+export type AdminMemberListResult = {
+  memberList: AdminMemberListItem[];
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  totalElements: number;
+  hasNext: boolean;
+};
+
+export type AdminMemberListResponse = ApiResponse<AdminMemberListResult>;
+
+export async function fetchAdminMembers(
+  page = 1,
+  keyword = ""
+): Promise<AdminMemberListResponse> {
+  const trimmedKeyword = keyword.trim();
+
+  const params = new URLSearchParams({
+    page: String(page),
+  });
+
+  if (trimmedKeyword) {
+    params.append("keyword", trimmedKeyword);
+  }
+
+  const res = await fetch(
+    `${ADMIN_MEMBER_ENDPOINTS.GET_MEMBERS}?${params.toString()}`,
+    {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error(`회원 목록 조회 실패 (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export type AdminMemberDetailResult = {
+  memberId: string;
+  nickname: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  description: string;
+  profileImageUrl: string;
+  categories: string[];
+  active: boolean;
+};
+
+export type AdminMemberDetailResponse = ApiResponse<AdminMemberDetailResult>;
+
+export async function fetchAdminMemberDetail(
+  memberNickName: string
+): Promise<AdminMemberDetailResponse> {
+  const encodedNickname = encodeURIComponent(memberNickName);
+
+  const res = await fetch(
+    ADMIN_MEMBER_ENDPOINTS.GET_MEMBER_DETAIL(encodedNickname),
+    {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error(`회원 상세 조회 실패 (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export type AdminMemberReportItem = {
+  reportId: number;
+  reportedMemberNickname: string;
+  reportedMemberProfileImageUrl: string;
+  reportType: string;
+  content: string;
+  createdAt: string;
+};
+
+export type AdminMemberReportsResult = {
+  reports: AdminMemberReportItem[];
+};
+
+export type AdminMemberReportsResponse = ApiResponse<AdminMemberReportsResult>;
+
+export async function fetchAdminMemberReports(
+  memberNickName: string
+): Promise<AdminMemberReportsResponse> {
+  const encodedNickname = encodeURIComponent(memberNickName);
+
+  const res = await fetch(
+    ADMIN_MEMBER_ENDPOINTS.GET_MEMBER_REPORTS(encodedNickname),
+    {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error(`회원 신고 목록 조회 실패 (${res.status})`);
   }
 
   return res.json();
