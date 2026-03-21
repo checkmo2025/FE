@@ -6,6 +6,9 @@ export const ADMIN_NEWS_ENDPOINTS = {
 
   GET_ADMIN_NEWS_DETAIL: (newsId: number) =>
     `${API_BASE_URL}/admin/news/${newsId}`,
+  
+  CREATE_ADMIN_NEWS: () =>
+    `${API_BASE_URL}/admin/news`,
 
   DELETE_ADMIN_NEWS: (newsId: number) =>
     `${API_BASE_URL}/admin/news/${newsId}`,

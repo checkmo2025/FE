@@ -83,16 +83,16 @@ export async function createAdminNews(
   data: CreateAdminNewsRequest
 ): Promise<CreateAdminNewsResponse> {
   const res = await fetch(
-  ADMIN_NEWS_ENDPOINTS.GET_ADMIN_NEWS_LIST(0, ""),
-  {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  }
-);
+    ADMIN_NEWS_ENDPOINTS.CREATE_ADMIN_NEWS(),
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
 
   if (!res.ok) {
     const errorText = await res.text().catch(() => "");
