@@ -44,8 +44,8 @@ function mapRole(role: AdminClubActiveMember["role"]) {
 }
 
 export default function MembersListPage() {
-  const params = useParams();
-  const clubId = Number(params.id ?? params.clubId);
+  const params = useParams<{ id: string }>();
+  const clubId = Number(params.id);
 
   const [page, setPage] = useState(1);
   const [groupName, setGroupName] = useState("");

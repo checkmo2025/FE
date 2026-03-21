@@ -299,7 +299,7 @@ export default function GroupDetailPage() {
     );
   }
 
-  const links = form.links ?? [];
+  const links = form.links;
 
   return (
     <main className="w-full flex justify-center">
