@@ -16,8 +16,8 @@ const PROVIDER_STYLES = {
     icon: "/kakaoImage.svg",
   },
   // 추후 google, naver 등 추가 가능
-  google: { bgColor: "bg-White border border-Gray-2", icon: "/google.svg" },
-  naver: { bgColor: "bg-[#03C75A]", icon: "/naver.svg" },
+  google: { bgColor: "bg-White border border-Gray-2", icon: "/googleLogo.svg" },
+  naver: { bgColor: "bg-[#03C75A]", icon: "/naverLogo.svg" },
 };
 
 export default function SocialLoginCard({ provider, email }: Props) {
