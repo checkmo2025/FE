@@ -36,10 +36,11 @@ export type AdminNewsListResponse = ApiResponse<AdminNewsListResult>;
 
 /** GET: 관리자 소식 목록 조회 (page는 0-based로 넣기) */
 export async function fetchAdminNews(
-  page: number
+  page: number,
+  keyword: string = ""
 ): Promise<AdminNewsListResponse> {
   const res = await fetch(
-    `${ADMIN_NEWS_ENDPOINTS.GET_ADMIN_NEWS_LIST}?page=${page}`,
+    ADMIN_NEWS_ENDPOINTS.GET_ADMIN_NEWS_LIST(page, keyword),
     {
       method: "GET",
       credentials: "include",
@@ -81,15 +82,17 @@ export type CreateAdminNewsResponse = ApiResponse<number>;
 export async function createAdminNews(
   data: CreateAdminNewsRequest
 ): Promise<CreateAdminNewsResponse> {
-  const res = await fetch(ADMIN_NEWS_ENDPOINTS.GET_ADMIN_NEWS_LIST, {
+  const res = await fetch(
+  ADMIN_NEWS_ENDPOINTS.GET_ADMIN_NEWS_LIST(0, ""),
+  {
     method: "POST",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      Accept: "application/json",
     },
     body: JSON.stringify(data),
-  });
+  }
+);
 
   if (!res.ok) {
     const errorText = await res.text().catch(() => "");
@@ -243,4 +246,22 @@ export async function fetchAdminNewsDetail(
   }
 
   return res.json();
+}
+
+export async function deleteAdminNews(newsId: number) {
+  const res = await fetch(
+    ADMIN_NEWS_ENDPOINTS.DELETE_ADMIN_NEWS(newsId),
+    {
+      method: "DELETE",
+      credentials: "include",
+    }
+  );
+
+  const data = await res.json();
+
+  if (!res.ok || !data.isSuccess) {
+    throw new Error(data.message || "소식 삭제 실패");
+  }
+
+  return data;
 }

@@ -15,6 +15,7 @@ type NewsRow = {
 
 export default function NewsPage() {
   const [keyword, setKeyword] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [page, setPage] = useState(1);
 
   const [newsList, setNewsList] = useState<NewsRow[]>([]);
@@ -26,7 +27,6 @@ export default function NewsPage() {
     setPage(1);
   };
 
-  // API 호출
   useEffect(() => {
     let alive = true;
 
@@ -34,8 +34,8 @@ export default function NewsPage() {
       try {
         setLoading(true);
 
-        const apiPage = Math.max(0, page - 1); // UI(1-based) -> API(0-based)
-        const data = await fetchAdminNews(apiPage);
+        const apiPage = Math.max(0, page - 1);
+        const data = await fetchAdminNews(apiPage, searchKeyword.trim());
 
         if (!data.isSuccess) {
           throw new Error(data.message || "관리자 소식 목록 조회 실패");
@@ -69,24 +69,15 @@ export default function NewsPage() {
     return () => {
       alive = false;
     };
-  }, [page]);
+  }, [page, searchKeyword]);
 
-  // 검색 필터
   const filtered = useMemo(() => {
-    const q = keyword.trim().toLowerCase();
-    if (!q) return newsList;
-
-    return newsList.filter((n) => {
-      return (
-        String(n.newsId).includes(q) ||
-        n.title.toLowerCase().includes(q) ||
-        n.authorEmail.toLowerCase().includes(q)
-      );
-    });
-  }, [newsList, keyword]);
+    return newsList;
+  }, [newsList]);
 
   const handleSearch = () => {
     setPage(1);
+    setSearchKeyword(keyword);
   };
 
   const goTo = (p: number) => {
@@ -130,7 +121,6 @@ export default function NewsPage() {
           }
         />
 
-        {/* 테이블 */}
         <div className="w-full">
           <table className="w-[1040px] table-fixed">
             <colgroup>
@@ -144,12 +134,24 @@ export default function NewsPage() {
 
             <thead>
               <tr className="border-b border-Subbrown-3">
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">소식 ID</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">소식 제목</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">등록자 이메일</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">등록 일자</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">게시날짜</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">상세보기</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  소식 ID
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  소식 제목
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  등록자 이메일
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  등록 일자
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  게시날짜
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  상세보기
+                </th>
               </tr>
             </thead>
 
@@ -160,8 +162,12 @@ export default function NewsPage() {
                   className="h-[48px] border-b border-Subbrown-4 body_1_2"
                 >
                   <td className="pl-[12px] py-0 text-Gray-7">{n.newsId}</td>
-                  <td className="pl-[12px] py-0 text-Gray-7 truncate">{n.title}</td>
-                  <td className="pl-[12px] py-0 text-Gray-7 truncate">{n.authorEmail}</td>
+                  <td className="pl-[12px] py-0 text-Gray-7 truncate">
+                    {n.title}
+                  </td>
+                  <td className="pl-[12px] py-0 text-Gray-7 truncate">
+                    {n.authorEmail}
+                  </td>
                   <td className="pl-[12px] py-0 text-Gray-7">{n.createdAt}</td>
                   <td className="pl-[12px] py-0 text-Gray-7">{n.postedAt}</td>
                   <td className="pl-[12px] py-0">
@@ -177,7 +183,10 @@ export default function NewsPage() {
 
               {!loading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="py-10 text-center body_1_2 text-Gray-4">
+                  <td
+                    colSpan={6}
+                    className="py-10 text-center body_1_2 text-Gray-4"
+                  >
                     표시할 소식이 없습니다.
                   </td>
                 </tr>
@@ -191,7 +200,6 @@ export default function NewsPage() {
             </div>
           )}
 
-          {/* 페이지네이션 */}
           <div className="mt-6 flex items-center justify-center gap-4 body_2_2">
             <button
               onClick={() => goTo(page - 1)}

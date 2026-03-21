@@ -57,7 +57,6 @@ export default function ReportList({ memberNickname }: Props) {
       {reports.map((report) => (
         <ReportItem
           key={report.reportId}
-          id={report.reportId}
           category={report.reportType}
           reporterName={report.reportedMemberNickname}
           content={report.content}

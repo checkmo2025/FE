@@ -169,3 +169,153 @@ export async function fetchAdminMemberReports(
 
   return res.json();
 }
+
+export type AdminMemberClubItem = {
+  clubId: number;
+  clubName: string;
+};
+
+export type AdminMemberClubsResult = {
+  clubList: AdminMemberClubItem[];
+};
+
+export type AdminMemberClubsResponse = ApiResponse<AdminMemberClubsResult>;
+
+export async function fetchAdminMemberClubs(
+  memberNickname: string
+): Promise<AdminMemberClubsResponse> {
+  const encodedNickname = encodeURIComponent(memberNickname);
+
+  const res = await fetch(
+    ADMIN_MEMBER_ENDPOINTS.GET_MEMBER_CLUBS(encodedNickname),
+    {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error(`회원 가입 모임 조회 실패 (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export type AdminMemberBookStoryItem = {
+  bookStoryId: number;
+  bookInfo: {
+    bookId: string;
+    title: string;
+    author: string;
+    imgUrl: string;
+  };
+  authorInfo: {
+    nickname: string;
+    profileImageUrl: string;
+    following: boolean;
+  };
+  bookStoryTitle: string;
+  description: string;
+  likes: number;
+  likedByMe: boolean;
+  createdAt: string;
+  writtenByMe: boolean;
+  commentCount: number;
+  viewCount: number;
+};
+
+export type AdminMemberBookStoriesResult = {
+  basicInfoList: AdminMemberBookStoryItem[];
+  hasNext: boolean;
+  nextCursor: number | null;
+  pageSize: number;
+};
+
+export type AdminMemberBookStoriesResponse =
+  ApiResponse<AdminMemberBookStoriesResult>;
+
+export async function fetchAdminMemberBookStories(
+  memberNickname: string,
+  cursorId?: number | null
+): Promise<AdminMemberBookStoriesResponse> {
+  const encodedNickname = encodeURIComponent(memberNickname);
+  const params = new URLSearchParams();
+
+  if (cursorId !== undefined && cursorId !== null) {
+    params.append("cursorId", String(cursorId));
+  }
+
+  const query = params.toString();
+  const url = query
+    ? `${ADMIN_MEMBER_ENDPOINTS.GET_MEMBER_BOOK_STORIES(encodedNickname)}?${query}`
+    : ADMIN_MEMBER_ENDPOINTS.GET_MEMBER_BOOK_STORIES(encodedNickname);
+
+  const res = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error(`회원 책이야기 조회 실패 (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export type AdminMemberNewsItem = {
+  newsId: number;
+  title: string;
+  description: string;
+  thumbnailUrl: string;
+  carousel: string;
+  publishStartAt: string;
+};
+
+export type AdminMemberNewsResult = {
+  basicInfoList: AdminMemberNewsItem[];
+  hasNext: boolean;
+  nextCursor: number | null;
+  pageSize: number;
+};
+
+export type AdminMemberNewsResponse = ApiResponse<AdminMemberNewsResult>;
+
+export async function fetchAdminMemberNews(
+  memberNickname: string,
+  cursorId?: number | null
+): Promise<AdminMemberNewsResponse> {
+  const encodedNickname = encodeURIComponent(memberNickname);
+  const params = new URLSearchParams();
+
+  if (cursorId !== undefined && cursorId !== null) {
+    params.append("cursorId", String(cursorId));
+  }
+
+  const query = params.toString();
+  const url = query
+    ? `${ADMIN_MEMBER_ENDPOINTS.GET_MEMBER_NEWS(encodedNickname)}?${query}`
+    : ADMIN_MEMBER_ENDPOINTS.GET_MEMBER_NEWS(encodedNickname);
+
+  const res = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error(`회원 등록 소식 조회 실패 (${res.status})`);
+  }
+
+  return res.json();
+}

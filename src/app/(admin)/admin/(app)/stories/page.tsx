@@ -18,21 +18,19 @@ export default function BookStoriesPage() {
   const router = useRouter();
 
   const [keyword, setKeyword] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [page, setPage] = useState(1);
   const [stories, setStories] = useState<BookStoryRow[]>([]);
   const [totalPages, setTotalPages] = useState(1);
 
   const handleKeywordChange = (v: string) => {
     setKeyword(v);
-    setPage(1);
   };
-
-  const pageSize = 20;
 
   useEffect(() => {
     const loadStories = async () => {
       try {
-        const result = await fetchAdminBookStories(page - 1, pageSize);
+        const result = await fetchAdminBookStories(page, searchKeyword.trim());
 
         const mapped: BookStoryRow[] = result.basicInfoList.map((item) => ({
           id: item.bookStoryId,
@@ -55,30 +53,15 @@ export default function BookStoriesPage() {
     };
 
     loadStories();
-  }, [page]);
-
-  const filtered = useMemo(() => {
-    const q = keyword.trim().toLowerCase();
-    if (!q) return stories;
-
-    return stories.filter((s) => {
-      return (
-        String(s.id).includes(q) ||
-        s.title.toLowerCase().includes(q) ||
-        s.authorNickname.toLowerCase().includes(q) ||
-        s.bookTitle.toLowerCase().includes(q) ||
-        s.status.toLowerCase().includes(q)
-      );
-    });
-  }, [stories, keyword]);
+  }, [page, searchKeyword]);
 
   const pageItems = useMemo(() => {
-    return filtered;
-  }, [filtered]);
+    return stories;
+  }, [stories]);
 
   const handleSearch = () => {
-    console.log("검색:", keyword);
     setPage(1);
+    setSearchKeyword(keyword);
   };
 
   const goTo = (p: number) => {
@@ -126,13 +109,27 @@ export default function BookStoriesPage() {
 
             <thead>
               <tr className="border-b border-Subbrown-3">
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">책이야기 ID</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">책이야기 제목</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">닉네임</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">책 제목</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">게시날짜</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">등록여부</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">상세보기</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  책이야기 ID
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  책이야기 제목
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  닉네임
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  책 제목
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  게시날짜
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  등록여부
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  상세보기
+                </th>
               </tr>
             </thead>
 
@@ -142,12 +139,24 @@ export default function BookStoriesPage() {
                   key={s.id}
                   className="h-[48px] border-b border-Subbrown-4 body_1_2"
                 >
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{s.id}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{s.title}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{s.authorNickname}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">{s.bookTitle}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{s.postedAt}</td>
-                  <td className="py-0 body_1_2 text-Gray-7 text-center">{s.status}</td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                    {s.id}
+                  </td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
+                    {s.title}
+                  </td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
+                    {s.authorNickname}
+                  </td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
+                    {s.bookTitle}
+                  </td>
+                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                    {s.postedAt}
+                  </td>
+                  <td className="py-0 body_1_2 text-Gray-7 text-center">
+                    {s.status}
+                  </td>
                   <td className="pl-[12px] py-0">
                     <button
                       onClick={() => router.push(`/admin/stories/${s.id}`)}

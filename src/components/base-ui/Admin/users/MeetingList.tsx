@@ -1,27 +1,43 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AdminMeetingCard from "./items/AdminMeetingCard";
-import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
+import {
+  fetchAdminMemberClubs,
+  type AdminMemberClubItem,
+} from "@/lib/api/admin/member";
 
 type Props = {
-  /** 관리자 상세 페이지의 대상 유저 ID */
-  userId: string;
+  /** 관리자 상세 페이지의 대상 유저 닉네임 */
+  memberNickname: string;
 };
 
-const MeetingList = ({ userId }: Props) => {
-  /**
-   * TODO:
-   * 관리자 전용 "특정 사용자(userId) 모임 목록 조회" API가 아직 없어
-   * 임시로 useMyClubsQuery()를 사용 중입니다.
-   * 추후 useUserClubsQuery(userId) 형태로 교체 예정입니다.
-   */
-  void userId; // 현재는 사용하지 않지만 구조 통일을 위해 유지
+const MeetingList = ({ memberNickname }: Props) => {
+  const [clubs, setClubs] = useState<AdminMemberClubItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  const { data, isLoading, isError } = useMyClubsQuery();
-  const clubs = data?.clubList || [];
+  useEffect(() => {
+    const loadClubs = async () => {
+      try {
+        setLoading(true);
+        setError(false);
 
-  if (isLoading) {
+        const res = await fetchAdminMemberClubs(memberNickname);
+        setClubs(res.result.clubList ?? []);
+      } catch (error) {
+        console.error("가입 모임 조회 실패:", error);
+        setClubs([]);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadClubs();
+  }, [memberNickname]);
+
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-10 w-full text-Gray-4 text-sm font-medium">
         불러오는 중...
@@ -29,7 +45,7 @@ const MeetingList = ({ userId }: Props) => {
     );
   }
 
-  if (isError) {
+  if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-10 w-full text-red-500 text-sm font-medium">
         독서 모임을 불러오는 데 실패했습니다.

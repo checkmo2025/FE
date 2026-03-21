@@ -1,44 +1,80 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import BookStoryCard from "./items/AdminBookStoryCard";
-import { useMyInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useInView } from "react-intersection-observer";
+import {
+  fetchAdminMemberBookStories,
+  type AdminMemberBookStoryItem,
+} from "@/lib/api/admin/member";
 
 type Props = {
-  /** 관리자 상세 페이지의 대상 유저 ID (현재는 구조만 맞추기 위해 받음) */
-  userId: string;
+  /** 관리자 상세 페이지의 대상 유저 닉네임 */
+  memberNickname: string;
 };
 
-const BookStoryList = ({ userId }: Props) => {
-  /**
-   * TODO:
-   * 관리자 전용 "특정 사용자(userId) 책 이야기 목록" API/쿼리가 아직 없어서
-   * 임시로 "내 책 이야기" 쿼리를 사용 중입니다.
-   * 추후 useUserInfiniteStoriesQuery(userId) 같은 형태로 교체 예정.
-   *
-   * - 현재 userId는 props로 받고만 있으며, 쿼리 교체 시 사용됩니다.
-   */
-  void userId;
+const BookStoryList = ({ memberNickname }: Props) => {
+  const [stories, setStories] = useState<AdminMemberBookStoryItem[]>([]);
+  const [nextCursor, setNextCursor] = useState<number | null>(null);
+  const [hasNext, setHasNext] = useState(false);
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError,
-  } = useMyInfiniteStoriesQuery();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
 
   const { ref, inView } = useInView();
 
   useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+    const loadInitialStories = async () => {
+      try {
+        setIsLoading(true);
+        setIsError(false);
 
-  const stories = data?.pages.flatMap((page) => page.basicInfoList) || [];
+        const res = await fetchAdminMemberBookStories(memberNickname, null);
+
+        setStories(res.result.basicInfoList ?? []);
+        setHasNext(res.result.hasNext ?? false);
+        setNextCursor(res.result.nextCursor ?? null);
+      } catch (error) {
+        console.error("회원 책이야기 조회 실패:", error);
+        setStories([]);
+        setHasNext(false);
+        setNextCursor(null);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadInitialStories();
+  }, [memberNickname]);
+
+  useEffect(() => {
+    const loadMoreStories = async () => {
+      if (!inView || !hasNext || nextCursor === null || isFetchingNextPage) {
+        return;
+      }
+
+      try {
+        setIsFetchingNextPage(true);
+
+        const res = await fetchAdminMemberBookStories(
+          memberNickname,
+          nextCursor
+        );
+
+        setStories((prev) => [...prev, ...(res.result.basicInfoList ?? [])]);
+        setHasNext(res.result.hasNext ?? false);
+        setNextCursor(res.result.nextCursor ?? null);
+      } catch (error) {
+        console.error("회원 책이야기 추가 조회 실패:", error);
+      } finally {
+        setIsFetchingNextPage(false);
+      }
+    };
+
+    loadMoreStories();
+  }, [inView, hasNext, nextCursor, isFetchingNextPage, memberNickname]);
 
   return (
     <div className="flex flex-col items-center w-full max-w-[1048px] mx-auto gap-[20px] px-[18px] md:px-[40px] lg:px-0">
@@ -58,26 +94,27 @@ const BookStoryList = ({ userId }: Props) => {
         </p>
       )}
 
-      <div className="grid grid-cols-2 min-[540px]:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-[20px] md:gap-[12px] lg:gap-[20px] w-fit">
-        {stories.map((story) => (
-          <BookStoryCard
-            key={story.bookStoryId}
-            authorName={story.authorInfo.nickname}
-            createdAt={story.createdAt}
-            viewCount={story.viewCount}
-            title={story.bookStoryTitle}
-            content={story.description}
-            likeCount={story.likes}
-            commentCount={story.commentCount}
-            coverImgSrc={story.bookInfo.imgUrl}
-            profileImgSrc={story.authorInfo.profileImageUrl}
-            hideSubscribeButton={true}
-          />
-        ))}
-      </div>
+      {!isLoading && !isError && stories.length > 0 && (
+        <div className="grid grid-cols-2 min-[540px]:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-[20px] md:gap-[12px] lg:gap-[20px] w-fit">
+          {stories.map((story) => (
+            <BookStoryCard
+              key={story.bookStoryId}
+              authorName={story.authorInfo.nickname}
+              createdAt={story.createdAt}
+              viewCount={story.viewCount}
+              title={story.bookStoryTitle}
+              content={story.description}
+              likeCount={story.likes}
+              commentCount={story.commentCount}
+              coverImgSrc={story.bookInfo.imgUrl}
+              profileImgSrc={story.authorInfo.profileImageUrl}
+              hideSubscribeButton={true}
+            />
+          ))}
+        </div>
+      )}
 
-      {/* Infinite Scroll Trigger */}
-      <div ref={ref} className="h-4 w-full" />
+      {!isLoading && !isError && hasNext && <div ref={ref} className="h-4 w-full" />}
 
       {isFetchingNextPage && (
         <p className="text-Gray-4 text-center py-4">

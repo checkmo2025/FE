@@ -92,9 +92,13 @@ export default function Page({ params }: PageProps) {
         <div className="flex flex-col items-center w-full gap-[40px] mt-[80px]">
           <AdminUserTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-          {activeTab === "meetings" && <MeetingList userId={user.userId} />}
-          {activeTab === "stories" && <BookStoryList userId={user.userId} />}
-          {activeTab === "posts" && <NewsList userId={user.userId} />}
+          {activeTab === "meetings" && (
+            <MeetingList memberNickname={member.nickname} />
+          )}
+          {activeTab === "stories" && (
+            <BookStoryList memberNickname={member.nickname} />
+          )}
+          {activeTab === "posts" && <NewsList memberNickname={member.nickname} />}
           {activeTab === "reports" && (
             <ReportList memberNickname={member.nickname} />
           )}

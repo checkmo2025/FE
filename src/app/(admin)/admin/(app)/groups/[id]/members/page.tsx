@@ -204,7 +204,7 @@ export default function MembersListPage() {
                     <td className="pl-[12px] text-Gray-7">{u.role}</td>
                     <td className="pl-[12px]">
                       <Link
-                        href="#"
+                        href={`/admin/users/${u.nickname}`}
                         className="text-Gray-7 underline underline-offset-2 hover:opacity-70"
                       >
                         상세보기

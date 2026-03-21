@@ -26,8 +26,8 @@ type AdminBookStoryListResponse = {
   result: AdminBookStoryListResult;
 };
 
-export async function fetchAdminBookStories(page = 0, size = 20) {
-  const res = await fetch(ADMIN_STORIES.list(page, size), {
+export async function fetchAdminBookStories(page = 1, keyword = "") {
+  const res = await fetch(ADMIN_STORIES.list(page, keyword), {
     method: "GET",
     credentials: "include",
   });
@@ -38,6 +38,11 @@ export async function fetchAdminBookStories(page = 0, size = 20) {
   }
 
   const data: AdminBookStoryListResponse = await res.json();
+
+  if (!data.isSuccess) {
+    throw new Error(data.message || "책 이야기 목록 조회에 실패했습니다.");
+  }
+
   return data.result;
 }
 
@@ -86,6 +91,11 @@ export async function fetchAdminBookStoryDetail(bookStoryId: number) {
   }
 
   const data: AdminBookStoryDetailResponse = await res.json();
+
+  if (!data.isSuccess) {
+    throw new Error(data.message || "책 이야기 상세 조회에 실패했습니다.");
+  }
+
   return data.result;
 }
 
