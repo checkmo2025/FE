@@ -85,8 +85,12 @@ type AdminClubActiveMembersResponse = {
   result: AdminClubActiveMembersResult;
 };
 
-export async function fetchAdminClubs(page = 0, size = 20) {
-  const res = await fetch(ADMIN_CLUBS.list(page, size), {
+export async function fetchAdminClubs(
+  page = 1,
+  size = 20,
+  keyword = "",
+) {
+  const res = await fetch(ADMIN_CLUBS.list(page, size, keyword), {
     method: "GET",
     credentials: "include",
     cache: "no-store",

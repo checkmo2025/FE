@@ -10,6 +10,7 @@ import {
 
 export default function GroupsPage() {
   const [keyword, setKeyword] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [page, setPage] = useState(1);
 
   const [groups, setGroups] = useState<AdminClubListItem[]>([]);
@@ -19,12 +20,12 @@ export default function GroupsPage() {
 
   const pageSize = 20;
 
-  const loadGroups = async (targetPage: number) => {
+  const loadGroups = async (targetPage: number, targetKeyword: string) => {
     try {
       setLoading(true);
       setError("");
 
-      const data = await fetchAdminClubs(targetPage - 1, pageSize);
+      const data = await fetchAdminClubs(targetPage, pageSize, targetKeyword);
 
       setGroups(data.clubs ?? []);
       setTotalPages(Math.max(1, data.totalPages ?? 1));
@@ -42,30 +43,17 @@ export default function GroupsPage() {
   };
 
   useEffect(() => {
-    loadGroups(page);
-  }, [page]);
+    loadGroups(page, searchKeyword);
+  }, [page, searchKeyword]);
 
   const handleKeywordChange = (v: string) => {
     setKeyword(v);
-    setPage(1);
   };
 
   const handleSearch = () => {
     setPage(1);
+    setSearchKeyword(keyword.trim());
   };
-
-  const filteredGroups = useMemo(() => {
-    const q = keyword.trim().toLowerCase();
-    if (!q) return groups;
-
-    return groups.filter((g) => {
-      return (
-        String(g.clubId).includes(q) ||
-        g.clubName.toLowerCase().includes(q) ||
-        g.ownerEmail.toLowerCase().includes(q)
-      );
-    });
-  }, [groups, keyword]);
 
   const goTo = (p: number) => {
     const next = Math.min(Math.max(1, p), totalPages);
@@ -112,12 +100,24 @@ export default function GroupsPage() {
 
             <thead>
               <tr className="border-b border-Subbrown-3">
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">모임 ID</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">이름</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">개설자 이메일</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">생성 일자</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">가입자 수</th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">상세보기</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  모임 ID
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  이름
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  개설자 이메일
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  생성 일자
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  가입자 수
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  상세보기
+                </th>
               </tr>
             </thead>
 
@@ -140,7 +140,7 @@ export default function GroupsPage() {
                     {error}
                   </td>
                 </tr>
-              ) : filteredGroups.length === 0 ? (
+              ) : groups.length === 0 ? (
                 <tr className="h-[48px] border-b border-Subbrown-4">
                   <td
                     colSpan={6}
@@ -150,12 +150,14 @@ export default function GroupsPage() {
                   </td>
                 </tr>
               ) : (
-                filteredGroups.map((g) => (
+                groups.map((g) => (
                   <tr
                     key={g.clubId}
                     className="h-[48px] border-b border-Subbrown-4 body_1_2"
                   >
-                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{g.clubId}</td>
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                      {g.clubId}
+                    </td>
                     <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
                       {g.clubName}
                     </td>
