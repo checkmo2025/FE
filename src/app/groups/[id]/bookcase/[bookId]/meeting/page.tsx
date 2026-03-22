@@ -133,12 +133,12 @@ export default function MeetingPage() {
       : undefined;
 
     if (matchedById) {
-      setSelectedTeamId((prev) => prev ?? matchedById.teamId);
+      setSelectedTeamId(matchedById.teamId);
       return;
     }
 
     if (matchedByLabel) {
-      setSelectedTeamId((prev) => prev ?? matchedByLabel.teamId);
+      setSelectedTeamId(matchedByLabel.teamId);
       return;
     }
 
