@@ -43,7 +43,13 @@ export default function NewsList({
       <div className="flex flex-1 items-start gap-[24px] min-w-0">
         {/* 이미지 */}
         <div className="relative shrink-0 w-[100px] h-[145px]">
-          <Image src={imageUrl} alt={title} fill className="object-cover" />
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            sizes="100px"
+            className="object-cover"
+          />
         </div>
 
         {/* 텍스트 컬럼 */}

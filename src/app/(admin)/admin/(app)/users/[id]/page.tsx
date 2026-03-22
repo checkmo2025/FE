@@ -1,39 +1,80 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AdminUserProfile from "@/components/base-ui/Admin/users/AdminUserProfile";
 import AdminCategory from "@/components/base-ui/Admin/users/AdminCategory";
 import AdminUserTabs, {
   type AdminUserTabId,
 } from "@/components/base-ui/Admin/users/AdminUserTab";
-
 import MeetingList from "@/components/base-ui/Admin/users/MeetingList";
 import BookStoryList from "@/components/base-ui/Admin/users/BookStoryList";
 import NewsList from "@/components/base-ui/Admin/users/NewsList";
 import ReportList from "@/components/base-ui/Admin/users/ReportList";
+import {
+  fetchAdminMemberDetail,
+  type AdminMemberDetailResult,
+} from "@/lib/api/admin/member";
 
-export default function Page() {
+type PageProps = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export default function Page({ params }: PageProps) {
+  const { id } = React.use(params);
+
   const [activeTab, setActiveTab] = useState<AdminUserTabId>("meetings");
+  const [member, setMember] = useState<AdminMemberDetailResult | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // 더미
-  // TODO: 관리자 사용자 상세 조회 API 연동 후, params.id 기반으로 user 데이터 교체 예정
+  useEffect(() => {
+    const loadMemberDetail = async () => {
+      try {
+        setLoading(true);
+        const res = await fetchAdminMemberDetail(id);
+        setMember(res.result);
+      } catch (error) {
+        console.error("회원 상세 조회 실패:", error);
+        setMember(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMemberDetail();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <main className="w-full bg-background">
+        <section className="w-[1040px] mx-auto pt-[80px]">
+          <div>불러오는 중...</div>
+        </section>
+      </main>
+    );
+  }
+
+  if (!member) {
+    return (
+      <main className="w-full bg-background">
+        <section className="w-[1040px] mx-auto pt-[80px]">
+          <div>회원 정보를 불러오지 못했습니다.</div>
+        </section>
+      </main>
+    );
+  }
+
   const user = {
-    userId: "hy_0716",
-    name: "윤현일",
-    email: "yh9839@naver.com",
-    phone: "010-1234-5678",
-    intro:
-      "이건 다양한 책을 읽고 서로의 생각을 나누는 책무새라서 시작했습니다. 한 권의 책이 주는 작은 울림이 일상에 변화를 만든다고 믿어요.",
-    profileImage: null as string | null,
+    userId: member.memberId,
+    name: member.name,
+    email: member.email,
+    phone: member.phoneNumber,
+    intro: member.description,
+    profileImage: member.profileImageUrl || null,
   };
 
-  // TODO: 관리자 사용자 카테고리 조회 API 연동 후 params.id 기반으로 교체 예정
-  const selectedCategories = [
-    "KOREAN_NOVEL",
-    "ESSAY",
-    "HUMANITIES",
-    "SELF_IMPROVEMENT",
-  ];
+  const selectedCategories = member.categories ?? [];
 
   return (
     <main className="w-full bg-background">
@@ -51,10 +92,16 @@ export default function Page() {
         <div className="flex flex-col items-center w-full gap-[40px] mt-[80px]">
           <AdminUserTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-          {activeTab === "meetings" && <MeetingList userId={user.userId} />}
-          {activeTab === "stories" && <BookStoryList userId={user.userId} />}
-          {activeTab === "posts" && <NewsList userId={user.userId} />}
-          {activeTab === "reports" && <ReportList userId={user.userId} />}
+          {activeTab === "meetings" && (
+            <MeetingList memberNickname={member.nickname} />
+          )}
+          {activeTab === "stories" && (
+            <BookStoryList memberNickname={member.nickname} />
+          )}
+          {activeTab === "posts" && <NewsList memberNickname={member.nickname} />}
+          {activeTab === "reports" && (
+            <ReportList memberNickname={member.nickname} />
+          )}
         </div>
       </section>
     </main>
