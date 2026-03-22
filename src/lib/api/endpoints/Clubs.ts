@@ -28,4 +28,10 @@ export const CLUBS = {
 
 
   meetingTeams: (clubId: number, meetingId: number) => `${API_BASE_URL}/clubs/${clubId}/meetings/${meetingId}/teams`,
+
+  meetingTeamTopics: (clubId: number, meetingId: number, teamId: number) =>
+   `${API_BASE_URL}/clubs/${clubId}/meetings/${meetingId}/teams/${teamId}/topics`,
+
+  meetingTeamChatMessages: (clubId: number, meetingId: number, teamId: number) =>
+    `${API_BASE_URL}/clubs/${clubId}/meetings/${meetingId}/teams/${teamId}/chat/messages`,
 } as const;

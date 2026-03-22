@@ -11,16 +11,12 @@ const DEFAULT_PROFILE = "/profile2.svg";
 
 type Props = {
   unassigned: TeamMember[];
-
   isDragOverPool: boolean;
   onDragOverPool: (isOver: boolean) => void;
-
-  // dnd-kit에서는 이동 처리를 page.tsx의 DndContext(onDragEnd)에서 하는 게 정석이라,
-  // 여기서는 안 씀(그래도 props 시그니처 유지)
   onMoveMember: (clubMemberId: number, toTeamNumber: number | null) => void;
-
-  onSubmit: () => void;
+  onSubmit: () => Promise<void>;
 };
+
 
 function DraggableUnassignedCard({
   member,
@@ -94,12 +90,23 @@ export default function MemberPool({
 
   const highlighted = isDragOverPool || isOver;
 
-  const handleConfirmYes = () => {
-    onSubmit();
-    setIsConfirmOpen(false);
-    router.back();
-  };
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const handleConfirmYes = async () => {
+    if (isSubmitting) return;
+
+    try {
+      setIsSubmitting(true);
+      await onSubmit();
+      setIsConfirmOpen(false);
+      router.back();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
   return (
     <div className="w-full">
       {/* 드랍 영역 전체(오른쪽 박스) */}
@@ -173,13 +180,15 @@ export default function MemberPool({
                 <button
                   type="button"
                   onClick={handleConfirmYes}
+                  disabled={isSubmitting}
                   className={[
                     "flex-1 h-[44px] rounded-[8px]",
                     "bg-primary-2 text-white body_1_2",
                     "cursor-pointer hover:brightness-90 active:brightness-90",
+                    isSubmitting ? "opacity-60 cursor-not-allowed" : "",
                   ].join(" ")}
                 >
-                  예
+                  {isSubmitting ? "저장 중..." : "예"}
                 </button>
                 <button
                   type="button"

@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
 
 import LongtermChatInput from "@/components/base-ui/LongtermInput";
 import DebateList, { DebateItem } from "@/components/base-ui/Group/DebateList";
@@ -18,6 +19,9 @@ type Props = {
   onSendDebate: (text: string) => boolean | void;
 
   items: DebateItem[];
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  onLoadMore: () => void | Promise<unknown>;
 
   onReport: (id: DebateItem["id"]) => void;
   onUpdate: (id: DebateItem["id"], nextContent: string) => void;
@@ -38,6 +42,9 @@ export default function DebateSection({
   onSendDebate,
 
   items,
+  hasNextPage,
+  isFetchingNextPage,
+  onLoadMore,
 
   onReport,
   onUpdate,
@@ -46,6 +53,17 @@ export default function DebateSection({
   onClickAuthor,
 }: Props) {
   const profileSrc = myProfileImageUrl || defaultProfileUrl;
+  const { ref: loadMoreRef, inView } = useInView({
+    rootMargin: "300px 0px",
+  });
+
+  useEffect(() => {
+    if (!inView) return;
+    if (!hasNextPage) return;
+    if (isFetchingNextPage) return;
+
+    onLoadMore();
+  }, [inView, hasNextPage, isFetchingNextPage, onLoadMore]);
 
   return (
     <div className="flex w-full flex-col items-start self-stretch">
@@ -98,6 +116,15 @@ export default function DebateSection({
         onDelete={onDelete}
         onClickAuthor={onClickAuthor}
       />
+
+      {(hasNextPage || isFetchingNextPage) && (
+        <div
+          ref={loadMoreRef}
+          className="flex w-full items-center justify-center py-4 text-Gray-4 body_2_3"
+        >
+          {isFetchingNextPage ? "발제를 더 불러오는 중..." : ""}
+        </div>
+      )}
     </div>
   );
 }
