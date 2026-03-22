@@ -11,9 +11,32 @@ export const useUpdateMeetingTeamsMutation = () => {
     mutationFn: (args: { clubId: number; meetingId: number; body: TeamMemberListPutBody }) =>
       meetingService.updateMeetingTeams(args),
 
-    onSuccess: (_, vars) => {
-      qc.invalidateQueries({ queryKey: meetingQueryKeys.members(vars.clubId, vars.meetingId) });
-      qc.invalidateQueries({ queryKey: meetingQueryKeys.detail(vars.clubId, vars.meetingId) });
+    onSuccess: async (_, vars) => {
+      const detailKey = meetingQueryKeys.detail(vars.clubId, vars.meetingId);
+      const membersKey = meetingQueryKeys.members(vars.clubId, vars.meetingId);
+
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: detailKey }),
+        qc.invalidateQueries({ queryKey: membersKey }),
+
+        qc.prefetchQuery({
+          queryKey: detailKey,
+          queryFn: () =>
+            meetingService.getMeetingDetail({
+              clubId: vars.clubId,
+              meetingId: vars.meetingId,
+            }),
+        }),
+
+        qc.prefetchQuery({
+          queryKey: membersKey,
+          queryFn: () =>
+            meetingService.getMeetingMembers({
+              clubId: vars.clubId,
+              meetingId: vars.meetingId,
+            }),
+        }),
+      ]);
     },
   });
 };
