@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import FloatingFab from "@/components/base-ui/Float";
@@ -73,6 +73,15 @@ export default function MeetingPage() {
   const [isTeamSelectModalOpen, setIsTeamSelectModalOpen] = useState(false);
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
   const [selectedChatTeamId, setSelectedChatTeamId] = useState<number | null>(null);
+
+  const [chatPosition, setChatPosition] = useState({ x: 980, y: 56 });
+
+  const dragRef = useRef<{
+    startX: number;
+    startY: number;
+    originX: number;
+    originY: number;
+  } | null>(null);
 
   const {
     data: meetingData,
@@ -239,6 +248,57 @@ export default function MeetingPage() {
     setIsChatModalOpen(false);
     setIsTeamSelectModalOpen(true);
   };
+
+  const handleChatDragStart = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (window.innerWidth < 768) return;
+    
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      originX: chatPosition.x,
+      originY: chatPosition.y,
+    };
+
+    document.body.style.userSelect = "none";
+  };
+
+  useEffect(() => {
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!dragRef.current) return;
+
+      const dx = e.clientX - dragRef.current.startX;
+      const dy = e.clientY - dragRef.current.startY;
+
+      const panelWidth = 426;
+      const panelHeight = 716;
+
+      const nextX = Math.max(
+        0,
+        Math.min(window.innerWidth - panelWidth, dragRef.current.originX + dx)
+      );
+
+      const nextY = Math.max(
+        0,
+        Math.min(window.innerHeight - panelHeight, dragRef.current.originY + dy)
+      );
+
+      setChatPosition({ x: nextX, y: nextY });
+    };
+
+    const handlePointerUp = () => {
+      dragRef.current = null;
+      document.body.style.userSelect = "";
+    };
+
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp);
+
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+      document.body.style.userSelect = "";
+    };
+  }, []);
 
   if (isMeetingLoading) {
     return (
@@ -452,6 +512,8 @@ export default function MeetingPage() {
         onClose={handleCloseAllChatLayers}
         onBack={handleBackToTeamSelect}
         onSelectTeam={(teamId) => setSelectedChatTeamId(teamId)}
+        position={chatPosition}
+        onDragStart={handleChatDragStart}
       />
     </div>
   );

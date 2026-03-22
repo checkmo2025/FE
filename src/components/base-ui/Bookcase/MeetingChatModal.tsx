@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useMeetingChatsInfiniteQuery } from "@/hooks/queries/useMeetingChatQueries";
 import type { ChatTeam } from "@/components/base-ui/Bookcase/ChatTeamSelectModal";
@@ -15,6 +15,8 @@ type Props = {
   onClose: () => void;
   onBack: () => void;
   onSelectTeam: (teamId: number) => void;
+  position: { x: number; y: number };
+  onDragStart: (e: React.PointerEvent<HTMLDivElement>) => void;
 };
 
 const DEFAULT_PROFILE = "/profile4.svg";
@@ -56,6 +58,8 @@ export default function MeetingChatModal({
   onClose,
   onBack,
   onSelectTeam,
+  position,
+  onDragStart,
 }: Props) {
   const selectedTeam =
     teams.find((team) => Number(team.teamId) === selectedTeamId) ?? null;
@@ -63,6 +67,23 @@ export default function MeetingChatModal({
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const topSentinelRef = useRef<HTMLDivElement | null>(null);
   const autoScrolledRef = useRef(false);
+
+  const [isTabletUp, setIsTabletUp] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const sync = () => setIsTabletUp(mq.matches);
+
+    sync();
+
+    if (mq.addEventListener) {
+      mq.addEventListener("change", sync);
+      return () => mq.removeEventListener("change", sync);
+    }
+
+    mq.addListener(sync);
+    return () => mq.removeListener(sync);
+  }, []);
 
   const chatsQuery = useMeetingChatsInfiniteQuery(
     clubId,
@@ -130,9 +151,28 @@ export default function MeetingChatModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-start justify-center bg-black/10 p-0 t:p-5 t:pt-[44px]">
-      <div className="flex h-[100dvh] w-full flex-col border border-Subbrown-4 bg-background shadow-[0_3px_5.1px_rgba(61,52,46,0.15)] t:h-[716px] t:max-w-[426px] t:rounded-[8px]">
-        <div className="grid grid-cols-[24px_1fr_24px] items-center border-b border-Subbrown-4 px-5 py-4">
+    <div
+      className={[
+        "fixed inset-0 z-[80]",
+        isTabletUp ? "pointer-events-none" : "bg-black/10",
+      ].join(" ")}
+    >
+      <div
+        className={[
+          "pointer-events-auto flex flex-col border border-Subbrown-4 bg-background shadow-[0_3px_5.1px_rgba(61,52,46,0.15)]",
+          isTabletUp
+            ? "absolute w-[426px] h-[716px] rounded-[8px]"
+            : "h-[100dvh] w-full",
+        ].join(" ")}
+        style={isTabletUp ? { left: position.x, top: position.y } : undefined}
+      >
+        <div
+          onPointerDown={isTabletUp ? onDragStart : undefined}
+          className={[
+            "grid grid-cols-[24px_1fr_24px] items-center border-b border-Subbrown-4 px-5 py-4",
+            isTabletUp ? "cursor-move select-none" : "",
+          ].join(" ")}
+        >
           <button
             type="button"
             onClick={onBack}
