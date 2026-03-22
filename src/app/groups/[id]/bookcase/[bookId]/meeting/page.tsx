@@ -62,8 +62,8 @@ export default function MeetingPage() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const clubId = Number(params.id as string);
-  const meetingId = Number(params.bookId as string);
+  const clubId = Number(params.id);
+  const meetingId = Number(params.bookId);
 
   const { user } = useAuthStore();
 
