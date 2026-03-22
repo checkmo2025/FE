@@ -34,8 +34,8 @@ export default function AdminMeetingTeamManagePage() {
   const searchParams = useSearchParams();
   const params = useParams();
 
-  const clubId = toNumber(params?.id as any);
-  const meetingId = toNumber(params?.meetingId as any);
+  const clubId = toNumber(params?.id);
+  const meetingId = toNumber(params?.meetingId);
 
   const meetingName =
     searchParams.get("meetingName") || searchParams.get("name") || "정기모임 이름";
@@ -54,16 +54,16 @@ export default function AdminMeetingTeamManagePage() {
   const { mutateAsync: updateTeams, isPending: isSaving } = useUpdateMeetingTeamsMutation();
 
   useEffect(() => {
-    if (isInitialized) return;
     if (!data) return;
+
     const existingTeamNumbers =
-      data.existingTeams?.map((t: any) => Number(t.teamNumber)).filter(Number.isFinite) ?? [];
+      data.existingTeams?.map((t) => Number(t.teamNumber)).filter(Number.isFinite) ?? [];
 
     const normalized = normalizeTeams(existingTeamNumbers);
     setTeams(normalized);
 
     const mappedMembers: TeamMember[] =
-      data.clubMembers?.map((cm: any) => ({
+      data.clubMembers?.map((cm) => ({
         clubMemberId: cm.clubMemberId,
         memberInfo: {
           nickname: cm.memberInfo?.nickname ?? "",
@@ -73,8 +73,7 @@ export default function AdminMeetingTeamManagePage() {
       })) ?? [];
 
     setMembers(mappedMembers);
-    setIsInitialized(true);
-  }, [data, isInitialized]);
+  }, [data]);
 
   const unassigned = useMemo(
     () => members.filter((m) => m.teamNumber == null),

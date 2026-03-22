@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
 import toast from "react-hot-toast";
 
 import LongtermChatInput from "@/components/base-ui/LongtermInput";
@@ -21,6 +22,9 @@ type Props = {
   onSendReview: (text: string, rating: number) => boolean | void;
 
   items: ReviewItem[];
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  onLoadMore: () => void | Promise<unknown>;
 
   onReport: (id: ReviewItem["id"]) => void;
   onUpdate: (id: ReviewItem["id"], nextContent: string, nextRating: number) => void;
@@ -41,6 +45,9 @@ export default function ReviewSection({
   onSendReview,
 
   items,
+  hasNextPage,
+  isFetchingNextPage,
+  onLoadMore,
 
   onReport,
   onUpdate,
@@ -50,6 +57,18 @@ export default function ReviewSection({
 }: Props) {
   const profileSrc = myProfileImageUrl || defaultProfileUrl;
   const [newRating, setNewRating] = useState<number>(0);
+
+  const { ref: loadMoreRef, inView } = useInView({
+    rootMargin: "300px 0px",
+  });
+
+  useEffect(() => {
+    if (!inView) return;
+    if (!hasNextPage) return;
+    if (isFetchingNextPage) return;
+
+    onLoadMore();
+  }, [inView, hasNextPage, isFetchingNextPage, onLoadMore]);
 
   const handleSend = (text: string) => {
     if (newRating < 0.5) {
@@ -81,7 +100,6 @@ export default function ReviewSection({
         </button>
       </div>
 
-      {/* 생성 UI */}
       {isWriting && (
         <div
           className="
@@ -133,6 +151,15 @@ export default function ReviewSection({
         onDelete={onDelete}
         onClickAuthor={onClickAuthor}
       />
+
+      {(hasNextPage || isFetchingNextPage) && (
+        <div
+          ref={loadMoreRef}
+          className="flex w-full items-center justify-center py-4 text-Gray-4 body_2_3"
+        >
+          {isFetchingNextPage ? "한줄평을 더 불러오는 중..." : ""}
+        </div>
+      )}
     </div>
   );
 }

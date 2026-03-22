@@ -6,6 +6,7 @@ import NewsNewForm from "@/components/base-ui/Admin/news/NewForm";
 import {
   fetchAdminNewsDetail,
   updateAdminNewsWithImages,
+  deleteAdminNews,
 } from "@/lib/api/admin/news";
 
 type CarouselType = "PROMOTION" | "GENERAL";
@@ -19,7 +20,6 @@ export default function AdminNewsEditPage() {
   const params = useParams();
   const newsId = Number(params.id);
 
-  // 폼 상태
   const [requesterEmail, setRequesterEmail] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -27,12 +27,10 @@ export default function AdminNewsEditPage() {
   const [dateRange, setDateRange] = useState("");
   const [carousel, setCarousel] = useState<CarouselType>("PROMOTION");
 
-  // 대표 이미지 상태
   const [existingThumbnailUrl, setExistingThumbnailUrl] = useState<string | null>(null);
   const [repFile, setRepFile] = useState<File | null>(null);
   const [repPreview, setRepPreview] = useState<string | null>(null);
 
-  // 추가 이미지 상태 통합
   const [extraImages, setExtraImages] = useState<ExtraImageItem[]>([]);
 
   const [submitting, setSubmitting] = useState(false);
@@ -164,16 +162,41 @@ export default function AdminNewsEditPage() {
       return alert("게시 요청 날짜 형식이 올바르지 않아요. (YYYY/MM/DD~YYYY/MM/DD)");
     }
 
+    const today = new Date();
+    const end = new Date(parsed.publishEndAt);
+
+    today.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
     const existingImageUrls = extraImages
-      .filter((image): image is { type: "existing"; url: string } => image.type === "existing")
+      .filter(
+        (image): image is { type: "existing"; url: string } =>
+          image.type === "existing"
+      )
       .map((image) => image.url);
 
     const imageFiles = extraImages
-      .filter((image): image is { type: "new"; file: File; previewUrl: string } => image.type === "new")
+      .filter(
+        (image): image is { type: "new"; file: File; previewUrl: string } =>
+          image.type === "new"
+      )
       .map((image) => image.file);
 
     try {
       setSubmitting(true);
+
+      if (end < today) {
+        const res = await deleteAdminNews(newsId);
+
+        if (!res.isSuccess) {
+          throw new Error(res.message || "소식 삭제 실패");
+        }
+
+        alert("게시 종료일이 지나 소식이 삭제되었습니다.");
+        router.push("/admin/news");
+        router.refresh();
+        return;
+      }
 
       const res = await updateAdminNewsWithImages(newsId, {
         title: title.trim(),
@@ -197,7 +220,7 @@ export default function AdminNewsEditPage() {
       router.refresh();
     } catch (err) {
       console.error(err);
-      alert("소식 수정 실패");
+      alert("소식 수정 또는 삭제 실패");
     } finally {
       setSubmitting(false);
     }

@@ -240,7 +240,10 @@ export default function BookDetailPage() {
                   );
                   return true;
                 }}
-                items={topicItems as any}
+                items={topicItems}
+                hasNextPage={!!topicsQuery.hasNextPage}
+                isFetchingNextPage={topicsQuery.isFetchingNextPage}
+                onLoadMore={topicsQuery.fetchNextPage}
                 onReport={() => reportToast()}
                 onUpdate={(id, nextContent) => {
                   updateTopic(
@@ -285,7 +288,10 @@ export default function BookDetailPage() {
                   );
                   return true;
                 }}
-                items={reviewItems as any}
+                items={reviewItems}
+                hasNextPage={!!reviewsQuery.hasNextPage}
+                isFetchingNextPage={reviewsQuery.isFetchingNextPage}
+                onLoadMore={reviewsQuery.fetchNextPage}
                 onReport={(id) => reportToast()}
                 onUpdate={(id, nextContent, nextRating) => {
                   updateReview(

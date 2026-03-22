@@ -1,71 +1,51 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AdminSearchHeader from "@/components/layout/AdminSearchHeader";
 import Link from "next/link";
-
-type UserRow = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-};
+import {
+  fetchAdminMembers,
+  type AdminMemberListItem,
+} from "@/lib/api/admin/member";
 
 export default function UsersPage() {
   const [keyword, setKeyword] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [page, setPage] = useState(1);
+
+  const [users, setUsers] = useState<AdminMemberListItem[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const handleKeywordChange = (v: string) => {
     setKeyword(v);
-    setPage(1);
   };
-
-  // 더미 데이터 (테스트용) - 100명 생성
-  const users: UserRow[] = useMemo(() => {
-    const base = [
-      { name: "윤현일", email: "yh9839@naver.com", phone: "010-1234-5678" },
-      { name: "김민수", email: "minsu@test.com", phone: "010-2222-3333" },
-      { name: "박지은", email: "jieun@test.com", phone: "010-4444-5555" },
-      { name: "이서연", email: "seoyeon@test.com", phone: "010-7777-8888" },
-      { name: "정다은", email: "daeun@test.com", phone: "010-9999-0000" },
-    ];
-    return Array.from({ length: 100 }).map((_, i) => {
-      const b = base[i % base.length];
-      const num = String(716 + i).padStart(4, "0");
-      return {
-        id: `hy_${num}`,
-        name: b.name,
-        email: b.email,
-        phone: b.phone,
-      };
-    });
-  }, []);
-
-  const pageSize = 20;
-
-  const filtered = useMemo(() => {
-    const q = keyword.trim().toLowerCase();
-    if (!q) return users;
-    return users.filter((u) => {
-      return (
-        u.id.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q) ||
-        u.name.toLowerCase().includes(q)
-      );
-    });
-  }, [users, keyword]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-
-  const pageItems = useMemo(() => {
-    const start = (page - 1) * pageSize;
-    return filtered.slice(start, start + pageSize);
-  }, [filtered, page, pageSize]);
 
   const handleSearch = () => {
-    console.log("검색:", keyword);
     setPage(1);
+    setSearchKeyword(keyword.trim());
   };
+
+  useEffect(() => {
+    const loadMembers = async () => {
+      try {
+        setLoading(true);
+
+        const res = await fetchAdminMembers(page, searchKeyword);
+
+        setUsers(res.result.memberList ?? []);
+        setTotalPages(Math.max(1, res.result.totalPages ?? 1));
+      } catch (error) {
+        console.error("회원 목록 조회 실패:", error);
+        setUsers([]);
+        setTotalPages(1);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMembers();
+  }, [page, searchKeyword]);
 
   const goTo = (p: number) => {
     const next = Math.min(Math.max(1, p), totalPages);
@@ -76,10 +56,12 @@ export default function UsersPage() {
     const max = 5;
     let start = Math.max(1, page - Math.floor(max / 2));
     let end = start + max - 1;
+
     if (end > totalPages) {
       end = totalPages;
       start = Math.max(1, end - max + 1);
     }
+
     return Array.from({ length: end - start + 1 }).map((_, idx) => start + idx);
   }, [page, totalPages]);
 
@@ -98,7 +80,6 @@ export default function UsersPage() {
           inputWidthClassName="w-[1040px]"
         />
 
-        {/* 라인형 테이블 */}
         <div className="w-full">
           <table className="w-[1040px] table-fixed">
             <colgroup>
@@ -120,29 +101,50 @@ export default function UsersPage() {
             </thead>
 
             <tbody>
-              {pageItems.map((u) => (
-                <tr
-                  key={u.id}
-                  className="h-[48px] border-b border-Subbrown-4 body_1_2"
-                >
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{u.id}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{u.name}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{u.email}</td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">{u.phone}</td>
-                  <td className="pl-[12px] py-0">
-                    <Link
-                      href={`/admin/users/${u.id}`}
-                      className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
-                    >
-                      상세보기
-                    </Link>
+              {loading ? (
+                <tr className="h-[48px] border-b border-Subbrown-4 body_1_2">
+                  <td colSpan={5} className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                    불러오는 중...
                   </td>
                 </tr>
-              ))}
+              ) : users.length > 0 ? (
+                users.map((u) => (
+                  <tr
+                    key={u.memberId}
+                    className="h-[48px] border-b border-Subbrown-4 body_1_2"
+                  >
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                      {u.memberId}
+                    </td>
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                      {u.name || u.nickname}
+                    </td>
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                      {u.email}
+                    </td>
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                      {u.phoneNumber}
+                    </td>
+                    <td className="pl-[12px] py-0">
+                      <Link
+                        href={`/admin/users/${u.nickname}`}
+                        className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
+                      >
+                        상세보기
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr className="h-[48px] border-b border-Subbrown-4 body_1_2">
+                  <td colSpan={5} className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                    조회된 회원이 없습니다.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
 
-          {/* 페이지네이션 */}
           <div className="mt-6 flex items-center justify-center gap-4 body_2_2">
             <button
               onClick={() => goTo(page - 1)}
