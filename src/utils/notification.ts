@@ -19,3 +19,19 @@ export const getNotificationText = (notification: NotificationBasicInfo): string
             return "새로운 알림이 도착했습니다.";
     }
 };
+
+export const getNotificationRedirectUrl = (notification: NotificationBasicInfo): string => {
+    switch (notification.notificationType) {
+        case "LIKE":
+        case "COMMENT":
+            return `/stories/${notification.domainId}`;
+        case "FOLLOW":
+            return `/profile/${encodeURIComponent(notification.displayName)}`;
+        case "JOIN_CLUB":
+        case "CLUB_MEETING_CREATED":
+        case "CLUB_NOTICE_CREATED":
+            return `/groups/${notification.domainId}`;
+        default:
+            return "/profile/mypage?tab=notifications";
+    }
+};

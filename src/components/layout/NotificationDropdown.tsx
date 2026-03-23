@@ -5,18 +5,20 @@ import { useNotificationPreviewQuery } from "@/hooks/queries/useNotificationQuer
 import { useRouter } from "next/navigation";
 import { formatTimeAgo } from "@/utils/time";
 import { useReadNotificationMutation } from "@/hooks/mutations/useNotificationMutations";
-import { getNotificationText } from "@/utils/notification";
+import { getNotificationText, getNotificationRedirectUrl } from "@/utils/notification";
+import { NotificationBasicInfo } from "@/types/notification";
 
 export default function NotificationDropdown() {
     const { data: notifications, isLoading } = useNotificationPreviewQuery(5);
     const { mutate: readNotification } = useReadNotificationMutation();
     const router = useRouter();
 
-    const handleNotificationClick = (notificationId: number, isRead: boolean) => {
-        if (!isRead) {
-            readNotification(notificationId);
+    const handleNotificationClick = (notification: NotificationBasicInfo) => {
+        if (!notification.read) {
+            readNotification(notification.notificationId);
         }
-        router.push("/profile/mypage?tab=notifications");
+        const redirectUrl = getNotificationRedirectUrl(notification);
+        router.push(redirectUrl);
     };
 
     return (
@@ -32,7 +34,7 @@ export default function NotificationDropdown() {
                 notifications.map((notif) => (
                     <div
                         key={notif.notificationId}
-                        onClick={() => handleNotificationClick(notif.notificationId, notif.read)}
+                        onClick={() => handleNotificationClick(notif)}
                         className="flex w-full items-center justify-between border-b border-Subbrown-4 px-[16px] py-[15px] transition-colors hover:bg-black/5 cursor-pointer"
                     >
                         <div className="flex items-center gap-[12px] pr-[10px]">
