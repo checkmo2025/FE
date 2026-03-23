@@ -16,6 +16,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState<AdminMemberListItem[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const handleKeywordChange = (v: string) => {
     setKeyword(v);
@@ -30,6 +31,7 @@ export default function UsersPage() {
     const loadMembers = async () => {
       try {
         setLoading(true);
+        setError(false);
 
         const res = await fetchAdminMembers(page, searchKeyword);
 
@@ -39,6 +41,7 @@ export default function UsersPage() {
         console.error("회원 목록 조회 실패:", error);
         setUsers([]);
         setTotalPages(1);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -67,6 +70,7 @@ export default function UsersPage() {
 
   const isFirst = page === 1;
   const isLast = page === totalPages;
+  const isSearching = searchKeyword.length > 0;
 
   return (
     <div className="w-full flex justify-center">
@@ -107,6 +111,12 @@ export default function UsersPage() {
                     불러오는 중...
                   </td>
                 </tr>
+              ) : error ? (
+                <tr className="h-[48px] border-b border-Subbrown-4 body_1_2">
+                  <td colSpan={5} className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                    {isSearching ? "검색 실패" : "멤버 리스트 불러오기 실패"}
+                  </td>
+                </tr>
               ) : users.length > 0 ? (
                 users.map((u) => (
                   <tr
@@ -138,7 +148,7 @@ export default function UsersPage() {
               ) : (
                 <tr className="h-[48px] border-b border-Subbrown-4 body_1_2">
                   <td colSpan={5} className="pl-[12px] py-0 body_1_2 text-Gray-7">
-                    조회된 회원이 없습니다.
+                    {isSearching ? "검색 결과가 없음" : "멤버 리스트가 없습니다."}
                   </td>
                 </tr>
               )}
