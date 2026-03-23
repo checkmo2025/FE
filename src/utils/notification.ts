@@ -26,7 +26,7 @@ export const getNotificationRedirectUrl = (notification: NotificationBasicInfo):
         case "COMMENT":
             return `/stories/${notification.domainId}`;
         case "FOLLOW":
-            return `/profile/${notification.displayName}`;
+            return `/profile/${encodeURIComponent(notification.displayName)}`;
         case "JOIN_CLUB":
         case "CLUB_MEETING_CREATED":
         case "CLUB_NOTICE_CREATED":
