@@ -5,7 +5,8 @@ import Image from "next/image";
 import { NotificationBasicInfo } from "@/types/notification";
 import { formatTimeAgo } from "@/utils/time";
 import { useReadNotificationMutation } from "@/hooks/mutations/useNotificationMutations";
-import { getNotificationText } from "@/utils/notification";
+import { getNotificationText, getNotificationRedirectUrl } from "@/utils/notification";
+import { useRouter } from "next/navigation";
 
 interface MyNotificationItemProps {
   notification: NotificationBasicInfo;
@@ -14,11 +15,14 @@ interface MyNotificationItemProps {
 
 const MyNotificationItem = ({ notification }: MyNotificationItemProps) => {
   const { mutate: readNotification } = useReadNotificationMutation();
+  const router = useRouter();
 
   const handleClick = () => {
     if (!notification.read) {
       readNotification(notification.notificationId);
     }
+    const redirectUrl = getNotificationRedirectUrl(notification);
+    router.push(redirectUrl);
   };
 
   return (
