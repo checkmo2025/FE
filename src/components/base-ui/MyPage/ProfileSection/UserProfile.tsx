@@ -124,7 +124,7 @@ const UserProfile = () => {
             내 책 이야기 쓰기
           </JoinButton>
           <JoinButton
-            onClick={() => window.open(EXTERNAL_LINKS.INQUIRY_FORM_URL, "_blank")}
+            onClick={() => window.open(EXTERNAL_LINKS.NEWS_FROM_URL, "_blank")}
             className="w-[160px] h-[32px] md:w-[355px] md:h-[48px] p-[12px_16px] gap-[10px] rounded-[8px] font-sans text-[14px] font-semibold md:text-[18px] md:font-medium leading-[135%]"
           >
             소식 문의하기
