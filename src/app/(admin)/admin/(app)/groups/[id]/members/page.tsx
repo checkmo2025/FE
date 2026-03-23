@@ -91,7 +91,7 @@ export default function MembersListPage() {
         setError(
           err instanceof Error
             ? err.message
-            : "모임 멤버 조회에 실패했습니다.",
+            : "모임 회원 리스트 불러오기 실패",
         );
       } finally {
         if (mounted) setLoading(false);
@@ -187,7 +187,7 @@ export default function MembersListPage() {
               ) : users.length === 0 ? (
                 <tr className="h-[48px] border-b border-Subbrown-4 body_1_2">
                   <td colSpan={7} className="pl-[12px] text-Gray-7">
-                    조회된 멤버가 없습니다.
+                    모임 회원 리스트가 없습니다.
                   </td>
                 </tr>
               ) : (

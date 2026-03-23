@@ -15,17 +15,20 @@ type Props = {
 export default function ReportList({ memberNickname }: Props) {
   const [reports, setReports] = useState<AdminMemberReportItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     const loadReports = async () => {
       try {
         setLoading(true);
+        setIsError(false);
 
         const res = await fetchAdminMemberReports(memberNickname);
         setReports(res.result.reports ?? []);
       } catch (error) {
         console.error("신고 목록 조회 실패:", error);
         setReports([]);
+        setIsError(true);
       } finally {
         setLoading(false);
       }
@@ -34,10 +37,20 @@ export default function ReportList({ memberNickname }: Props) {
     loadReports();
   }, [memberNickname]);
 
+  // ✅ 로딩 상태
   if (loading) {
     return (
-      <div className="w-full max-w-[1040px] mx-auto">
-        <div>불러오는 중...</div>
+      <div className="flex flex-col items-center justify-center py-10 w-full text-Gray-4 text-sm font-medium">
+        불러오는 중...
+      </div>
+    );
+  }
+
+  // ✅ 에러 상태
+  if (!loading && isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-10 w-full text-red-500 text-sm font-medium">
+        멤버 신고 목록 불러오기 실패
       </div>
     );
   }
@@ -45,8 +58,8 @@ export default function ReportList({ memberNickname }: Props) {
   if (reports.length === 0) {
     return (
       <div className="w-full max-w-[1040px] mx-auto flex justify-center items-center py-[80px]">
-        <div className="text-Gray-4 body_1_2">
-          신고 내역이 없습니다.
+        <div className="text-Gray-4 text-sm font-medium text-center">
+          멤버 신고 목록 없음
         </div>
       </div>
     );

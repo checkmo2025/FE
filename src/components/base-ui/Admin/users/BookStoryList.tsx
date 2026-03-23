@@ -125,19 +125,23 @@ const BookStoryList = ({ memberNickname }: Props) => {
     <>
       <div className="flex flex-col items-center w-full max-w-[1048px] mx-auto gap-[20px] px-[18px] md:px-[40px] lg:px-0">
         {isLoading && (
-          <p className="text-Gray-4 text-center py-4">로딩 중...</p>
+          <div className="flex flex-col items-center justify-center py-10 w-full text-Gray-4 text-sm font-medium">
+            불러오는 중...
+          </div>
         )}
 
         {!isLoading && isError && (
-          <p className="text-red-500 text-center py-4">
+          <div className="flex flex-col items-center justify-center py-10 w-full text-red-500 text-sm font-medium">
             멤버 책 이야기 불러오기 실패
-          </p>
+          </div>
         )}
 
         {!isLoading && !isError && stories.length === 0 && (
-          <p className="text-Gray-4 text-center py-4">
-            멤버 책 이야기 없음
-          </p>
+          <div className="flex justify-center items-center w-full max-w-[1040px] mx-auto py-[80px]">
+            <p className="text-Gray-4 text-sm font-medium whitespace-pre-wrap text-center">
+              멤버 책 이야기 없음
+            </p>
+          </div>
         )}
 
         {!isLoading && !isError && stories.length > 0 && (

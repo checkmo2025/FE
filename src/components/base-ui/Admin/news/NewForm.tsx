@@ -150,7 +150,7 @@ export default function NewForm({
                 onChange={() => setCarousel("PROMOTION")}
                 className="h-5 w-5 accent-[var(--Primary_1)]"
               />
-              <span>모임별</span>
+              <span>프로모션</span>
             </label>
 
             <label className="flex items-center gap-[8px] cursor-pointer text-[18px] font-medium leading-[135%] tracking-[-0.018px] text-[var(--Gray_6)]">
@@ -162,7 +162,7 @@ export default function NewForm({
                 onChange={() => setCarousel("GENERAL")}
                 className="h-5 w-5 accent-[var(--Primary_1)]"
               />
-              <span>지역별</span>
+              <span>일반</span>
             </label>
           </div>
         </div>

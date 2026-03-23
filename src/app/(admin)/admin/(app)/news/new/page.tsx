@@ -4,13 +4,13 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createAdminNewsWithImages } from "@/lib/api/admin/news";
 import NewsNewForm from "@/components/base-ui/Admin/news/NewForm";
+import Toast from "@/components/base-ui/Admin/Toast";
 
 type CarouselType = "PROMOTION" | "GENERAL";
 
 export default function AdminNewsNewPage() {
   const router = useRouter();
 
-  // 폼 상태
   const [requesterEmail, setRequesterEmail] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -18,19 +18,30 @@ export default function AdminNewsNewPage() {
   const [dateRange, setDateRange] = useState("");
   const [carousel, setCarousel] = useState<CarouselType>("PROMOTION");
 
-  // 파일 상태(업로드용)
   const [repFile, setRepFile] = useState<File | null>(null);
   const [extraFiles, setExtraFiles] = useState<File[]>([]);
 
-  // UI용(미리보기)
   const [repPreview, setRepPreview] = useState<string | null>(null);
   const [extraPreviews, setExtraPreviews] = useState<string[]>([]);
 
   const [submitting, setSubmitting] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const closeToast = () => {
+    setToastMessage("");
+  };
+
+  const isImageFile = (file: File) => file.type.startsWith("image/");
 
   const onPickRepImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (!isImageFile(file)) {
+      setToastMessage("이미지 파일 형식 오류");
+      e.target.value = "";
+      return;
+    }
 
     setRepFile(file);
 
@@ -45,6 +56,13 @@ export default function AdminNewsNewPage() {
   const onPickExtraImages = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
     if (!files.length) return;
+
+    const hasInvalidFile = files.some((file) => !isImageFile(file));
+    if (hasInvalidFile) {
+      setToastMessage("이미지 파일 형식 오류");
+      e.target.value = "";
+      return;
+    }
 
     const merged = [...extraFiles, ...files].slice(0, 5);
 
@@ -94,7 +112,8 @@ export default function AdminNewsNewPage() {
 
     const parsed = parseDateRange(dateRange);
     if (!parsed) {
-      return alert("게시 요청 날짜 형식이 올바르지 않아요. (YYYY/MM/DD~YYYY/MM/DD)");
+      setToastMessage("게시 날짜 오류");
+      return;
     }
 
     try {
@@ -115,44 +134,53 @@ export default function AdminNewsNewPage() {
 
       if (!res.isSuccess) throw new Error(res.message || "소식 등록 실패");
 
-      alert(`소식 등록 완료! (ID: ${res.result})`);
-      router.push("/admin/news");
-      router.refresh();
+      setToastMessage("소식 등록 성공");
+
+      setTimeout(() => {
+        router.push("/admin/news");
+        router.refresh();
+      }, 500);
     } catch (err) {
       console.error(err);
-      alert("소식 등록 실패");
+      setToastMessage("소식 등록 실패");
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-[var(--background)]">
-      <section className="mx-auto w-full px-6 py-10">
-        <div className="rounded-[12px] bg-transparent">
-          <NewsNewForm
-            requesterEmail={requesterEmail}
-            title={title}
-            content={content}
-            dateRange={dateRange}
-            originalLink={originalLink}
-            carousel={carousel}
-            setRequesterEmail={setRequesterEmail}
-            setTitle={setTitle}
-            setContent={setContent}
-            setDateRange={setDateRange}
-            setOriginalLink={setOriginalLink}
-            setCarousel={setCarousel}
-            repPreview={repPreview}
-            extraPreviews={extraPreviews}
-            onPickRepImage={onPickRepImage}
-            onPickExtraImages={onPickExtraImages}
-            removeExtraAt={removeExtraAt}
-            submitting={submitting}
-            onSubmit={onSubmit}
-          />
-        </div>
-      </section>
-    </main>
+    <>
+      <main className="min-h-screen bg-[var(--background)]">
+        <section className="mx-auto w-full px-6 py-10">
+          <div className="rounded-[12px] bg-transparent">
+            <NewsNewForm
+              requesterEmail={requesterEmail}
+              title={title}
+              content={content}
+              dateRange={dateRange}
+              originalLink={originalLink}
+              carousel={carousel}
+              setRequesterEmail={setRequesterEmail}
+              setTitle={setTitle}
+              setContent={setContent}
+              setDateRange={setDateRange}
+              setOriginalLink={setOriginalLink}
+              setCarousel={setCarousel}
+              repPreview={repPreview}
+              extraPreviews={extraPreviews}
+              onPickRepImage={onPickRepImage}
+              onPickExtraImages={onPickExtraImages}
+              removeExtraAt={removeExtraAt}
+              submitting={submitting}
+              onSubmit={onSubmit}
+            />
+          </div>
+        </section>
+      </main>
+
+      {toastMessage && (
+        <Toast message={toastMessage} onClose={closeToast} />
+      )}
+    </>
   );
 }

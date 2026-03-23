@@ -22,14 +22,17 @@ export default function BookStoriesPage() {
   const [page, setPage] = useState(1);
   const [stories, setStories] = useState<BookStoryRow[]>([]);
   const [totalPages, setTotalPages] = useState(1);
+  const [error, setError] = useState("");
 
   const handleKeywordChange = (v: string) => {
-    setKeyword(v);
+    setKeyword(v.slice(0, 40));
   };
 
   useEffect(() => {
     const loadStories = async () => {
       try {
+        setError("");
+
         const result = await fetchAdminBookStories(page, searchKeyword.trim());
 
         const mapped: BookStoryRow[] = result.basicInfoList.map((item) => ({
@@ -49,6 +52,7 @@ export default function BookStoriesPage() {
         console.error("책 이야기 목록 조회 실패:", error);
         setStories([]);
         setTotalPages(1);
+        setError("fail");
       }
     };
 
@@ -61,7 +65,7 @@ export default function BookStoriesPage() {
 
   const handleSearch = () => {
     setPage(1);
-    setSearchKeyword(keyword);
+    setSearchKeyword(keyword.trim());
   };
 
   const goTo = (p: number) => {
@@ -134,39 +138,59 @@ export default function BookStoriesPage() {
             </thead>
 
             <tbody>
-              {pageItems.map((s) => (
-                <tr
-                  key={s.id}
-                  className="h-[48px] border-b border-Subbrown-4 body_1_2"
-                >
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
-                    {s.id}
-                  </td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
-                    {s.title}
-                  </td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
-                    {s.authorNickname}
-                  </td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
-                    {s.bookTitle}
-                  </td>
-                  <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
-                    {s.postedAt}
-                  </td>
-                  <td className="py-0 body_1_2 text-Gray-7 text-center">
-                    {s.status}
-                  </td>
-                  <td className="pl-[12px] py-0">
-                    <button
-                      onClick={() => router.push(`/admin/stories/${s.id}`)}
-                      className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
-                    >
-                      상세보기
-                    </button>
+              {error ? (
+                <tr className="h-[48px] border-b border-Subbrown-4">
+                  <td
+                    colSpan={7}
+                    className="pl-[12px] py-0 body_1_2 text-center text-red-500"
+                  >
+                    {searchKeyword ? "검색 실패" : "책 이야기 리스트 불러오기 실패"}
                   </td>
                 </tr>
-              ))}
+              ) : pageItems.length === 0 ? (
+                <tr className="h-[48px] border-b border-Subbrown-4">
+                  <td
+                    colSpan={7}
+                    className="pl-[12px] py-0 body_1_2 text-Gray-7 text-center"
+                  >
+                    {searchKeyword ? "검색 결과가 없음" : "책 이야기 리스트가 없습니다."}
+                  </td>
+                </tr>
+              ) : (
+                pageItems.map((s) => (
+                  <tr
+                    key={s.id}
+                    className="h-[48px] border-b border-Subbrown-4 body_1_2"
+                  >
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                      {s.id}
+                    </td>
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
+                      {s.title}
+                    </td>
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
+                      {s.authorNickname}
+                    </td>
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
+                      {s.bookTitle}
+                    </td>
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                      {s.postedAt}
+                    </td>
+                    <td className="py-0 body_1_2 text-Gray-7 text-center">
+                      {s.status}
+                    </td>
+                    <td className="pl-[12px] py-0">
+                      <button
+                        onClick={() => router.push(`/admin/stories/${s.id}`)}
+                        className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
+                      >
+                        상세보기
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
 
