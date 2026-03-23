@@ -104,8 +104,8 @@ export default function NewsPage() {
 
       <FloatingFab
         iconSrc="/icons_calling.svg"
-        iconAlt="문의하기"
-        onClick={() => window.open(EXTERNAL_LINKS.INQUIRY_FORM_URL, "_blank")}
+        iconAlt="소식 문의하기"
+        onClick={() => window.open(EXTERNAL_LINKS.NEWS_FROM_URL, "_blank")}
       />
     </div>
   );
