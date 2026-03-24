@@ -48,7 +48,7 @@ const MeetingList = ({ memberNickname }: Props) => {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-10 w-full text-red-500 text-sm font-medium">
-        독서 모임을 불러오는 데 실패했습니다.
+        멤버 가입 모임 불러오기 실패
       </div>
     );
   }
@@ -57,7 +57,7 @@ const MeetingList = ({ memberNickname }: Props) => {
     return (
       <div className="flex flex-col items-center justify-center py-20 w-full">
         <p className="text-Gray-4 text-sm font-medium whitespace-pre-wrap text-center">
-          가입한 독서 모임이 없습니다.
+          멤버 가입 모임 없음
         </p>
       </div>
     );

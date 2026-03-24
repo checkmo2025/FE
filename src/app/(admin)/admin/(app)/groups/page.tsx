@@ -47,7 +47,7 @@ export default function GroupsPage() {
   }, [page, searchKeyword]);
 
   const handleKeywordChange = (v: string) => {
-    setKeyword(v);
+    setKeyword(v.slice(0, 40));
   };
 
   const handleSearch = () => {
@@ -137,7 +137,7 @@ export default function GroupsPage() {
                     colSpan={6}
                     className="pl-[12px] py-0 body_1_2 text-center text-red-500"
                   >
-                    {error}
+                    {searchKeyword ? "검색 실패" : "모임 리스트 불러오기 실패"}
                   </td>
                 </tr>
               ) : groups.length === 0 ? (
@@ -146,7 +146,7 @@ export default function GroupsPage() {
                     colSpan={6}
                     className="pl-[12px] py-0 body_1_2 text-Gray-7 text-center"
                   >
-                    조회된 모임이 없습니다.
+                    {searchKeyword ? "검색 결과가 없음" : "모임 리스트가 없습니다."}
                   </td>
                 </tr>
               ) : (
