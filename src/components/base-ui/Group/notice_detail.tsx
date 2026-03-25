@@ -14,6 +14,8 @@ import {
   useDeleteClubNoticeMutation,
   useVoteClubNoticeMutation,
 } from '@/hooks/mutations/useClubNotificationMutations';
+import BookshelfDeleteConfirmModal from '../Bookcase/bookid/BookshelfDeleteConfirmModal';
+
 
 type NoticeDetailProps = {
   clubId: number;
@@ -46,7 +48,7 @@ export default function NoticeDetail({
 }: NoticeDetailProps) {
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
   const [isRevoteMode, setIsRevoteMode] = useState(false);
-
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -135,23 +137,32 @@ const handleRevote = () => {
   setSelectedOptions([]);
 };
 
-  const handleDeleteNotice = async () => {
-    if (!isAdmin || isDeletePending) return;
+  const handleOpenDeleteModal = () => {
+  if (!isAdmin || isDeletePending) return;
+  setMenuOpen(false);
+  setIsDeleteModalOpen(true);
+};
 
-    const ok = window.confirm('공지사항을 삭제하시겠습니까?');
-    if (!ok) return;
+const handleCloseDeleteModal = () => {
+  if (isDeletePending) return;
+  setIsDeleteModalOpen(false);
+};
 
-    try {
-      await deleteNotice({ clubId, noticeId });
-      toast.success('공지사항이 삭제되었습니다.');
-      router.push(`/groups/${clubId}/notice`);
-    } catch (e: any) {
-      const msg = e?.message ?? '';
-      toast.error(msg || '공지사항 삭제에 실패했습니다.');
-    } finally {
-      setMenuOpen(false);
-    }
-  };
+const handleDeleteNotice = async () => {
+  if (!isAdmin || isDeletePending) return;
+
+  try {
+    await deleteNotice({ clubId, noticeId });
+    toast.success('공지사항이 삭제되었습니다.');
+    router.push(`/groups/${clubId}/notice`);
+  } catch (e: any) {
+    const msg = e?.message ?? '';
+    toast.error(msg || '공지사항 삭제에 실패했습니다.');
+  } finally {
+    setIsDeleteModalOpen(false);
+    setMenuOpen(false);
+  }
+};
 
   const handleEditNotice = () => {
     if (!isAdmin) return;
@@ -252,7 +263,7 @@ const handleRevote = () => {
                     <div className="absolute right-0 top-full mt-1 w-34 h-22 rounded-lg bg-White z-10 px-2 shadow-md">
                       <button
                         type="button"
-                        onClick={handleDeleteNotice}
+                        onClick={handleOpenDeleteModal}
                         className="flex w-full items-center gap-2 px-4 py-2.5 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
                       >
                         <Image src="/delete.svg" alt="삭제" width={24} height={24} />
@@ -426,6 +437,16 @@ const handleRevote = () => {
           </div>
         )}
       </div>
+      <BookshelfDeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        isPending={isDeletePending}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleDeleteNotice}
+        title="공지사항을 삭제할까요?"
+        description="삭제 후 복구할 수 없습니다."
+        confirmText="예"
+        cancelText="아니요"
+      />
     </div>
   );
 }
