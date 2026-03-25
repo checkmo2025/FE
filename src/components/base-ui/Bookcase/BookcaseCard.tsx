@@ -46,12 +46,12 @@ export default function BookcaseCard({
     <div
       role="button"
       tabIndex={0}
-      onClick={onMeetingClick}
+      onClick={onTopicClick}
       onKeyDown={(e) => {
-        if (!onMeetingClick) return;
+        if (!onTopicClick) return;
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          onMeetingClick();
+          onTopicClick();
         }
       }}
       className="
