@@ -64,10 +64,12 @@ export default function GroupDetailPage() {
   
 
   const isAdmin = me.staff === true;
-
+  
   const noticeText = latestNotice?.title ?? "공지사항이 없습니다.";
   const hasNotice = Boolean(latestNotice?.id);
-  const noticeUrl = `/groups/${groupId}/notice`;
+  const noticenumber = latestNotice?.id;
+  const noticeUrl = `/groups/${groupId}/notice/${noticenumber}`;
+  
 
   const imgSrc = home.profileImageUrl || DEFAULT_CLUB_IMG;
   const clubName = home.name;
@@ -115,7 +117,7 @@ export default function GroupDetailPage() {
               toast.error("공지사항이 없습니다.");
               return;
             }
-            router.push(`/groups/${groupId}/notice`);
+            router.push(noticeUrl!);
           }}
           onKeyDown={(e) => {
             if (e.key !== "Enter" && e.key !== " ") return;
@@ -124,7 +126,7 @@ export default function GroupDetailPage() {
               toast.error("공지사항이 없습니다.");
               return;
             }
-            router.push(`/groups/${groupId}/notice`);
+            router.push(noticeUrl!);
           }}
           className="
             block w-full
