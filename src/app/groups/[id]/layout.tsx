@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { useClubhomeQueries } from "@/hooks/queries/useClubhomeQueries";
+import { useClubAccessGuard } from "@/hooks/useClubAccessGuard";
 
 type TabType = "home" | "notice" | "bookcase";
 
@@ -21,10 +22,41 @@ export default function GroupDetailLayout({ children }: { children: React.ReactN
     return pathname?.includes("/admin/");
   }, [pathname]);
 
+  const requiresMemberAccess = useMemo(() => {
+    if (!pathname) return false;
+    if (skipLayout) return false;
+    return pathname.includes("/notice") || pathname.includes("/bookcase");
+  }, [pathname, skipLayout]);
+
   const safeClubId = skipLayout ? NaN : groupIdNum;
   const { homeQuery } = useClubhomeQueries(safeClubId);
+  const access = useClubAccessGuard({
+    clubId: groupIdNum,
+    require: "member",
+    enabled: requiresMemberAccess,
+  });
 
   if (skipLayout) return <>{children}</>;
+
+  if (requiresMemberAccess && access.isCheckingAccess) {
+    return (
+      <div className="w-full px-6 py-10 body_1_2 text-Gray-5">
+        불러오는 중...
+      </div>
+    );
+  }
+
+  if (requiresMemberAccess && access.isUnauthorized) {
+    return null;
+  }
+
+  if (requiresMemberAccess && access.isError) {
+    return (
+      <div className="w-full px-6 py-10 body_1_2 text-Red">
+        모임 정보를 불러오지 못했습니다.
+      </div>
+    );
+  }
 
   const groupName = homeQuery.data?.name ?? "";
 

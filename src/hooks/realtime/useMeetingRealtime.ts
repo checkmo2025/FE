@@ -87,9 +87,11 @@ export function useMeetingRealtime({
     myTeamId,
     onPresentationEvent,
     onRealtimeResynced,
+    enabled,
   ]);
 
   const cleanupSubscriptions = useCallback(() => {
+
     subscriptionsRef.current.presentation?.unsubscribe();
     subscriptionsRef.current.chat?.unsubscribe();
     subscriptionsRef.current.error?.unsubscribe();
@@ -98,6 +100,8 @@ export function useMeetingRealtime({
 
   const invalidateRealtimeQueries = useCallback(async () => {
     const current = latestRef.current;
+
+    console.log("[meeting realtime] invalidateRealtimeQueries", current);
 
     if (current.presentationTeamId) {
       await queryClient.invalidateQueries({
@@ -134,6 +138,7 @@ export function useMeetingRealtime({
 
   const resubscribe = useCallback(() => {
     const client = clientRef.current;
+
     if (!client || !client.connected) return;
 
     cleanupSubscriptions();
@@ -149,28 +154,28 @@ export function useMeetingRealtime({
         } catch {
           parsed = null;
         }
-
-        console.error("[meeting realtime][error queue]", {
-          headers: message.headers,
-          body: message.body,
-          parsed,
-        });
       }
     );
 
-    if (current.presentationTeamId) {
-      subscriptionsRef.current.presentation = client.subscribe(
-        meetingRealtimeDestinations.subscribePresentation(
-          current.clubId,
-          current.meetingId,
-          current.presentationTeamId
-        ),
-        (message) => {
-          const event = JSON.parse(message.body) as MeetingPresentationEvent;
-          applyPresentationEventToTopicsCache(queryClient, event);
-          latestRef.current.onPresentationEvent?.(event);
-        }
+    const canSubscribePresentation =
+      current.presentationTeamId !== null &&
+      (current.isStaff || current.presentationTeamId === current.myTeamId);
+
+    if (canSubscribePresentation && current.presentationTeamId) {
+      const destination = meetingRealtimeDestinations.subscribePresentation(
+        current.clubId,
+        current.meetingId,
+        current.presentationTeamId
       );
+
+      subscriptionsRef.current.presentation = client.subscribe(destination, (message) => {
+        const event = JSON.parse(message.body) as MeetingPresentationEvent;
+
+
+        applyPresentationEventToTopicsCache(queryClient, event);
+        latestRef.current.onPresentationEvent?.(event);
+      });
+    } else {
     }
 
     const canSubscribeChat =
@@ -179,43 +184,55 @@ export function useMeetingRealtime({
       (current.isStaff || current.chatTeamId === current.myTeamId);
 
     if (canSubscribeChat && current.chatTeamId) {
-      subscriptionsRef.current.chat = client.subscribe(
-        meetingRealtimeDestinations.subscribeChatMessages(
-          current.clubId,
-          current.meetingId,
-          current.chatTeamId
-        ),
-        (message) => {
-          const event = JSON.parse(message.body) as MeetingChatMessageEvent;
-          appendChatMessageToChatsCache(queryClient, event);
-        }
+      const destination = meetingRealtimeDestinations.subscribeChatMessages(
+        current.clubId,
+        current.meetingId,
+        current.chatTeamId
       );
+
+
+      subscriptionsRef.current.chat = client.subscribe(destination, (message) => {
+        const event = JSON.parse(message.body) as MeetingChatMessageEvent;
+
+
+        appendChatMessageToChatsCache(queryClient, event);
+      });
+    } else {
     }
   }, [cleanupSubscriptions, queryClient]);
 
   useEffect(() => {
+
     if (!enabled) return;
     if (!Number.isFinite(clubId) || !Number.isFinite(meetingId)) return;
 
     const client = createMeetingStompClient({
       onConnect: async () => {
+
         setIsConnected(true);
         resubscribe();
         await invalidateRealtimeQueries();
         latestRef.current.onRealtimeResynced?.();
       },
-      onStompError: () => {
+      onStompError: (frame) => {
+        console.error("[meeting realtime] onStompError", {
+          headers: frame.headers,
+          body: frame.body,
+        });
         setIsConnected(false);
       },
       onWebSocketClose: () => {
+        console.warn("[meeting realtime] onWebSocketClose");
         setIsConnected(false);
       },
-      onWebSocketError: () => {
+      onWebSocketError: (event) => {
+        console.error("[meeting realtime] onWebSocketError", event);
         setIsConnected(false);
       },
     });
 
     clientRef.current = client;
+
     client.activate();
 
     return () => {
@@ -227,6 +244,8 @@ export function useMeetingRealtime({
   }, [clubId, meetingId, enabled, cleanupSubscriptions, resubscribe, invalidateRealtimeQueries]);
 
   useEffect(() => {
+
+
     if (!clientRef.current?.connected) return;
     resubscribe();
   }, [presentationTeamId, chatTeamId, isChatOpen, isStaff, myTeamId, resubscribe]);
@@ -235,6 +254,14 @@ export function useMeetingRealtime({
     (teamId: number, rawContent: string) => {
       const client = clientRef.current;
       const content = rawContent.trim();
+
+      console.log("[meeting realtime] publishChatMessage", {
+        teamId,
+        rawContent,
+        connected: !!client?.connected,
+        isStaff,
+        myTeamId,
+      });
 
       if (!client || !client.connected) {
         throw new Error("웹소켓이 아직 연결되지 않았습니다.");
