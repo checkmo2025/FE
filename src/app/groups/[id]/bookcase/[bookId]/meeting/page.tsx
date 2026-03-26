@@ -235,6 +235,27 @@ export default function MeetingPage() {
   const canSelectCurrentTeamTopic =
     isStaff || (selectedTeamId !== null && myTeamId === selectedTeamId);
 
+  const presentationSubscribeTeamId = isStaff ? selectedTeamId : myTeamId;
+
+  useEffect(() => {
+    console.log("[meeting page] selectedTeam state changed", {
+      selectedTeamId,
+      selectedTeamName: selectedTeam?.teamName ?? null,
+      myTeamId,
+      canSelectCurrentTeamTopic,
+      isConnected,
+      presentationSubscribeTeamId,
+      pendingKeys: [...pendingPresentationKeys],
+    });
+  }, [
+    selectedTeamId,
+    selectedTeam?.teamName,
+    myTeamId,
+    canSelectCurrentTeamTopic,
+    presentationSubscribeTeamId,
+    pendingPresentationKeys,
+  ]);
+
   const chatSelectableTeams = useMemo<ChatTeam[]>(() => {
     const mapped = teams.map((team) => ({
       teamId: String(team.teamId),
@@ -255,7 +276,7 @@ export default function MeetingPage() {
   } = useMeetingRealtime({
     clubId,
     meetingId,
-    presentationTeamId: selectedTeamId,
+    presentationTeamId: presentationSubscribeTeamId ?? null,
     chatTeamId: selectedChatTeamId,
     isChatOpen: isChatModalOpen,
     isStaff,
@@ -289,6 +310,14 @@ export default function MeetingPage() {
   const handleSelectTeam = (teamName: string) => {
     const matched = teams.find((team) => team.teamName === teamName);
     if (!matched) return;
+
+    console.log("[meeting page] handleSelectTeam", {
+      clickedTeamName: teamName,
+      nextTeamId: matched.teamId,
+      prevSelectedTeamId: selectedTeamId,
+      myTeamId,
+      presentationSubscribeTeamId,
+    });
 
     setSelectedTeamId(matched.teamId);
 
@@ -393,6 +422,20 @@ export default function MeetingPage() {
   const handleTogglePresentation = (topicId: number, currentSelected: boolean) => {
     if (selectedTeamId === null) return;
 
+    const key = makePresentationPendingKey(selectedTeamId, topicId);
+
+    console.log("[meeting page] toggle attempt", {
+      selectedTeamId,
+      myTeamId,
+      topicId,
+      currentSelected,
+      canSelectCurrentTeamTopic,
+      isConnected,
+      presentationSubscribeTeamId,
+      isPending: pendingPresentationKeys.has(key),
+      pendingKeys: [...pendingPresentationKeys],
+    });
+
     if (!canSelectCurrentTeamTopic) {
       toast.error("현재 조의 발제만 선택할 수 있습니다.");
       return;
@@ -402,8 +445,6 @@ export default function MeetingPage() {
       toast.error("실시간 연결이 아직 되지 않았습니다.");
       return;
     }
-
-    const key = makePresentationPendingKey(selectedTeamId, topicId);
 
     if (pendingPresentationKeys.has(key)) {
       return;
