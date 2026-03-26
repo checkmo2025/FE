@@ -17,6 +17,10 @@ type Props = {
   onSelectTeam: (teamId: number) => void;
   position: { x: number; y: number };
   onDragStart: (e: React.PointerEvent<HTMLDivElement>) => void;
+
+  onSendMessage: (content: string) => void;
+  isSocketConnected: boolean;
+  canSendMessage: boolean;
 };
 
 const DEFAULT_PROFILE = "/profile4.svg";
@@ -60,6 +64,9 @@ export default function MeetingChatModal({
   onSelectTeam,
   position,
   onDragStart,
+  onSendMessage,
+  isSocketConnected,
+  canSendMessage,
 }: Props) {
   const selectedTeam =
     teams.find((team) => Number(team.teamId) === selectedTeamId) ?? null;
@@ -69,6 +76,7 @@ export default function MeetingChatModal({
   const autoScrolledRef = useRef(false);
 
   const [isTabletUp, setIsTabletUp] = useState(false);
+  const [draft, setDraft] = useState("");
 
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
@@ -148,6 +156,32 @@ export default function MeetingChatModal({
     });
   }, [isOpen, messages.length, selectedTeamId]);
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDraft("");
+  }, [selectedTeamId, isOpen]);
+
+  const handleSubmit = () => {
+    const content = draft.trim();
+    if (!content) return;
+    if (!isSocketConnected || !canSendMessage) return;
+
+    onSendMessage(content);
+    setDraft("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== "Enter" || e.nativeEvent.isComposing) return;
+    e.preventDefault();
+    handleSubmit();
+  };
+
+  const inputPlaceholder = !isSocketConnected
+    ? "실시간 연결 중입니다."
+    : !canSendMessage
+    ? "이 조 채팅은 보낼 수 없습니다."
+    : "메시지를 입력하세요";
+
   if (!isOpen) return null;
 
   return (
@@ -161,7 +195,7 @@ export default function MeetingChatModal({
         className={[
           "pointer-events-auto flex flex-col border border-Subbrown-4 bg-background shadow-[0_3px_5.1px_rgba(61,52,46,0.15)]",
           isTabletUp
-            ? "absolute w-[426px] h-[716px] rounded-[8px]"
+            ? "absolute h-[716px] w-[426px] rounded-[8px]"
             : "h-[100dvh] w-full",
         ].join(" ")}
         style={isTabletUp ? { left: position.x, top: position.y } : undefined}
@@ -182,7 +216,7 @@ export default function MeetingChatModal({
             <Image src="/ArrowLeft3.svg" alt="" fill className="object-contain" />
           </button>
 
-          <div className="text-center text-Gray-7 subhead_4_1 truncate">
+          <div className="truncate text-center text-Gray-7 subhead_4_1">
             {selectedTeam?.teamName ?? ""}
           </div>
 
@@ -217,10 +251,10 @@ export default function MeetingChatModal({
                       onSelectTeam(Number(team.teamId));
                     }}
                     className={[
-                      "shrink-0 flex h-[36px] min-w-[83px] items-center justify-center rounded-[4px] border px-[10px] transition-colors body_2_2 cursor-pointer",
+                      "body_2_2 flex h-[36px] min-w-[83px] shrink-0 cursor-pointer items-center justify-center rounded-[4px] border px-[10px] transition-colors",
                       isActive
-                        ? "bg-primary-2 border-primary-2 text-White"
-                        : "bg-White border-Subbrown-4 text-Gray-7 hover:bg-Gray-1",
+                        ? "border-primary-2 bg-primary-2 text-White"
+                        : "border-Subbrown-4 bg-White text-Gray-7 hover:bg-Gray-1",
                     ].join(" ")}
                   >
                     {team.teamName}
@@ -277,7 +311,7 @@ export default function MeetingChatModal({
                         </span>
                       </div>
 
-                      <div className="w-fit max-w-full rounded-[12px] bg-[#F6F3F1] px-4 py-3 text-Gray-7 body_2_3 whitespace-pre-wrap break-words">
+                      <div className="body_2_3 w-fit max-w-full whitespace-pre-wrap break-words rounded-[12px] bg-[#F6F3F1] px-4 py-3 text-Gray-7">
                         {message.content}
                       </div>
                     </div>
@@ -289,15 +323,35 @@ export default function MeetingChatModal({
         </div>
 
         <div className="border-t border-Subbrown-4 px-5 py-4">
-          <div className="flex items-center gap-3 rounded-[8px] border border-Subbrown-4 bg-White px-4 py-3 opacity-60">
+          <div
+            className={[
+              "flex items-center gap-3 rounded-[8px] border border-Subbrown-4 bg-White px-4 py-3",
+              !isSocketConnected || !canSendMessage ? "opacity-60" : "",
+            ].join(" ")}
+          >
             <input
-              disabled
-              className="flex-1 bg-transparent outline-none text-Gray-5 body_1_2"
-              placeholder="채팅 전송은 다음 단계에서 연결합니다."
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={handleKeyDown}
+              disabled={!isSocketConnected || !canSendMessage}
+              className="body_1_2 flex-1 bg-transparent text-Gray-5 outline-none"
+              placeholder={inputPlaceholder}
             />
-            <div className="relative h-6 w-6 shrink-0">
+
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={!isSocketConnected || !canSendMessage || !draft.trim()}
+              className={[
+                "relative h-6 w-6 shrink-0",
+                !isSocketConnected || !canSendMessage || !draft.trim()
+                  ? "cursor-not-allowed opacity-50"
+                  : "cursor-pointer hover:brightness-90",
+              ].join(" ")}
+              aria-label="채팅 전송"
+            >
               <Image src="/Send.svg" alt="" fill className="object-contain" />
-            </div>
+            </button>
           </div>
         </div>
       </div>
