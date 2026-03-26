@@ -170,6 +170,7 @@ export default function ReviewList({
                   {!isEditing && (
                     <ItemMoreMenu
                       canManage={canManage}
+                      canReport={!canManage}
                       onReport={() => onReport(item.id)}
                       onEdit={() => startEdit(item)}
                       onDelete={() => openDelete(item.id)}
@@ -238,6 +239,7 @@ export default function ReviewList({
                 {!isEditing && (
                   <ItemMoreMenu
                     canManage={canManage}
+                    canReport={!canManage}
                     onReport={() => onReport(item.id)}
                     onEdit={() => startEdit(item)}
                     onDelete={() => openDelete(item.id)}

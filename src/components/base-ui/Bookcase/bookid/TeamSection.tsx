@@ -51,7 +51,6 @@ export default function TeamSection({ teamName, members }: Props) {
             key={member.id}
             name={member.name}
             profileImageUrl={member.profileImageUrl}
-            onMoreClick={() => console.log(`${member.name} 더보기 클릭`)}
           />
         ))}
       </div>
