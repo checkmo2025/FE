@@ -237,25 +237,6 @@ export default function MeetingPage() {
 
   const presentationSubscribeTeamId = isStaff ? selectedTeamId : myTeamId;
 
-  useEffect(() => {
-    console.log("[meeting page] selectedTeam state changed", {
-      selectedTeamId,
-      selectedTeamName: selectedTeam?.teamName ?? null,
-      myTeamId,
-      canSelectCurrentTeamTopic,
-      isConnected,
-      presentationSubscribeTeamId,
-      pendingKeys: [...pendingPresentationKeys],
-    });
-  }, [
-    selectedTeamId,
-    selectedTeam?.teamName,
-    myTeamId,
-    canSelectCurrentTeamTopic,
-    presentationSubscribeTeamId,
-    pendingPresentationKeys,
-  ]);
-
   const chatSelectableTeams = useMemo<ChatTeam[]>(() => {
     const mapped = teams.map((team) => ({
       teamId: String(team.teamId),
@@ -423,18 +404,6 @@ export default function MeetingPage() {
     if (selectedTeamId === null) return;
 
     const key = makePresentationPendingKey(selectedTeamId, topicId);
-
-    console.log("[meeting page] toggle attempt", {
-      selectedTeamId,
-      myTeamId,
-      topicId,
-      currentSelected,
-      canSelectCurrentTeamTopic,
-      isConnected,
-      presentationSubscribeTeamId,
-      isPending: pendingPresentationKeys.has(key),
-      pendingKeys: [...pendingPresentationKeys],
-    });
 
     if (!canSelectCurrentTeamTopic) {
       toast.error("현재 조의 발제만 선택할 수 있습니다.");
