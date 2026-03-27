@@ -23,6 +23,8 @@ interface SignupState {
     profileImage: string | null;
     isProfileImageSet: boolean; // Explicit check for whether user set an image or chose default
     selectedInterests: string[];
+    // Social Login
+    isSocial: boolean;
     // Toast
     toast: { message: string; visible: boolean } | null;
 }
@@ -43,6 +45,7 @@ interface SignupActions {
     setProfileImage: (image: string | null) => void;
     setIsProfileImageSet: (isSet: boolean) => void;
     setSelectedInterests: (interests: string[]) => void;
+    setIsSocial: (isSocial: boolean) => void;
     showToast: (message: string) => void;
     resetSignup: () => void;
 }
@@ -65,6 +68,7 @@ const initialState: SignupState = {
     profileImage: "/default_profile_1.svg",
     isProfileImageSet: false,
     selectedInterests: [],
+    isSocial: false,
     toast: null,
 };
 
@@ -110,6 +114,7 @@ export const SignupProvider = ({ children }: { children: ReactNode }) => {
         setProfileImage: (profileImage) => setState((prev) => ({ ...prev, profileImage })),
         setIsProfileImageSet: (isProfileImageSet) => setState((prev) => ({ ...prev, isProfileImageSet })),
         setSelectedInterests: (selectedInterests) => setState((prev) => ({ ...prev, selectedInterests })),
+        setIsSocial: (isSocial) => setState((prev) => ({ ...prev, isSocial })),
         showToast,
         resetSignup: () => setState(initialState),
     }), [showToast]);
