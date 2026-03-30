@@ -16,7 +16,7 @@ export default function SignupStepPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const step = params.step as string;
-    const { isSocial, setIsSocial, setEmail } = useSignup();
+    const { isSocial, setIsSocial, setEmail, email } = useSignup();
     const { user, isLoggedIn } = useAuthStore();
 
     // 소셜 로그인 여부 감지 (URL 파라미터 또는 이미 로그인된 프로필 미완성 유저)
@@ -25,15 +25,19 @@ export default function SignupStepPage() {
         // 이미 로그인되어 있는데 프로필 정보가 없는 경우 (소셜 로그인 직후 리다이렉트된 상태)
         const storeIsSocial = isLoggedIn && user && !user.nickname;
 
-        if (urlIsSocial || storeIsSocial) {
-            setIsSocial(true);
-            if (user?.email) {
-                setEmail(user.email);
-            } else if (searchParams.get("email")) {
-                setEmail(searchParams.get("email") as string);
+        const shouldBeSocial = urlIsSocial || storeIsSocial;
+
+        if (shouldBeSocial) {
+            if (!isSocial) {
+                setIsSocial(true);
+            }
+
+            const newEmail = user?.email ?? searchParams.get("email");
+            if (newEmail && newEmail !== email) {
+                setEmail(newEmail);
             }
         }
-    }, [searchParams, user, isLoggedIn, setIsSocial, setEmail]);
+    }, [searchParams, user, isLoggedIn, isSocial, email, setIsSocial, setEmail]);
 
     const navigateTo = (nextStep: string) => {
         router.push(`/signup/${nextStep}`);
