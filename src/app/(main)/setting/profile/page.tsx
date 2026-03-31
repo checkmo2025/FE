@@ -12,8 +12,8 @@ export default function ProfileEditPage() {
   const { user } = useAuthStore();
   const [nickname, setNickname] = useState(user?.nickname || "");
   const [intro, setIntro] = useState(user?.description || "");
-  const [name, setName] = useState(user?.nickname || ""); // Assuming nickname is used for name if not separate
-  const [phone, setPhone] = useState("");
+  const [name, setName] = useState(user?.name || "");
+  const [phone, setPhone] = useState(user?.phoneNumber || "");
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     user?.categories || []
   );
@@ -31,10 +31,9 @@ export default function ProfileEditPage() {
     if (user) {
       setNickname(user.nickname || "");
       setIntro(user.description || "");
-      // 백엔드 명세상 email 외에 name 속성이 별도로 user 데이터에 있다면 그걸 쓰는게 맞지만, 현재 auth의 User 타입엔 없으므로 일단 nickname
-      setName(user.nickname || "");
+      setName(user.name || "");
+      setPhone(user.phoneNumber || "");
       setSelectedCategories(user.categories || []);
-      setPreviewImage(user.profileImageUrl || null);
       setPreviewImage(user.profileImageUrl || null);
     }
   }, [user]);

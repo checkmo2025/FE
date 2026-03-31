@@ -28,6 +28,8 @@ export interface UpdatePasswordRequest {
 
 export interface ProfileResponse {
     nickname: string;
+    name: string;
+    phoneNumber: string;
     description: string;
     profileImageUrl: string;
     categories: string[];
