@@ -11,6 +11,7 @@ export interface RecommendResponse {
 export interface UpdateProfileRequest {
     description: string;
     categories: string[];
+    phoneNumber: string;
     imgUrl?: string;
 }
 
@@ -28,6 +29,8 @@ export interface UpdatePasswordRequest {
 
 export interface ProfileResponse {
     nickname: string;
+    name: string;
+    phoneNumber: string;
     description: string;
     profileImageUrl: string;
     categories: string[];

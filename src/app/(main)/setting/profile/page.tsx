@@ -12,8 +12,8 @@ export default function ProfileEditPage() {
   const { user } = useAuthStore();
   const [nickname, setNickname] = useState(user?.nickname || "");
   const [intro, setIntro] = useState(user?.description || "");
-  const [name, setName] = useState(user?.nickname || ""); // Assuming nickname is used for name if not separate
-  const [phone, setPhone] = useState("");
+  const [name, setName] = useState(user?.name || "");
+  const [phone, setPhone] = useState(user?.phoneNumber || "");
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     user?.categories || []
   );
@@ -27,14 +27,20 @@ export default function ProfileEditPage() {
 
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfileMutation();
 
+  const formatPhoneNumber = (value: string) => {
+    const phoneNumber = value.replace(/[^\d]/g, "");
+    if (phoneNumber.length <= 3) return phoneNumber;
+    if (phoneNumber.length <= 7) return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
+    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7, 11)}`;
+  };
+
   useEffect(() => {
     if (user) {
       setNickname(user.nickname || "");
       setIntro(user.description || "");
-      // 백엔드 명세상 email 외에 name 속성이 별도로 user 데이터에 있다면 그걸 쓰는게 맞지만, 현재 auth의 User 타입엔 없으므로 일단 nickname
-      setName(user.nickname || "");
+      setName(user.name || "");
+      setPhone(formatPhoneNumber(user.phoneNumber || ""));
       setSelectedCategories(user.categories || []);
-      setPreviewImage(user.profileImageUrl || null);
       setPreviewImage(user.profileImageUrl || null);
     }
   }, [user]);
@@ -47,6 +53,11 @@ export default function ProfileEditPage() {
           ? [...prev, category]
           : prev
     );
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setPhone(formatted);
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,6 +81,7 @@ export default function ProfileEditPage() {
     updateProfile({
       description: intro.slice(0, 20),
       categories: selectedCategories,
+      phoneNumber: phone,
       profileImageFile,
       currentProfileImageUrl: previewImage,
     }, {
@@ -153,8 +165,9 @@ export default function ProfileEditPage() {
             <input
               className={inputClass}
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={handlePhoneChange}
               placeholder="010-0000-0000"
+              maxLength={13}
             />
           </div>
         </div>

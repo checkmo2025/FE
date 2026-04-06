@@ -19,12 +19,20 @@ export default function SignupStepPage() {
     const { isSocial, setIsSocial, setEmail, email } = useSignup();
     const { user, isLoggedIn } = useAuthStore();
 
-    // 소셜 로그인 여부 감지 (URL 파라미터 또는 이미 로그인된 프로필 미완성 유저)
+    // 소셜 로그인 여부 감지 및 리다이렉트 가드
     useEffect(() => {
-        const urlIsSocial = searchParams.get("isSocial") === "true";
+        const isSocialParam = searchParams.get("isSocial");
+        const urlIsSocial = isSocialParam === "true";
+        const urlIsSocialFalse = isSocialParam === "false";
+
+        // 1. 기존 유저 (isSocial=false)인 경우 메인으로 리다이렉트
+        if (urlIsSocialFalse) {
+            router.replace("/");
+            return;
+        }
+
         // 이미 로그인되어 있는데 프로필 정보가 없는 경우 (소셜 로그인 직후 리다이렉트된 상태)
         const storeIsSocial = isLoggedIn && user && !user.nickname;
-
         const shouldBeSocial = urlIsSocial || storeIsSocial;
 
         if (shouldBeSocial) {
@@ -36,11 +44,17 @@ export default function SignupStepPage() {
             if (newEmail && newEmail !== email) {
                 setEmail(newEmail);
             }
+
+            // 2. 소셜 가입 신규 유저인데 이메일/비밀번호 단계에 진입한 경우 프로필로 강제 이동
+            if (step === "email" || step === "password") {
+                router.replace(`/signup/profile?isSocial=true`);
+            }
         }
-    }, [searchParams, user, isLoggedIn, isSocial, email, setIsSocial, setEmail]);
+    }, [searchParams, user, isLoggedIn, isSocial, email, setIsSocial, setEmail, step, router]);
 
     const navigateTo = (nextStep: string) => {
-        router.push(`/signup/${nextStep}`);
+        const query = isSocial ? "?isSocial=true" : "";
+        router.push(`/signup/${nextStep}${query}`);
     };
 
     const steps: Record<string, React.ReactNode> = {
