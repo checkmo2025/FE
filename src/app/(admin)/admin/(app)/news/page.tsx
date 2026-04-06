@@ -21,9 +21,10 @@ export default function NewsPage() {
   const [newsList, setNewsList] = useState<NewsRow[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const handleKeywordChange = (v: string) => {
-    setKeyword(v);
+    setKeyword(v.slice(0, 40));
     setPage(1);
   };
 
@@ -33,6 +34,7 @@ export default function NewsPage() {
     const run = async () => {
       try {
         setLoading(true);
+        setError(false);
 
         const apiPage = Math.max(0, page - 1);
         const data = await fetchAdminNews(apiPage, searchKeyword.trim());
@@ -56,8 +58,10 @@ export default function NewsPage() {
       } catch (e) {
         console.error(e);
         if (!alive) return;
+
         setNewsList([]);
         setTotalPages(1);
+        setError(true);
       } finally {
         if (!alive) return;
         setLoading(false);
@@ -77,7 +81,7 @@ export default function NewsPage() {
 
   const handleSearch = () => {
     setPage(1);
-    setSearchKeyword(keyword);
+    setSearchKeyword(keyword.trim());
   };
 
   const goTo = (p: number) => {
@@ -156,40 +160,49 @@ export default function NewsPage() {
             </thead>
 
             <tbody>
-              {filtered.map((n) => (
-                <tr
-                  key={n.newsId}
-                  className="h-[48px] border-b border-Subbrown-4 body_1_2"
-                >
-                  <td className="pl-[12px] py-0 text-Gray-7">{n.newsId}</td>
-                  <td className="pl-[12px] py-0 text-Gray-7 truncate">
-                    {n.title}
-                  </td>
-                  <td className="pl-[12px] py-0 text-Gray-7 truncate">
-                    {n.authorEmail}
-                  </td>
-                  <td className="pl-[12px] py-0 text-Gray-7">{n.createdAt}</td>
-                  <td className="pl-[12px] py-0 text-Gray-7">{n.postedAt}</td>
-                  <td className="pl-[12px] py-0">
-                    <Link
-                      href={`/admin/news/${n.newsId}`}
-                      className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
-                    >
-                      상세보기
-                    </Link>
+              {error ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="py-10 text-center body_1_2 text-red-500"
+                  >
+                    {searchKeyword ? "검색 실패" : "소식 리스트 불러오기 실패"}
                   </td>
                 </tr>
-              ))}
-
-              {!loading && filtered.length === 0 && (
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td
                     colSpan={6}
                     className="py-10 text-center body_1_2 text-Gray-4"
                   >
-                    표시할 소식이 없습니다.
+                    {searchKeyword ? "검색 결과가 없음" : "소식 리스트가 없습니다."}
                   </td>
                 </tr>
+              ) : (
+                filtered.map((n) => (
+                  <tr
+                    key={n.newsId}
+                    className="h-[48px] border-b border-Subbrown-4 body_1_2"
+                  >
+                    <td className="pl-[12px] py-0 text-Gray-7">{n.newsId}</td>
+                    <td className="pl-[12px] py-0 text-Gray-7 truncate">
+                      {n.title}
+                    </td>
+                    <td className="pl-[12px] py-0 text-Gray-7 truncate">
+                      {n.authorEmail}
+                    </td>
+                    <td className="pl-[12px] py-0 text-Gray-7">{n.createdAt}</td>
+                    <td className="pl-[12px] py-0 text-Gray-7">{n.postedAt}</td>
+                    <td className="pl-[12px] py-0">
+                      <Link
+                        href={`/admin/news/${n.newsId}`}
+                        className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
+                      >
+                        상세보기
+                      </Link>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>

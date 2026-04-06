@@ -19,7 +19,6 @@ function getSafeImageSrc(
 
   if (!trimmed) return fallback;
 
-  // Swagger 예시값이나 잘못된 문자열 방어
   if (
     trimmed === "string" ||
     trimmed === "null" ||
@@ -28,7 +27,6 @@ function getSafeImageSrc(
     return fallback;
   }
 
-  // next/image 에서 허용 가능한 경로만 통과
   if (
     trimmed.startsWith("/") ||
     trimmed.startsWith("http://") ||
@@ -47,6 +45,7 @@ export default function AdminNewsDetailPage() {
   const [news, setNews] = useState<AdminNewsDetailResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [isInvalid, setIsInvalid] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     if (Number.isNaN(newsId)) {
@@ -59,19 +58,21 @@ export default function AdminNewsDetailPage() {
 
     const run = async () => {
       try {
+        setIsError(false);
+
         const response = await fetchAdminNewsDetail(newsId);
 
         if (!alive) return;
 
         if (!response.isSuccess) {
-          setIsInvalid(true);
+          setIsError(true);
           return;
         }
 
         setNews(response.result);
       } catch (error) {
         if (!alive) return;
-        setIsInvalid(true);
+        setIsError(true);
       } finally {
         if (!alive) return;
         setLoading(false);
@@ -90,7 +91,15 @@ export default function AdminNewsDetailPage() {
   }, [news?.thumbnailUrl]);
 
   if (loading) {
-  return <div className="text-center py-20">Loading...</div>;
+    return <div className="text-center py-20">Loading...</div>;
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 w-full text-red-500 text-sm font-medium">
+        소식 상세정보 불러오기 실패
+      </div>
+    );
   }
 
   if (isInvalid || !news) {
@@ -99,7 +108,6 @@ export default function AdminNewsDetailPage() {
 
   return (
     <>
-      {/* Hero */}
       <div className="relative w-screen h-[297px] t:h-[468px] overflow-hidden">
         <Image
           src={thumbnailSrc}
@@ -111,7 +119,6 @@ export default function AdminNewsDetailPage() {
         />
       </div>
 
-      {/* Main */}
       <div className="mx-auto w-full max-w-[1400px] px-9 t:px-[200px] mt-6 t:mt-10">
         <p className="body_2_2 text-Gray-4 mb-2">
           게시기간 {news.publishStartAt} - {news.publishEndAt}
@@ -122,14 +129,12 @@ export default function AdminNewsDetailPage() {
           <p className="body_1_2 text-Gray-3">{news.createdAt}</p>
         </div>
 
-        {/* 본문 */}
         <div className="w-full max-w-[1040px] mt-22">
           <p className="body_1_3 t:subhead_3 text-Gray-6 whitespace-pre-wrap">
             {news.content}
           </p>
         </div>
 
-        {/* 수정 버튼 */}
         <div className="w-full max-w-[1040px] mt-[72px] mb-[87px]">
           <Link
             href={`/admin/news/${news.newsId}/edit`}

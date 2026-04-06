@@ -59,7 +59,7 @@ export default function Page({ params }: PageProps) {
     return (
       <main className="w-full bg-background">
         <section className="w-[1040px] mx-auto pt-[80px]">
-          <div>회원 정보를 불러오지 못했습니다.</div>
+          <div>멤버 상세보기 불러오기 실패</div>
         </section>
       </main>
     );

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import NewsNewForm from "@/components/base-ui/Admin/news/NewForm";
+import Toast from "@/components/base-ui/Admin/Toast";
 import {
   fetchAdminNewsDetail,
   updateAdminNewsWithImages,
@@ -34,6 +35,13 @@ export default function AdminNewsEditPage() {
   const [extraImages, setExtraImages] = useState<ExtraImageItem[]>([]);
 
   const [submitting, setSubmitting] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const closeToast = () => {
+    setToastMessage("");
+  };
+
+  const isImageFile = (file: File) => file.type.startsWith("image/");
 
   useEffect(() => {
     if (Number.isNaN(newsId)) return;
@@ -89,6 +97,12 @@ export default function AdminNewsEditPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (!isImageFile(file)) {
+      setToastMessage("이미지 파일 형식 오류");
+      e.target.value = "";
+      return;
+    }
+
     setRepFile(file);
 
     setRepPreview((prev) => {
@@ -104,6 +118,13 @@ export default function AdminNewsEditPage() {
   const onPickExtraImages = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
     if (!files.length) return;
+
+    const hasInvalidFile = files.some((file) => !isImageFile(file));
+    if (hasInvalidFile) {
+      setToastMessage("이미지 파일 형식 오류");
+      e.target.value = "";
+      return;
+    }
 
     setExtraImages((prev) => {
       const remaining = Math.max(0, 5 - prev.length);
@@ -159,7 +180,8 @@ export default function AdminNewsEditPage() {
 
     const parsed = parseDateRange(dateRange);
     if (!parsed) {
-      return alert("게시 요청 날짜 형식이 올바르지 않아요. (YYYY/MM/DD~YYYY/MM/DD)");
+      setToastMessage("게시 날짜 오류");
+      return;
     }
 
     const today = new Date();
@@ -215,12 +237,15 @@ export default function AdminNewsEditPage() {
 
       if (!res.isSuccess) throw new Error(res.message || "소식 수정 실패");
 
-      alert("소식 수정 완료!");
-      router.push(`/admin/news/${newsId}`);
-      router.refresh();
+      setToastMessage("소식 수정 성공");
+
+      setTimeout(() => {
+        router.push(`/admin/news/${newsId}`);
+        router.refresh();
+      }, 500);
     } catch (err) {
       console.error(err);
-      alert("소식 수정 또는 삭제 실패");
+      setToastMessage("소식 수정 실패");
     } finally {
       setSubmitting(false);
     }
@@ -231,34 +256,40 @@ export default function AdminNewsEditPage() {
   );
 
   return (
-    <main className="min-h-screen bg-[var(--background)]">
-      <section className="mx-auto w-full px-6 py-10">
-        <div className="rounded-[12px] bg-transparent">
-          <NewsNewForm
-            requesterEmail={requesterEmail}
-            title={title}
-            content={content}
-            dateRange={dateRange}
-            originalLink={originalLink}
-            carousel={carousel}
-            setRequesterEmail={setRequesterEmail}
-            setTitle={setTitle}
-            setContent={setContent}
-            setDateRange={setDateRange}
-            setOriginalLink={setOriginalLink}
-            setCarousel={setCarousel}
-            repPreview={repPreview}
-            extraPreviews={extraPreviews}
-            onPickRepImage={onPickRepImage}
-            onPickExtraImages={onPickExtraImages}
-            removeExtraAt={removeExtraAt}
-            submitting={submitting}
-            onSubmit={onSubmit}
-            submitLabel="수정하기"
-            submittingLabel="수정 중..."
-          />
-        </div>
-      </section>
-    </main>
+    <>
+      <main className="min-h-screen bg-[var(--background)]">
+        <section className="mx-auto w-full px-6 py-10">
+          <div className="rounded-[12px] bg-transparent">
+            <NewsNewForm
+              requesterEmail={requesterEmail}
+              title={title}
+              content={content}
+              dateRange={dateRange}
+              originalLink={originalLink}
+              carousel={carousel}
+              setRequesterEmail={setRequesterEmail}
+              setTitle={setTitle}
+              setContent={setContent}
+              setDateRange={setDateRange}
+              setOriginalLink={setOriginalLink}
+              setCarousel={setCarousel}
+              repPreview={repPreview}
+              extraPreviews={extraPreviews}
+              onPickRepImage={onPickRepImage}
+              onPickExtraImages={onPickExtraImages}
+              removeExtraAt={removeExtraAt}
+              submitting={submitting}
+              onSubmit={onSubmit}
+              submitLabel="수정하기"
+              submittingLabel="수정 중..."
+            />
+          </div>
+        </section>
+      </main>
+
+      {toastMessage && (
+        <Toast message={toastMessage} onClose={closeToast} />
+      )}
+    </>
   );
 }

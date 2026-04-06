@@ -108,7 +108,7 @@ export default function GroupDetailPage() {
         setError(
           err instanceof Error
             ? err.message
-            : "모임 상세 정보를 불러오지 못했습니다.",
+            : "모임 상세정보 불러오기 실패",
         );
       } finally {
         setLoading(false);

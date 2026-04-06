@@ -1,6 +1,8 @@
 export interface User {
   email: string;
   nickname?: string;
+  name?: string;
+  phoneNumber?: string;
   description?: string;
   profileImageUrl?: string;
   categories?: string[];

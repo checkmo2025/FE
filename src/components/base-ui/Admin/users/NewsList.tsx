@@ -48,7 +48,7 @@ export default function NewsList({ memberNickname }: Props) {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-10 w-full text-red-500 text-sm font-medium">
-        등록 소식을 불러오는 데 실패했습니다.
+        멤버 등록 소식 불러오기 실패
       </div>
     );
   }
@@ -57,7 +57,7 @@ export default function NewsList({ memberNickname }: Props) {
     return (
       <div className="flex justify-center items-center w-full max-w-[1040px] mx-auto py-[80px]">
         <p className="text-Gray-4 text-sm font-medium whitespace-pre-wrap text-center">
-          등록한 소식이 없습니다.
+          멤버 등록 소식 없음
         </p>
       </div>
     );
