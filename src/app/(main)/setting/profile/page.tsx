@@ -27,12 +27,19 @@ export default function ProfileEditPage() {
 
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfileMutation();
 
+  const formatPhoneNumber = (value: string) => {
+    const phoneNumber = value.replace(/[^\d]/g, "");
+    if (phoneNumber.length <= 3) return phoneNumber;
+    if (phoneNumber.length <= 7) return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
+    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7, 11)}`;
+  };
+
   useEffect(() => {
     if (user) {
       setNickname(user.nickname || "");
       setIntro(user.description || "");
       setName(user.name || "");
-      setPhone(user.phoneNumber || "");
+      setPhone(formatPhoneNumber(user.phoneNumber || ""));
       setSelectedCategories(user.categories || []);
       setPreviewImage(user.profileImageUrl || null);
     }
@@ -46,6 +53,11 @@ export default function ProfileEditPage() {
           ? [...prev, category]
           : prev
     );
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setPhone(formatted);
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,6 +81,7 @@ export default function ProfileEditPage() {
     updateProfile({
       description: intro.slice(0, 20),
       categories: selectedCategories,
+      phoneNumber: phone,
       profileImageFile,
       currentProfileImageUrl: previewImage,
     }, {
@@ -152,8 +165,9 @@ export default function ProfileEditPage() {
             <input
               className={inputClass}
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={handlePhoneChange}
               placeholder="010-0000-0000"
+              maxLength={13}
             />
           </div>
         </div>

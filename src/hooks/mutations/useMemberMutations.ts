@@ -9,6 +9,7 @@ import { memberKeys } from "../queries/useMemberQueries";
 interface UpdateProfilePayload {
     description: string;
     categories: string[];
+    phoneNumber: string;
     profileImageFile: File | null;
     currentProfileImageUrl: string | null;
 }
@@ -41,6 +42,7 @@ export const useUpdateProfileMutation = () => {
             await memberService.updateProfile({
                 description: payload.description,
                 categories: payload.categories,
+                phoneNumber: payload.phoneNumber,
                 imgUrl: imgUrl || "", // Backend might expect empty string for default
             });
         },

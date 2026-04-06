@@ -11,6 +11,7 @@ export interface RecommendResponse {
 export interface UpdateProfileRequest {
     description: string;
     categories: string[];
+    phoneNumber: string;
     imgUrl?: string;
 }
 
