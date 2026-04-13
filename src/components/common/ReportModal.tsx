@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 import Image from "next/image";
 
 type ReportType = "일반" | "책 이야기" | "책이야기(댓글)" | "책모임 내부" | null;
@@ -19,6 +20,8 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReportTy
     const reportTypes: ReportType[] = ["일반", "책 이야기", "책이야기(댓글)", "책모임 내부"];
     const isSubmitEnabled = reportType !== null && reportContent.trim().length > 0;
 
+    useScrollLock(isOpen);
+
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === "Escape" && isOpen) {
@@ -27,21 +30,18 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReportTy
         };
 
         if (isOpen) {
-            document.body.style.overflow = "hidden";
             document.addEventListener("keydown", handleEscape);
             setReportType(defaultReportType);
         } else {
-            document.body.style.overflow = "";
             // Reset state when closed
             setReportType(defaultReportType);
             setReportContent("");
         }
 
         return () => {
-            document.body.style.overflow = "";
             document.removeEventListener("keydown", handleEscape);
         };
-    }, [isOpen, onClose]);
+    }, [isOpen, onClose, defaultReportType]);
 
     if (!isOpen) return null;
 

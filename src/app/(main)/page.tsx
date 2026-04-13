@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import LoginModal from "@/components/base-ui/Login/LoginModal";
+
 import HomeNewsSection from "@/components/base-ui/home/News/HomeNewsSection";
 import HomeClubSection from "@/components/base-ui/home/Club/HomeClubSection";
 import HomeRecommendationSection from "@/components/base-ui/home/Recommendation/HomeRecommendationSection";
@@ -14,7 +14,7 @@ import { useHomeInteractions } from "@/hooks/useHomeInteractions";
 
 
 export default function HomePage() {
-  const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
+  const { isLoggedIn, openLoginModal } = useAuthStore();
   const { handleToggleFollow } = useHomeInteractions();
 
   const { data: membersData, isLoading: isLoadingMembers, isError: isErrorMembers } = useRecommendedMembersQuery(isLoggedIn);
@@ -28,7 +28,6 @@ export default function HomePage() {
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 t:px-6">
-      {isLoginModalOpen && <LoginModal onClose={() => closeLoginModal()} />}
 
       <div className="flex flex-col gap-6 w-full">
         {/* 상단 영역: 뉴스, 독서모임, 추천 (기기별 배치 자동 조정) */}

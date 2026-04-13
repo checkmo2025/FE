@@ -6,7 +6,7 @@ import Image from "next/image";
 import { NavItem } from "./NavItem";
 import { useState, useRef, useEffect } from "react";
 import SearchModal from "./SearchModal";
-import LoginModal from "../base-ui/Login/LoginModal";
+
 import NotificationDropdown from "./NotificationDropdown";
 import { useHeaderTitle } from "@/contexts/HeaderTitleContext";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -34,7 +34,7 @@ export default function Header() {
   const router = useRouter();
   const defaultTitle = getPageTitle(pathname);
   const { customTitle } = useHeaderTitle();
-  const { user, isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
+  const { user, isLoggedIn, openLoginModal } = useAuthStore();
   const pageTitle = customTitle || defaultTitle;
   const { isSearchOpen, toggleSearch, closeSearch } = useSearchStore();
 
@@ -57,6 +57,7 @@ export default function Header() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isNotificationOpen]);
+
 
   const handleNavClick = (href: string, label: string) => {
     if (label === "모임" && !isLoggedIn) {
@@ -164,9 +165,6 @@ export default function Header() {
         isOpen={isSearchOpen}
         onClose={closeSearch}
       />
-      {isLoginModalOpen && (
-        <LoginModal onClose={() => closeLoginModal()} />
-      )}
     </header>
   );
 }

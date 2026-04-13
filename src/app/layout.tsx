@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { HeaderTitleProvider } from "@/contexts/HeaderTitleContext";
 import Providers from "@/app/providers";
+import GlobalLoginModal from "@/components/base-ui/Login/GlobalLoginModal";
 import "@/app/globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -54,6 +55,7 @@ export default function RootLayout({
             <HeaderTitleProvider>
               {children}
               <BottomNav />
+              <GlobalLoginModal />
               <Toaster position="top-center" />
             </HeaderTitleProvider>
           </AuthProvider>
