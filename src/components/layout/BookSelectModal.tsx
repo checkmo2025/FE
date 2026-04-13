@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 import Image from "next/image";
 import { useInfiniteBookSearchQuery } from "@/hooks/queries/useBookQueries";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -53,6 +54,8 @@ export default function BookSelectModal({
     }
   };
 
+  useScrollLock(isOpen);
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
@@ -61,14 +64,10 @@ export default function BookSelectModal({
     };
 
     if (isOpen) {
-      document.body.style.overflow = "hidden";
       document.addEventListener("keydown", handleEscape);
-    } else {
-      document.body.style.overflow = "";
     }
 
     return () => {
-      document.body.style.overflow = "";
       document.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen, onClose]);

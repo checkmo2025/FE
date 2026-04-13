@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { useScrollLock } from "@/components/base-ui/Login/hooks/useScrollLock";
+import { useScrollLock } from "@/hooks/useScrollLock";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

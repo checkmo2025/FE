@@ -10,7 +10,7 @@ import SocialLogin from "./components/SocialLogin";
 
 // Hooks
 import useLoginForm from "./hooks/useLoginForm";
-import { useScrollLock } from "./hooks/useScrollLock";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 type Props = {
   onClose: () => void;
