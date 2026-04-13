@@ -10,7 +10,7 @@ import Image from "next/image";
 import { isValidUrl } from "@/utils/url";
 import { useParams, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
-import LoginModal from "@/components/base-ui/Login/LoginModal";
+
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 import {
@@ -29,7 +29,7 @@ export default function StoryDetailPage() {
 
   const { mutate: toggleLike } = useToggleStoryLikeMutation();
   const { mutate: toggleFollow } = useToggleFollowMutation();
-  const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } =
+  const { isLoggedIn, openLoginModal } =
     useAuthStore();
 
   useEffect(() => {
@@ -103,7 +103,6 @@ export default function StoryDetailPage() {
 
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4">
-      {isLoginModalOpen && <LoginModal onClose={() => closeLoginModal()} />}
 
       <div className="t:hidden w-screen -mx-4 border-b border-zinc-300">
         <div className="px-4 h-[44px] flex gap-5 items-center">

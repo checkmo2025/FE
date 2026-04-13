@@ -5,7 +5,7 @@ import ListSubscribeLarge from "@/components/base-ui/home/Recommendation/list_su
 
 import { useRouter } from "next/navigation";
 import FloatingFab from "@/components/base-ui/Float";
-import LoginModal from "@/components/base-ui/Login/LoginModal";
+
 import { useAuthStore } from "@/store/useAuthStore";
 import { useInfiniteStoriesQuery, useFollowingInfiniteStoriesQuery, useClubInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
@@ -17,7 +17,7 @@ import CategorySlider from "@/components/base-ui/BookStory/Common/CategorySlider
 
 export default function StoriesPage() {
   const router = useRouter();
-  const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
+  const { isLoggedIn, openLoginModal } = useAuthStore();
   const { mutate: toggleLike } = useToggleStoryLikeMutation();
   const { mutate: toggleFollow } = useToggleFollowMutation();
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -154,9 +154,6 @@ export default function StoriesPage() {
 
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4 pb-[100px]">
-      {isLoginModalOpen && (
-        <LoginModal onClose={() => closeLoginModal()} />
-      )}
       <CategorySlider
         selectedCategory={selectedCategory}
         onCategoryChange={setSelectedCategory}
