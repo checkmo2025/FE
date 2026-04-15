@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 type ConfirmModalProps = {
     isOpen: boolean;
@@ -10,6 +11,8 @@ type ConfirmModalProps = {
 };
 
 export default function ConfirmModal({ isOpen, message, onConfirm, onCancel }: ConfirmModalProps) {
+    useScrollLock(isOpen);
+
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === "Escape" && isOpen) {
@@ -18,14 +21,10 @@ export default function ConfirmModal({ isOpen, message, onConfirm, onCancel }: C
         };
 
         if (isOpen) {
-            document.body.style.overflow = "hidden";
             document.addEventListener("keydown", handleEscape);
-        } else {
-            document.body.style.overflow = "";
         }
 
         return () => {
-            document.body.style.overflow = "";
             document.removeEventListener("keydown", handleEscape);
         };
     }, [isOpen, onCancel]);

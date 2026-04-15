@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 import Image from "next/image";
 
 const ICON_CLOSE = "/icon_minus_1.svg";
@@ -27,12 +28,11 @@ export default function BookshelfDeleteConfirmModal({
   confirmText = "예",
   cancelText = "아니요",
 }: Props) {
-  // ESC 닫기 + body scroll lock
+  useScrollLock(isOpen);
+
+  // ESC 닫기
   useEffect(() => {
     if (!isOpen) return;
-
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -40,7 +40,6 @@ export default function BookshelfDeleteConfirmModal({
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
-      document.body.style.overflow = prevOverflow;
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [isOpen, onClose]);

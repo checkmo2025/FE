@@ -9,7 +9,7 @@ import Image from "next/image";
 import { isValidUrl } from "@/utils/url";
 import { useParams } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
-import LoginModal from "@/components/base-ui/Login/LoginModal";
+
 import { useStoryDetailQuery } from "@/hooks/queries/useStoryQueries";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
@@ -20,7 +20,7 @@ export default function StoryDetailPage() {
   const { data: story, isLoading, isError } = useStoryDetailQuery(Number(id));
   const { mutate: toggleLike } = useToggleStoryLikeMutation();
   const { mutate: toggleFollow } = useToggleFollowMutation();
-  const { isLoggedIn, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuthStore();
+  const { isLoggedIn, openLoginModal } = useAuthStore();
 
   const handleToggleLike = () => {
     if (!isLoggedIn) {
@@ -65,9 +65,6 @@ export default function StoryDetailPage() {
 
   return (
     <div className="relative mx-auto w-full max-w-[1400px] px-4">
-      {isLoginModalOpen && (
-        <LoginModal onClose={() => closeLoginModal()} />
-      )}
       {/* 책이야기 > 상세보기 */}
       {/* 모바일: 전체 너비 선 */}
       <div className="t:hidden w-screen -mx-4 border-b border-zinc-300">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -85,24 +86,20 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     }
   }, [isOpen]);
 
+  // isOpen 상태에 따라 body 스크롤 잠금/복원 (카운터 방식으로 중첩 모달과 안전하게 공존)
+  useScrollLock(isOpen);
+
+  // Escape 키로 검색 모달 닫기
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
         onClose();
       }
     };
-
     if (isOpen) {
-      // body 스크롤 막기
-      document.body.style.overflow = "hidden";
       document.addEventListener("keydown", handleEscape);
-    } else {
-      // body 스크롤 복원
-      document.body.style.overflow = "";
     }
-
     return () => {
-      document.body.style.overflow = "";
       document.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen, onClose]);
