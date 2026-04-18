@@ -23,9 +23,11 @@ export default function ListSubscribeElement({
   isFollowing = false,
 }: ListSubscribeElementProps) {
   return (
-    <div 
-      className="flex w-full t:w-[296px] min-h-[60px] t:h-[66px] px-[14px] py-[8px] gap-[8px] rounded-[8px] border border-Subbrown-4 bg-white cursor-pointer hover:bg-stone-100 transition-colors group"
+    <div
+      className={`flex w-full t:w-[296px] min-h-[60px] t:h-[66px] px-[14px] py-[8px] gap-[8px] rounded-[8px] border border-Subbrown-4 bg-white transition-colors group ${onProfileClick ? "cursor-pointer hover:bg-stone-100" : ""}`}
       onClick={onProfileClick}
+      role={onProfileClick ? "button" : undefined}
+      tabIndex={onProfileClick ? 0 : -1}
     >
       <div className="w-[24px] h-[24px] t:w-[32px] t:h-[32px] rounded-full overflow-hidden shrink-0 relative self-center">
         <Image

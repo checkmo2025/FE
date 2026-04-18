@@ -26,8 +26,10 @@ function ListSubscribeElementLarge({
 }: ListSubscribeElementLargeProps) {
   return (
     <div
-      className="flex w-[296px] h-[66px] px-[14px] py-[8px] gap-[8px] rounded-[8px] border border-Subbrown-4 bg-white cursor-pointer hover:bg-stone-100 transition-colors group"
+      className={`flex w-[296px] h-[66px] px-[14px] py-[8px] gap-[8px] rounded-[8px] border border-Subbrown-4 bg-white transition-colors group ${onProfileClick ? "cursor-pointer hover:bg-stone-100" : ""}`}
       onClick={onProfileClick}
+      role={onProfileClick ? "button" : undefined}
+      tabIndex={onProfileClick ? 0 : -1}
     >
       <div className="w-[32px] h-[32px] rounded-full overflow-hidden shrink-0 relative self-center">
         <Image
@@ -42,7 +44,7 @@ function ListSubscribeElementLarge({
 
       <div className="flex flex-row flex-1 min-w-0 gap-[8px] items-center">
         <div className="flex flex-col min-w-0 flex-1">
-          <p className="text-Gray-7 body_1 truncate ">{name}</p>
+          <p className={`text-Gray-7 body_1 truncate ${onProfileClick ? "group-hover:underline" : ""}`}>{name}</p>
           {subscribingCount !== undefined && subscribersCount !== undefined && (
             <p className="body_2_3 text-Gray-3">
               구독중 {subscribingCount} 구독자 {subscribersCount}
