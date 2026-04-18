@@ -14,6 +14,7 @@ import { useHomeInteractions } from "@/hooks/useHomeInteractions";
 
 
 export default function HomePage() {
+  const router = useRouter();
   const { isLoggedIn, openLoginModal } = useAuthStore();
   const { handleToggleFollow } = useHomeInteractions();
 
@@ -51,6 +52,7 @@ export default function HomePage() {
                 users={recommendedUsers}
                 isError={isErrorMembers}
                 isLoading={isLoadingMembers}
+                onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
                 onSubscribeClick={handleToggleFollow}
               />
             </div>

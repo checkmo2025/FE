@@ -7,6 +7,7 @@ interface HomeRecommendationSectionProps {
   users: RecommendedMember[];
   isError: boolean;
   isLoading?: boolean;
+  onProfileClick?: (nickname: string) => void;
   onSubscribeClick: (nickname: string, isFollowing: boolean) => void;
 }
 
@@ -16,6 +17,7 @@ export default function HomeRecommendationSection({
   users,
   isError,
   isLoading,
+  onProfileClick,
   onSubscribeClick,
 }: HomeRecommendationSectionProps) {
   if (isLoading) {
@@ -45,6 +47,7 @@ export default function HomeRecommendationSection({
                 name={u.nickname}
                 profileSrc={u.profileImageUrl}
                 isFollowing={u.isFollowing}
+                onProfileClick={() => onProfileClick?.(u.nickname)}
                 onSubscribeClick={() => onSubscribeClick(u.nickname, u.isFollowing)}
               />
             ))
@@ -58,6 +61,7 @@ export default function HomeRecommendationSection({
           height="h-[424px] d:h-[380px]"
           users={users}
           isError={isError}
+          onProfileClick={onProfileClick}
           onSubscribeClick={onSubscribeClick}
         />
       </div>

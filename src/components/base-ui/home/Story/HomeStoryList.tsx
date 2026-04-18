@@ -60,6 +60,7 @@ const HomeStoryList: React.FC<HomeStoryListProps> = ({
       users={recommendedUsers}
       isError={isErrorMembers}
       isLoading={isLoadingMembers}
+      onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
       onSubscribeClick={onToggleFollow}
     />
   ) : undefined;

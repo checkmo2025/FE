@@ -8,6 +8,7 @@ type ListSubscribeElementLargeProps = {
   subscribingCount?: number;
   subscribersCount?: number;
   profileSrc?: string;
+  onProfileClick?: () => void;
   onSubscribeClick?: () => void;
   buttonText?: string;
   isFollowing?: boolean;
@@ -18,12 +19,16 @@ function ListSubscribeElementLarge({
   subscribingCount,
   subscribersCount,
   profileSrc = '/profile2.svg',
+  onProfileClick,
   onSubscribeClick,
   buttonText = '구독',
   isFollowing = false,
 }: ListSubscribeElementLargeProps) {
   return (
-    <div className="flex w-[296px] h-[66px] px-[14px] py-[8px] gap-[8px] rounded-[8px] border border-Subbrown-4 bg-white">
+    <div
+      className="flex w-[296px] h-[66px] px-[14px] py-[8px] gap-[8px] rounded-[8px] border border-Subbrown-4 bg-white cursor-pointer hover:bg-stone-100 transition-colors group"
+      onClick={onProfileClick}
+    >
       <div className="w-[32px] h-[32px] rounded-full overflow-hidden shrink-0 relative self-center">
         <Image
           src={isValidUrl(profileSrc) ? profileSrc : '/profile2.svg'}
@@ -37,7 +42,7 @@ function ListSubscribeElementLarge({
 
       <div className="flex flex-row flex-1 min-w-0 gap-[8px] items-center">
         <div className="flex flex-col min-w-0 flex-1">
-          <p className="text-Gray-7 body_1 truncate">{name}</p>
+          <p className="text-Gray-7 body_1 truncate ">{name}</p>
           {subscribingCount !== undefined && subscribersCount !== undefined && (
             <p className="body_2_3 text-Gray-3">
               구독중 {subscribingCount} 구독자 {subscribersCount}
@@ -47,7 +52,7 @@ function ListSubscribeElementLarge({
 
         <button
           type="button"
-          onClick={onSubscribeClick}
+          onClick={(e) => { e.stopPropagation(); onSubscribeClick?.(); }}
           className={`flex px-[17px] py-[8px] justify-center items-center gap-[10px] rounded-[8px] text-[12px] font-semibold leading-[100%] tracking-[-0.012px] whitespace-nowrap shrink-0 transition-colors ${isFollowing
             ? "bg-Subbrown-4 text-primary-3"
             : "bg-primary-2 text-white"
@@ -71,6 +76,7 @@ type ListSubscribeLargeProps = {
   }>;
   isError?: boolean;
   isLoading?: boolean;
+  onProfileClick?: (nickname: string) => void;
   onSubscribeClick?: (nickname: string, isFollowing: boolean) => void;
 };
 
@@ -79,6 +85,7 @@ export default function ListSubscribeLarge({
   users = [],
   isError = false,
   isLoading = false,
+  onProfileClick,
   onSubscribeClick,
 }: ListSubscribeLargeProps) {
 
@@ -114,6 +121,7 @@ export default function ListSubscribeLarge({
               profileSrc={u.profileImageUrl}
               isFollowing={u.isFollowing}
               buttonText={u.isFollowing ? "구독중" : "구독"}
+              onProfileClick={() => onProfileClick?.(u.nickname)}
               onSubscribeClick={() => onSubscribeClick?.(u.nickname, u.isFollowing || false)}
             />
           ))}
