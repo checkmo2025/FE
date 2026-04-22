@@ -115,6 +115,9 @@ export default function StoryDetailPage() {
             isFollowing={story.authorInfo.following}
             onSubscribeClick={handleToggleFollow}
             hideSubscribeButton={story.writtenByMe}
+            isMyStory={story.writtenByMe}
+            onEditClick={() => {}}
+            onDeleteClick={() => {}}
           />
         </StoryNavigation>
         {/* 책이야기 글 본문 */}
