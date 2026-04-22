@@ -37,6 +37,7 @@ export default function CommentItem({
   content,
   createdAt,
   isAuthor = false,
+  isMine = false,
   isReply = false,
   canEdit = false,
   canDelete = false,
@@ -78,8 +79,13 @@ export default function CommentItem({
     setIsEditing(false);
   };
 
+  const derivedCanEdit = canEdit || isMine;
+  const derivedCanDelete = canDelete || isMine;
+  const derivedCanReport = canReport || (!isMine);
+
   const hasReplyAction = !isReply && !!onReply;
-  const hasMenuAction = hasReplyAction || canEdit || canDelete || canReport;
+  const hasManageAction = derivedCanDelete || derivedCanEdit;
+  const hasMenuAction = hasReplyAction || hasManageAction || derivedCanReport;
 
   // 댓글 본체 (프로필 + 이름 + 작성자 + 날짜 + 내용 + 메뉴)
   const commentBody = (
@@ -123,10 +129,31 @@ export default function CommentItem({
               {/* 드롭다운 메뉴 */}
               {menuOpen && (
                 <div className="absolute right-0 top-full mt-1 w-[137px] rounded-lg bg-White shadow-lg z-10 overflow-hidden">
-                
-                  {(canDelete || canEdit) && (
+
+                  {/* 답글달기 - 상위 댓글일 때만 표시 */}
+                  {hasReplyAction && (
                     <>
-                      {canDelete && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onReply?.(id);
+                          setMenuOpen(false);
+                        }}
+                        className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+                      >
+                        <Image src="/reply2.svg" alt="답글" width={24} height={24} />
+                        답글달기
+                      </button>
+                      {(hasManageAction || derivedCanReport) && (
+                        <div className="mx-2 border-b border-Subbrown-4" />
+                      )}
+                    </>
+                  )}
+
+                  {/* 내 댓글일 경우 삭제/수정, 아닐 경우 신고 */}
+                  {hasManageAction ? (
+                    <>
+                      {derivedCanDelete && (
                         <button
                           type="button"
                           onClick={() => {
@@ -145,11 +172,11 @@ export default function CommentItem({
                         </button>
                       )}
 
-                      {canEdit && canDelete && (
+                      {derivedCanEdit && derivedCanDelete && (
                         <div className="mx-2 border-b border-Subbrown-4" />
                       )}
 
-                      {canEdit && (
+                      {derivedCanEdit && (
                         <button
                           type="button"
                           onClick={() => {
@@ -168,26 +195,26 @@ export default function CommentItem({
                         </button>
                       )}
                     </>
+                  ) : (
+                    derivedCanReport && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onReport?.(id);
+                          setMenuOpen(false);
+                        }}
+                        className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+                      >
+                        <Image
+                          src="/report.svg"
+                          alt="신고"
+                          width={24}
+                          height={24}
+                        />
+                        신고하기
+                      </button>
+                    )
                   )}
-
-                  
-                  <button
-                      type="button"
-                      onClick={() => {
-                        onReport?.(id);
-                        setMenuOpen(false);
-                      }}
-                      className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
-                    >
-                      <Image
-                        src="/report.svg"
-                        alt="신고"
-                        width={24}
-                        height={24}
-                      />
-                      신고하기
-                    </button>
-                  
                 </div>
               )}
             </div>
