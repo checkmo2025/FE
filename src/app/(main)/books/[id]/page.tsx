@@ -3,23 +3,54 @@
 import { useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import SearchBookResult from "@/components/base-ui/Search/search_bookresult";
-import { DUMMY_STORIES } from "@/data/dummyStories";
-import BookStoryCard from "@/components/base-ui/BookStory/Common/bookstory_card";
 import { useBookDetailQuery } from "@/hooks/queries/useBookQueries";
 import { useToggleBookLikeMutation } from "@/hooks/mutations/useBookMutations";
+import BookStoryInfiniteList from "@/components/base-ui/BookStory/Common/BookStoryInfiniteList";
+import { useBookInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
+import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
+import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function BookDetailPage() {
     const params = useParams();
     const router = useRouter();
     const isbn = params.id as string;
     const { data: bookData, isLoading, isError } = useBookDetailQuery(isbn);
-    const { mutate: toggleLike } = useToggleBookLikeMutation();
+    const { mutate: toggleBookLike } = useToggleBookLikeMutation();
+    const { mutate: toggleStoryLike } = useToggleStoryLikeMutation();
+    const { mutate: toggleFollow } = useToggleFollowMutation();
+    const { isLoggedIn, openLoginModal } = useAuthStore();
 
-    // 관련된 책 이야기들 (더미 데이터에서 필터링)
+    // 실제 책 이야기 데이터 연동
+    const {
+        data: storiesData,
+        isLoading: isStoriesLoading,
+        isError: isStoriesError,
+        hasNextPage,
+        isFetchingNextPage,
+        fetchNextPage,
+    } = useBookInfiniteStoriesQuery(isbn);
+
     const relatedStories = useMemo(() => {
-        if (!bookData) return [];
-        return DUMMY_STORIES.filter((story) => story.bookTitle === bookData.title);
-    }, [bookData]);
+        if (!storiesData) return [];
+        return storiesData.pages.flatMap((page) => page.basicInfoList) || [];
+    }, [storiesData]);
+
+    const handleToggleStoryLike = (storyId: number) => {
+        if (!isLoggedIn) {
+            openLoginModal();
+            return;
+        }
+        toggleStoryLike(storyId);
+    };
+
+    const handleToggleFollow = (nickname: string, isFollowing: boolean) => {
+        if (!isLoggedIn) {
+            openLoginModal();
+            return;
+        }
+        toggleFollow({ nickname, isFollowing });
+    };
 
     if (isLoading) {
         return (
@@ -52,8 +83,18 @@ export default function BookDetailPage() {
                         author={bookData.author}
                         detail={bookData.description}
                         liked={bookData.likedByMe || false}
-                        onLikeChange={() => toggleLike(isbn)}
+                        onLikeChange={() => {
+                            if (!isLoggedIn) {
+                                openLoginModal();
+                                return;
+                            }
+                            toggleBookLike(isbn);
+                        }}
                         onPencilClick={() => {
+                            if (!isLoggedIn) {
+                                openLoginModal();
+                                return;
+                            }
                             router.push(`/stories/new?isbn=${isbn}`);
                         }}
                     />
@@ -68,28 +109,21 @@ export default function BookDetailPage() {
                 </div>
 
                 {/* 책 이야기 카드 */}
-                <div className="grid grid-cols-1 t:grid-cols-2 d:grid-cols-3 gap-5 justify-items-center">
-                    {relatedStories.map((story) => (
-                        <div
-                            key={story.id}
-                            onClick={() => router.push(`/stories/${story.id}`)}
-                            className="cursor-pointer"
-                        >
-                            <BookStoryCard
-                                layoutType="large-fixed"
-                                id={story.id}
-                                authorName={story.authorName}
-                                createdAt={story.createdAt}
-                                viewCount={story.viewCount}
-                                coverImgSrc={story.bookImageUrl}
-                                title={story.title}
-                                content={story.content}
-                                likeCount={story.likeCount}
-                                commentCount={story.commentCount}
-                                subscribeText="구독"
-                            />
-                        </div>
-                    ))}
+                <div className="w-full mt-4">
+                    <BookStoryInfiniteList
+                        stories={relatedStories}
+                        isLoading={isStoriesLoading}
+                        isError={isStoriesError}
+                        hasNextPage={!!hasNextPage}
+                        isFetchingNextPage={isFetchingNextPage}
+                        fetchNextPage={fetchNextPage}
+                        emptyMessage="해당 도서에 작성된 책 이야기가 없습니다."
+                        errorMessage="책 이야기를 불러오는 중 오류가 발생했습니다."
+                        cardLayoutType="large-fixed"
+                        onToggleLike={handleToggleStoryLike}
+                        onToggleFollow={handleToggleFollow}
+                        onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
+                    />
                 </div>
             </div>
         </div>

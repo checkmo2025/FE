@@ -51,6 +51,15 @@ export const storyService = {
         );
         return response.result!;
     },
+    getStoriesByBookId: async (bookId: string, cursorId?: number): Promise<BookStoryListResponse> => {
+        const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
+            STORY_ENDPOINTS.SEARCH_BY_BOOK(bookId),
+            {
+                params: { cursorId },
+            }
+        );
+        return response.result!;
+    },
     getStoryById: async (id: number): Promise<BookStoryDetail> => {
         const response = await apiClient.get<ApiResponse<BookStoryDetail>>(
             `${STORY_ENDPOINTS.LIST}/${id}`
