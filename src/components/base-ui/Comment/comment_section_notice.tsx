@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 import CommentListNotice, { Comment } from "./comment_list_notice";
@@ -41,6 +41,7 @@ export default function CommentSectionNotice({
   isAdminView = false,
 }: CommentSectionNoticeProps) {
   const params = useParams();
+  const router = useRouter();
   const clubId = Number(params.id);
 
   const { user } = useAuthStore();
@@ -227,6 +228,7 @@ export default function CommentSectionNotice({
         onEditComment={handleEditComment}
         onDeleteComment={handleDeleteComment}
         onReportComment={handleReportComment}
+        onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
         onLoadMore={handleLoadMore}
         hasNextPage={!!commentsQuery.hasNextPage}
         isFetchingNextPage={!!commentsQuery.isFetchingNextPage}
