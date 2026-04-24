@@ -15,6 +15,7 @@ import ReportModal from "@/components/common/ReportModal";
 import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
 import { ReportType } from "@/types/member";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useRouter } from "next/navigation";
 
 // 어떤 글의 댓글인지 구분
 type CommentSectionProps = {
@@ -34,6 +35,7 @@ export default function CommentSection({
   const deleteCommentMutation = useDeleteCommentMutation(storyId);
   const { mutate: reportMember } = useReportMemberMutation();
   const { isLoggedIn, openLoginModal } = useAuthStore();
+  const router = useRouter();
 
   // API 데이터를 UI용 Comment 형식으로 변환 및 계층 구조화
   const mapApiToUiComments = (apiComments: CommentInfo[]): Comment[] => {
@@ -233,6 +235,7 @@ export default function CommentSection({
         onEditComment={handleEditComment}
         onDeleteComment={handleDeleteComment}
         onReportComment={handleReportComment}
+        onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
       />
       <ConfirmModal
         isOpen={isConfirmOpen}
