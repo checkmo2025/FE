@@ -12,7 +12,7 @@ import GroupAdminMenu from "@/components/base-ui/Group/group_admin_menu";
 
 import { useClubhomeQueries } from "@/hooks/queries/useClubhomeQueries";
 
-const DEFAULT_CLUB_IMG = "/ClubDefaultImg.svg";
+const DEFAULT_CLUB_IMG = "/default_profile_1.svg";
 
 export default function GroupDetailPage() {
   const router = useRouter();
@@ -61,7 +61,7 @@ export default function GroupDetailPage() {
   const me = meQuery.data!;
   const home = homeQuery.data!;
   const latestNotice = latestNoticeQuery.data; // null/undefined 가능
-  
+
 
   const isAdmin = me.staff === true;
 
@@ -352,11 +352,11 @@ export default function GroupDetailPage() {
 
             <div className="w-full rounded-[8px] overflow-hidden items-center">
               {modalLinks.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => window.open(item.url, "_blank", "noopener,noreferrer")}
-                className="
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => window.open(item.url, "_blank", "noopener,noreferrer")}
+                  className="
                   w-full
                   flex items-center gap-2
                   px-5 py-[10px]
@@ -365,11 +365,11 @@ export default function GroupDetailPage() {
                   hover:bg-Subbrown-4/40
                   text-left
                 "
-              >
-                <Image src="/link.svg" alt="" width={24} height={24} className="object-contain shrink-0" />
-                <p className="text-Gray-5 body_2_3 t:body_1_3 truncate">{item.label}</p>
-              </button>
-            ))}
+                >
+                  <Image src="/link.svg" alt="" width={24} height={24} className="object-contain shrink-0" />
+                  <p className="text-Gray-5 body_2_3 t:body_1_3 truncate">{item.label}</p>
+                </button>
+              ))}
             </div>
           </div>
         </div>
