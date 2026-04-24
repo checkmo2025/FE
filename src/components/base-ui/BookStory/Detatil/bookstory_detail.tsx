@@ -124,67 +124,47 @@ export default function BookstoryDetail({
   const renderDropdownMenu = () => {
     if (!menuOpen) return null;
 
-    if (isMyStory) {
-      return (
-        <div className="absolute right-0 top-full mt-1 w-34 h-22 rounded-lg bg-White z-10 px-2 shadow-md flex flex-col justify-center">
-          <button
-            type="button"
-            onClick={() => {
-              setMenuOpen(false);
-              onEditClick?.();
-            }}
-            className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
-          >
-            <Image src="/Edit.svg" alt="수정" width={20} height={20} />
-            수정하기
-          </button>
-          <div className="mx-2 border-b border-Subbrown-4" />
-          <button
-            type="button"
-            onClick={() => {
-              setMenuOpen(false);
-              onDeleteClick?.();
-            }}
-            className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
-          >
-            <Image src="/delete.svg" alt="삭제" width={20} height={20} />
-            삭제하기
-          </button>
-        </div>
-      );
-    }
+    const menuItems = isMyStory
+      ? [
+          { label: "수정하기", icon: "/Edit.svg", onClick: onEditClick },
+          { label: "삭제하기", icon: "/delete.svg", onClick: onDeleteClick },
+          { label: "공유하기", icon: "/gray_share.svg", onClick: handleShare },
+        ]
+      : [
+          {
+            label: "신고하기",
+            icon: "/report.svg",
+            onClick: () => {
+              if (!isLoggedIn) {
+                openLoginModal();
+                return;
+              }
+              setIsReportModalOpen(true);
+            },
+          },
+          { label: "공유하기", icon: "/gray_share.svg", onClick: handleShare },
+        ];
 
     return (
-      <div className="absolute right-0 top-full mt-1 w-34 h-22 rounded-lg bg-White z-10 px-2 shadow-md flex flex-col justify-center">
-        <button
-          type="button"
-          onClick={() => {
-            if (!isLoggedIn) {
-              openLoginModal();
-              return;
-            }
-            setIsReportModalOpen(true);
-            setMenuOpen(false);
-          }}
-          className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
-        >
-          <Image src="/report.svg" alt="신고" width={20} height={20} />
-          신고하기
-        </button>
-        <div className="mx-2 border-b border-Subbrown-4" />
-        <button
-          type="button"
-          onClick={handleShare}
-          className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
-        >
-          <Image
-            src="/gray_share.svg"
-            alt="공유"
-            width={20}
-            height={20}
-          />
-          공유하기
-        </button>
+      <div className="absolute right-0 top-full mt-1 w-34 h-auto py-1 rounded-lg bg-White z-10 px-2 shadow-md flex flex-col justify-center">
+        {menuItems.map((item, index) => (
+          <div key={item.label}>
+            <button
+              type="button"
+              onClick={() => {
+                setMenuOpen(false);
+                item.onClick?.();
+              }}
+              className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
+            >
+              <Image src={item.icon} alt={item.label} width={20} height={20} />
+              {item.label}
+            </button>
+            {index < menuItems.length - 1 && (
+              <div className="mx-2 border-b border-Subbrown-4" />
+            )}
+          </div>
+        ))}
       </div>
     );
   };
