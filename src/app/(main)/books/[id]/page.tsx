@@ -9,7 +9,7 @@ import BookStoryInfiniteList from "@/components/base-ui/BookStory/Common/BookSto
 import { useBookInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthAction } from "@/hooks/useAuthAction";
 
 export default function BookDetailPage() {
     const params = useParams();
@@ -19,7 +19,7 @@ export default function BookDetailPage() {
     const { mutate: toggleBookLike } = useToggleBookLikeMutation();
     const { mutate: toggleStoryLike } = useToggleStoryLikeMutation();
     const { mutate: toggleFollow } = useToggleFollowMutation();
-    const { isLoggedIn, openLoginModal } = useAuthStore();
+    const { authAction } = useAuthAction();
 
     // 실제 책 이야기 데이터 연동
     const {
@@ -36,21 +36,13 @@ export default function BookDetailPage() {
         return storiesData.pages.flatMap((page) => page.basicInfoList) ?? [];
     }, [storiesData]);
 
-    const handleToggleStoryLike = (storyId: number) => {
-        if (!isLoggedIn) {
-            openLoginModal();
-            return;
-        }
+    const handleToggleStoryLike = authAction((storyId: number) => {
         toggleStoryLike(storyId);
-    };
+    });
 
-    const handleToggleFollow = (nickname: string, isFollowing: boolean) => {
-        if (!isLoggedIn) {
-            openLoginModal();
-            return;
-        }
+    const handleToggleFollow = authAction((nickname: string, isFollowing: boolean) => {
         toggleFollow({ nickname, isFollowing });
-    };
+    });
 
     if (isLoading) {
         return (
@@ -83,20 +75,12 @@ export default function BookDetailPage() {
                         author={bookData.author}
                         detail={bookData.description}
                         liked={bookData.likedByMe || false}
-                        onLikeChange={() => {
-                            if (!isLoggedIn) {
-                                openLoginModal();
-                                return;
-                            }
+                        onLikeChange={authAction(() => {
                             toggleBookLike(isbn);
-                        }}
-                        onPencilClick={() => {
-                            if (!isLoggedIn) {
-                                openLoginModal();
-                                return;
-                            }
+                        })}
+                        onPencilClick={authAction(() => {
                             router.push(`/stories/new?isbn=${isbn}`);
-                        }}
+                        })}
                     />
                 </div>
 
