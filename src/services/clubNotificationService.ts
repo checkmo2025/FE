@@ -131,7 +131,7 @@ export const clubNotificationService = {
     const res = await apiClient.get<GetClubNoticeCommentsResponse>(
       CLUB_NOTIFICATION.noticeComments(clubId, noticeId),
       {
-        params: { cursorId },
+        params: cursorId !== undefined ? { cursorId } : undefined
       }
     );
 

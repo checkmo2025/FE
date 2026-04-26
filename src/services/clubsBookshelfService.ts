@@ -38,7 +38,7 @@ export const clubsBookshelfService = {
 
     const res = await apiClient.get<ClubsBookshelfSimpleResponse>(
       CLUBS_BOOKSHELF_ENDPOINTS.simpleBookshelves(clubId),
-      { params: { cursorId } }
+      { params: cursorId !== undefined ? { cursorId } : undefined }
     );
 
     return res.result;
@@ -95,7 +95,7 @@ export const clubsBookshelfService = {
     return res.result;
   },
 
-   // GET /api/clubs/{clubId}/bookshelves/{meetingId}
+  // GET /api/clubs/{clubId}/bookshelves/{meetingId}
   getBookshelfDetail: async (params: {
     clubId: number;
     meetingId: number;
@@ -108,7 +108,7 @@ export const clubsBookshelfService = {
 
     return res.result;
   },
-  
+
   deleteBookshelf: async (params: {
     clubId: number;
     meetingId: number;
