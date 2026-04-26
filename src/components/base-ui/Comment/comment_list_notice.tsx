@@ -26,6 +26,7 @@ type CommentListNoticeProps = {
   onEditComment?: (id: number, content: string) => void | Promise<void>;
   onDeleteComment?: (id: number) => void | Promise<void>;
   onReportComment?: (id: number) => void;
+  onProfileClick?: (nickname: string) => void;
   onLoadMore?: () => void;
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;
@@ -37,6 +38,7 @@ export default function CommentListNotice({
   onEditComment,
   onDeleteComment,
   onReportComment,
+  onProfileClick,
   onLoadMore,
   hasNextPage = false,
   isFetchingNextPage = false,
@@ -87,6 +89,7 @@ export default function CommentListNotice({
             onEdit={onEditComment}
             onDelete={onDeleteComment}
             onReport={onReportComment}
+            onProfileClick={onProfileClick}
           />
         ))}
       </div>

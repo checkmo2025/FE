@@ -10,6 +10,7 @@ export const storyKeys = {
     myList: () => [...storyKeys.all, "myList"] as const,
     clubList: (clubId: number) => [...storyKeys.all, "clubList", clubId] as const,
     otherMember: (nickname: string) => [...storyKeys.all, "otherMember", nickname] as const,
+    bookList: (bookId: string) => [...storyKeys.all, "bookList", bookId] as const,
     detail: (id: number) => [...storyKeys.all, "detail", id] as const,
 };
 
@@ -88,5 +89,18 @@ export const useOtherMemberInfiniteStoriesQuery = (nickname: string) => {
             return lastPage.nextCursor;
         },
         enabled: !!nickname,
+    });
+};
+
+export const useBookInfiniteStoriesQuery = (bookId: string) => {
+    return useInfiniteQuery({
+        queryKey: storyKeys.bookList(bookId),
+        queryFn: ({ pageParam }) => storyService.getStoriesByBookId(bookId, pageParam ?? undefined),
+        initialPageParam: null as number | null,
+        getNextPageParam: (lastPage) => {
+            if (!lastPage || !lastPage.hasNext) return undefined;
+            return lastPage.nextCursor;
+        },
+        enabled: !!bookId,
     });
 };

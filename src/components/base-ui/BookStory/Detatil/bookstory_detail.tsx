@@ -35,6 +35,9 @@ type BookstoryDetailProps = {
   likedByMe?: boolean;
   onLikeClick?: (e: React.MouseEvent) => void;
   hideSubscribeButton?: boolean;
+  isMyStory?: boolean;
+  onEditClick?: () => void;
+  onDeleteClick?: () => void;
 };
 
 function timeAgo(iso: string) {
@@ -72,6 +75,9 @@ export default function BookstoryDetail({
   likedByMe = false,
   onLikeClick,
   hideSubscribeButton = false,
+  isMyStory = false,
+  onEditClick,
+  onDeleteClick,
 }: BookstoryDetailProps) {
   const href = authorHref ?? `/profile/${authorId}`;
   const [menuOpen, setMenuOpen] = useState(false);
@@ -113,6 +119,54 @@ export default function BookstoryDetail({
       toast.error("복사에 실패했습니다.");
     }
     setMenuOpen(false);
+  };
+
+  const renderDropdownMenu = () => {
+    if (!menuOpen) return null;
+
+    const menuItems = isMyStory
+      ? [
+          { label: "수정하기", icon: "/Edit.svg", onClick: onEditClick },
+          { label: "삭제하기", icon: "/delete.svg", onClick: onDeleteClick },
+          { label: "공유하기", icon: "/gray_share.svg", onClick: handleShare },
+        ]
+      : [
+          {
+            label: "신고하기",
+            icon: "/report.svg",
+            onClick: () => {
+              if (!isLoggedIn) {
+                openLoginModal();
+                return;
+              }
+              setIsReportModalOpen(true);
+            },
+          },
+          { label: "공유하기", icon: "/gray_share.svg", onClick: handleShare },
+        ];
+
+    return (
+      <div className="absolute right-0 top-full mt-1 w-34 h-auto py-1 rounded-lg bg-White z-10 px-2 shadow-md flex flex-col justify-center">
+        {menuItems.map((item, index) => (
+          <div key={item.label}>
+            <button
+              type="button"
+              onClick={() => {
+                setMenuOpen(false);
+                item.onClick?.();
+              }}
+              className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
+            >
+              <Image src={item.icon} alt={item.label} width={20} height={20} />
+              {item.label}
+            </button>
+            {index < menuItems.length - 1 && (
+              <div className="mx-2 border-b border-Subbrown-4" />
+            )}
+          </div>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -173,39 +227,7 @@ export default function BookstoryDetail({
             <Image src="/menu_dots.svg" alt="메뉴" width={24} height={24} />
           </button>
 
-          {menuOpen && (
-            <div className="absolute right-0 top-full mt-1 w-34 h-22 rounded-lg bg-White z-10 px-2 shadow-md">
-              <button
-                type="button"
-                onClick={() => {
-                  if (!isLoggedIn) {
-                    openLoginModal();
-                    return;
-                  }
-                  setIsReportModalOpen(true);
-                  setMenuOpen(false);
-                }}
-                className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
-              >
-                <Image src="/report.svg" alt="신고" width={20} height={20} />
-                신고하기
-              </button>
-              <div className="mx-2 border-b border-Subbrown-4" />
-              <button
-                type="button"
-                onClick={handleShare}
-                className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
-              >
-                <Image
-                  src="/gray_share.svg"
-                  alt="공유"
-                  width={20}
-                  height={20}
-                />
-                공유하기
-              </button>
-            </div>
-          )}
+          {renderDropdownMenu()}
         </div>
       </div>
 
@@ -338,39 +360,7 @@ export default function BookstoryDetail({
             </button>
 
             {/* 드롭다운 메뉴 */}
-            {menuOpen && (
-              <div className="absolute right-0 top-full mt-1 w-34 h-22 rounded-lg bg-White z-10 px-2 shadow-md">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (!isLoggedIn) {
-                      openLoginModal();
-                      return;
-                    }
-                    setIsReportModalOpen(true);
-                    setMenuOpen(false);
-                  }}
-                  className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
-                >
-                  <Image src="/report.svg" alt="신고" width={20} height={20} />
-                  신고하기
-                </button>
-                <div className="mx-2 border-b border-Subbrown-4" />
-                <button
-                  type="button"
-                  onClick={handleShare}
-                  className="flex w-full items-center gap-2 px-4 py-3 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
-                >
-                  <Image
-                    src="/gray_share.svg"
-                    alt="공유"
-                    width={20}
-                    height={20}
-                  />
-                  공유하기
-                </button>
-              </div>
-            )}
+            {renderDropdownMenu()}
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import BookStoryCard from "@/components/base-ui/BookStory/Common/bookstory_card";
+import EmptyState from "@/components/common/EmptyState";
 import { BookStory } from "@/types/story";
 import { useInView } from "react-intersection-observer";
 
@@ -72,13 +73,7 @@ const BookStoryInfiniteList: React.FC<BookStoryInfiniteListProps> = ({
   }
 
   if (stories.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 w-full">
-        <p className="text-Gray-4 body_1_2 text-center whitespace-pre-wrap">
-          {emptyMessage}
-        </p>
-      </div>
-    );
+    return <EmptyState message={emptyMessage} />;
   }
 
   const renderCard = (story: BookStory) => (
