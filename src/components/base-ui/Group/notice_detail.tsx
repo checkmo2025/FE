@@ -72,18 +72,34 @@ export default function NoticeDetail({
       .map((item) => item.itemNumber);
   }, [voteDetail, myName]);
 
-  const isVoteEnded = useMemo(() => {
-    if (!voteDetail?.deadline) return false;
-    return new Date(voteDetail.deadline).getTime() < Date.now();
-  }, [voteDetail?.deadline]);
-
   const hasSubmittedVote = votedOptionNumbers.length > 0;
   const hasVoted = hasSubmittedVote && !isRevoteMode;
+
+  const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     setSelectedOptions(votedOptionNumbers);
     setIsRevoteMode(false);
   }, [votedOptionNumbers]);
+
+  useEffect(() => {
+    if (!voteDetail?.deadline) return;
+    const deadlineTime = new Date(voteDetail.deadline).getTime();
+    const remaining = deadlineTime - Date.now();
+
+    if (remaining <= 0) return;
+
+    const timer = setTimeout(() => {
+      setNow(Date.now());
+    }, remaining);
+
+    return () => clearTimeout(timer);
+  }, [voteDetail?.deadline]);
+
+  const isVoteEnded = useMemo(() => {
+    if (!voteDetail?.deadline) return false;
+    return new Date(voteDetail.deadline).getTime() < now;
+  }, [voteDetail?.deadline, now]);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -99,7 +115,11 @@ export default function NoticeDetail({
   }, [isAdmin]);
 
   const handleOptionClick = (optionId: number) => {
-    if (!voteDetail || hasVoted || isVotePending) return;
+    const freshIsVoteEnded = voteDetail?.deadline
+      ? new Date(voteDetail.deadline).getTime() < Date.now()
+      : false;
+
+    if (!voteDetail || hasVoted || isVotePending || freshIsVoteEnded) return;
 
     if (voteDetail.duplication) {
       setSelectedOptions((prev) =>
@@ -113,9 +133,16 @@ export default function NoticeDetail({
   };
 
   const handleVoteSubmit = async () => {
-  if (!voteDetail || selectedOptions.length === 0 || isVotePending) {
-    return;
-  }
+    const freshIsVoteEnded = voteDetail?.deadline
+      ? new Date(voteDetail.deadline).getTime() < Date.now()
+      : false;
+
+    if (!voteDetail || selectedOptions.length === 0 || isVotePending || freshIsVoteEnded) {
+      if (freshIsVoteEnded) {
+        toast.error('투표 기간이 종료되었습니다.');
+      }
+      return;
+    }
 
   try {
     await voteNotice({
