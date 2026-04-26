@@ -72,6 +72,11 @@ export default function NoticeDetail({
       .map((item) => item.itemNumber);
   }, [voteDetail, myName]);
 
+  const isVoteEnded = useMemo(() => {
+    if (!voteDetail?.deadline) return false;
+    return new Date(voteDetail.deadline).getTime() < Date.now();
+  }, [voteDetail?.deadline]);
+
   const hasSubmittedVote = votedOptionNumbers.length > 0;
   const hasVoted = hasSubmittedVote && !isRevoteMode;
 
@@ -129,7 +134,7 @@ export default function NoticeDetail({
   }
 };
 const handleRevote = () => {
-  if (!voteDetail || isVotePending) return;
+  if (!voteDetail || isVotePending || isVoteEnded) return;
 
   setIsRevoteMode(true);
   setSelectedOptions([]);
@@ -355,7 +360,7 @@ const handleRevote = () => {
             <div className="flex flex-col gap-3 mb-6">
               {voteDetail.items.map((option) => {
                 const isSelected = selectedOptions.includes(option.itemNumber);
-                const isDisabled = hasVoted || isVotePending;
+                const isDisabled = hasVoted || isVotePending || isVoteEnded;
 
                 return (
                   <div
@@ -408,11 +413,13 @@ const handleRevote = () => {
             <div className="flex justify-end">
               <button
                 onClick={hasVoted ? handleRevote : handleVoteSubmit}
-                disabled={!hasVoted && (selectedOptions.length === 0 || isVotePending)}
+                disabled={isVoteEnded || (!hasVoted && (selectedOptions.length === 0 || isVotePending))}
                 className={`
                   w-[104px] h-[44px] px-6 py-3 rounded-lg body_1_2 transition-colors flex items-center justify-center box-border
                   ${
-                    hasVoted
+                    isVoteEnded
+                      ? 'bg-Gray-2 text-Gray-4 border border-transparent cursor-not-allowed'
+                      : hasVoted
                       ? 'bg-Subbrown-4 border border-transparent text-primary-1 cursor-pointer hover:bg-Subbrown-3'
                       : selectedOptions.length > 0
                       ? 'bg-primary-1 text-white border border-transparent cursor-pointer hover:bg-primary-3 hover:text-white'
@@ -420,7 +427,7 @@ const handleRevote = () => {
                   }
                 `}
               >
-                {hasVoted ? '다시 투표' : isVotePending ? '투표 중...' : '투표하기'}
+                {isVoteEnded ? '투표 마감' : hasVoted ? '다시 투표' : isVotePending ? '투표 중...' : '투표하기'}
               </button>
             </div>
           </div>
