@@ -108,7 +108,7 @@ export default function SearchClubApplyModal({ open, club, onClose, onSubmit }: 
 
               <div className="flex items-center gap-1 shrink-0">
                 <span className="body_2_2 text-Gray-4">{club.public ? "공개" : "비공개"}</span>
-                <Image src={club.public ? "/Unlock.svg" : "/lock.svg"} alt="" width={20} height={20} />
+                <Image src={club.public ? "/Unlock.svg" : "/Lockicon.svg"} alt="" width={20} height={20} />
               </div>
             </div>
           </div>

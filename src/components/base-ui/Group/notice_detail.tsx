@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import type {
   ClubNoticeMeetingDetail,
   ClubNoticeVoteDetail,
+  ClubNoticeVoteMember,
 } from '@/types/clubnotification';
 import BookcaseCard from '../Bookcase/BookcaseCard';
 import { useRouter } from 'next/navigation';
@@ -14,6 +15,8 @@ import {
   useDeleteClubNoticeMutation,
   useVoteClubNoticeMutation,
 } from '@/hooks/mutations/useClubNotificationMutations';
+import BookshelfDeleteConfirmModal from '../Bookcase/bookid/BookshelfDeleteConfirmModal';
+import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 
 type NoticeDetailProps = {
   clubId: number;
@@ -29,6 +32,135 @@ type NoticeDetailProps = {
   voteDetail?: ClubNoticeVoteDetail | null;
   editPath?: string;
 };
+
+const DEFAULT_PROFILE = '/profile4.svg';
+
+function normalizeProfileSrc(src?: string | null) {
+  if (!src || src.trim() === '') return DEFAULT_PROFILE;
+  if (src.startsWith('http')) return src;
+  if (src.startsWith('/')) return src;
+  return `/${src}`;
+}
+
+type VoteMemberPopoverProps = {
+  memberCount: number;
+  members: ClubNoticeVoteMember[];
+  isPublic: boolean;
+};
+
+function VoteMemberPopover({
+  memberCount,
+  members,
+  isPublic,
+}: VoteMemberPopoverProps) {
+  const router = useRouter();
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useOnClickOutside(containerRef, () => {
+    setIsOpen(false);
+  });
+
+  const normalizedMembers = useMemo(
+    () =>
+      members.map((member, index) => ({
+        key: `${member.nickname}-${index}`,
+        nickname: member.nickname,
+        profileImageUrl: normalizeProfileSrc(member.profileImageUrl),
+      })),
+    [members]
+  );
+
+  const handleClickMember = (nickname: string) => {
+    setIsOpen(false);
+    router.push(`/profile/${encodeURIComponent(nickname)}`);
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative shrink-0"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        type="button"
+        disabled={!isPublic}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (!isPublic) return;
+          setIsOpen((prev) => !prev);
+        }}
+        className={`
+          flex items-center gap-1 shrink-0 rounded-[6px] px-1 py-1 transition
+          ${isPublic ? 'cursor-pointer hover:bg-Gray-1' : 'cursor-default'}
+        `}
+        aria-label={isPublic ? '투표한 인원 보기' : '비공개 투표'}
+      >
+        <Image
+          src="/member.svg"
+          alt="인원"
+          width={24}
+          height={24}
+          className="shrink-0"
+        />
+        <span className="body_1_2 text-Gray-5 w-3 text-right">{memberCount}</span>
+      </button>
+
+      {isOpen && isPublic && (
+        <div
+          className="
+            absolute left-0 top-full mt-2 z-[30]
+            flex max-h-[292px] w-[236px] flex-col items-center
+            rounded-[8px] border border-Subbrown-4 bg-White
+            py-3 shadow-[0_3px_10px_rgba(61,52,46,0.12)]
+          "
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div
+            className="
+              flex h-full w-full flex-col items-center overflow-y-auto
+              [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden
+            "
+          >
+            {normalizedMembers.length === 0 ? (
+              <div className="flex h-full w-full items-center justify-center px-4 text-center text-Gray-4 body_2_3">
+                투표한 인원이 없습니다.
+              </div>
+            ) : (
+              normalizedMembers.map((member) => (
+                <div
+                  key={member.key}
+                  className="flex w-[204px] items-center border-b border-Subbrown-4 last:border-b-0"
+                >
+                  <button
+                    type="button"
+                    onClick={() => handleClickMember(member.nickname)}
+                    className="
+                      flex w-[204px] items-center gap-3 px-2 py-2
+                      text-left transition hover:bg-Gray-1 rounded-[8px]
+                      cursor-pointer
+                    "
+                  >
+                    <Image
+                      src={member.profileImageUrl}
+                      alt=""
+                      width={36}
+                      height={36}
+                      className="h-9 w-9 rounded-full object-cover shrink-0"
+                    />
+                    <span className="min-w-0 truncate text-Gray-7 body_1_3">
+                      {member.nickname}
+                    </span>
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function NoticeDetail({
   clubId,
@@ -46,7 +178,7 @@ export default function NoticeDetail({
 }: NoticeDetailProps) {
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
   const [isRevoteMode, setIsRevoteMode] = useState(false);
-
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -137,41 +269,57 @@ export default function NoticeDetail({
       ? new Date(voteDetail.deadline).getTime() < Date.now()
       : false;
 
-    if (!voteDetail || selectedOptions.length === 0 || isVotePending || freshIsVoteEnded) {
+    if (
+      !voteDetail ||
+      selectedOptions.length === 0 ||
+      isVotePending ||
+      freshIsVoteEnded
+    ) {
       if (freshIsVoteEnded) {
         toast.error('투표 기간이 종료되었습니다.');
       }
       return;
     }
 
-  try {
-    await voteNotice({
-      clubId,
-      noticeId,
-      voteId: voteDetail.id,
-      body: {
-        selectedItemNumbers: selectedOptions,
-      },
-    });
+    try {
+      await voteNotice({
+        clubId,
+        noticeId,
+        voteId: voteDetail.id,
+        body: {
+          selectedItemNumbers: selectedOptions,
+        },
+      });
 
-    toast.success(isRevoteMode ? '투표가 수정되었습니다.' : '투표가 완료되었습니다.');
-  } catch (e: any) {
-    const msg = e?.message ?? '';
-    toast.error(msg || '투표에 실패했습니다.');
-  }
-};
-const handleRevote = () => {
-  if (!voteDetail || isVotePending || isVoteEnded) return;
+      toast.success(
+        isRevoteMode ? '투표가 수정되었습니다.' : '투표가 완료되었습니다.'
+      );
+    } catch (e: any) {
+      const msg = e?.message ?? '';
+      toast.error(msg || '투표에 실패했습니다.');
+    }
+  };
 
-  setIsRevoteMode(true);
-  setSelectedOptions([]);
-};
+  const handleRevote = () => {
+    if (!voteDetail || isVotePending || isVoteEnded) return;
+
+    setIsRevoteMode(true);
+    setSelectedOptions([]);
+  };
+
+  const handleOpenDeleteModal = () => {
+    if (!isAdmin || isDeletePending) return;
+    setMenuOpen(false);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    if (isDeletePending) return;
+    setIsDeleteModalOpen(false);
+  };
 
   const handleDeleteNotice = async () => {
     if (!isAdmin || isDeletePending) return;
-
-    const ok = window.confirm('공지사항을 삭제하시겠습니까?');
-    if (!ok) return;
 
     try {
       await deleteNotice({ clubId, noticeId });
@@ -181,6 +329,7 @@ const handleRevote = () => {
       const msg = e?.message ?? '';
       toast.error(msg || '공지사항 삭제에 실패했습니다.');
     } finally {
+      setIsDeleteModalOpen(false);
       setMenuOpen(false);
     }
   };
@@ -230,12 +379,11 @@ const handleRevote = () => {
   return (
     <div className="w-full">
       <div className="flex flex-col t:flex-row gap-9">
-        {/* 책장: t 이상에서만 노출 */}
-        {meetingDetail && <div className="hidden t:block shrink-0">{renderBookcaseCard()}</div>}
+        {meetingDetail && (
+          <div className="hidden t:block shrink-0">{renderBookcaseCard()}</div>
+        )}
 
-        {/* 본문 */}
         <div className="flex-1 min-w-0">
-          {/* 1줄: 고정/태그 | 날짜/메뉴 */}
           <div className="flex items-start justify-between gap-4 mb-3">
             <div className="flex items-center gap-2 flex-wrap min-w-0">
               {isPinned && (
@@ -284,7 +432,7 @@ const handleRevote = () => {
                     <div className="absolute right-0 top-full mt-1 w-34 h-22 rounded-lg bg-White z-10 px-2 shadow-md">
                       <button
                         type="button"
-                        onClick={handleDeleteNotice}
+                        onClick={handleOpenDeleteModal}
                         className="flex w-full items-center gap-2 px-4 py-2.5 body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
                       >
                         <Image src="/delete.svg" alt="삭제" width={24} height={24} />
@@ -308,21 +456,18 @@ const handleRevote = () => {
             </div>
           </div>
 
-          {/* 2줄: 제목 */}
           <div className="mb-4">
             <h2 className="subhead_2 t:headline_3 text-Gray-7 break-words">
               {title}
             </h2>
           </div>
 
-          {/* 3줄: 본문 */}
           <p className="body_1_3 text-Gray-5 whitespace-pre-wrap min-w-[300px] max-w-full">
             {content}
           </p>
         </div>
       </div>
 
-      {/* 모바일 전용 책장: 본문 아래 / 이미지 위 */}
       {meetingDetail && (
         <div className="mt-4 flex justify-center t:hidden">
           <div className="w-full flex justify-center">{renderBookcaseCard()}</div>
@@ -330,7 +475,6 @@ const handleRevote = () => {
       )}
 
       <div>
-        {/* 이미지 영역 */}
         {images && images.length > 0 && (
           <div className="mt-4 overflow-x-auto">
             <div className="flex gap-4" style={{ minWidth: 'max-content' }}>
@@ -351,7 +495,6 @@ const handleRevote = () => {
           </div>
         )}
 
-        {/* 투표 UI */}
         {voteDetail && (
           <div className="mt-6 mb-6">
             <div className="flex items-center justify-between mb-4">
@@ -420,18 +563,11 @@ const handleRevote = () => {
                       {option.itemNumber}번: {option.item}
                     </span>
 
-                    <div className="flex items-center gap-1 shrink-0">
-                      <Image
-                        src="/member.svg"
-                        alt="인원"
-                        width={24}
-                        height={24}
-                        className="shrink-0"
-                      />
-                      <span className="body_1_2 text-Gray-5 w-3 text-right">
-                        {option.voteCount}
-                      </span>
-                    </div>
+                    <VoteMemberPopover
+                      memberCount={option.voteCount}
+                      members={option.votedMembers}
+                      isPublic={!voteDetail.anonymity}
+                    />
                   </div>
                 );
               })}
@@ -460,6 +596,17 @@ const handleRevote = () => {
           </div>
         )}
       </div>
+
+      <BookshelfDeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        isPending={isDeletePending}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleDeleteNotice}
+        title="공지사항을 삭제할까요?"
+        description="삭제 후 복구할 수 없습니다."
+        confirmText="예"
+        cancelText="아니요"
+      />
     </div>
   );
 }

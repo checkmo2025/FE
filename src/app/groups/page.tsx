@@ -55,12 +55,16 @@ function mapInputFilter(group: boolean, region: boolean): InputFilter | null {
   if (!group && region) return "REGION";
   return null;
 }
-
 function mapApplyType(myStatus: string): "No" | "Wait" | "Yes" {
-  if (myStatus === "NONE") return "No";
-  if (myStatus === "MEMBER" || myStatus === "JOINED") return "Yes";
-  return "Wait";
+  if (myStatus === "NONE" || myStatus === "WITHDRAWN" || myStatus === "KICKED") {
+    return "No";
+  }
+  if (myStatus === "MEMBER" || myStatus === "JOINED" || myStatus === "STAFF" || myStatus === "OWNER") {
+    return "Yes";
+  }
+  return "Wait"; // PENDING 등
 }
+
 
 function mapClubDTOToSummary(club: ClubDTO, myStatus: string, reason = ""): ClubSummary {
   return {

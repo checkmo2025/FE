@@ -100,7 +100,7 @@ export default function MeetingTeamMemberPopover({
                     onClick={() => handleClickMember(member.nickname)}
                     className="
                       flex w-[204px] items-center gap-3 px-2 py-2
-                      text-left transition hover:bg-Gray-1 rounded-[8px]
+                      text-left transition hover:bg-Gray-1
                       cursor-pointer
                     "
                   >

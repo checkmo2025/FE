@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
@@ -11,6 +10,7 @@ import ButtonWithoutImg from "@/components/base-ui/button_without_img";
 import GroupAdminMenu from "@/components/base-ui/Group/group_admin_menu";
 
 import { useClubhomeQueries } from "@/hooks/queries/useClubhomeQueries";
+import { isClubMember } from "@/hooks/useClubAccessGuard";
 
 const DEFAULT_CLUB_IMG = "/default_profile_1.svg";
 
@@ -64,10 +64,13 @@ export default function GroupDetailPage() {
 
 
   const isAdmin = me.staff === true;
-
+  const canAccessMemberOnlyPage = isClubMember(me);
+  
   const noticeText = latestNotice?.title ?? "공지사항이 없습니다.";
   const hasNotice = Boolean(latestNotice?.id);
-  const noticeUrl = `/groups/${groupId}/notice`;
+  const noticenumber = latestNotice?.id;
+  const noticeUrl = `/groups/${groupId}/notice/${noticenumber}`;
+  
 
   const imgSrc = home.profileImageUrl || DEFAULT_CLUB_IMG;
   const clubName = home.name;
@@ -96,10 +99,16 @@ export default function GroupDetailPage() {
   }, [home.links]);
 
   const onClickJoin = () => {
+    if (!canAccessMemberOnlyPage) {
+      toast.error("회원만 접근이 가능합니다.");
+      return;
+    }
+
     if (!joinUrl) {
       toast.error("다음 정기모임이 없습니다.");
       return;
     }
+
     router.push(joinUrl);
   };
 
@@ -111,20 +120,28 @@ export default function GroupDetailPage() {
           role="button"
           tabIndex={0}
           onClick={() => {
+            if (!canAccessMemberOnlyPage) {
+              toast.error("회원만 접근이 가능합니다.");
+              return;
+            }
             if (!hasNotice) {
               toast.error("공지사항이 없습니다.");
               return;
             }
-            router.push(`/groups/${groupId}/notice`);
+            router.push(noticeUrl!);
           }}
           onKeyDown={(e) => {
             if (e.key !== "Enter" && e.key !== " ") return;
             e.preventDefault();
+            if (!canAccessMemberOnlyPage) {
+              toast.error("회원만 접근이 가능합니다.");
+              return;
+            }
             if (!hasNotice) {
               toast.error("공지사항이 없습니다.");
               return;
             }
-            router.push(`/groups/${groupId}/notice`);
+            router.push(noticeUrl!);
           }}
           className="
             block w-full

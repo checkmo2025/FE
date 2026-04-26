@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import FloatingFab from "@/components/base-ui/Float";
@@ -15,6 +15,8 @@ import { useAuthStore } from "@/store/useAuthStore";
 import type { MeetingTopicItem } from "@/types/groups/meetingTopics";
 
 import MeetingTeamMemberPopover from "@/components/base-ui/Bookcase/MeetingTeamMemberPopover";
+import toast from "react-hot-toast";
+import { useMeetingRealtime } from "@/hooks/realtime/useMeetingRealtime";
 
 type TeamViewModel = {
   teamId: number;
@@ -25,6 +27,9 @@ type TeamViewModel = {
 
 const CHECKED_BG = "#F7FEF3";
 const DEFAULT_PROFILE = "/profile4.svg";
+
+const makePresentationPendingKey = (teamId: number, topicId: number) =>
+  `${teamId}:${topicId}`;
 
 function teamNumberToLabel(teamNumber: number) {
   const code = 64 + teamNumber;
@@ -54,8 +59,6 @@ function sortSelectedFirstStable(list: MeetingTopicItem[]) {
   return next;
 }
 
-
-
 export default function MeetingPage() {
   const params = useParams();
   const router = useRouter();
@@ -74,7 +77,55 @@ export default function MeetingPage() {
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
   const [selectedChatTeamId, setSelectedChatTeamId] = useState<number | null>(null);
 
+  const [pendingPresentationKeys, setPendingPresentationKeys] = useState<Set<string>>(
+    new Set()
+  );
+
+  const addPendingPresentation = useCallback((teamId: number, topicId: number) => {
+    const key = makePresentationPendingKey(teamId, topicId);
+
+    setPendingPresentationKeys((prev) => {
+      const next = new Set(prev);
+      next.add(key);
+      return next;
+    });
+  }, []);
+
+  const removePendingPresentation = useCallback((teamId: number, topicId: number) => {
+    const key = makePresentationPendingKey(teamId, topicId);
+
+    setPendingPresentationKeys((prev) => {
+      if (!prev.has(key)) return prev;
+      const next = new Set(prev);
+      next.delete(key);
+      return next;
+    });
+  }, []);
+
+  const clearPendingPresentations = useCallback(() => {
+    setPendingPresentationKeys(new Set());
+  }, []);
+
   const [chatPosition, setChatPosition] = useState({ x: 980, y: 56 });
+
+  useEffect(() => {
+    const clampChatPosition = () => {
+      if (window.innerWidth < 768) return;
+
+      const panelWidth = 426;
+      const panelHeight = 716;
+
+      setChatPosition((prev) => ({
+        x: Math.max(0, Math.min(window.innerWidth - panelWidth, prev.x)),
+        y: Math.max(0, Math.min(window.innerHeight - panelHeight, prev.y)),
+      }));
+    };
+
+    clampChatPosition();
+    window.addEventListener("resize", clampChatPosition);
+
+    return () => window.removeEventListener("resize", clampChatPosition);
+  }, []);
 
   const dragRef = useRef<{
     startX: number;
@@ -108,9 +159,6 @@ export default function MeetingPage() {
   }, [meetingData]);
 
   const myTeamId = useMemo(() => {
-    // TODO:
-    // 현재 응답에는 "내 clubMemberId"가 없어서 nickname 기반 임시 판별만 가능.
-    // 추후 BE가 내 clubMemberId를 내려주면 그 값 기준으로 교체할 것.
     const myNickname = user?.nickname?.trim();
     if (!myNickname || !meetingData) return null;
 
@@ -161,7 +209,8 @@ export default function MeetingPage() {
     () => teams.find((team) => team.teamId === selectedTeamId) ?? null,
     [teams, selectedTeamId]
   );
-    const selectedTeamMembers = useMemo(() => {
+
+  const selectedTeamMembers = useMemo(() => {
     if (!meetingData || selectedTeamId === null) return [];
 
     const matchedGroup = meetingData.teamMembers.find(
@@ -186,6 +235,8 @@ export default function MeetingPage() {
   const canSelectCurrentTeamTopic =
     isStaff || (selectedTeamId !== null && myTeamId === selectedTeamId);
 
+  const presentationSubscribeTeamId = isStaff ? selectedTeamId : myTeamId;
+
   const chatSelectableTeams = useMemo<ChatTeam[]>(() => {
     const mapped = teams.map((team) => ({
       teamId: String(team.teamId),
@@ -197,6 +248,28 @@ export default function MeetingPage() {
     if (!myTeamId) return [];
     return mapped.filter((team) => Number(team.teamId) === myTeamId);
   }, [teams, isStaff, myTeamId]);
+
+  const {
+    isConnected,
+    canSubscribeChat,
+    publishChatMessage,
+    publishPresentation,
+  } = useMeetingRealtime({
+    clubId,
+    meetingId,
+    presentationTeamId: presentationSubscribeTeamId ?? null,
+    chatTeamId: selectedChatTeamId,
+    isChatOpen: isChatModalOpen,
+    isStaff,
+    myTeamId,
+    enabled: Number.isFinite(clubId) && Number.isFinite(meetingId) && !!meetingData,
+    onPresentationEvent: (event) => {
+      removePendingPresentation(event.teamId, event.topicId);
+    },
+    onRealtimeResynced: () => {
+      clearPendingPresentations();
+    },
+  });
 
   useEffect(() => {
     if (chatSelectableTeams.length === 0) {
@@ -219,6 +292,14 @@ export default function MeetingPage() {
     const matched = teams.find((team) => team.teamName === teamName);
     if (!matched) return;
 
+    console.log("[meeting page] handleSelectTeam", {
+      clickedTeamName: teamName,
+      nextTeamId: matched.teamId,
+      prevSelectedTeamId: selectedTeamId,
+      myTeamId,
+      presentationSubscribeTeamId,
+    });
+
     setSelectedTeamId(matched.teamId);
 
     const next = new URLSearchParams(searchParams.toString());
@@ -234,7 +315,14 @@ export default function MeetingPage() {
   };
 
   const handleSelectChatTeam = (team: ChatTeam) => {
-    setSelectedChatTeamId(Number(team.teamId));
+    const nextTeamId = Number(team.teamId);
+
+    if (!isStaff && myTeamId !== nextTeamId) {
+      toast.error("본인 팀 채팅만 열 수 있습니다.");
+      return;
+    }
+
+    setSelectedChatTeamId(nextTeamId);
     setIsTeamSelectModalOpen(false);
     setIsChatModalOpen(true);
   };
@@ -249,9 +337,21 @@ export default function MeetingPage() {
     setIsTeamSelectModalOpen(true);
   };
 
+  const handleSendChatMessage = (content: string) => {
+    if (selectedChatTeamId === null) return;
+
+    try {
+      publishChatMessage(selectedChatTeamId, content);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "채팅 전송 중 오류가 발생했습니다.";
+      toast.error(message);
+    }
+  };
+
   const handleChatDragStart = (e: React.PointerEvent<HTMLDivElement>) => {
     if (window.innerWidth < 768) return;
-    
+
     dragRef.current = {
       startX: e.clientX,
       startY: e.clientY,
@@ -300,6 +400,38 @@ export default function MeetingPage() {
     };
   }, []);
 
+  const handleTogglePresentation = (topicId: number, currentSelected: boolean) => {
+    if (selectedTeamId === null) return;
+
+    const key = makePresentationPendingKey(selectedTeamId, topicId);
+
+    if (!canSelectCurrentTeamTopic) {
+      toast.error("현재 조의 발제만 선택할 수 있습니다.");
+      return;
+    }
+
+    if (!isConnected) {
+      toast.error("실시간 연결이 아직 되지 않았습니다.");
+      return;
+    }
+
+    if (pendingPresentationKeys.has(key)) {
+      return;
+    }
+
+    addPendingPresentation(selectedTeamId, topicId);
+
+    try {
+      publishPresentation(selectedTeamId, topicId, !currentSelected);
+    } catch (error) {
+      removePendingPresentation(selectedTeamId, topicId);
+
+      const message =
+        error instanceof Error ? error.message : "발제 선택 중 오류가 발생했습니다.";
+      toast.error(message);
+    }
+  };
+
   if (isMeetingLoading) {
     return (
       <div className="w-full flex justify-center">
@@ -347,7 +479,7 @@ export default function MeetingPage() {
                     "shrink-0 flex h-[36px] min-w-[83px] items-center justify-center rounded-[4px] border px-[10px] transition-colors body_2_2 cursor-pointer",
                     isActive
                       ? "bg-primary-2 border-primary-2 text-White"
-                      : "bg-White border-Subbrown-4 text-Gray-7 hover:bg-Gray-1",
+                      : "bg-White border-Subbrown-4 text-Gray-7 hover:bg-Gray-2",
                   ].join(" ")}
                 >
                   {team.teamName}
@@ -360,7 +492,6 @@ export default function MeetingPage() {
         {selectedTeam ? (
           <div className="w-full flex flex-col gap-[16px]">
             <div className="flex items-center justify-between w-full">
-              
               <div className="flex items-center gap-2">
                 <span className="text-Gray-7 subhead_4_1">{selectedTeam.teamName}</span>
 
@@ -404,6 +535,11 @@ export default function MeetingPage() {
                 ) : (
                   visibleTopics.map((topic) => {
                     const profileSrc = normalizeSrc(topic.author.profileImageUrl);
+                    const isPending =
+                      selectedTeamId !== null &&
+                      pendingPresentationKeys.has(
+                        makePresentationPendingKey(selectedTeamId, topic.topicId)
+                      );
 
                     return (
                       <div
@@ -440,19 +576,27 @@ export default function MeetingPage() {
 
                           <button
                             type="button"
-                            disabled
+                            disabled={!canSelectCurrentTeamTopic || !isConnected || isPending}
+                            onClick={() => handleTogglePresentation(topic.topicId, topic.isSelected)}
                             title={
-                              canSelectCurrentTeamTopic
-                                ? "발제 선택/해제는 다음 단계에서 연결합니다."
-                                : "다른 조 발제는 조회만 가능합니다."
+                              !canSelectCurrentTeamTopic
+                                ? "다른 조 발제는 조회만 가능합니다."
+                                : !isConnected
+                                ? "실시간 연결 중입니다."
+                                : isPending
+                                ? "선택 반영 중입니다."
+                                : topic.isSelected
+                                ? "발제 선택을 해제합니다."
+                                : "이 발제를 선택합니다."
                             }
                             className={[
                               "relative w-6 h-6 shrink-0 justify-self-end",
-                              canSelectCurrentTeamTopic
-                                ? "cursor-default"
-                                : "cursor-not-allowed opacity-70",
+                              !canSelectCurrentTeamTopic || !isConnected || isPending
+                                ? "cursor-not-allowed opacity-70"
+                                : "cursor-pointer",
                             ].join(" ")}
                             aria-label="발제 선택 상태"
+                            aria-busy={isPending}
                           >
                             <Image
                               src={topic.isSelected ? "/CheckOn.svg" : "/CheckOff.svg"}
@@ -511,9 +655,18 @@ export default function MeetingPage() {
         selectedTeamId={selectedChatTeamId}
         onClose={handleCloseAllChatLayers}
         onBack={handleBackToTeamSelect}
-        onSelectTeam={(teamId) => setSelectedChatTeamId(teamId)}
+        onSelectTeam={(teamId) => {
+          const matched = chatSelectableTeams.find(
+            (team) => Number(team.teamId) === teamId
+          );
+          if (!matched) return;
+          handleSelectChatTeam(matched);
+        }}
         position={chatPosition}
         onDragStart={handleChatDragStart}
+        onSendMessage={handleSendChatMessage}
+        isSocketConnected={isConnected}
+        canSendMessage={canSubscribeChat}
       />
     </div>
   );

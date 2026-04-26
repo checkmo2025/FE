@@ -12,6 +12,7 @@ import ReviewSection from "./ReviewSection";
 import MeetingTabSection from "./MeetingTabSection";
 
 import BookshelfDeleteConfirmModal from "@/components/base-ui/Bookcase/bookid/BookshelfDeleteConfirmModal";
+import ReportModal from "@/components/common/ReportModal";
 
 import { useClubMeQuery } from "@/hooks/queries/useClubhomeQueries";
 import {
@@ -28,11 +29,24 @@ import {
   useDeleteReviewMutation,
   useDeleteBookshelfMutation,
 } from "@/hooks/mutations/useClubsBookshelfMutations";
+import { useReportMemberMutation } from "@/hooks/mutations/useReportMemberMutations";
 
 import { useAuthStore } from "@/store/useAuthStore";
 
 function isTabKey(v: string | null): v is TabKey {
   return v === "topic" || v === "review" || v === "meeting";
+}
+
+function mapReportTypeToApi(type: string): "GENERAL" | "BOOK_STORY" {
+  switch (type) {
+    case "책 이야기":
+    case "책이야기(댓글)":
+      return "BOOK_STORY";
+    case "일반":
+    case "책모임 내부":
+    default:
+      return "GENERAL";
+  }
 }
 
 export default function BookDetailPage() {
@@ -48,7 +62,7 @@ export default function BookDetailPage() {
   const meetingId = Number(meetingIdParam);
 
   const [activeTab, setActiveTab] = useState<TabKey>("meeting");
-  
+
   const { user } = useAuthStore();
 
   const myName = user?.nickname ?? "My_Name";
@@ -58,6 +72,9 @@ export default function BookDetailPage() {
   const [isReviewWriting, setIsReviewWriting] = useState(false);
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [reportTarget, setReportTarget] = useState<{
+    reportedMemberNickname: string;
+  } | null>(null);
 
   const { data: meData } = useClubMeQuery(clubId);
   const isStaff = !!meData?.staff;
@@ -81,6 +98,8 @@ export default function BookDetailPage() {
 
   const { mutateAsync: deleteBookshelf, isPending: isDeletingBookshelf } =
     useDeleteBookshelfMutation();
+
+  const { mutateAsync: reportMember } = useReportMemberMutation();
 
   useEffect(() => {
     const tab = searchParams.get("tab");
@@ -175,7 +194,59 @@ export default function BookDetailPage() {
     router.push(`/profile/${nickname}`);
   };
 
-  const reportToast = () => toast("신고 기능은 준비중입니다.");
+  const handleOpenTopicReport = (id: number | string) => {
+    const target = topicItems.find((item) => String(item.id) === String(id));
+
+    if (!target) {
+      toast.error("신고할 발제를 찾을 수 없습니다.");
+      return;
+    }
+
+    if (isStaff || target.isAuthor) {
+      toast.error("신고할 수 없는 항목입니다.");
+      return;
+    }
+
+    setReportTarget({
+      reportedMemberNickname: target.name,
+    });
+  };
+
+  const handleOpenReviewReport = (id: number | string) => {
+    const target = reviewItems.find((item) => String(item.id) === String(id));
+
+    if (!target) {
+      toast.error("신고할 한줄평을 찾을 수 없습니다.");
+      return;
+    }
+
+    if (isStaff || target.isAuthor) {
+      toast.error("신고할 수 없는 항목입니다.");
+      return;
+    }
+
+    setReportTarget({
+      reportedMemberNickname: target.name,
+    });
+  };
+
+  const handleSubmitReport = async (type: string, content: string) => {
+    const target = reportTarget;
+    if (!target) return;
+
+    try {
+      await reportMember({
+        reportedMemberNickname: target.reportedMemberNickname,
+        reportType: mapReportTypeToApi(type),
+        content,
+      });
+
+      toast.success("신고가 접수되었습니다.");
+    } catch (e: any) {
+      const msg = e?.message ?? "";
+      toast.error(msg || "신고 접수에 실패했습니다.");
+    }
+  };
 
   return (
     <div className="flex flex-col w-full items-start gap-[24px]">
@@ -188,6 +259,13 @@ export default function BookDetailPage() {
         description="(공지사항도 함께 삭제됩니다)"
         confirmText="예"
         cancelText="아니요"
+      />
+
+      <ReportModal
+        isOpen={reportTarget !== null}
+        onClose={() => setReportTarget(null)}
+        onSubmit={handleSubmitReport}
+        defaultReportType="책모임 내부"
       />
 
       <div className="flex flex-col w-full items-start gap-[40px]">
@@ -216,7 +294,11 @@ export default function BookDetailPage() {
 
           <div className="flex flex-col items-start gap-[24px] self-stretch">
             {activeTab === "meeting" && (
-              <MeetingTabSection clubId={clubId} meetingId={meetingId} onManageTeamsClick={handleManageTeams} />
+              <MeetingTabSection
+                clubId={clubId}
+                meetingId={meetingId}
+                onManageTeamsClick={handleManageTeams}
+              />
             )}
 
             {activeTab === "topic" && (
@@ -244,7 +326,7 @@ export default function BookDetailPage() {
                 hasNextPage={!!topicsQuery.hasNextPage}
                 isFetchingNextPage={topicsQuery.isFetchingNextPage}
                 onLoadMore={topicsQuery.fetchNextPage}
-                onReport={() => reportToast()}
+                onReport={handleOpenTopicReport}
                 onUpdate={(id, nextContent) => {
                   updateTopic(
                     { clubId, meetingId, topicId: Number(id), body: { description: nextContent } },
@@ -292,7 +374,7 @@ export default function BookDetailPage() {
                 hasNextPage={!!reviewsQuery.hasNextPage}
                 isFetchingNextPage={reviewsQuery.isFetchingNextPage}
                 onLoadMore={reviewsQuery.fetchNextPage}
-                onReport={(id) => reportToast()}
+                onReport={handleOpenReviewReport}
                 onUpdate={(id, nextContent, nextRating) => {
                   updateReview(
                     {

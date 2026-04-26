@@ -157,7 +157,7 @@ export default function SearchClubListItem({
           <div className="flex flex-col items-end gap-1">
             <div className="flex items-center gap-1">
               <span className="body_1_2 text-Gray-4">{club.public ? "공개" : "비공개"}</span>
-              <Image src={club.public ? "/Unlock.svg" : "/lock.svg"} alt="" width={16} height={16} />
+              <Image src={club.public ? "/Unlock.svg" : "/Lockicon.svg"} alt="" width={16} height={16} />
             </div>
 
             {applyMeta.label && (

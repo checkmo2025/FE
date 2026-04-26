@@ -101,7 +101,7 @@ function RoleEditDropdown({
   if (status === "PENDING") {
     const items = [
       { label: "가입 승인", icon: "/admin.svg", action: "APPROVE" as const },
-      { label: "가입 거절", icon: "/logout.svg", action: "REJECT" as const },
+      { label: "가입 거절", icon: "/Logout.svg", action: "REJECT" as const },
     ];
 
     return (
@@ -141,7 +141,7 @@ function RoleEditDropdown({
       >
         <div className="flex w-full h-11 items-center gap-3 px-4 body_1_2 text-Gray-4">
           <Image
-            src="/logout.svg"
+            src="/Logout.svg"
             alt="변경 불가"
             width={24}
             height={24}
@@ -179,7 +179,7 @@ function RoleEditDropdown({
     { type: "admin" as RoleType, label: "운영진 역할", icon: "/admin.svg" },
     { type: "member" as RoleType, label: "회원 역할", icon: "/member.svg" },
     { type: "creator" as RoleType, label: "개설자 역할", icon: "/leader.svg" },
-    { type: null, label: "회원 탈퇴", icon: "/logout.svg" },
+    { type: null, label: "회원 탈퇴", icon: "/Logout.svg" },
   ];
 
   return (

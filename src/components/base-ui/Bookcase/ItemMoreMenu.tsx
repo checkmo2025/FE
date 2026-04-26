@@ -5,18 +5,29 @@ import Image from "next/image";
 
 type Props = {
   canManage: boolean;
-  onReport: () => void;
+  canReport?: boolean;
+  onReport?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
 };
 
 const ICON_REPORT = "/Danger_Circle.svg";
-const ICON_EDIT = "/Edit.svg";  
+const ICON_EDIT = "/Edit.svg";
 const ICON_DELETE = "/Delete_2.svg";
 
-export default function ItemMoreMenu({ canManage, onReport, onEdit, onDelete }: Props) {
+export default function ItemMoreMenu({
+  canManage,
+  canReport = true,
+  onReport,
+  onEdit,
+  onDelete,
+}: Props) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  const showReport = canReport && !!onReport;
+  const showManage = canManage && (!!onEdit || !!onDelete);
+  const hasAnyAction = showReport || showManage;
 
   useEffect(() => {
     if (!open) return;
@@ -32,6 +43,8 @@ export default function ItemMoreMenu({ canManage, onReport, onEdit, onDelete }: 
     fn();
     setOpen(false);
   };
+
+  if (!hasAnyAction) return null;
 
   return (
     <div className="relative" ref={ref}>
@@ -58,38 +71,62 @@ export default function ItemMoreMenu({ canManage, onReport, onEdit, onDelete }: 
             overflow-hidden
           "
         >
-          <button
-            type="button"
-            onClick={() => handle(onReport)}
-            className="h-[44px] w-[137px] flex items-center gap-[10px] justify-center px-5 py-[10px] body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
-          >
-            <Image src={ICON_REPORT} alt="" width={24} height={24} className="object-contain shrink-0" />
-            <span>신고하기</span>
-          </button>
+          {showReport && (
+            <button
+              type="button"
+              onClick={() => onReport && handle(onReport)}
+              className="h-[44px] w-[137px] flex items-center gap-[10px] justify-center px-5 py-[10px] body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
+            >
+              <Image
+                src={ICON_REPORT}
+                alt=""
+                width={24}
+                height={24}
+                className="object-contain shrink-0"
+              />
+              <span>신고하기</span>
+            </button>
+          )}
 
-          {canManage && (
+          {showManage && (
             <>
-              <div className="mx-3 border-b border-Subbrown-4" />
+              {showReport && <div className="mx-3 border-b border-Subbrown-4" />}
 
-              <button
-                type="button"
-                onClick={() => onEdit && handle(onEdit)}
-                className="h-[44px] w-[137px] flex items-center gap-[10px] justify-center px-5 py-[10px] body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
-              >
-                <Image src={ICON_EDIT} alt=""  width={24} height={24} className="object-contain shrink-0" />
-                <span>수정하기</span>
-              </button>
+              {onEdit && (
+                <button
+                  type="button"
+                  onClick={() => handle(onEdit)}
+                  className="h-[44px] w-[137px] flex items-center gap-[10px] justify-center px-5 py-[10px] body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
+                >
+                  <Image
+                    src={ICON_EDIT}
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="object-contain shrink-0"
+                  />
+                  <span>수정하기</span>
+                </button>
+              )}
 
-              <div className="mx-3 border-b border-Subbrown-4" />
+              {onEdit && onDelete && <div className="mx-3 border-b border-Subbrown-4" />}
 
-              <button
-                type="button"
-                onClick={() => onDelete && handle(onDelete)}
-                className="h-[44px] w-[137px] flex items-center gap-[10px] justify-center px-5 py-[10px] body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
-              >
-                <Image src={ICON_DELETE} alt=""  width={24} height={24} className="object-contain shrink-0" />
-                <span>삭제하기</span>
-              </button>
+              {onDelete && (
+                <button
+                  type="button"
+                  onClick={() => handle(onDelete)}
+                  className="h-[44px] w-[137px] flex items-center gap-[10px] justify-center px-5 py-[10px] body_1_2 text-Gray-4 hover:text-Gray-7 cursor-pointer"
+                >
+                  <Image
+                    src={ICON_DELETE}
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="object-contain shrink-0"
+                  />
+                  <span>삭제하기</span>
+                </button>
+              )}
             </>
           )}
         </div>
