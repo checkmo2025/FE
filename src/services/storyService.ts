@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib/api/client";
+import { apiClient, extractResult } from "@/lib/api/client";
 import { STORY_ENDPOINTS } from "@/lib/api/endpoints/bookstory";
 import { BookStoryListResponse, BookStoryDetail, CreateBookStoryRequest } from "@/types/story";
 import { ApiResponse } from "@/types/auth";
@@ -11,7 +11,7 @@ export const storyService = {
                 params: cursorId !== undefined ? { cursorId } : undefined
             }
         );
-        return response.result!;
+        return extractResult(response);
     },
     getFollowingStories: async (cursorId?: number): Promise<BookStoryListResponse> => {
         const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
@@ -20,7 +20,7 @@ export const storyService = {
                 params: cursorId !== undefined ? { cursorId } : undefined
             }
         );
-        return response.result!;
+        return extractResult(response);
     },
     // 특정 모임의 클럽 책 이야기 조회 
     getClubStories: async (clubId: number, cursorId?: number): Promise<BookStoryListResponse> => {
@@ -30,7 +30,7 @@ export const storyService = {
                 params: cursorId !== undefined ? { cursorId } : undefined
             }
         );
-        return response.result!;
+        return extractResult(response);
     },
 
     getMyStories: async (cursorId?: number): Promise<BookStoryListResponse> => {
@@ -40,7 +40,7 @@ export const storyService = {
                 params: cursorId !== undefined ? { cursorId } : undefined
             }
         );
-        return response.result!;
+        return extractResult(response);
     },
     getOtherMemberStories: async (nickname: string, cursorId?: number): Promise<BookStoryListResponse> => {
         const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
@@ -49,7 +49,7 @@ export const storyService = {
                 params: cursorId !== undefined ? { cursorId } : undefined
             }
         );
-        return response.result!;
+        return extractResult(response);
     },
     getStoriesByBookId: async (bookId: string, cursorId?: number): Promise<BookStoryListResponse> => {
         const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
@@ -58,20 +58,20 @@ export const storyService = {
                 params: cursorId !== undefined ? { cursorId } : undefined
             }
         );
-        return response.result!;
+        return extractResult(response);
     },
     getStoryById: async (id: number): Promise<BookStoryDetail> => {
         const response = await apiClient.get<ApiResponse<BookStoryDetail>>(
             `${STORY_ENDPOINTS.LIST}/${id}`
         );
-        return response.result!;
+        return extractResult(response);
     },
     createBookStory: async (data: CreateBookStoryRequest): Promise<number> => {
         const response = await apiClient.post<ApiResponse<number>>(
             STORY_ENDPOINTS.LIST,
             data
         );
-        return response.result!;
+        return extractResult(response);
     },
     createComment: async (
         bookStoryId: number,
@@ -87,7 +87,7 @@ export const storyService = {
                 params: { parentCommentId }
             }
         );
-        return response.result!;
+        return extractResult(response);
     },
     updateComment: async (
         bookStoryId: number,
@@ -98,7 +98,7 @@ export const storyService = {
             `${STORY_ENDPOINTS.LIST}/${bookStoryId}/comments/${commentId}`,
             data
         );
-        return response.result!;
+        return extractResult(response);
     },
     deleteComment: async (
         bookStoryId: number,
@@ -107,12 +107,12 @@ export const storyService = {
         const response = await apiClient.delete<ApiResponse<null>>(
             `${STORY_ENDPOINTS.LIST}/${bookStoryId}/comments/${commentId}`
         );
-        return response.result!;
+        return extractResult(response);
     },
     toggleLikeStory: async (bookStoryId: number): Promise<boolean> => {
         const response = await apiClient.post<ApiResponse<boolean>>(
             STORY_ENDPOINTS.LIKE(bookStoryId)
         );
-        return response.result!;
+        return extractResult(response);
     },
 };
