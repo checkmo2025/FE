@@ -33,7 +33,7 @@ export default function BookDetailPage() {
 
     const relatedStories = useMemo(() => {
         if (!storiesData) return [];
-        return storiesData.pages.flatMap((page) => page.basicInfoList) || [];
+        return storiesData.pages.flatMap((page) => page.basicInfoList) ?? [];
     }, [storiesData]);
 
     const handleToggleStoryLike = (storyId: number) => {
