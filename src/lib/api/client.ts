@@ -1,4 +1,4 @@
-
+import { ApiResponse } from "@/types/auth";
 import { useAuthStore } from "@/store/useAuthStore";
 import toast from "react-hot-toast";
 import { getErrorMessage } from "./errorMapper";
@@ -105,4 +105,16 @@ export const apiClient = {
     request<T>(url, { ...options, method: "PATCH", body: body ? JSON.stringify(body) : undefined }),
   delete: <T>(url: string, options?: RequestOptions) =>
     request<T>(url, { ...options, method: "DELETE" }),
+};
+
+/**
+ * [Standardization] API 응답에서 result를 안전하게 추출하는 헬퍼 함수
+ * result가 undefined인 경우에만 예외를 발생시켜 비정상 응답을 방지하며,
+ * null, false, 0 등의 Falsy value는 정상 데이터로 간주하여 보존합니다.
+ */
+export const extractResult = <T,>(response: ApiResponse<T>): T => {
+  if (response.result === undefined) {
+    throw new Error(response.message || "API 응답에 결과(result)가 누락되었습니다.");
+  }
+  return response.result;
 };

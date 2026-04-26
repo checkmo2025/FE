@@ -5,7 +5,7 @@ import React from "react";
 import ClubCategoryTags from "./search_club_category_tags";
 import type { ApplyType, ParticipantType } from "@/types/groups/groups";
 import type { ClubCategoryDTO } from "@/types/groups/clubsearch";
-const DEFAULT_CLUB_IMG = "/ClubDefaultImg.svg";
+const DEFAULT_CLUB_IMG = "/default_profile_1.svg";
 
 // participantTypes 한글 매핑
 const PARTICIPANT_KO: Record<string, string> = {
@@ -31,7 +31,7 @@ export type ClubSummary = {
   clubId: number;
   name: string;
   profileImageUrl?: string | null;
-  category: ClubCategoryDTO[]; 
+  category: ClubCategoryDTO[];
   public: boolean;
   applytype: ApplyType;
   region: string;
@@ -49,13 +49,13 @@ type Props = {
 };
 
 function safeImageSrc(src?: string | null) {
-    if (!src) return DEFAULT_CLUB_IMG;
+  if (!src) return DEFAULT_CLUB_IMG;
 
-    if (src === "string") return DEFAULT_CLUB_IMG;
-    if (src.startsWith("/")) return src;
-    if (src.startsWith("http://") || src.startsWith("https://")) return src;
+  if (src === "string") return DEFAULT_CLUB_IMG;
+  if (src.startsWith("/")) return src;
+  if (src.startsWith("http://") || src.startsWith("https://")) return src;
 
-    return DEFAULT_CLUB_IMG;
+  return DEFAULT_CLUB_IMG;
 }
 
 
@@ -133,13 +133,13 @@ export default function SearchClubListItem({
 
           <div className="mt-5 flex items-start gap-4">
             <div className="relative shrink-0 w-[148px] h-[148px] rounded-[8px] overflow-hidden">
-                <Image
-                  src={imgSrc}
-                  alt="모임 이미지"
-                  fill
-                  sizes="148px"
-                  className="object-cover"
-                />
+              <Image
+                src={imgSrc}
+                alt="모임 이미지"
+                fill
+                sizes="148px"
+                className="object-cover"
+              />
             </div>
             <div className="flex flex-col gap-1 min-w-0">
               <p className="body_2_2 text-Gray-4">

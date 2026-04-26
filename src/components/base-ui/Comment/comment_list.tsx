@@ -25,6 +25,7 @@ type CommentListProps = {
   onEditComment?: (id: number, content: string) => void;
   onDeleteComment?: (id: number) => void;
   onReportComment?: (id: number) => void;
+  onProfileClick?: (nickname: string) => void;
 };
 
 export default function CommentList({
@@ -34,6 +35,7 @@ export default function CommentList({
   onEditComment,
   onDeleteComment,
   onReportComment,
+  onProfileClick,
 }: CommentListProps) {
   // 각 댓글의 답글 입력창 표시 여부
   const [replyInputOpen, setReplyInputOpen] = useState<Record<number, boolean>>({});
@@ -109,6 +111,7 @@ export default function CommentList({
                 onEdit={onEditComment}
                 onDelete={onDeleteComment}
                 onReport={onReportComment}
+                onProfileClick={onProfileClick}
               />
 
               {/* 답글 입력창  */}
@@ -170,6 +173,7 @@ export default function CommentList({
                     onEdit={onEditComment}
                     onDelete={onDeleteComment}
                     onReport={onReportComment}
+                    onProfileClick={onProfileClick}
                   />
                 </div>
               ))}

@@ -207,10 +207,31 @@ export default function NoticeDetail({
   const hasSubmittedVote = votedOptionNumbers.length > 0;
   const hasVoted = hasSubmittedVote && !isRevoteMode;
 
+  const [now, setNow] = useState(() => Date.now());
+
   useEffect(() => {
     setSelectedOptions(votedOptionNumbers);
     setIsRevoteMode(false);
   }, [votedOptionNumbers]);
+
+  useEffect(() => {
+    if (!voteDetail?.deadline) return;
+    const deadlineTime = new Date(voteDetail.deadline).getTime();
+    const remaining = deadlineTime - Date.now();
+
+    if (remaining <= 0) return;
+
+    const timer = setTimeout(() => {
+      setNow(Date.now());
+    }, remaining);
+
+    return () => clearTimeout(timer);
+  }, [voteDetail?.deadline]);
+
+  const isVoteEnded = useMemo(() => {
+    if (!voteDetail?.deadline) return false;
+    return new Date(voteDetail.deadline).getTime() < now;
+  }, [voteDetail?.deadline, now]);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -226,7 +247,11 @@ export default function NoticeDetail({
   }, [isAdmin]);
 
   const handleOptionClick = (optionId: number) => {
-    if (!voteDetail || hasVoted || isVotePending) return;
+    const freshIsVoteEnded = voteDetail?.deadline
+      ? new Date(voteDetail.deadline).getTime() < Date.now()
+      : false;
+
+    if (!voteDetail || hasVoted || isVotePending || freshIsVoteEnded) return;
 
     if (voteDetail.duplication) {
       setSelectedOptions((prev) =>
@@ -240,7 +265,19 @@ export default function NoticeDetail({
   };
 
   const handleVoteSubmit = async () => {
-    if (!voteDetail || selectedOptions.length === 0 || isVotePending) {
+    const freshIsVoteEnded = voteDetail?.deadline
+      ? new Date(voteDetail.deadline).getTime() < Date.now()
+      : false;
+
+    if (
+      !voteDetail ||
+      selectedOptions.length === 0 ||
+      isVotePending ||
+      freshIsVoteEnded
+    ) {
+      if (freshIsVoteEnded) {
+        toast.error('투표 기간이 종료되었습니다.');
+      }
       return;
     }
 
@@ -254,7 +291,9 @@ export default function NoticeDetail({
         },
       });
 
-      toast.success(isRevoteMode ? '투표가 수정되었습니다.' : '투표가 완료되었습니다.');
+      toast.success(
+        isRevoteMode ? '투표가 수정되었습니다.' : '투표가 완료되었습니다.'
+      );
     } catch (e: any) {
       const msg = e?.message ?? '';
       toast.error(msg || '투표에 실패했습니다.');
@@ -262,7 +301,7 @@ export default function NoticeDetail({
   };
 
   const handleRevote = () => {
-    if (!voteDetail || isVotePending) return;
+    if (!voteDetail || isVotePending || isVoteEnded) return;
 
     setIsRevoteMode(true);
     setSelectedOptions([]);
@@ -491,7 +530,7 @@ export default function NoticeDetail({
             <div className="flex flex-col gap-3 mb-6">
               {voteDetail.items.map((option) => {
                 const isSelected = selectedOptions.includes(option.itemNumber);
-                const isDisabled = hasVoted || isVotePending;
+                const isDisabled = hasVoted || isVotePending || isVoteEnded;
 
                 return (
                   <div
@@ -537,11 +576,13 @@ export default function NoticeDetail({
             <div className="flex justify-end">
               <button
                 onClick={hasVoted ? handleRevote : handleVoteSubmit}
-                disabled={!hasVoted && (selectedOptions.length === 0 || isVotePending)}
+                disabled={isVoteEnded || (!hasVoted && (selectedOptions.length === 0 || isVotePending))}
                 className={`
                   w-[104px] h-[44px] px-6 py-3 rounded-lg body_1_2 transition-colors flex items-center justify-center box-border
                   ${
-                    hasVoted
+                    isVoteEnded
+                      ? 'bg-Gray-2 text-Gray-4 border border-transparent cursor-not-allowed'
+                      : hasVoted
                       ? 'bg-Subbrown-4 border border-transparent text-primary-1 cursor-pointer hover:bg-Subbrown-3'
                       : selectedOptions.length > 0
                       ? 'bg-primary-1 text-white border border-transparent cursor-pointer hover:bg-primary-3 hover:text-white'
@@ -549,7 +590,7 @@ export default function NoticeDetail({
                   }
                 `}
               >
-                {hasVoted ? '다시 투표' : isVotePending ? '투표 중...' : '투표하기'}
+                {isVoteEnded ? '투표 마감' : hasVoted ? '다시 투표' : isVotePending ? '투표 중...' : '투표하기'}
               </button>
             </div>
           </div>

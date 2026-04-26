@@ -178,6 +178,7 @@ export default function StoriesPage() {
             <ListSubscribeLarge
               height="h-[380px]"
               users={recommendedMembers}
+              onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
               onSubscribeClick={(nickname, isFollowing) => handleToggleFollow(nickname, isFollowing)}
             />
           )

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import ClubCategoryTags from "./search_clublist/search_club_category_tags";
 
-const DEFAULT_CLUB_IMG = "/ClubDefaultImg.svg";
+const DEFAULT_CLUB_IMG = "/default_profile_1.svg";
 
 const PARTICIPANT_KO: Record<string, string> = {
   STUDENT: "대학생",
