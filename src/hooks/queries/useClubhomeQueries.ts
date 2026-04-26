@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { clubService } from "@/services/clubService";
 
-const clubhomeKeys = {
+export const clubhomeKeys = {
   all: (clubId: number) => ["clubhome", clubId] as const,
   me: (clubId: number) => [...clubhomeKeys.all(clubId), "me"] as const,
   home: (clubId: number) => [...clubhomeKeys.all(clubId), "home"] as const,

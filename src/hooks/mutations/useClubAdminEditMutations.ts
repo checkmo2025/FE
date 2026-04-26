@@ -1,6 +1,7 @@
 // src/hooks/mutations/useClubAdminEditMutations.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { clubAdminEditQueryKeys } from "@/hooks/queries/useClubAdminEditQueries";
+import { clubhomeKeys } from "@/hooks/queries/useClubhomeQueries";
 
 import type { UpdateClubAdminRequest } from "@/types/groups/clubAdminEdit";
 
@@ -19,6 +20,7 @@ export function useUpdateClubAdminMutation(clubId: number) {
 
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: clubAdminEditQueryKeys.detail(clubId) });
+      qc.invalidateQueries({ queryKey: clubhomeKeys.home(clubId) });
     },
   });
 }
