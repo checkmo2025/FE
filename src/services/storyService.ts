@@ -8,7 +8,7 @@ export const storyService = {
         const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
             STORY_ENDPOINTS.LIST,
             {
-                params: { cursorId },
+                params: cursorId !== undefined ? { cursorId } : undefined
             }
         );
         return response.result!;
@@ -17,7 +17,7 @@ export const storyService = {
         const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
             STORY_ENDPOINTS.FOLLOWING,
             {
-                params: { cursorId },
+                params: cursorId !== undefined ? { cursorId } : undefined
             }
         );
         return response.result!;
@@ -27,7 +27,7 @@ export const storyService = {
         const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
             STORY_ENDPOINTS.CLUB(clubId),
             {
-                params: { cursorId }
+                params: cursorId !== undefined ? { cursorId } : undefined
             }
         );
         return response.result!;
@@ -37,7 +37,7 @@ export const storyService = {
         const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
             STORY_ENDPOINTS.ME,
             {
-                params: { cursorId },
+                params: cursorId !== undefined ? { cursorId } : undefined
             }
         );
         return response.result!;
@@ -46,7 +46,7 @@ export const storyService = {
         const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
             STORY_ENDPOINTS.OTHER_MEMBER(nickname),
             {
-                params: { cursorId },
+                params: cursorId !== undefined ? { cursorId } : undefined
             }
         );
         return response.result!;
@@ -55,7 +55,7 @@ export const storyService = {
         const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
             STORY_ENDPOINTS.SEARCH_BY_BOOK(bookId),
             {
-                params: { cursorId },
+                params: cursorId !== undefined ? { cursorId } : undefined
             }
         );
         return response.result!;
