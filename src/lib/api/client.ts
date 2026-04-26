@@ -1,4 +1,4 @@
-
+import { ApiResponse } from "@/types/auth";
 import { useAuthStore } from "@/store/useAuthStore";
 import toast from "react-hot-toast";
 import { getErrorMessage } from "./errorMapper";
