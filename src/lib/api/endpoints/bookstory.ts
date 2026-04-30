@@ -8,4 +8,5 @@ export const STORY_ENDPOINTS = {
     OTHER_MEMBER: (nickname: string) => `${API_BASE_URL}/book-stories/members/${encodeURIComponent(nickname)}`,
     SEARCH_BY_BOOK: (bookId: string) => `${API_BASE_URL}/book-stories/search/${encodeURIComponent(bookId)}`,
     LIKE: (id: number) => `${API_BASE_URL}/book-stories/${id}/like`,
+    DETAIL: (id: number) => `${API_BASE_URL}/book-stories/${id}`,
 };
