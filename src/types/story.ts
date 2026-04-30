@@ -80,3 +80,7 @@ export interface CreateBookStoryRequest {
 export interface CreateCommentRequest {
     content: string;
 }
+
+export interface UpdateBookStoryRequest {
+    description: string;
+}
