@@ -2,7 +2,7 @@ import { useMutation, useQueryClient, InfiniteData } from "@tanstack/react-query
 import { storyService } from "@/services/storyService";
 import { CreateBookStoryRequest, storyKeys } from "@/hooks/queries/useStoryQueries";
 import { toast } from "react-hot-toast";
-import { BookStoryListResponse, BookStoryDetail } from "@/types/story";
+import { BookStoryListResponse, BookStoryDetail, UpdateBookStoryRequest } from "@/types/story";
 
 const updateLikeInStoryList = (old: BookStoryListResponse | undefined, bookStoryId: number) => {
     if (!old || !old.basicInfoList) return old;
@@ -87,6 +87,32 @@ export const useCreateBookStoryMutation = () => {
         mutationFn: (data: CreateBookStoryRequest) => storyService.createBookStory(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: storyKeys.all });
+        },
+    });
+};
+
+export const useUpdateBookStoryMutation = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (args: { bookStoryId: number; data: UpdateBookStoryRequest }) =>
+            storyService.updateBookStory(args.bookStoryId, args.data),
+        onSuccess: (_data, variables) => {
+            queryClient.invalidateQueries({ queryKey: storyKeys.detail(variables.bookStoryId) });
+            queryClient.invalidateQueries({ queryKey: storyKeys.all });
+        },
+    });
+};
+
+export const useDeleteBookStoryMutation = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (bookStoryId: number) => storyService.deleteBookStory(bookStoryId),
+        onSuccess: (_data, bookStoryId) => {
+            queryClient.removeQueries({ queryKey: storyKeys.detail(bookStoryId) });
+            queryClient.invalidateQueries({ queryKey: storyKeys.infiniteList() });
+            queryClient.invalidateQueries({ queryKey: storyKeys.myList() });
+            queryClient.invalidateQueries({ queryKey: storyKeys.list() });
+            queryClient.invalidateQueries({ queryKey: [...storyKeys.all, "otherMember"] });
         },
     });
 };
