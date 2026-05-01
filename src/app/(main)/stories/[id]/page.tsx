@@ -7,7 +7,7 @@ import CommentSection from "@/components/base-ui/Comment/comment_section_bookcas
 
 import Image from "next/image";
 import { isValidUrl } from "@/utils/url";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -16,6 +16,7 @@ import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations"
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 
 export default function StoryDetailPage() {
+  const router = useRouter();
   const params = useParams();
   const id = params?.id as string;
   const { data: story, isLoading, isError } = useStoryDetailQuery(Number(id));
@@ -118,8 +119,7 @@ export default function StoryDetailPage() {
             hideSubscribeButton={story.writtenByMe}
             isMyStory={story.writtenByMe}
             onEditClick={() => {
-              // TODO: 책 이야기 수정 전용 폼 페이지로 연결 구현 (ex. router.push(`/stories/${story.bookStoryId}/edit`))
-              toast("수정 기능은 현재 준비 중입니다.", { icon: "🚧" });
+              router.push(`/stories/${story.bookStoryId}/edit`);
             }}
             onDeleteClick={() => {
               // TODO: 삭제 재확인 모달 표출 및 삭제 API(useDeleteStoryMutation) 로직 연동

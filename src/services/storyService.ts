@@ -1,6 +1,6 @@
 import { apiClient, extractResult } from "@/lib/api/client";
 import { STORY_ENDPOINTS } from "@/lib/api/endpoints/bookstory";
-import { BookStoryListResponse, BookStoryDetail, CreateBookStoryRequest } from "@/types/story";
+import { BookStoryListResponse, BookStoryDetail, CreateBookStoryRequest, UpdateBookStoryRequest } from "@/types/story";
 import { ApiResponse } from "@/types/auth";
 
 export const storyService = {
@@ -112,6 +112,13 @@ export const storyService = {
     toggleLikeStory: async (bookStoryId: number): Promise<boolean> => {
         const response = await apiClient.post<ApiResponse<boolean>>(
             STORY_ENDPOINTS.LIKE(bookStoryId)
+        );
+        return extractResult(response);
+    },
+    updateBookStory: async (bookStoryId: number, data: UpdateBookStoryRequest): Promise<number> => {
+        const response = await apiClient.patch<ApiResponse<number>>(
+            STORY_ENDPOINTS.DETAIL(bookStoryId),
+            data
         );
         return extractResult(response);
     },
