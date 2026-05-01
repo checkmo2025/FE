@@ -122,10 +122,10 @@ export const storyService = {
         );
         return extractResult(response);
     },
-    deleteBookStory: async (bookStoryId: number): Promise<number> => {
+    deleteBookStory: async (bookStoryId: number): Promise<void> => {
         const response = await apiClient.delete<ApiResponse<number>>(
             STORY_ENDPOINTS.DETAIL(bookStoryId)
         );
-        return extractResult(response);
+        extractResult(response);
     },
 };

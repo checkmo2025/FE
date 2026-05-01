@@ -26,7 +26,19 @@ export default function StoryDetailPage() {
   const router = useRouter();
   const params = useParams();
   const id = params?.id as string;
-  const { data: story, isLoading, isError } = useStoryDetailQuery(Number(id));
+  const storyId = Number(id);
+
+  // NaN 검증 추가
+  if (!id || isNaN(storyId)) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <h2 className="text-2xl font-bold text-Gray-7 mb-4">잘못된 접근</h2>
+        <p className="text-Gray-5">올바른 경로로 접근해주세요.</p>
+      </div>
+    );
+  }
+
+  const { data: story, isLoading, isError } = useStoryDetailQuery(storyId);
   const { mutate: toggleLike } = useToggleStoryLikeMutation();
   const { mutate: deleteStory, isPending: isDeletePending } = useDeleteBookStoryMutation();
   const { mutate: toggleFollow } = useToggleFollowMutation();
@@ -158,6 +170,7 @@ export default function StoryDetailPage() {
         isPending={isDeletePending}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={() => {
+          if (!story?.bookStoryId || isDeletePending) return;
           deleteStory(story.bookStoryId, {
             onSuccess: () => {
               toast.success("책 이야기가 삭제되었습니다.");
