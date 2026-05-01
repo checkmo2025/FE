@@ -161,7 +161,7 @@ export default function StoryDetailPage() {
           deleteStory(story.bookStoryId, {
             onSuccess: () => {
               toast.success("책 이야기가 삭제되었습니다.");
-              router.push("/stories");
+              router.replace("/stories");
             },
             onError: () => {
               toast.error("삭제에 실패했습니다. 다시 시도해 주세요.");
