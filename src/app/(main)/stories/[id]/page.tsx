@@ -4,15 +4,22 @@
 import BookstoryDetail from "@/components/base-ui/BookStory/Detatil/bookstory_detail";
 import StoryNavigation from "@/components/base-ui/BookStory/Detatil/story_navigation";
 import CommentSection from "@/components/base-ui/Comment/comment_section_bookcase";
+import BookshelfDeleteConfirmModal from "@/components/base-ui/Bookcase/bookid/BookshelfDeleteConfirmModal";
 
+import { useState } from "react";
 import Image from "next/image";
 import { isValidUrl } from "@/utils/url";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/useAuthStore";
 
-import { useStoryDetailQuery } from "@/hooks/queries/useStoryQueries";
-import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
+import {
+  useStoryDetailQuery,
+} from "@/hooks/queries/useStoryQueries";
+import {
+  useToggleStoryLikeMutation,
+  useDeleteBookStoryMutation,
+} from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 
 export default function StoryDetailPage() {
@@ -21,8 +28,11 @@ export default function StoryDetailPage() {
   const id = params?.id as string;
   const { data: story, isLoading, isError } = useStoryDetailQuery(Number(id));
   const { mutate: toggleLike } = useToggleStoryLikeMutation();
+  const { mutate: deleteStory, isPending: isDeletePending } = useDeleteBookStoryMutation();
   const { mutate: toggleFollow } = useToggleFollowMutation();
   const { isLoggedIn, openLoginModal } = useAuthStore();
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const handleToggleLike = () => {
     if (!isLoggedIn) {
@@ -122,8 +132,7 @@ export default function StoryDetailPage() {
               router.push(`/stories/${story.bookStoryId}/edit`);
             }}
             onDeleteClick={() => {
-              // TODO: 삭제 재확인 모달 표출 및 삭제 API(useDeleteStoryMutation) 로직 연동
-              toast("삭제 기능은 현재 준비 중입니다.", { icon: "🚧" });
+              setIsDeleteModalOpen(true);
             }}
           />
         </StoryNavigation>
@@ -143,6 +152,27 @@ export default function StoryDetailPage() {
           />
         </div>
       </div>
+
+      <BookshelfDeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        isPending={isDeletePending}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={() => {
+          deleteStory(story.bookStoryId, {
+            onSuccess: () => {
+              toast.success("책 이야기가 삭제되었습니다.");
+              router.push("/stories");
+            },
+            onError: () => {
+              toast.error("삭제에 실패했습니다. 다시 시도해 주세요.");
+            },
+          });
+        }}
+        title="책 이야기를 삭제할까요?"
+        description="삭제 후에는 복구할 수 없습니다."
+        confirmText="예"
+        cancelText="아니요"
+      />
     </div>
   );
 }

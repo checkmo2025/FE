@@ -103,6 +103,16 @@ export const useUpdateBookStoryMutation = () => {
     });
 };
 
+export const useDeleteBookStoryMutation = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (bookStoryId: number) => storyService.deleteBookStory(bookStoryId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: storyKeys.all });
+        },
+    });
+};
+
 export const useCreateCommentMutation = (bookStoryId: number) => {
     const queryClient = useQueryClient();
     return useMutation({
