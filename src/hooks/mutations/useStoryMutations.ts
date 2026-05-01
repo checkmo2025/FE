@@ -103,6 +103,20 @@ export const useUpdateBookStoryMutation = () => {
     });
 };
 
+export const useDeleteBookStoryMutation = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (bookStoryId: number) => storyService.deleteBookStory(bookStoryId),
+        onSuccess: (_data, bookStoryId) => {
+            queryClient.removeQueries({ queryKey: storyKeys.detail(bookStoryId) });
+            queryClient.invalidateQueries({ queryKey: storyKeys.infiniteList() });
+            queryClient.invalidateQueries({ queryKey: storyKeys.myList() });
+            queryClient.invalidateQueries({ queryKey: storyKeys.list() });
+            queryClient.invalidateQueries({ queryKey: [...storyKeys.all, "otherMember"] });
+        },
+    });
+};
+
 export const useCreateCommentMutation = (bookStoryId: number) => {
     const queryClient = useQueryClient();
     return useMutation({
