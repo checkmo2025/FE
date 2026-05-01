@@ -98,9 +98,7 @@ export const useUpdateBookStoryMutation = () => {
             storyService.updateBookStory(args.bookStoryId, args.data),
         onSuccess: (_data, variables) => {
             queryClient.invalidateQueries({ queryKey: storyKeys.detail(variables.bookStoryId) });
-            queryClient.invalidateQueries({ queryKey: storyKeys.infiniteList() });
-            queryClient.invalidateQueries({ queryKey: storyKeys.myList() });
-            queryClient.invalidateQueries({ queryKey: [...storyKeys.all, "otherMember"] });
+            queryClient.invalidateQueries({ queryKey: storyKeys.all });
         },
     });
 };

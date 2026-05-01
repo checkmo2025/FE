@@ -21,15 +21,15 @@ export default function StoryEditPage() {
   const { isLoggedIn, isInitialized } = useAuthStore();
 
   const [description, setDescription] = useState("");
-  const [isInitialized2, setIsInitialized2] = useState(false);
+  const [isDescriptionInitialized, setIsDescriptionInitialized] = useState(false);
 
   // 초기 description 세팅 (데이터 로드 후 한 번만)
   useEffect(() => {
-    if (story && !isInitialized2) {
+    if (story && !isDescriptionInitialized) {
       setDescription(story.description);
-      setIsInitialized2(true);
+      setIsDescriptionInitialized(true);
     }
-  }, [story, isInitialized2]);
+  }, [story, isDescriptionInitialized]);
 
   // 로그인 여부 방어
   useEffect(() => {
