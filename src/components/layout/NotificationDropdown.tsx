@@ -7,9 +7,11 @@ import { formatTimeAgo } from "@/utils/time";
 import { useReadNotificationMutation } from "@/hooks/mutations/useNotificationMutations";
 import { getNotificationText, getNotificationRedirectUrl } from "@/utils/notification";
 import { NotificationBasicInfo } from "@/types/notification";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function NotificationDropdown() {
-    const { data: notifications, isLoading } = useNotificationPreviewQuery(5);
+    const { isLoggedIn } = useAuthStore();
+    const { data: notifications, isLoading } = useNotificationPreviewQuery(5, isLoggedIn);
     const { mutate: readNotification } = useReadNotificationMutation();
     const router = useRouter();
 
