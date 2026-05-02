@@ -79,8 +79,8 @@ export default function GroupNoticePage() {
     <div className="w-full relative t:mx-3">
       {/* 비어있을 때 */}
       {isEmpty && (
-        <div className="w-full min-h-[240px] flex items-center justify-center">
-          <p className="body_1_2 text-Gray-4">공지사항이 없습니다.</p>
+        <div className="w-full min-h-[300px] flex items-center justify-center">
+          <p className="body_1_2 text-Gray-5">아직 등록된 공지사항이 없습니다.</p>
         </div>
       )}
 
