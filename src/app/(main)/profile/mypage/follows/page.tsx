@@ -3,6 +3,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
+import { isValidUrl } from "@/utils/url";
 import MyPageBreadcrumb from "@/components/base-ui/MyPage/ProfileSection/MyPageBreadcrumb";
 import FollowList from "@/components/base-ui/Profile/Follow/FollowList";
 import { FollowUser } from "@/components/base-ui/Profile/Follow/FollowItem";
@@ -87,16 +88,12 @@ function FollowsContent() {
                 {/* Profile Image & Nickname Area */}
                 <div className="flex flex-col items-center gap-[16px] w-[138px]">
                     <div className="flex justify-center items-center w-[138px] h-[138px] rounded-full overflow-hidden relative shrink-0">
-                        {user.profileImage ? (
-                            <Image
-                                src={user.profileImage}
-                                alt={user.name}
-                                fill
-                                className="object-cover"
-                            />
-                        ) : (
-                            <div className="w-full h-full bg-[#EAE5E2]" />
-                        )}
+                        <Image
+                            src={isValidUrl(user.profileImage) ? user.profileImage : "/profile2.svg"}
+                            alt={user.name}
+                            fill
+                            className="object-cover"
+                        />
                     </div>
                     <span className="self-stretch text-center text-Gray-7 font-sans text-[24px] font-semibold leading-[135%] tracking-[-0.024px]">
                         {user.name}

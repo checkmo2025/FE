@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { isValidUrl } from "@/utils/url";
 
 type Props = {
   name: string;
@@ -24,16 +25,12 @@ export default function TeamMemberItem({
     >
       <div className="flex items-center gap-[12px]">
         <div className="relative flex h-[40px] w-[40px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-Gray-2">
-          {profileImageUrl ? (
-            <Image
-              src={profileImageUrl}
-              alt={name}
-              fill
-              className="object-cover"
-            />
-          ) : (
-            <div className="h-full w-full bg-Gray-3" />
-          )}
+          <Image
+            src={isValidUrl(profileImageUrl) ? profileImageUrl : "/profile2.svg"}
+            alt={name}
+            fill
+            className="object-cover"
+          />
         </div>
 
         <span className="subhead_4_1 text-Gray-7">{name}</span>
