@@ -64,6 +64,7 @@ function FollowsContent() {
         nickname: userDTO.nickname,
         profileImageUrl: userDTO.profileImageUrl,
         isFollowing: userDTO.following,
+        isDeleted: userDTO.isDeleted,
     })) || [];
 
     const handleToggleFollow = (id: string | number, currentIsFollowing: boolean) => {

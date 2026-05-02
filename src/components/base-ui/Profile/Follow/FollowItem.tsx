@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { isValidUrl } from "@/utils/url";
@@ -9,6 +9,7 @@ export type FollowUser = {
     nickname: string;
     profileImageUrl?: string;
     isFollowing: boolean;
+    isDeleted?: boolean;
 };
 
 type FollowItemProps = {
@@ -18,12 +19,11 @@ type FollowItemProps = {
 };
 
 export default function FollowItem({ user, onToggleFollow, onDelete }: FollowItemProps) {
-    const [isDeleted, setIsDeleted] = useState(false);
+    const isDeleted = user.isDeleted ?? false;
 
     const handleDelete = () => {
-        if (onDelete) {
+        if (onDelete && !isDeleted) {
             onDelete(user.nickname);
-            setIsDeleted(true);
         }
     };
 
