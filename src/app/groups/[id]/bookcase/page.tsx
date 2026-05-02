@@ -92,8 +92,8 @@ export default function BookcasePage() {
 
   if (!adaptedResponse || mergedBookShelfInfoList.length === 0) {
     return (
-      <div className="w-full flex flex-col gap-[24px] items-center h-50 justify-center">
-        <div className="text-Gray-6 body_1_2">아직 책장이 없습니다.</div>
+      <div className="w-full flex flex-col items-center min-h-[300px] justify-center gap-6">
+        <div className="text-Gray-5 body_1_2">아직 등록된 책장이 없습니다.</div>
 
         {isStaff && (
           <FloatingFab

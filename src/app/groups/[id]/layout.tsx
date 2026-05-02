@@ -38,26 +38,6 @@ export default function GroupDetailLayout({ children }: { children: React.ReactN
 
   if (skipLayout) return <>{children}</>;
 
-  if (requiresMemberAccess && access.isCheckingAccess) {
-    return (
-      <div className="w-full px-6 py-10 body_1_2 text-Gray-5">
-        불러오는 중...
-      </div>
-    );
-  }
-
-  if (requiresMemberAccess && access.isUnauthorized) {
-    return null;
-  }
-
-  if (requiresMemberAccess && access.isError) {
-    return (
-      <div className="w-full px-6 py-10 body_1_2 text-Red">
-        모임 정보를 불러오지 못했습니다.
-      </div>
-    );
-  }
-
   const groupName = homeQuery.data?.name ?? "";
 
   const getActiveTab = (): TabType => {
@@ -73,6 +53,36 @@ export default function GroupDetailLayout({ children }: { children: React.ReactN
     { id: "notice" as TabType, label: "공지사항", href: `/groups/${groupId}/notice`, icon: "/Notification2.svg" },
     { id: "bookcase" as TabType, label: "책장", href: `/groups/${groupId}/bookcase`, icon: "/bookshelf.svg" },
   ];
+
+  const renderContent = () => {
+    if (!requiresMemberAccess) return children;
+
+    if (access.isCheckingAccess) {
+      return (
+        <div className="w-full flex items-center justify-center min-h-[300px]">
+          <p className="body_1_2 text-Gray-5">불러오는 중...</p>
+        </div>
+      );
+    }
+
+    if (access.isUnauthorized) {
+      return (
+        <div className="w-full flex items-center justify-center min-h-[300px]">
+          <p className="body_1_2 text-Gray-5">해당 모임의 회원만 접근할 수 있습니다.</p>
+        </div>
+      );
+    }
+
+    if (access.isError) {
+      return (
+        <div className="w-full flex items-center justify-center min-h-[300px]">
+          <p className="body_1_2 text-Red">모임 정보를 불러오지 못했습니다.</p>
+        </div>
+      );
+    }
+
+    return children;
+  };
 
   return (
     <div className="w-full">
@@ -166,7 +176,7 @@ export default function GroupDetailLayout({ children }: { children: React.ReactN
             </nav>
           </aside>
 
-          <main className="min-w-0 flex-1 px-3">{children}</main>
+          <main className="min-w-0 flex-1 px-3">{renderContent()}</main>
         </div>
       </div>
     </div>
