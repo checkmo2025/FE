@@ -43,19 +43,22 @@ export default function FollowItem({ user, onToggleFollow, onDelete }: FollowIte
                 <span className="text-Gray-7 subhead_4_1">{user.nickname}</span>
             </Link>
 
-            {onDelete ? (
-                !isDeleted && (
-                    <button
-                        type="button"
-                        onClick={handleDelete}
-                        className="flex px-[17px] py-[8px] justify-center items-center gap-[10px] rounded-[8px] transition-colors bg-Red text-White"
-                    >
-                        <span className="font-sans text-[12px] font-semibold leading-[100%] tracking-[-0.012px]">
-                            삭제
-                        </span>
-                    </button>
-                )
-            ) : (
+            {onDelete && (
+                <button
+                    type="button"
+                    onClick={handleDelete}
+                    disabled={isDeleted}
+                    className={`flex px-[17px] py-[8px] justify-center items-center gap-[10px] rounded-[8px] transition-colors ${isDeleted
+                        ? "bg-Subbrown-4 text-primary-3 cursor-not-allowed opacity-50"
+                        : "bg-Red text-White"
+                        }`}
+                >
+                    <span className="font-sans text-[12px] font-semibold leading-[100%] tracking-[-0.012px]">
+                        {isDeleted ? "삭제됨" : "삭제"}
+                    </span>
+                </button>
+            )}
+            {!onDelete && (
                 <button
                     type="button"
                     onClick={() => onToggleFollow(user.id, user.isFollowing)}

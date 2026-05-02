@@ -289,8 +289,8 @@ export const useToggleFollowMutation = () => {
             queryClient.invalidateQueries({ queryKey: storyKeys.all });
             queryClient.invalidateQueries({ queryKey: memberKeys.recommended() });
             queryClient.invalidateQueries({ queryKey: memberKeys.otherProfile(variables.nickname) });
-            queryClient.invalidateQueries({ queryKey: memberKeys.followers() });
-            queryClient.invalidateQueries({ queryKey: memberKeys.followings() });
+            queryClient.invalidateQueries({ queryKey: memberKeys.followers(), refetchType: 'none' });
+            queryClient.invalidateQueries({ queryKey: memberKeys.followings(), refetchType: 'none' });
             queryClient.invalidateQueries({ queryKey: memberKeys.followCount() });
         },
     });
