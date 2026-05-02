@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { isValidUrl } from '@/utils/url';
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 type ListSubscribeElementLargeProps = {
   name: string;
@@ -18,7 +19,7 @@ function ListSubscribeElementLarge({
   name,
   subscribingCount,
   subscribersCount,
-  profileSrc = '/profile2.svg',
+  profileSrc = DEFAULT_PROFILE_IMAGE,
   onProfileClick,
   onSubscribeClick,
   buttonText = '구독',
@@ -33,7 +34,7 @@ function ListSubscribeElementLarge({
     >
       <div className="w-[32px] h-[32px] rounded-full overflow-hidden shrink-0 relative self-center">
         <Image
-          src={isValidUrl(profileSrc) ? profileSrc : '/profile2.svg'}
+          src={isValidUrl(profileSrc) ? profileSrc : DEFAULT_PROFILE_IMAGE}
           alt={`${name} profile`}
           fill
           className="object-cover"

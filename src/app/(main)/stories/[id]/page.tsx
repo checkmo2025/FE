@@ -21,6 +21,7 @@ import {
   useDeleteBookStoryMutation,
 } from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 export default function StoryDetailPage() {
   const router = useRouter();
@@ -126,7 +127,7 @@ export default function StoryDetailPage() {
             authorName={story.authorInfo.nickname}
             authorNickname={story.authorInfo.nickname}
             authorId={story.authorInfo.nickname}
-            profileImgSrc={isValidUrl(story.authorInfo.profileImageUrl) ? story.authorInfo.profileImageUrl : "/profile2.svg"}
+            profileImgSrc={isValidUrl(story.authorInfo.profileImageUrl) ? story.authorInfo.profileImageUrl : DEFAULT_PROFILE_IMAGE}
             bookTitle={story.bookInfo.title}
             bookAuthor={story.bookInfo.author}
             bookDetail={story.description}

@@ -12,6 +12,7 @@ import { useHeaderTitle } from "@/contexts/HeaderTitleContext";
 import { useAuthStore } from "@/store/useAuthStore";
 
 import { useSearchStore } from "@/store/useSearchStore";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 const NAV = [
   { label: "책모 홈", href: "/" },
@@ -151,7 +152,7 @@ export default function Header() {
               className="relative hidden w-6 h-6 t:block"
             >
               <Image
-                src={user?.profileImageUrl || "/profile2.svg"}
+                src={user?.profileImageUrl || DEFAULT_PROFILE_IMAGE}
                 alt="프로필"
                 fill
                 className={`object-cover ${user?.profileImageUrl ? "rounded-full" : "object-contain"}`}

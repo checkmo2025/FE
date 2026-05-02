@@ -8,6 +8,7 @@ import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
 import { ReportType } from "@/types/member";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-hot-toast";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 type BookstoryDetailProps = {
   imageUrl?: string;
@@ -16,7 +17,7 @@ type BookstoryDetailProps = {
   authorNickname: string;
   authorId: string | number;
 
-  profileImgSrc?: string; // 기본: "/profile2.svg"
+  profileImgSrc?: string; // 기본: DEFAULT_PROFILE_IMAGE
   subscribeText?: string; // 기본: "구독"
   isFollowing?: boolean;
   onSubscribeClick?: () => void;
@@ -59,7 +60,7 @@ export default function BookstoryDetail({
   authorName,
   authorNickname,
   authorId,
-  profileImgSrc = "/profile2.svg",
+  profileImgSrc = DEFAULT_PROFILE_IMAGE,
   subscribeText = "구독",
   isFollowing = false,
   onSubscribeClick,

@@ -2,11 +2,13 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { isValidUrl } from "@/utils/url";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
 import { DUMMY_USER_PROFILE } from "@/constants/mocks/mypage";
 import { useProfileQuery, useFollowCountQuery } from "@/hooks/queries/useMemberQueries";
 import FloatingFab from "@/components/base-ui/Float";
 import { EXTERNAL_LINKS } from "@/constants/links";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 const UserProfile = () => {
   const router = useRouter();
@@ -48,17 +50,12 @@ const UserProfile = () => {
         <div className="relative flex items-center self-stretch justify-between">
           {/* Profile Image */}
           <div className="flex justify-center items-center w-[138px] h-[138px] rounded-full bg-gray-200 overflow-hidden relative shrink-0">
-            {user.profileImage ? (
-              <Image
-                src={user.profileImage}
-                alt="Profile"
-                fill
-                className="object-cover"
-              />
-            ) : (
-              // Placeholder UI
-              <div className="w-full h-full bg-[#EAE5E2]" />
-            )}
+            <Image
+              src={isValidUrl(user.profileImage) ? user.profileImage : DEFAULT_PROFILE_IMAGE}
+              alt="Profile"
+              fill
+              className="object-cover"
+            />
           </div>
 
           {/* Text Info Wrapper */}
