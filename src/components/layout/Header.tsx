@@ -8,6 +8,7 @@ import { useState, useRef, useEffect } from "react";
 import SearchModal from "./SearchModal";
 
 import NotificationDropdown from "./NotificationDropdown";
+import { useNotificationPreviewQuery } from "@/hooks/queries/useNotificationQueries";
 import { useHeaderTitle } from "@/contexts/HeaderTitleContext";
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -41,6 +42,10 @@ export default function Header() {
 
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
+
+  const { data: notificationsData } = useNotificationPreviewQuery(5, isLoggedIn);
+  const notifications = isLoggedIn ? notificationsData : [];
+  const hasUnread = notifications?.some((notif) => !notif.read) ?? false;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -141,6 +146,9 @@ export default function Header() {
                   className="object-contain"
                   priority
                 />
+                {hasUnread && (
+                  <span className="absolute top-0 right-0 block w-1.5 h-1.5 bg-Red rounded-full border border-primary-1" />
+                )}
               </button>
               {isNotificationOpen && <NotificationDropdown />}
             </div>
