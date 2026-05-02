@@ -1,9 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, InfiniteData } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { memberService } from "@/services/memberService";
 import { authService } from "@/services/authService";
 import { useAuthStore } from "@/store/useAuthStore";
-import { ReportMemberRequest } from "@/types/member";
+import { ReportMemberRequest, FollowListResponse } from "@/types/member";
 import { memberKeys } from "../queries/useMemberQueries";
 
 interface UpdateProfilePayload {
@@ -63,10 +63,9 @@ export const useUpdateProfileMutation = () => {
     });
 };
 
-import { UpdatePasswordRequest, RecommendResponse, FollowListResponse, FindEmailRequest, OtherProfileResponse, FollowCountResponse } from "@/types/member";
+import { UpdatePasswordRequest, RecommendResponse, FindEmailRequest, OtherProfileResponse, FollowCountResponse } from "@/types/member";
 import { BookStoryListResponse } from "@/types/story";
 import { storyKeys } from "@/hooks/queries/useStoryQueries";
-import { InfiniteData } from "@tanstack/react-query";
 
 // Optimistic update helpers
 const updateFollowStateInRecommend = (old: RecommendResponse | undefined, nickname: string, isFollowing: boolean) => {
@@ -303,20 +302,45 @@ export const useDeleteFollowerMutation = () => {
         mutationFn: async (nickname: string) => {
             await memberService.deleteFollower(nickname);
         },
+        onMutate: async (nickname) => {
+            // 진행 중인 refetch를 취소하여 낙관적 업데이트를 덮어쓰지 않도록 함
+            await queryClient.cancelQueries({ queryKey: memberKeys.followers() });
+
+            // 이전 캐시 데이터 스냅샷
+            const previousFollowers = queryClient.getQueryData(memberKeys.followers());
+
+            // 캐시를 즉시 업데이트
+            queryClient.setQueryData<InfiniteData<FollowListResponse>>(memberKeys.followers(), (old) => {
+                if (!old) return old;
+                return {
+                    ...old,
+                    pages: old.pages.map((page) => ({
+                        ...page,
+                        followList: page.followList.map((member) =>
+                            member.nickname === nickname ? { ...member, isDeleted: true } : member
+                        ),
+                    })),
+                };
+            });
+
+            return { previousFollowers };
+        },
         onSuccess: () => {
             toast.success("구독자가 삭제되었습니다.");
-            // Mark the follower list as stale, but don't refetch immediately.
-            // This ensures that deleted items are only removed when the user navigates
-            // away and back to the tab.
             queryClient.invalidateQueries({
                 queryKey: memberKeys.followers(),
                 refetchType: "none",
             });
         },
-        onError: (error: any) => {
+        onError: (error: any, nickname, context) => {
             console.error("Failed to delete follower:", error);
             const errorMessage = error.response?.data?.message || error.message || "구독자 삭제에 실패했습니다.";
             toast.error(errorMessage);
+            
+            // 에러 발생 시 이전 상태로 롤백
+            if (context?.previousFollowers) {
+                queryClient.setQueryData(memberKeys.followers(), context.previousFollowers);
+            }
         },
     });
 };
