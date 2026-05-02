@@ -145,14 +145,7 @@ export const useToggleBookLikeMutation = () => {
                             let updatedBooks = page.books
                                 .map((book) =>
                                     book.isbn === isbn ? { ...book, likedByMe: !book.likedByMe } : book
-                                )
-                                .filter((book) => {
-                                    if (isMyLibrary) {
-                                        // 내 서재면 좋아요 취소 시 제거
-                                        return book.isbn !== isbn || book.likedByMe;
-                                    }
-                                    return true; // 타인의 서재면 제거하지 않음
-                                });
+                                );
 
                             // Inject the new book into the very first page if it's not already in the library,
                             // we are actually liking it, and we are looking at My Library
@@ -221,9 +214,9 @@ export const useToggleBookLikeMutation = () => {
                 return { ...old, likedByMe: liked };
             });
 
-            // Invalidate infinite queries to ensure data consistency
-            queryClient.invalidateQueries({ queryKey: [...bookKeys.all, "infiniteSearch"] });
-            queryClient.invalidateQueries({ queryKey: [...bookKeys.all, "likedBooks"] });
+            // Invalidate infinite queries to ensure data consistency without immediate disappearing
+            queryClient.invalidateQueries({ queryKey: [...bookKeys.all, "infiniteSearch"], refetchType: 'none' });
+            queryClient.invalidateQueries({ queryKey: [...bookKeys.all, "likedBooks"], refetchType: 'none' });
         },
     });
 };
