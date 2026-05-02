@@ -14,6 +14,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 import {
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
   fetchAdminBookStoryDetail,
   type AdminBookStoryDetail,
 } from "@/lib/api/admin/stories";
@@ -151,7 +152,7 @@ export default function StoryDetailPage() {
             profileImgSrc={
               isValidUrl(story.authorInfo.profileImageUrl)
                 ? story.authorInfo.profileImageUrl
-                : "/profile2.svg"
+                : DEFAULT_PROFILE_IMAGE
             }
             bookTitle={story.bookInfo.title}
             bookAuthor={story.bookInfo.author}

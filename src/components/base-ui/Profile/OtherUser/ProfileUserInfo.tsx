@@ -9,6 +9,7 @@ import { useState } from "react";
 import ReportModal from "@/components/common/ReportModal";
 import { useAuthStore } from "@/store/useAuthStore";
 import Link from "next/link";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 // [보조 컴포넌트] 액션 버튼 (구독하기 / 신고하기)
 function ActionButton({
@@ -117,7 +118,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
             md:h-[138px] md:w-[138px]"
           >
             <Image
-              src={profile.profileImageUrl || "/profile2.svg"}
+              src={profile.profileImageUrl || DEFAULT_PROFILE_IMAGE}
               alt={`${profile.nickname}님의 프로필`}
               fill
               className="object-cover"

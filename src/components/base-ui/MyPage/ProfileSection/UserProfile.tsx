@@ -8,6 +8,7 @@ import { DUMMY_USER_PROFILE } from "@/constants/mocks/mypage";
 import { useProfileQuery, useFollowCountQuery } from "@/hooks/queries/useMemberQueries";
 import FloatingFab from "@/components/base-ui/Float";
 import { EXTERNAL_LINKS } from "@/constants/links";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 const UserProfile = () => {
   const router = useRouter();
@@ -50,7 +51,7 @@ const UserProfile = () => {
           {/* Profile Image */}
           <div className="flex justify-center items-center w-[138px] h-[138px] rounded-full bg-gray-200 overflow-hidden relative shrink-0">
             <Image
-              src={isValidUrl(user.profileImage) ? user.profileImage : "/profile2.svg"}
+              src={isValidUrl(user.profileImage) ? user.profileImage : DEFAULT_PROFILE_IMAGE}
               alt="Profile"
               fill
               className="object-cover"

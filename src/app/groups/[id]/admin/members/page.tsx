@@ -9,12 +9,13 @@ import toast from "react-hot-toast";
 import { useInfiniteClubMembersQuery } from "@/hooks/queries/useClubMemberQueries";
 import { useUpdateClubMemberStatusMutation } from "@/hooks/mutations/useClubMemberMutations";
 import type {
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
   ClubMemberItem,
   ClubMemberStatus,
   UpdateClubMemberStatusRequest,
 } from "@/types/groups/clubMembers";
 
-const DEFAULT_PROFILE_IMG = "/profile2.svg";
+const DEFAULT_PROFILE_IMG = DEFAULT_PROFILE_IMAGE;
 
 function safeImageSrc(src: string | null | undefined) {
   if (!src) return DEFAULT_PROFILE_IMG;

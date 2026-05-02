@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { isValidUrl } from "@/utils/url";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 export type FollowUser = {
     id: string | number;
@@ -31,7 +32,7 @@ export default function FollowItem({ user, onToggleFollow, onDelete }: FollowIte
             <Link href={`/profile/${user.nickname}`} className="flex items-center gap-[12px] cursor-pointer">
                 <div className="flex w-[40px] h-[40px] justify-center items-center shrink-0 rounded-full overflow-hidden relative">
                     <Image
-                        src={isValidUrl(user.profileImageUrl) ? user.profileImageUrl : "/profile2.svg"}
+                        src={isValidUrl(user.profileImageUrl) ? user.profileImageUrl : DEFAULT_PROFILE_IMAGE}
                         alt={user.nickname}
                         fill
                         className="object-cover"

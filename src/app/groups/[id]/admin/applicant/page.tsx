@@ -8,6 +8,7 @@ import { useHeaderTitle } from '@/contexts/HeaderTitleContext';
 import { useInfiniteClubMembersQuery } from '@/hooks/queries/useClubMemberQueries';
 import { useUpdateClubMemberStatusMutation } from '@/hooks/mutations/useClubMemberMutations';
 import type { ClubMemberItem } from '@/types/groups/clubMembers';
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 type ActionType = 'delete' | 'approve';
 
@@ -302,7 +303,7 @@ export default function AdminApplicantPage() {
                     <div className="hidden t:flex t:w-28 d:w-45 h-15 t:px-3 d:px-4 py-3 items-center gap-2 shrink-0">
                       <div className="relative w-6 h-6 rounded-full overflow-hidden shrink-0">
                         <Image
-                          src={applicant.profileImageUrl || '/profile2.svg'}
+                          src={applicant.profileImageUrl || DEFAULT_PROFILE_IMAGE}
                           alt={applicant.name}
                           fill
                           className="object-cover"

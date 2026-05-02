@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 type Props = {
   category: string;
@@ -44,7 +45,7 @@ export default function ReportItem({
           <div className="flex items-center gap-[8px]">
             <div className="relative h-[24px] w-[24px] shrink-0">
               <Image
-                src="/profile2.svg"
+                src=DEFAULT_PROFILE_IMAGE
                 alt="profile"
                 fill
                 className="object-cover rounded-full"

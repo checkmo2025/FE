@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { NavItem } from "./AdminNavItem";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 const ADMIN_NAV = [
   { label: "회원 관리", href: "/admin/users" },
@@ -76,7 +77,7 @@ export default function AdminHeader() {
               className="relative w-6 h-6"
             >
               <Image
-                src="/profile2.svg"
+                src=DEFAULT_PROFILE_IMAGE
                 alt="프로필"
                 fill
                 className="object-contain"

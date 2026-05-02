@@ -10,6 +10,7 @@ import { FollowUser } from "@/components/base-ui/Profile/Follow/FollowItem";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useProfileQuery, useFollowerListQuery, useFollowingListQuery, useFollowCountQuery } from "@/hooks/queries/useMemberQueries";
 import { useToggleFollowMutation, useDeleteFollowerMutation } from "@/hooks/mutations/useMemberMutations";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 function FollowsContent() {
     const router = useRouter();
@@ -89,7 +90,7 @@ function FollowsContent() {
                 <div className="flex flex-col items-center gap-[16px] w-[138px]">
                     <div className="flex justify-center items-center w-[138px] h-[138px] rounded-full overflow-hidden relative shrink-0">
                         <Image
-                            src={isValidUrl(user.profileImage) ? user.profileImage : "/profile2.svg"}
+                            src={isValidUrl(user.profileImage) ? user.profileImage : DEFAULT_PROFILE_IMAGE}
                             alt={user.name}
                             fill
                             className="object-cover"

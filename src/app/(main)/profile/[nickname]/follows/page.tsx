@@ -9,6 +9,7 @@ import FollowList from "@/components/base-ui/Profile/Follow/FollowList";
 import { FollowUser } from "@/components/base-ui/Profile/Follow/FollowItem";
 import { useOtherProfileQuery, useFollowerListQuery, useFollowingListQuery } from "@/hooks/queries/useMemberQueries";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 function OtherUserFollowsContent() {
     const router = useRouter();
@@ -90,7 +91,7 @@ function OtherUserFollowsContent() {
                 <div className="flex flex-col items-center gap-[16px] w-[138px]">
                     <div className="flex justify-center items-center w-[138px] h-[138px] rounded-full overflow-hidden relative shrink-0">
                         <Image
-                            src={isValidUrl(profileData.profileImageUrl) ? profileData.profileImageUrl : "/profile2.svg"}
+                            src={isValidUrl(profileData.profileImageUrl) ? profileData.profileImageUrl : DEFAULT_PROFILE_IMAGE}
                             alt={profileData.nickname}
                             fill
                             className="object-cover"
