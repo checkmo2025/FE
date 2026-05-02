@@ -77,7 +77,7 @@ export default function AdminHeader() {
               className="relative w-6 h-6"
             >
               <Image
-                src=DEFAULT_PROFILE_IMAGE
+                src={DEFAULT_PROFILE_IMAGE}
                 alt="프로필"
                 fill
                 className="object-contain"

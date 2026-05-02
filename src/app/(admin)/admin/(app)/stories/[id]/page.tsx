@@ -1,4 +1,5 @@
 "use client";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 import { useEffect, useState } from "react";
 import BookstoryDetail from "@/components/base-ui/Admin/stories/bookstory_detail";
@@ -14,7 +15,6 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 import {
-import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
   fetchAdminBookStoryDetail,
   type AdminBookStoryDetail,
 } from "@/lib/api/admin/stories";

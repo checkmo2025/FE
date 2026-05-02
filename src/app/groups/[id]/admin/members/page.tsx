@@ -8,8 +8,8 @@ import toast from "react-hot-toast";
 
 import { useInfiniteClubMembersQuery } from "@/hooks/queries/useClubMemberQueries";
 import { useUpdateClubMemberStatusMutation } from "@/hooks/mutations/useClubMemberMutations";
-import type {
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import type {
   ClubMemberItem,
   ClubMemberStatus,
   UpdateClubMemberStatusRequest,

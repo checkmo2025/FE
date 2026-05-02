@@ -45,7 +45,7 @@ export default function ReportItem({
           <div className="flex items-center gap-[8px]">
             <div className="relative h-[24px] w-[24px] shrink-0">
               <Image
-                src=DEFAULT_PROFILE_IMAGE
+                src={DEFAULT_PROFILE_IMAGE}
                 alt="profile"
                 fill
                 className="object-cover rounded-full"
