@@ -11,8 +11,8 @@ import { useAuthStore } from "@/store/useAuthStore";
 
 export default function NotificationDropdown() {
     const { isLoggedIn } = useAuthStore();
-    const { data: notifications, isLoading } = useNotificationPreviewQuery(5, isLoggedIn);
-    const { mutate: readNotification } = useReadNotificationMutation();
+    const { data: notificationsData, isLoading } = useNotificationPreviewQuery(5, isLoggedIn);
+    const notifications = isLoggedIn ? notificationsData : []; const { mutate: readNotification } = useReadNotificationMutation();
     const router = useRouter();
 
     const handleNotificationClick = (notification: NotificationBasicInfo) => {

@@ -43,7 +43,8 @@ export default function Header() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
 
-  const { data: notifications } = useNotificationPreviewQuery(5, isLoggedIn);
+  const { data: notificationsData } = useNotificationPreviewQuery(5, isLoggedIn);
+  const notifications = isLoggedIn ? notificationsData : [];
   const hasUnread = notifications?.some((notif) => !notif.read) ?? false;
 
   useEffect(() => {
