@@ -13,9 +13,18 @@ export default function NewsListBanner() {
 
     const newsList = data?.pages.flatMap((page) => page.basicInfoList) || [];
 
+    // 'PROMOTION' 태그가 붙은 소식만 필터링 및 게시 종료 날짜 순 정렬 (최대 5개)
+    const promotionList = useMemo(() => {
+        return newsList
+            .filter((news) => news.carousel === "PROMOTION")
+            .sort((a, b) => new Date(b.publishEndAt).getTime() - new Date(a.publishEndAt).getTime())
+            .slice(0, 5);
+    }, [newsList]);
+
+    const slideCount = promotionList.length;
+
     // 5초 자동 슬라이드 로직
     useEffect(() => {
-        const slideCount = Math.min(newsList.length, 5);
         if (slideCount <= 1) return;
 
         const timer = setInterval(() => {
@@ -23,7 +32,7 @@ export default function NewsListBanner() {
         }, 5000);
 
         return () => clearInterval(timer);
-    }, [newsList.length]);
+    }, [slideCount]);
 
     if (isLoading) {
         return (
@@ -33,26 +42,31 @@ export default function NewsListBanner() {
         );
     }
 
-    if (isError || newsList.length === 0) {
+    if (isError) {
         return (
             <div className="relative h-[297px] t:h-[468px] w-full max-w-[1040px] overflow-hidden rounded-[10px] bg-gray-50 flex flex-col items-center justify-center gap-2 border border-Gray-1">
-                <div className="text-gray-400 text-lg font-medium">새로운 소식이 아직 없어요!</div>
-                <div className="text-gray-400 text-sm">준비 중인 소식을 기다려 주세요.</div>
+                <div className="text-gray-400 text-lg font-medium">소식을 불러오지 못했어요.</div>
             </div>
         );
     }
+
+    if (slideCount === 0) {
+        return (
+            <div className="relative h-[297px] t:h-[468px] w-full max-w-[1040px] overflow-hidden rounded-[10px] bg-gray-50 flex flex-col items-center justify-center gap-2 border border-Gray-1">
+                <div className="text-gray-400 text-lg font-medium text-center px-4">책모의 소식에서 다양한 책 관련 행사를 알아보세요!</div>
+            </div>
+        );
+    }
+
+    const safeIndex = index % slideCount;
 
     const isValidSrc = (src: string) => {
         return src && src !== "string" && (src.startsWith("/") || src.startsWith("http://") || src.startsWith("https://"));
     };
 
-    // 최대 5개 노출
-    const slideCount = Math.min(newsList.length, 5);
-    const safeIndex = index % slideCount;
-
     return (
         <div className="relative h-[297px] t:h-[468px] w-full max-w-[1040px] overflow-hidden rounded-[10px] shadow-sm">
-            {newsList.slice(0, slideCount).map((news, i) => {
+            {promotionList.map((news, i) => {
                 const imageSrc = isValidSrc(news.thumbnailUrl) ? news.thumbnailUrl : "/news_sample.svg";
                 const isActive = i === safeIndex;
 
@@ -88,7 +102,7 @@ export default function NewsListBanner() {
 
             {/* 인디케이터 */}
             <div className="absolute top-[20px] left-[20px] t:top-[27px] t:left-[33px] flex gap-2 z-20">
-                {newsList.slice(0, slideCount).map((_, i) => {
+                {promotionList.map((_, i) => {
                     const active = i === safeIndex;
 
                     return (
