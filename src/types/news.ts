@@ -5,6 +5,7 @@ export interface NewsBasicInfo {
     thumbnailUrl: string;
     carousel: "PROMOTION" | "GENERAL";
     publishStartAt: string;
+    publishEndAt: string;
 }
 
 export interface NewsListResponse {
@@ -23,4 +24,5 @@ export interface NewsDetail {
     carousel: "PROMOTION" | "GENERAL";
     imageUrls: string[];
     publishStartAt: string;
+    publishEndAt: string;
 }
