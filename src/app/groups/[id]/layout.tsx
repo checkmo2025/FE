@@ -176,7 +176,7 @@ export default function GroupDetailLayout({ children }: { children: React.ReactN
             </nav>
           </aside>
 
-          <main className="min-w-0 flex-1 px-3">{renderContent()}</main>
+          <div className="min-w-0 flex-1 px-3">{renderContent()}</div>
         </div>
       </div>
     </div>

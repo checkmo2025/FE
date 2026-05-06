@@ -70,9 +70,9 @@ export default function AdminLayout({
   // 로딩 중
   if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         로딩 중...
-      </main>
+      </div>
     );
   }
 
@@ -82,7 +82,7 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen flex flex-col">
       {!isAuthPage && <AdminHeader />}
-      <main className="flex-1 bg-background">{children}</main>
+      <div className="flex-1 bg-background">{children}</div>
     </div>
   );
 }
