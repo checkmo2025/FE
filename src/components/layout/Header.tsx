@@ -11,6 +11,8 @@ import NotificationDropdown from "./NotificationDropdown";
 import { useNotificationPreviewQuery } from "@/hooks/queries/useNotificationQueries";
 import { useHeaderTitle } from "@/contexts/HeaderTitleContext";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useScrollDirection } from "@/hooks/useScrollDirection";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { useSearchStore } from "@/store/useSearchStore";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
@@ -42,6 +44,9 @@ export default function Header() {
 
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
+  
+  const isScrollVisible = useScrollDirection();
+  const shouldShowHeader = isScrollVisible || isSearchOpen || isNotificationOpen;
 
   const { data: notificationsData } = useNotificationPreviewQuery(5, isLoggedIn);
   const notifications = isLoggedIn ? notificationsData : [];
@@ -73,7 +78,9 @@ export default function Header() {
     router.push(href);
   };
   return (
-    <header className="w-full bg-primary-1">
+    <header 
+      className={`w-full bg-primary-1 sticky top-0 z-50 transition-transform duration-300 ${shouldShowHeader ? "translate-y-0" : "-translate-y-full"}`}
+    >
       <div className="mx-auto w-full max-w-[1440px] px-4 py-3 t:px-6 t:py-3.5 d:px-5">
         <div className="relative flex items-center justify-between w-full">
           {/*로고 + 메뉴*/}
@@ -119,7 +126,9 @@ export default function Header() {
 
           {/*아이콘*/}
           <div className="flex items-center gap-2.5 t:gap-4 d:mr-1">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={toggleSearch}
               aria-label="검색"
               className="relative h-6 w-6 cursor-pointer"
@@ -131,10 +140,12 @@ export default function Header() {
                 className="object-contain"
                 priority
               />
-            </button>
+            </motion.button>
 
             <div className="relative flex items-center" ref={notificationRef}>
-              <button
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={() => setIsNotificationOpen(!isNotificationOpen)}
                 aria-label="알림"
                 className="relative w-6 h-6 cursor-pointer"
@@ -149,24 +160,31 @@ export default function Header() {
                 {hasUnread && (
                   <span className="absolute top-0 right-0 block w-1.5 h-1.5 bg-Red rounded-full border border-primary-1" />
                 )}
-              </button>
-              {isNotificationOpen && <NotificationDropdown />}
+              </motion.button>
+              <AnimatePresence>
+                {isNotificationOpen && <NotificationDropdown />}
+              </AnimatePresence>
             </div>
 
             {/* 태블릿부터 프로필 표시 */}
-            <Link
-              href="/profile/mypage"
-              aria-label="프로필"
-              className="relative hidden w-6 h-6 t:block"
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
             >
-              <Image
-                src={user?.profileImageUrl || DEFAULT_PROFILE_IMAGE}
-                alt="프로필"
-                fill
-                className={`object-cover ${user?.profileImageUrl ? "rounded-full" : "object-contain"}`}
-                priority
-              />
-            </Link>
+              <Link
+                href="/profile/mypage"
+                aria-label="프로필"
+                className="relative hidden w-6 h-6 t:block"
+              >
+                <Image
+                  src={user?.profileImageUrl || DEFAULT_PROFILE_IMAGE}
+                  alt="프로필"
+                  fill
+                  className={`object-cover ${user?.profileImageUrl ? "rounded-full" : "object-contain"}`}
+                  priority
+                />
+              </Link>
+            </motion.div>
           </div>
         </div>
       </div>
