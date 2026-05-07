@@ -12,6 +12,7 @@ import { useNotificationPreviewQuery } from "@/hooks/queries/useNotificationQuer
 import { useHeaderTitle } from "@/contexts/HeaderTitleContext";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { useSearchStore } from "@/store/useSearchStore";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
@@ -125,7 +126,9 @@ export default function Header() {
 
           {/*아이콘*/}
           <div className="flex items-center gap-2.5 t:gap-4 d:mr-1">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={toggleSearch}
               aria-label="검색"
               className="relative h-6 w-6 cursor-pointer"
@@ -137,10 +140,12 @@ export default function Header() {
                 className="object-contain"
                 priority
               />
-            </button>
+            </motion.button>
 
             <div className="relative flex items-center" ref={notificationRef}>
-              <button
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={() => setIsNotificationOpen(!isNotificationOpen)}
                 aria-label="알림"
                 className="relative w-6 h-6 cursor-pointer"
@@ -155,24 +160,31 @@ export default function Header() {
                 {hasUnread && (
                   <span className="absolute top-0 right-0 block w-1.5 h-1.5 bg-Red rounded-full border border-primary-1" />
                 )}
-              </button>
-              {isNotificationOpen && <NotificationDropdown />}
+              </motion.button>
+              <AnimatePresence>
+                {isNotificationOpen && <NotificationDropdown />}
+              </AnimatePresence>
             </div>
 
             {/* 태블릿부터 프로필 표시 */}
-            <Link
-              href="/profile/mypage"
-              aria-label="프로필"
-              className="relative hidden w-6 h-6 t:block"
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
             >
-              <Image
-                src={user?.profileImageUrl || DEFAULT_PROFILE_IMAGE}
-                alt="프로필"
-                fill
-                className={`object-cover ${user?.profileImageUrl ? "rounded-full" : "object-contain"}`}
-                priority
-              />
-            </Link>
+              <Link
+                href="/profile/mypage"
+                aria-label="프로필"
+                className="relative hidden w-6 h-6 t:block"
+              >
+                <Image
+                  src={user?.profileImageUrl || DEFAULT_PROFILE_IMAGE}
+                  alt="프로필"
+                  fill
+                  className={`object-cover ${user?.profileImageUrl ? "rounded-full" : "object-contain"}`}
+                  priority
+                />
+              </Link>
+            </motion.div>
           </div>
         </div>
       </div>

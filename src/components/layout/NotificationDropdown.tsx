@@ -8,6 +8,7 @@ import { useReadNotificationMutation } from "@/hooks/mutations/useNotificationMu
 import { getNotificationText, getNotificationRedirectUrl } from "@/utils/notification";
 import { NotificationBasicInfo } from "@/types/notification";
 import { useAuthStore } from "@/store/useAuthStore";
+import { motion } from "framer-motion";
 
 export default function NotificationDropdown() {
     const { isLoggedIn } = useAuthStore();
@@ -24,7 +25,11 @@ export default function NotificationDropdown() {
     };
 
     return (
-        <div
+        <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
             className="absolute top-[44px] right-0 z-50 flex w-[364px] flex-col items-start rounded-[8px] bg-White/80 backdrop-blur-sm shadow-[0_4px_8px_0_rgba(0,0,0,0.08)] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
         >
@@ -80,6 +85,6 @@ export default function NotificationDropdown() {
                     전체보기
                 </span>
             </div>
-        </div>
+        </motion.div>
     );
 }
