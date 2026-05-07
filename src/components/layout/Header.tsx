@@ -11,6 +11,7 @@ import NotificationDropdown from "./NotificationDropdown";
 import { useNotificationPreviewQuery } from "@/hooks/queries/useNotificationQueries";
 import { useHeaderTitle } from "@/contexts/HeaderTitleContext";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useScrollDirection } from "@/hooks/useScrollDirection";
 
 import { useSearchStore } from "@/store/useSearchStore";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
@@ -42,6 +43,9 @@ export default function Header() {
 
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
+  
+  const isScrollVisible = useScrollDirection();
+  const shouldShowHeader = isScrollVisible || isSearchOpen || isNotificationOpen;
 
   const { data: notificationsData } = useNotificationPreviewQuery(5, isLoggedIn);
   const notifications = isLoggedIn ? notificationsData : [];
@@ -73,7 +77,9 @@ export default function Header() {
     router.push(href);
   };
   return (
-    <header className="w-full bg-primary-1">
+    <header 
+      className={`w-full bg-primary-1 sticky top-0 z-50 transition-transform duration-300 ${shouldShowHeader ? "translate-y-0" : "-translate-y-full"}`}
+    >
       <div className="mx-auto w-full max-w-[1440px] px-4 py-3 t:px-6 t:py-3.5 d:px-5">
         <div className="relative flex items-center justify-between w-full">
           {/*로고 + 메뉴*/}
