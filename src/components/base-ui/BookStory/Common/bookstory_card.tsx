@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { formatTimeAgo } from "@/utils/time";
 import { isValidUrl } from "@/utils/url";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 type Props = {
   id: number;
@@ -29,7 +30,7 @@ type Props = {
 export default function BookStoryCard({
   id,
   authorName,
-  profileImgSrc = "/profile2.svg",
+  profileImgSrc = DEFAULT_PROFILE_IMAGE,
   createdAt,
   viewCount,
   coverImgSrc = "/bookstorycard.svg",
@@ -73,7 +74,7 @@ export default function BookStoryCard({
         >
           <div className="relative w-8 h-8 overflow-hidden rounded-full shrink-0">
             <Image
-              src={isValidUrl(profileImgSrc) ? profileImgSrc : "/profile2.svg"}
+              src={isValidUrl(profileImgSrc) ? profileImgSrc : DEFAULT_PROFILE_IMAGE}
               alt={authorName}
               fill
               className="object-cover"

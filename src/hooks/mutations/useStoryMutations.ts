@@ -299,11 +299,11 @@ export const useToggleStoryLikeMutation = () => {
             }
         },
         onSettled: (data, err, bookStoryId) => {
-            // Invalidate queries to ensure sync with server
-            queryClient.invalidateQueries({ queryKey: storyKeys.infiniteList() });
-            queryClient.invalidateQueries({ queryKey: storyKeys.myList() });
-            queryClient.invalidateQueries({ queryKey: [...storyKeys.all, "otherMember"] });
-            queryClient.invalidateQueries({ queryKey: storyKeys.list() });
+            // Invalidate queries to ensure sync with server without causing immediate disappearing
+            queryClient.invalidateQueries({ queryKey: storyKeys.infiniteList(), refetchType: 'none' });
+            queryClient.invalidateQueries({ queryKey: storyKeys.myList(), refetchType: 'none' });
+            queryClient.invalidateQueries({ queryKey: [...storyKeys.all, "otherMember"], refetchType: 'none' });
+            queryClient.invalidateQueries({ queryKey: storyKeys.list(), refetchType: 'none' });
             queryClient.invalidateQueries({ queryKey: storyKeys.detail(bookStoryId) });
         },
     });

@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { isValidUrl } from "@/utils/url";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 export type FollowUser = {
     id: string | number;
     nickname: string;
     profileImageUrl?: string;
     isFollowing: boolean;
+    isDeleted?: boolean;
 };
 
 type FollowItemProps = {
@@ -16,12 +19,11 @@ type FollowItemProps = {
 };
 
 export default function FollowItem({ user, onToggleFollow, onDelete }: FollowItemProps) {
-    const [isDeleted, setIsDeleted] = useState(false);
+    const isDeleted = user.isDeleted ?? false;
 
     const handleDelete = () => {
-        if (onDelete) {
+        if (onDelete && !isDeleted) {
             onDelete(user.nickname);
-            setIsDeleted(true);
         }
     };
 
@@ -29,33 +31,32 @@ export default function FollowItem({ user, onToggleFollow, onDelete }: FollowIte
         <div className="flex w-full max-w-[1040px] p-[20px] justify-between items-center rounded-[8px] border border-Subbrown-4 bg-White">
             <Link href={`/profile/${user.nickname}`} className="flex items-center gap-[12px] cursor-pointer">
                 <div className="flex w-[40px] h-[40px] justify-center items-center shrink-0 rounded-full overflow-hidden relative">
-                    {user.profileImageUrl ? (
-                        <Image
-                            src={user.profileImageUrl}
-                            alt={user.nickname}
-                            fill
-                            className="object-cover"
-                        />
-                    ) : (
-                        <div className="w-full h-full bg-[#EAE5E2]" />
-                    )}
+                    <Image
+                        src={isValidUrl(user.profileImageUrl) ? user.profileImageUrl : DEFAULT_PROFILE_IMAGE}
+                        alt={user.nickname}
+                        fill
+                        className="object-cover"
+                    />
                 </div>
                 <span className="text-Gray-7 subhead_4_1">{user.nickname}</span>
             </Link>
 
-            {onDelete ? (
-                !isDeleted && (
-                    <button
-                        type="button"
-                        onClick={handleDelete}
-                        className="flex px-[17px] py-[8px] justify-center items-center gap-[10px] rounded-[8px] transition-colors bg-Red text-White"
-                    >
-                        <span className="font-sans text-[12px] font-semibold leading-[100%] tracking-[-0.012px]">
-                            삭제
-                        </span>
-                    </button>
-                )
-            ) : (
+            {onDelete && (
+                <button
+                    type="button"
+                    onClick={handleDelete}
+                    disabled={isDeleted}
+                    className={`flex px-[17px] py-[8px] justify-center items-center gap-[10px] rounded-[8px] transition-colors ${isDeleted
+                        ? "bg-Subbrown-4 text-primary-3 cursor-not-allowed opacity-50"
+                        : "bg-Red text-White"
+                        }`}
+                >
+                    <span className="font-sans text-[12px] font-semibold leading-[100%] tracking-[-0.012px]">
+                        {isDeleted ? "삭제됨" : "삭제"}
+                    </span>
+                </button>
+            )}
+            {!onDelete && (
                 <button
                     type="button"
                     onClick={() => onToggleFollow(user.id, user.isFollowing)}

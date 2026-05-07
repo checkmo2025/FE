@@ -142,6 +142,7 @@ export default function SearchClubApplyModal({ open, club, onClose, onSubmit }: 
                 "h-[40px] px-4 rounded-[8px]",
                 "bg-primary-2 text-White border border-primary-2",
                 "body_1_2",
+                "hover:bg-primary-1 hover:border-primary-1 transition-all",
               ].join(" ")}
               disabled={reason.trim().length === 0}
             >

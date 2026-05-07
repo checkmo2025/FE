@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
@@ -66,7 +66,7 @@ export default function GroupDetailPage() {
   const isAdmin = me.staff === true;
   const canAccessMemberOnlyPage = isClubMember(me);
   
-  const noticeText = latestNotice?.title ?? "공지사항이 없습니다.";
+  const noticeText = latestNotice?.title ?? "아직 등록된 공지사항이 없습니다.";
   const hasNotice = Boolean(latestNotice?.id);
   const noticenumber = latestNotice?.id;
   const noticeUrl = `/groups/${groupId}/notice/${noticenumber}`;
@@ -125,7 +125,7 @@ export default function GroupDetailPage() {
               return;
             }
             if (!hasNotice) {
-              toast.error("공지사항이 없습니다.");
+              toast.error("아직 등록된 공지사항이 없습니다.");
               return;
             }
             router.push(noticeUrl!);
@@ -138,7 +138,7 @@ export default function GroupDetailPage() {
               return;
             }
             if (!hasNotice) {
-              toast.error("공지사항이 없습니다.");
+              toast.error("아직 등록된 공지사항이 없습니다.");
               return;
             }
             router.push(noticeUrl!);

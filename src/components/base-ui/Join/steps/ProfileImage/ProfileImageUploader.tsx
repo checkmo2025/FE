@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import Image from "next/image";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 interface ProfileImageUploaderProps {
   profileImage: string | null;
@@ -23,7 +24,7 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
       <div className="relative w-[148px] h-[141px]">
         <div className="w-[138px] h-[138px] rounded-full overflow-hidden bg-Subbrown-4">
           <Image
-            src={profileImage || "/profile2.svg"}
+            src={profileImage || DEFAULT_PROFILE_IMAGE}
             alt="Profile"
             width={138}
             height={138}

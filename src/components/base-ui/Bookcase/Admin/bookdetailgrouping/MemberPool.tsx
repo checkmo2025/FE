@@ -6,8 +6,9 @@ import { useRouter } from "next/navigation";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { TeamMember } from "@/types/groups/bookcasedetail";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
-const DEFAULT_PROFILE = "/profile2.svg";
+const DEFAULT_PROFILE = DEFAULT_PROFILE_IMAGE;
 
 type Props = {
   unassigned: TeamMember[];

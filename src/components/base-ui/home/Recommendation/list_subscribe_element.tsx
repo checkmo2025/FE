@@ -1,11 +1,12 @@
 import Image from 'next/image';
 import { isValidUrl } from '@/utils/url';
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 type ListSubscribeElementProps = {
   name: string;
   subscribingCount?: number; // 구독중
   subscribersCount?: number; // 구독자
-  profileSrc?: string; // 기본: "/profile2.svg" (public)
+  profileSrc?: string; // 기본: DEFAULT_PROFILE_IMAGE (public)
   onProfileClick?: () => void;
   onSubscribeClick?: () => void;
   buttonText?: string; // 기본: "구독"
@@ -16,7 +17,7 @@ export default function ListSubscribeElement({
   name,
   subscribingCount,
   subscribersCount,
-  profileSrc = '/profile2.svg',
+  profileSrc = DEFAULT_PROFILE_IMAGE,
   onProfileClick,
   onSubscribeClick,
   buttonText = '구독',
@@ -31,7 +32,7 @@ export default function ListSubscribeElement({
     >
       <div className="w-[24px] h-[24px] t:w-[32px] t:h-[32px] rounded-full overflow-hidden shrink-0 relative self-center">
         <Image
-          src={isValidUrl(profileSrc) ? profileSrc : '/profile2.svg'}
+          src={isValidUrl(profileSrc) ? profileSrc : DEFAULT_PROFILE_IMAGE}
           alt={`${name} profile`}
           fill
           className="object-cover"
