@@ -86,7 +86,7 @@ export default function NewsListBanner() {
                         />
 
                         {/* Text Overlay - 텍스트 포함 요청 반영 */}
-                        <div className="absolute inset-y-0 right-0 w-full md:w-1/2 p-6 t:p-10 flex flex-col justify-center items-end bg-gradient-to-l from-black/60 via-black/30 to-transparent text-right">
+                        <div className="absolute inset-y-0 right-0 w-full md:w-1/2 p-6 t:p-10 flex flex-col justify-center items-end bg-gradient-to-l from-black/90 via-black/50 to-transparent text-right">
                             <div className="flex flex-col gap-2 t:gap-3 text-white">
                                 <h3 className="text-xl t:text-3xl font-bold leading-tight drop-shadow-lg">
                                     {news.title}
