@@ -5,11 +5,13 @@ import { useOtherProfileQuery } from "@/hooks/queries/useMemberQueries";
 
 import { useToggleFollowMutation, useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
 import { ReportType } from "@/types/member";
-import { useState } from "react";
 import ReportModal from "@/components/common/ReportModal";
 import { useAuthStore } from "@/store/useAuthStore";
 import Link from "next/link";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import ActionSelectionModal from "@/components/common/ActionSelectionModal";
+import BlockConfirmModal from "@/components/common/BlockConfirmModal";
+import { useReportBlockFlow } from "@/hooks/useReportBlockFlow";
 
 // [보조 컴포넌트] 액션 버튼 (구독하기 / 신고하기)
 function ActionButton({
@@ -61,7 +63,29 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
   const { isLoggedIn, openLoginModal } = useAuthStore();
   const { mutate: toggleFollow } = useToggleFollowMutation();
   const { mutate: reportMember } = useReportMemberMutation();
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  
+  const handleReportSubmitLogic = (type: string, content: string) => {
+    let mappedType: ReportType = "GENERAL";
+    if (type === "책 이야기") mappedType = "BOOK_STORY";
+    if (type === "책이야기(댓글)") mappedType = "COMMENT";
+    if (type === "책모임 내부") mappedType = "CLUB_MEETING";
+
+    reportMember({
+      reportedMemberNickname: nickname,
+      reportType: mappedType,
+      content,
+    });
+  };
+
+  const {
+    modalStep,
+    openSelection,
+    closeAll,
+    selectReport,
+    selectBlock,
+    handleReportSubmit,
+    handleBlockConfirm,
+  } = useReportBlockFlow(handleReportSubmitLogic);
 
   if (isLoading) {
     return (
@@ -85,19 +109,6 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
       return;
     }
     toggleFollow({ nickname, isFollowing: profile.following });
-  };
-
-  const handleReportSubmit = (type: string, content: string) => {
-    let mappedType: ReportType = "GENERAL";
-    if (type === "책 이야기") mappedType = "BOOK_STORY";
-    if (type === "책이야기(댓글)") mappedType = "COMMENT";
-    if (type === "책모임 내부") mappedType = "CLUB_MEETING";
-
-    reportMember({
-      reportedMemberNickname: nickname,
-      reportType: mappedType,
-      content,
-    });
   };
 
   return (
@@ -167,23 +178,40 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
           />
           <ActionButton
             variant="secondary"
-            label="신고하기"
+            label="신고/차단"
             onClick={() => {
               if (!isLoggedIn) {
                 openLoginModal();
                 return;
               }
-              setIsReportModalOpen(true);
+              openSelection();
             }}
           />
         </div>
 
-        {/* Report Modal */}
+        {/* Modals */}
+        <ActionSelectionModal
+          isOpen={modalStep === "selection"}
+          onClose={closeAll}
+          onSelectReport={selectReport}
+          onSelectBlock={selectBlock}
+          targetUser={{
+            nickname: profile.nickname,
+            profileImageUrl: profile.profileImageUrl,
+          }}
+        />
+
         <ReportModal
-          isOpen={isReportModalOpen}
-          onClose={() => setIsReportModalOpen(false)}
+          isOpen={modalStep === "report"}
+          onClose={closeAll}
           onSubmit={handleReportSubmit}
           defaultReportType="일반"
+        />
+
+        <BlockConfirmModal
+          isOpen={modalStep === "block"}
+          onClose={closeAll}
+          onConfirmBlock={handleBlockConfirm}
         />
       </div>
     </div>
