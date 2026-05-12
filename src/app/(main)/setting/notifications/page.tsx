@@ -57,21 +57,21 @@ export default function NotificationPage() {
             <div className="flex flex-col gap-[20px] self-stretch">
               <NotificationItem
                 title="모임 참여 신청/승인 알림"
-                description="모임 참여 신청 및 승인 결과에 대한 알림 수신"
+                description="나의 독서 모임 가입 활동에 대한 알림 수신"
                 isChecked={settings?.joinClub}
                 onToggle={() => handleToggle("JOIN_CLUB")}
                 disabled={isPending}
               />
               <NotificationItem
                 title="모임 공지사항 알림"
-                description="참여 중인 모임의 새로운 공지사항 등록 알림 수신"
+                description="내가 가입한 독서 모임의 공지사항 등록에 대한 알림 수신"
                 isChecked={settings?.clubNoticeCreated}
                 onToggle={() => handleToggle("CLUB_NOTICE_CREATED")}
                 disabled={isPending}
               />
               <NotificationItem
                 title="모임 댓글/답글 알림"
-                description="작성한 게시글에 대한 댓글 및 답글 알림 수신"
+                description="내가 가입한 독서 모임의 정기 모임 생성에 대한 알림 수신"
                 // There isn't a single clear match for this string in standard setting schema besides what Swagger provided. 
                 // Currently matching clubMeetingCreated here based on structure, although naming implies 'meeting/gathering'.
                 isChecked={settings?.clubMeetingCreated}
