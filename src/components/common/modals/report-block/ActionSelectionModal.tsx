@@ -57,7 +57,7 @@ export default function ActionSelectionModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 15 }}
             transition={{ type: "spring", stiffness: 300, damping: 40, mass: 0.1 }}
-            className="relative flex flex-col items-center justify-center w-full max-w-[580px] bg-White border-2 border-Subbrown-4 backdrop-blur-md rounded-[8px] p-6 gap-6 md:h-[220px]"
+            className="relative flex flex-col items-center justify-center w-full max-w-[580px] bg-White/80 border-2 border-Subbrown-4 backdrop-blur-md rounded-[8px] p-6 gap-6 md:h-[220px]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Title */}
@@ -84,24 +84,24 @@ export default function ActionSelectionModal({
             <div className="flex flex-col md:flex-row items-center gap-3 w-full max-w-[504px]">
               <button
                 type="button"
+                onClick={onClose}
+                className="w-full md:flex-1 h-[48px] bg-White border border-Subbrown-3 text-Gray-5 rounded-[8px] subhead_4_1 transition-colors hover:bg-gray-50"
+              >
+                취소
+              </button>
+              <button
+                type="button"
                 onClick={onSelectReport}
-                className="w-full md:flex-1 h-[48px] bg-primary-1 text-White rounded-[8px] subhead_4_1 transition-colors hover:bg-primary-1/90 md:order-2"
+                className="w-full md:flex-1 h-[48px] bg-primary-1 text-White rounded-[8px] subhead_4_1 transition-colors hover:bg-primary-1/90"
               >
                 신고하기
               </button>
               <button
                 type="button"
                 onClick={onSelectBlock}
-                className="w-full md:flex-1 h-[48px] bg-primary-1 border border-Subbrown-3 text-White rounded-[8px] subhead_4_1 transition-colors hover:bg-primary-1/90 md:order-3"
+                className="w-full md:flex-1 h-[48px] bg-primary-1 border border-Subbrown-3 text-White rounded-[8px] subhead_4_1 transition-colors hover:bg-primary-1/90"
               >
                 차단하기
-              </button>
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-full md:flex-1 h-[48px] bg-White border border-Subbrown-3 text-Gray-5 rounded-[8px] subhead_4_1 transition-colors hover:bg-gray-50 md:order-1"
-              >
-                취소
               </button>
             </div>
           </motion.div>

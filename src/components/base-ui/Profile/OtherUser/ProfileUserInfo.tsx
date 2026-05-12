@@ -5,13 +5,14 @@ import { useOtherProfileQuery } from "@/hooks/queries/useMemberQueries";
 
 import { useToggleFollowMutation, useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
 import { ReportType } from "@/types/member";
-import ReportModal from "@/components/common/ReportModal";
+import ReportModal from "@/components/common/modals/report-block/ReportModal";
 import { useAuthStore } from "@/store/useAuthStore";
 import Link from "next/link";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
-import ActionSelectionModal from "@/components/common/ActionSelectionModal";
-import BlockConfirmModal from "@/components/common/BlockConfirmModal";
+import ActionSelectionModal from "@/components/common/modals/report-block/ActionSelectionModal";
+import BlockConfirmModal from "@/components/common/modals/report-block/BlockConfirmModal";
 import { useReportBlockFlow } from "@/hooks/useReportBlockFlow";
+import { REPORT_TYPE_MAP } from "@/constants/report";
 
 // [보조 컴포넌트] 액션 버튼 (구독하기 / 신고하기)
 function ActionButton({
@@ -65,10 +66,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
   const { mutate: reportMember } = useReportMemberMutation();
   
   const handleReportSubmitLogic = (type: string, content: string) => {
-    let mappedType: ReportType = "GENERAL";
-    if (type === "책 이야기") mappedType = "BOOK_STORY";
-    if (type === "책이야기(댓글)") mappedType = "COMMENT";
-    if (type === "책모임 내부") mappedType = "CLUB_MEETING";
+    const mappedType = REPORT_TYPE_MAP[type] || "GENERAL";
 
     reportMember({
       reportedMemberNickname: nickname,

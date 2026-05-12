@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import ReportModal from "@/components/common/ReportModal";
+import ReportModal from "@/components/common/modals/report-block/ReportModal";
 import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
 import { deleteAdminBookStory } from "@/lib/api/admin/stories";
 import { ReportType } from "@/types/member";

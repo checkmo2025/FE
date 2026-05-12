@@ -49,7 +49,7 @@ export default function BlockConfirmModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 15 }}
             transition={{ type: "spring", stiffness: 300, damping: 40, mass: 0.1 }}
-            className="relative flex flex-col items-center justify-center w-full max-w-[580px] bg-White border-2 border-Subbrown-4 backdrop-blur-md rounded-[8px] p-6 gap-6 md:h-[220px]"
+            className="relative flex flex-col items-center justify-center w-full max-w-[580px] bg-White/80 border-2 border-Subbrown-4 backdrop-blur-md rounded-[8px] p-6 gap-6 md:h-[220px]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Warning Icon & Title */}
