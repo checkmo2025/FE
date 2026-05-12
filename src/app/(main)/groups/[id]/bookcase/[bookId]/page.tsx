@@ -12,7 +12,7 @@ import ReviewSection from "./ReviewSection";
 import MeetingTabSection from "./MeetingTabSection";
 
 import BookshelfDeleteConfirmModal from "@/components/base-ui/Bookcase/bookid/BookshelfDeleteConfirmModal";
-import ReportModal from "@/components/common/ReportModal";
+import ReportModal from "@/components/common/modals/report-block/ReportModal";
 
 import { useClubMeQuery } from "@/hooks/queries/useClubhomeQueries";
 import {

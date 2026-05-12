@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 
 import CommentListNotice, { Comment } from "./comment_list_notice";
 import ConfirmModal from "@/components/common/ConfirmModal";
-import ReportModal from "@/components/common/ReportModal";
+import ReportModal from "@/components/common/modals/report-block/ReportModal";
 
 import { useAuthStore } from "@/store/useAuthStore";
 import { useClubNoticeCommentsInfiniteQuery } from "@/hooks/queries/useClubNoticeCommentQueries";

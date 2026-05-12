@@ -11,7 +11,7 @@ import {
 } from "@/hooks/mutations/useStoryMutations";
 import { toast } from "react-hot-toast";
 import ConfirmModal from "@/components/common/ConfirmModal";
-import ReportModal from "@/components/common/ReportModal";
+import ReportModal from "@/components/common/modals/report-block/ReportModal";
 import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
 import { ReportType } from "@/types/member";
 import { useAuthStore } from "@/store/useAuthStore";
