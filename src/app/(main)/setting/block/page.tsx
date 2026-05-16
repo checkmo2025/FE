@@ -1,27 +1,27 @@
 "use client";
 
 import SettingsDetailLayout from "@/components/base-ui/Settings/SettingsDetailLayout";
-// import BlockedUserItem from "@/components/base-ui/Settings/Block/BlockedUserItem";
-// import { useBlockedUsersQuery } from "@/hooks/queries/useMemberQueries"; // API 미구현
+import BlockedUserItem from "@/components/base-ui/Settings/Block/BlockedUserItem";
 import { useInView } from "react-intersection-observer";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function BlockPage() {
   // const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } = useBlockedUsersQuery();
-  const { ref, inView } = useInView();
+  const { ref } = useInView();
 
-  // API 미구현으로 인한 임시 상태 및 핸들러
+  // API 미구현으로 인한 임시 상태 및 핸들러 (리뷰 반영: Mock 데이터 도입)
   const [isLoading] = useState(false);
   const [isError] = useState(false);
-  const [blockedUsers] = useState([]); // 현재는 빈 목록
+  const [blockedUsers, setBlockedUsers] = useState([
+    { id: 1, nickname: "북클럽_매니아", profileImageUrl: "" },
+    { id: 2, nickname: "책읽는_고양이", profileImageUrl: "" },
+    { id: 3, nickname: "독서왕_제이", profileImageUrl: "" },
+  ]);
 
-  /*
-  useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
-  */
+  const handleUnblock = (id: number) => {
+    // TODO: 차단 해제 API 연동 (현재는 로컬 Mock 상태에서만 삭제)
+    setBlockedUsers((prev) => prev.filter((user) => user.id !== id));
+  };
 
   if (isLoading) {
     return (
@@ -51,24 +51,22 @@ export default function BlockPage() {
         </div>
       ) : (
         <div className="flex flex-col gap-[8px] w-full">
-          {/* 
-          {blockedUsers.map((user, idx) => (
+          {blockedUsers.map((user) => (
             <BlockedUserItem
-              key={`${user.id}-${idx}`}
+              key={user.id}
               nickname={user.nickname}
               profileImageUrl={user.profileImageUrl}
-              onUnblock={() => {
-                // TODO: 차단 해제 API 연동
-                console.log("Unblock", user.nickname);
-              }}
+              onUnblock={() => handleUnblock(user.id)}
             />
           ))}
-          */}
         </div>
       )}
 
       {/* Infinite Scroll Trigger */}
       <div ref={ref} className="h-4 w-full" />
+    </SettingsDetailLayout>
+  );
+}
       {/* 
       {isFetchingNextPage && (
         <div className="flex justify-center p-4">

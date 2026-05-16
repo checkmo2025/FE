@@ -23,7 +23,7 @@ export default function BlockedUserItem({
     >
       <div className="flex items-center gap-[12px]">
         {/* Profile Image */}
-        <div className="relative h-[40px] w-[40px] shrink-0 overflow-hidden rounded-full border border-[#D2C5B6] bg-[#F9F7F6]">
+        <div className="relative h-[40px] w-[40px] shrink-0 overflow-hidden rounded-full border border-Subbrown-3 bg-background">
           <Image
             src={profileImageUrl || DEFAULT_PROFILE_IMAGE}
             alt={`${nickname} profile`}
