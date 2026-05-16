@@ -25,6 +25,9 @@ type Props = {
   onClick?: () => void;
   onProfileClick?: () => void;
   layoutType?: "responsive" | "large-fixed";
+  status?: "PUBLISHED" | "DRAFT";
+  canContinue?: boolean;
+  onContinueClick?: (e: React.MouseEvent) => void;
 };
 
 export default function BookStoryCard({
@@ -47,10 +50,14 @@ export default function BookStoryCard({
   onClick,
   onProfileClick,
   layoutType = "responsive",
+  status = "PUBLISHED",
+  canContinue = false,
+  onContinueClick,
 }: Props) {
   const heartIcon = likedByMe ? "/red_heart.svg" : "/gray_heart.svg";
   
   const isLargeFixed = layoutType === "large-fixed";
+  const isDraft = status === "DRAFT";
 
   return (
     <div
@@ -119,6 +126,11 @@ export default function BookStoryCard({
             <div className="relative w-auto h-[90%] aspect-[2/3] shadow-sm z-10 transition-transform hover:scale-105">
               <Image src={coverImgSrc} alt="cover" fill className="object-contain" />
             </div>
+            {isDraft && (
+              <div className="absolute top-2 left-2 z-20 flex px-2 py-1 items-center rounded-md bg-Secondary-1 text-White text-[10px] md:text-[12px] font-bold">
+                임시저장
+              </div>
+            )}
           </>
         )}
       </div>
@@ -148,8 +160,26 @@ export default function BookStoryCard({
         </div>
       </div>
 
-      {/* 4. 하단 통계 (좋아요/댓글) */}
-      {/* 모바일 버전 Footer (responsive 타입일 때만) */}
+      {/* 4. 하단 통계 (좋아요/댓글) 또는 이어쓰기 버튼 */}
+      {isDraft && canContinue ? (
+        <div className="mt-auto px-4 pb-4">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onContinueClick?.(e);
+            }}
+            className="w-full h-10 rounded-lg bg-primary-2 text-White body_1_2 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2"
+          >
+            <div className="relative w-4 h-4">
+              <Image src="/pencil_icon.svg" alt="edit" fill className="object-contain brightness-0 invert" />
+            </div>
+            이어쓰기
+          </button>
+        </div>
+      ) : (
+        <>
+          {/* 모바일 버전 Footer (responsive 타입일 때만) */}
       {!isLargeFixed && (
         <div className="flex md:hidden h-[37px] items-start border-t border-Subbrown-4 pt-[4px] pb-[12px]">
           <div
@@ -196,6 +226,8 @@ export default function BookStoryCard({
           </div>
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }

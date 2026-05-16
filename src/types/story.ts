@@ -19,6 +19,8 @@ export interface BookStory {
     likedByMe: boolean;
     createdAt: string;
     writtenByMe: boolean;
+    status: "PUBLISHED" | "DRAFT";
+    canContinue: boolean;
 }
 
 export interface BookStoryListResponse {
@@ -69,12 +71,14 @@ export interface BookStoryDetail {
     comments: CommentInfo[];
     prevBookStoryId: number;
     nextBookStoryId: number;
+    status: "PUBLISHED" | "DRAFT";
 }
 
 export interface CreateBookStoryRequest {
     isbn: string;
     title: string;
-    description: string;
+    description?: string;
+    status?: "PUBLISHED" | "DRAFT";
 }
 
 export interface CreateCommentRequest {
@@ -82,5 +86,8 @@ export interface CreateCommentRequest {
 }
 
 export interface UpdateBookStoryRequest {
-    description: string;
+    isbn?: string;
+    title?: string;
+    description?: string;
+    status?: "PUBLISHED" | "DRAFT";
 }

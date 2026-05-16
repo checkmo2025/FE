@@ -85,8 +85,12 @@ export const useCreateBookStoryMutation = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data: CreateBookStoryRequest) => storyService.createBookStory(data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: storyKeys.all });
+        onSuccess: (_data, variables) => {
+            if (variables.status === "DRAFT") {
+                queryClient.invalidateQueries({ queryKey: storyKeys.myList() });
+            } else {
+                queryClient.invalidateQueries({ queryKey: storyKeys.all });
+            }
         },
     });
 };
@@ -98,7 +102,11 @@ export const useUpdateBookStoryMutation = () => {
             storyService.updateBookStory(args.bookStoryId, args.data),
         onSuccess: (_data, variables) => {
             queryClient.invalidateQueries({ queryKey: storyKeys.detail(variables.bookStoryId) });
-            queryClient.invalidateQueries({ queryKey: storyKeys.all });
+            if (variables.data.status === "DRAFT") {
+                queryClient.invalidateQueries({ queryKey: storyKeys.myList() });
+            } else {
+                queryClient.invalidateQueries({ queryKey: storyKeys.all });
+            }
         },
     });
 };

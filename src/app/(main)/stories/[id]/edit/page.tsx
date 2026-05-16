@@ -51,21 +51,33 @@ export default function StoryEditPage() {
     router.back();
   };
 
-  const handleSubmit = () => {
-    if (!description.trim()) {
+  const handleSubmit = (targetStatus?: "PUBLISHED" | "DRAFT") => {
+    // PUBLISHED일 경우 description 밸리데이션 처리
+    if (targetStatus === "PUBLISHED" && !description.trim()) {
       toast.error("내용을 입력해 주세요.");
       return;
     }
 
+    const payload = {
+      description,
+      ...(story ? { isbn: story.bookInfo.bookId, title: story.bookStoryTitle } : {}),
+      ...(targetStatus ? { status: targetStatus } : {})
+    };
+
     updateStory(
-      { bookStoryId, data: { description } },
+      { bookStoryId, data: payload },
       {
         onSuccess: () => {
-          toast.success("수정이 완료되었습니다.");
-          router.push(`/stories/${bookStoryId}`);
+          if (targetStatus === "DRAFT") {
+            toast.success("임시저장되었습니다.");
+            router.push("/profile/mypage");
+          } else {
+            toast.success(targetStatus === "PUBLISHED" && story?.status === "DRAFT" ? "발행이 완료되었습니다." : "수정이 완료되었습니다.");
+            router.push(`/stories/${bookStoryId}`);
+          }
         },
         onError: () => {
-          toast.error("수정에 실패했습니다. 다시 시도해 주세요.");
+          toast.error("저장에 실패했습니다. 다시 시도해 주세요.");
         },
       }
     );
@@ -148,21 +160,44 @@ export default function StoryEditPage() {
         {/* 하단 버튼 */}
         <div className="flex justify-center">
           <div className="flex w-full max-w-[1040px] justify-center t:justify-end gap-4 mt-6">
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors"
-            >
-              취소
-            </button>
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isPending}
-              className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:opacity-90 transition-opacity disabled:opacity-50"
-            >
-              {isPending ? "저장 중..." : "저장"}
-            </button>
+            {story.status === "DRAFT" ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => handleSubmit("DRAFT")}
+                  disabled={isPending}
+                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors hover:bg-primary-1 disabled:opacity-50"
+                >
+                  임시저장
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSubmit("PUBLISHED")}
+                  disabled={isPending}
+                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {isPending ? "발행 중..." : "발행"}
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors"
+                >
+                  취소
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSubmit()}
+                  disabled={isPending}
+                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {isPending ? "저장 중..." : "저장"}
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
