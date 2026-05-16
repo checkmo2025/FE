@@ -126,6 +126,11 @@ export default function BookStoryCard({
             <div className="relative w-auto h-[90%] aspect-[2/3] shadow-sm z-10 transition-transform hover:scale-105">
               <Image src={coverImgSrc} alt="cover" fill className="object-contain" />
             </div>
+            {isDraft && (
+              <div className="absolute top-2 left-2 z-20 flex px-2 py-1 items-center rounded-md bg-Secondary-1 text-White text-[10px] md:text-[12px] font-bold">
+                임시저장
+              </div>
+            )}
           </>
         )}
       </div>
@@ -157,15 +162,18 @@ export default function BookStoryCard({
 
       {/* 4. 하단 통계 (좋아요/댓글) 또는 이어쓰기 버튼 */}
       {isDraft && canContinue ? (
-        <div className={`mt-auto px-4 pb-4 ${isLargeFixed ? "block" : "hidden md:block"}`}>
+        <div className="mt-auto px-4 pb-4">
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               onContinueClick?.(e);
             }}
-            className="w-full h-10 rounded-lg bg-primary-1 text-primary-3 body_1_2 hover:bg-primary-2 hover:text-White transition-colors"
+            className="w-full h-10 rounded-lg bg-primary-2 text-White body_1_2 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2"
           >
+            <div className="relative w-4 h-4">
+              <Image src="/pencil_icon.svg" alt="edit" fill className="object-contain brightness-0 invert" />
+            </div>
             이어쓰기
           </button>
         </div>
