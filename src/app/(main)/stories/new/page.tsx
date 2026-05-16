@@ -159,7 +159,7 @@ function StoryNewContent() {
               disabled={createStoryMutation.isPending}
               className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors hover:bg-primary-1 disabled:opacity-50"
             >
-              임시저장
+              {createStoryMutation.isPending ? "임시저장 중..." : "임시저장"}
             </button>
             <button
               type="button"
