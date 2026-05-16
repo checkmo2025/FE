@@ -55,7 +55,7 @@ export default function BookStoryCard({
   onContinueClick,
 }: Props) {
   const heartIcon = likedByMe ? "/red_heart.svg" : "/gray_heart.svg";
-  
+
   const isLargeFixed = layoutType === "large-fixed";
   const isDraft = status === "DRAFT";
 
@@ -63,10 +63,10 @@ export default function BookStoryCard({
     <div
       onClick={onClick}
       className={`flex flex-col overflow-hidden rounded-lg border-2 border-Subbrown-4 bg-White hover:border-primary-2 transition-colors cursor-pointer
-      ${isLargeFixed 
-        ? "w-full max-w-[336px] h-[380px]" // 고정형 (기존 BookStoryCardLarge)
-        : "w-[161px] h-[243px] md:w-full md:max-w-[336px] md:h-[380px]" // 반응형
-      }`}
+      ${isLargeFixed
+          ? "w-full max-w-[336px] h-[380px]" // 고정형 (기존 BookStoryCardLarge)
+          : "w-[161px] h-[243px] md:w-full md:max-w-[336px] md:h-[380px]" // 반응형
+        }`}
     >
       {/* 1. 상단 프로필 */}
       <div className={`items-center gap-2 px-4 py-3 ${isLargeFixed ? "flex" : "hidden md:flex"}`}>
@@ -126,11 +126,6 @@ export default function BookStoryCard({
             <div className="relative w-auto h-[90%] aspect-[2/3] shadow-sm z-10 transition-transform hover:scale-105">
               <Image src={coverImgSrc} alt="cover" fill className="object-contain" />
             </div>
-            {isDraft && (
-              <div className="absolute top-2 left-2 z-20 flex px-2 py-1 items-center rounded-md bg-Secondary-1 text-White text-[10px] md:text-[12px] font-bold">
-                임시저장
-              </div>
-            )}
           </>
         )}
       </div>
@@ -144,7 +139,7 @@ export default function BookStoryCard({
           className={`text-Gray-7 truncate ${isLargeFixed
             ? "text-left subhead_2 pb-1"
             : "text-center mt-[12px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px] md:text-left md:mt-0 md:subhead_2 md:pb-1"
-          }`}
+            }`}
         >
           {title}
         </p>
@@ -154,7 +149,7 @@ export default function BookStoryCard({
           className={`text-Gray-5 overflow-hidden ${isLargeFixed
             ? "h-16 pt-1 text-left body_1_3 line-clamp-3"
             : "mt-[4px] text-center text-[12px] font-medium leading-[145%] tracking-[-0.012px] line-clamp-2 md:line-clamp-3 md:block md:h-16 md:pt-1 md:text-left md:body_1_3"
-          }`}
+            }`}
         >
           {content}
         </div>
@@ -162,72 +157,69 @@ export default function BookStoryCard({
 
       {/* 4. 하단 통계 (좋아요/댓글) 또는 이어쓰기 버튼 */}
       {isDraft && canContinue ? (
-        <div className="mt-auto px-4 pb-4">
+        <div className={`mt-auto px-4 pb-4 ${isLargeFixed ? "block" : "hidden md:block"}`}>
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               onContinueClick?.(e);
             }}
-            className="w-full h-10 rounded-lg bg-primary-2 text-White body_1_2 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2"
+            className="w-full h-10 rounded-lg bg-primary-1 text-primary-3 body_1_2 hover:bg-primary-2 hover:text-White transition-colors"
           >
-            <div className="relative w-4 h-4">
-              <Image src="/pencil_icon.svg" alt="edit" fill className="object-contain brightness-0 invert" />
-            </div>
             이어쓰기
           </button>
         </div>
       ) : (
         <>
           {/* 모바일 버전 Footer (responsive 타입일 때만) */}
-      {!isLargeFixed && (
-        <div className="flex md:hidden h-[37px] items-start border-t border-Subbrown-4 pt-[4px] pb-[12px]">
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              onLikeClick?.(e);
-            }}
-            className="flex flex-1 items-center justify-center gap-[6px] border-r-2 border-Gray-2 h-[32px] hover:bg-gray-100 transition-colors"
-          >
-            <Image src={heartIcon} alt="좋아요" width={20} height={20} />
-            <span className={`text-[12px] font-medium ${likedByMe ? 'text-primary-2' : 'text-Gray-4'}`}>
-              {likeCount}
-            </span>
-          </div>
-          <div className="flex flex-1 items-center justify-center gap-[6px] h-[32px]">
-            <Image src="/comment.svg" alt="댓글" width={20} height={20} />
-            <span className="text-[12px] font-medium text-Gray-4">
-              {commentCount}
-            </span>
-          </div>
-        </div>
-      )}
+          {!isLargeFixed && (
+            <div className="flex md:hidden h-[37px] items-start border-t border-Subbrown-4 pt-[4px] pb-[12px]">
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onLikeClick?.(e);
+                }}
+                className="flex flex-1 items-center justify-center gap-[6px] border-r-2 border-Gray-2 h-[32px] hover:bg-gray-100 transition-colors"
+              >
+                <Image src={heartIcon} alt="좋아요" width={20} height={20} />
+                <span className={`text-[12px] font-medium ${likedByMe ? 'text-primary-2' : 'text-Gray-4'}`}>
+                  {likeCount}
+                </span>
+              </div>
+              <div className="flex flex-1 items-center justify-center gap-[6px] h-[32px]">
+                <Image src="/comment.svg" alt="댓글" width={20} height={20} />
+                <span className="text-[12px] font-medium text-Gray-4">
+                  {commentCount}
+                </span>
+              </div>
+            </div>
+          )}
 
-      {/* 데스크탑 버전 Footer */}
-      <div className={`${isLargeFixed ? "grid" : "hidden md:grid"} mt-1 grid-cols-[1fr_auto_1fr] items-center px-2 pb-[10px]`}>
+          {/* 데스크탑 버전 Footer */}
+          <div className={`${isLargeFixed ? "grid" : "hidden md:grid"} mt-1 grid-cols-[1fr_auto_1fr] items-center px-2 pb-[10px]`}>
 
-        <div className="flex justify-center items-center">
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              onLikeClick?.(e);
-            }}
-            className="flex items-center justify-center gap-2 pt-1 cursor-pointer hover:bg-gray-100 transition-colors rounded-full px-4 h-10"
-          >
-            <Image src={heartIcon} alt="좋아요" width={24} height={24} />
-            <span className={`body_1_2 ${likedByMe ? 'text-primary-2' : 'text-Gray-4'}`}>좋아요 {likeCount}</span>
+            <div className="flex justify-center items-center">
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onLikeClick?.(e);
+                }}
+                className="flex items-center justify-center gap-2 pt-1 cursor-pointer hover:bg-gray-100 transition-colors rounded-full px-4 h-10"
+              >
+                <Image src={heartIcon} alt="좋아요" width={24} height={24} />
+                <span className={`body_1_2 ${likedByMe ? 'text-primary-2' : 'text-Gray-4'}`}>좋아요 {likeCount}</span>
+              </div>
+            </div>
+            <div className="h-10 w-[1.8px] mt-2 rounded-full bg-Gray-2" />
+            <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center gap-2 pt-1 px-4 h-10">
+                <Image src="/comment.svg" alt="댓글" width={24} height={24} />
+                <span className="body_1_2 text-Gray-4">댓글 {commentCount}</span>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="h-10 w-[1.8px] mt-2 rounded-full bg-Gray-2" />
-        <div className="flex items-center justify-center">
-          <div className="flex items-center justify-center gap-2 pt-1 px-4 h-10">
-            <Image src="/comment.svg" alt="댓글" width={24} height={24} />
-            <span className="body_1_2 text-Gray-4">댓글 {commentCount}</span>
-          </div>
-        </div>
-      </div>
-        </>
-      )}
+          </>
+        )}
     </div>
   );
 }
