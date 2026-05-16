@@ -75,6 +75,16 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
     });
   };
 
+  const handleBlockSubmitLogic = async () => {
+    // TODO: 실제 차단 API 연동 (현재는 Mock 처리)
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        console.log("Member blocked:", nickname);
+        resolve();
+      }, 1000);
+    });
+  };
+
   const {
     modalStep,
     openSelection,
@@ -83,7 +93,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
     selectBlock,
     handleReportSubmit,
     handleBlockConfirm,
-  } = useReportBlockFlow(handleReportSubmitLogic);
+  } = useReportBlockFlow(handleReportSubmitLogic, handleBlockSubmitLogic);
 
   if (isLoading) {
     return (
