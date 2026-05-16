@@ -67,13 +67,3 @@ export default function BlockPage() {
     </SettingsDetailLayout>
   );
 }
-      {/* 
-      {isFetchingNextPage && (
-        <div className="flex justify-center p-4">
-          <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-primary-2"></div>
-        </div>
-      )}
-      */}
-    </SettingsDetailLayout>
-  );
-}
