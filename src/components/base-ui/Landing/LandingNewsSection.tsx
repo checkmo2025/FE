@@ -3,47 +3,33 @@ import Image from "next/image";
 export default function LandingNewsSection() {
   return (
     <section className="relative overflow-hidden bg-white">
-      <div className="flex min-h-[520px] flex-col t:flex-row">
-        {/* 좌측: 풀블리드 배경 + 카드 cascade */}
-        <div className="relative min-h-[400px] w-full overflow-hidden t:w-[56%] t:shrink-0">
-          {/* 배경 이미지 */}
-          <Image
-            src="/landing/landing-fourth-news1.svg"
-            alt="소식 배경"
-            fill
-            className="object-cover"
-          />
+      <div className="flex min-h-[600px] flex-col t:flex-row">
+        {/* 좌측: 배경 상단 + 카드 cascade */}
+        <div className="relative min-h-[500px] w-full t:w-[58%] t:shrink-0">
+          {/* 블러 배경 - 상단에만 */}
+          <div className="absolute inset-x-0 top-0 h-[48%]">
+            <Image
+              src="/landing/landing-fourth-background.svg"
+              alt=""
+              fill
+              className="object-cover object-top"
+            />
+          </div>
+          {/* 배경→흰색 페이드 */}
+          <div className="absolute inset-x-0 top-[32%] h-[20%] bg-gradient-to-b from-transparent to-white" />
 
-          {/* 카드 cascade - 뒤에서 앞으로 쌓임 */}
-          {/* 카드 2 - 가장 뒤, 많이 기울어짐 */}
-          <div className="absolute bottom-[28%] left-[6%] w-[62%] rotate-[-14deg] drop-shadow-xl">
-            <Image
-              src="/landing/landing-fourth-news2.svg"
-              alt="소식 카드"
-              width={400}
-              height={220}
-              className="w-full rounded-xl"
-            />
+          {/* 카드 cascade - 뒤→앞 */}
+          <div className="absolute bottom-[44%] left-[2%] w-[72%] rotate-[-18deg] drop-shadow-lg">
+            <Image src="/landing/landing-fourth-news1.svg" alt="소식" width={480} height={260} className="w-full rounded-xl" />
           </div>
-          {/* 카드 3 - 중간 */}
-          <div className="absolute bottom-[16%] left-[12%] w-[66%] rotate-[-7deg] drop-shadow-xl">
-            <Image
-              src="/landing/landing-fourth-news3.svg"
-              alt="소식 카드"
-              width={420}
-              height={240}
-              className="w-full rounded-xl"
-            />
+          <div className="absolute bottom-[34%] left-[5%] w-[74%] rotate-[-12deg] drop-shadow-lg">
+            <Image src="/landing/landing-fourth-news2.svg" alt="소식" width={500} height={270} className="w-full rounded-xl" />
           </div>
-          {/* 카드 4 - 가장 앞, 거의 수평 */}
-          <div className="absolute bottom-[2%] left-[16%] w-[72%] rotate-[-2deg] drop-shadow-2xl">
-            <Image
-              src="/landing/landing-fourth-news4.svg"
-              alt="소식 카드"
-              width={460}
-              height={260}
-              className="w-full rounded-xl"
-            />
+          <div className="absolute bottom-[22%] left-[8%] w-[78%] rotate-[-6deg] drop-shadow-xl">
+            <Image src="/landing/landing-fourth-news3.svg" alt="소식" width={520} height={280} className="w-full rounded-xl" />
+          </div>
+          <div className="absolute bottom-[10%] left-[10%] w-[82%] rotate-[-1deg] drop-shadow-2xl">
+            <Image src="/landing/landing-fourth-news4.svg" alt="소식" width={550} height={300} className="w-full rounded-xl" />
           </div>
         </div>
 
