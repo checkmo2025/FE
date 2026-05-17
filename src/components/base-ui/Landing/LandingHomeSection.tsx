@@ -3,17 +3,22 @@ import Image from "next/image";
 export default function LandingHomeSection() {
   return (
     <section className="relative overflow-hidden bg-background py-20 t:py-28">
-      {/* 좌측 다크 패널 (대각선 클립) */}
+      {/* 모바일: 전체 다크 배경 */}
       <div
-        className="absolute inset-y-0 left-0 w-[60%]"
+        className="absolute inset-0 t:hidden"
+        style={{ backgroundColor: "#3C2A22" }}
+      />
+      {/* 태블릿+: 대각선 클립 다크 패널 */}
+      <div
+        className="absolute inset-y-0 left-0 hidden w-[60%] t:block"
         style={{
           backgroundColor: "#3C2A22",
           clipPath: "polygon(0 0, 100% 0, 67% 100%, 0 100%)",
         }}
       />
 
-      <div className="relative mx-auto flex max-w-[1200px] flex-col items-start gap-12 px-6 t:flex-row t:items-center t:gap-10 d:px-8">
-        {/* 텍스트 (다크 패널 위) */}
+      <div className="relative mx-auto flex max-w-[1200px] flex-col gap-8 px-4 t:flex-row t:items-center t:gap-10 t:px-6 d:px-8">
+        {/* 텍스트 */}
         <div className="flex flex-col gap-4 t:w-[38%] t:shrink-0">
           <div className="flex flex-col gap-0.5">
             <span className="subhead_3_1 font-bold text-white">책모 홈</span>
@@ -32,8 +37,7 @@ export default function LandingHomeSection() {
         </div>
 
         {/* 이미지 영역 */}
-        <div className="relative w-full pb-16 t:flex-1">
-          {/* 메인 스크린 */}
+        <div className="relative w-full pb-14 t:flex-1 t:pb-16">
           <Image
             src="/landing/landing-second-screen.svg"
             alt="책모 홈 화면"
@@ -41,8 +45,8 @@ export default function LandingHomeSection() {
             height={460}
             className="w-full rounded-xl shadow-2xl"
           />
-          {/* 북스토리 카드 - 좌 플로팅 */}
-          <div className="absolute -left-4 bottom-4 w-[36%] t:-left-6">
+          {/* 북스토리 카드 */}
+          <div className="absolute -left-2 bottom-2 w-[32%] t:-left-6 t:bottom-4 t:w-[36%]">
             <Image
               src="/landing/landing-second-bookstory.svg"
               alt="북스토리"
@@ -51,8 +55,8 @@ export default function LandingHomeSection() {
               className="w-full rounded-xl shadow-xl"
             />
           </div>
-          {/* 캐러셀 카드 - 우하단 플로팅 */}
-          <div className="absolute top-8 -right-14 w-[78%] t:-right-20">
+          {/* 캐러셀 카드 */}
+          <div className="absolute -right-2 top-4 w-[65%] t:-right-14 t:top-8 t:w-[78%]">
             <Image
               src="/landing/landing-second-carousel.svg"
               alt="캐러셀"

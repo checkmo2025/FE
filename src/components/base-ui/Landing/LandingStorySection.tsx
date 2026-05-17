@@ -3,7 +3,7 @@ import Image from "next/image";
 export default function LandingStorySection() {
   return (
     <section className="relative overflow-hidden bg-white py-20 t:py-28">
-      <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-12 px-6 t:flex-row t:items-start t:gap-16 d:px-8">
+      <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-4 t:flex-row t:items-start t:gap-16 t:px-6 d:px-8">
         {/* 텍스트 */}
         <div className="flex flex-col gap-4 t:w-[38%] t:shrink-0 t:pt-10">
           <div className="flex flex-col gap-0.5">
@@ -21,7 +21,7 @@ export default function LandingStorySection() {
         </div>
 
         {/* 스크린 + 책 데코 */}
-        <div className="relative w-full t:flex-1">
+        <div className="relative w-full pb-10 t:flex-1 t:pb-0">
           <Image
             src="/landing/landing-fourth-screen.svg"
             alt="책 이야기 화면"
@@ -29,8 +29,8 @@ export default function LandingStorySection() {
             height={460}
             className="w-full rounded-xl shadow-xl"
           />
-          {/* 책 스택 데코 - 우하단 */}
-          <div className="absolute -bottom-10 -right-8 w-[30%] t:-right-12">
+          {/* 책 스택 데코 */}
+          <div className="absolute -bottom-8 -right-4 w-[26%] t:-bottom-10 t:-right-12 t:w-[30%]">
             <Image
               src="/landing/landing-fourth-books.svg"
               alt=""

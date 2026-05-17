@@ -1,6 +1,18 @@
+"use client";
+
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function LandingChatSection() {
+  const router = useRouter();
+  const { openLoginModal } = useAuthStore();
+
+  const handleJoin = () => {
+    openLoginModal();
+    router.push("/home");
+  };
+
   return (
     <section className="relative overflow-hidden bg-[#1a1008]">
       {/* 배경 이미지 */}
@@ -12,9 +24,9 @@ export default function LandingChatSection() {
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
 
-      <div className="relative z-10 flex flex-col items-center px-6 pt-20 pb-10 t:pt-24 t:pb-16 d:px-8">
+      <div className="relative z-10 flex flex-col items-center px-4 pt-20 pb-10 t:px-6 t:pt-24 t:pb-16 d:px-8">
         {/* 책 아이콘 */}
-        <div className="mb-6 w-24 t:w-28">
+        <div className="mb-6 w-20 t:w-28">
           <Image
             src="/landing/landing-sixth-book.svg"
             alt="책"
@@ -28,13 +40,35 @@ export default function LandingChatSection() {
         <h2 className="subhead_1 mb-3 text-center text-white t:headline_3">
           독서 토론의 처음부터 끝까지!
         </h2>
-        <p className="body_1_2 mb-16 text-center text-white/70">
+        <p className="body_1_2 mb-12 text-center text-white/70 t:mb-16">
           독서 토론의 처음부터 끝까지, 함께 읽는 경험을 더 풍부하게 만들어줘요.
         </p>
 
-        {/* 화면 영역 */}
-        <div className="relative mx-auto w-full max-w-[1100px]">
-          {/* 좌측 앱 화면 (screen1) */}
+        {/* ── 한줄평 작성 ── */}
+
+        {/* 모바일 */}
+        <div className="w-full t:hidden">
+          <div className="mb-6">
+            <h3 className="subhead_1 mb-2 text-white">한줄평 작성</h3>
+            <p className="body_1_2 leading-relaxed text-white/70">
+              책을 읽고 난 첫 감상을 별점과 함께 짧게 남겨보세요.
+              서로의 한줄평을 통해 같은 책을 다르게 읽은 시선을 발견할 수 있어요.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3">
+            <Image src="/landing/landing-sixth-screen1.svg" alt="한줄평 화면" width={600} height={400} className="w-full rounded-xl shadow-xl" />
+            <Image src="/landing/landing-sixth-screen2.svg" alt="한줄평 팝업" width={700} height={520} className="w-full rounded-xl shadow-xl" />
+            <div className="flex flex-col gap-2">
+              <Image src="/landing/landing-sixth-comment1.svg" alt="댓글 1" width={700} height={80} className="w-full" />
+              <Image src="/landing/landing-sixth-comment2.svg" alt="댓글 2" width={700} height={80} className="w-full" />
+              <Image src="/landing/landing-sixth-comment3.svg" alt="댓글 3" width={700} height={80} className="w-full" />
+              <Image src="/landing/landing-sixth-comment4.svg" alt="댓글 4" width={700} height={80} className="w-full" />
+            </div>
+          </div>
+        </div>
+
+        {/* 태블릿+ */}
+        <div className="relative mx-auto hidden w-full max-w-[1100px] t:block">
           <div className="relative z-10 w-[52%] drop-shadow-2xl">
             <Image
               src="/landing/landing-sixth-screen1.svg"
@@ -43,28 +77,12 @@ export default function LandingChatSection() {
               height={400}
               className="w-full rounded-xl"
             />
-            {/* 북 카드 오버레이 */}
             <div className="absolute bottom-[18%] left-[16%] w-[15%]">
-              <Image
-                src="/landing/landing-sixth-bookcard1.svg"
-                alt="책 카드"
-                width={520}
-                height={160}
-                className="w-full"
-              />
+              <Image src="/landing/landing-sixth-bookcard1.svg" alt="책 카드" width={520} height={160} className="w-full" />
             </div>
           </div>
-
-          {/* 우측 팝업 화면 (screen2) + comment 스택 */}
           <div className="absolute right-0 top-[-20px] z-20 w-[62%] drop-shadow-2xl">
-            <Image
-              src="/landing/landing-sixth-screen2.svg"
-              alt="한줄평 팝업"
-              width={700}
-              height={520}
-              className="w-full rounded-xl"
-            />
-            {/* comment 차곡차곡 */}
+            <Image src="/landing/landing-sixth-screen2.svg" alt="한줄평 팝업" width={700} height={520} className="w-full rounded-xl" />
             <div className="mt-2 flex flex-col gap-2">
               <Image src="/landing/landing-sixth-comment1.svg" alt="댓글 1" width={700} height={80} className="w-full" />
               <Image src="/landing/landing-sixth-comment2.svg" alt="댓글 2" width={700} height={80} className="w-full" />
@@ -72,10 +90,8 @@ export default function LandingChatSection() {
               <Image src="/landing/landing-sixth-comment4.svg" alt="댓글 4" width={700} height={80} className="w-full" />
             </div>
           </div>
-
-          {/* 하단 좌측 텍스트 */}
           <div className="mt-8 w-[40%]">
-            <h3 className="subhead_2 mb-2 text-white">한줄평 작성</h3>
+            <h3 className="subhead_1 mb-2 text-white t:headline_3">한줄평 작성</h3>
             <p className="body_1_2 leading-relaxed text-white/70">
               책을 읽고 난 첫 감상을 별점과 함께 짧게 남겨보세요.
               <br />
@@ -86,40 +102,39 @@ export default function LandingChatSection() {
           </div>
         </div>
 
-        {/* 발제 작성 및 선택 섹션 */}
-        <div className="mx-auto mt-32 flex w-full max-w-[1100px] items-center gap-12">
-          {/* 좌측: screen3 + select 오버레이 */}
-          <div className="relative w-[60%] shrink-0 drop-shadow-2xl">
-            <Image
-              src="/landing/landing-sixth-screen3.svg"
-              alt="발제 화면"
-              width={720}
-              height={480}
-              className="w-full rounded-xl"
-            />
-            {/* select1 오버레이 */}
+        {/* ── 발제 작성 및 선택 ── */}
+
+        {/* 모바일 */}
+        <div className="mt-16 w-full t:hidden">
+          <div className="mb-6">
+            <h3 className="subhead_1 mb-2 text-white">발제 작성 및 선택</h3>
+            <p className="body_1_2 leading-relaxed text-white/70">
+              토론을 이끌 질문을 직접 작성하고, 함께 이야기하고 싶은
+              발제를 선택해 보세요. 좋은 발제 하나가 모임의 대화를 더 깊고 풍성하게 만들어줘요.
+            </p>
+          </div>
+          <div className="relative drop-shadow-2xl">
+            <Image src="/landing/landing-sixth-screen3.svg" alt="발제 화면" width={720} height={480} className="w-full rounded-xl" />
             <div className="absolute left-[22%] top-[38%] w-[75%]">
-              <Image
-                src="/landing/landing-sixth-select1.svg"
-                alt="발제 선택 1"
-                width={400}
-                height={48}
-                className="w-full"
-              />
+              <Image src="/landing/landing-sixth-select1.svg" alt="발제 선택 1" width={400} height={48} className="w-full" />
             </div>
-            {/* select2 오버레이 */}
             <div className="absolute left-[22%] top-[54%] w-[75%]">
-              <Image
-                src="/landing/landing-sixth-select2.svg"
-                alt="발제 선택 2"
-                width={400}
-                height={48}
-                className="w-full"
-              />
+              <Image src="/landing/landing-sixth-select2.svg" alt="발제 선택 2" width={400} height={48} className="w-full" />
             </div>
           </div>
+        </div>
 
-          {/* 우측: 텍스트 */}
+        {/* 태블릿+ */}
+        <div className="mx-auto mt-32 hidden w-full max-w-[1100px] items-center gap-12 t:flex">
+          <div className="relative w-[60%] shrink-0 drop-shadow-2xl">
+            <Image src="/landing/landing-sixth-screen3.svg" alt="발제 화면" width={720} height={480} className="w-full rounded-xl" />
+            <div className="absolute left-[22%] top-[38%] w-[75%]">
+              <Image src="/landing/landing-sixth-select1.svg" alt="발제 선택 1" width={400} height={48} className="w-full" />
+            </div>
+            <div className="absolute left-[22%] top-[54%] w-[75%]">
+              <Image src="/landing/landing-sixth-select2.svg" alt="발제 선택 2" width={400} height={48} className="w-full" />
+            </div>
+          </div>
           <div className="flex flex-col gap-3">
             <h3 className="subhead_1 text-white t:headline_3">발제 작성 및 선택</h3>
             <p className="body_1_2 leading-relaxed text-white/70">
@@ -132,9 +147,32 @@ export default function LandingChatSection() {
           </div>
         </div>
 
-        {/* 채팅 기능 활용 섹션 */}
-        <div className="mx-auto mt-32 w-full max-w-[1100px] pb-24">
-          {/* 상단 텍스트 (좌측) */}
+        {/* ── 채팅 기능 활용 ── */}
+
+        {/* 모바일 */}
+        <div className="mt-16 w-full pb-16 t:hidden">
+          <div className="mb-6">
+            <h3 className="subhead_1 mb-2 text-white">채팅 기능 활용</h3>
+            <p className="body_1_2 leading-relaxed text-white/70">
+              온·오프라인으로 조원들과 자유롭게 의견을 나눠보세요.
+              토론 전후의 생각까지 이어가며 독서 경험을 더 오래, 더 진하게 남길 수 있어요.
+            </p>
+          </div>
+          <div className="flex flex-col gap-4">
+            <Image src="/landing/landing-sixth-screen4.svg" alt="채팅 조 선택" width={420} height={460} className="w-full rounded-xl shadow-xl" />
+            <Image src="/landing/landing-sixth-screen5.svg" alt="채팅 화면" width={740} height={540} className="w-full rounded-xl shadow-xl" />
+            <div className="flex w-full items-center rounded-full border border-[#C4A068] bg-white px-5 py-3 shadow-sm">
+              <span className="body_1_1 flex-1 text-Gray-7">독서 토론의 처음부터 끝까지, 책모!</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="shrink-0">
+                <path d="M22 2L11 13" stroke="#C4A068" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="#C4A068" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* 태블릿+ */}
+        <div className="mx-auto mt-32 hidden w-full max-w-[1100px] pb-24 t:block">
           <div className="mb-12 w-[45%]">
             <h3 className="subhead_1 mb-3 text-white t:headline_3">채팅 기능 활용</h3>
             <p className="body_1_2 leading-relaxed text-white/70">
@@ -145,84 +183,67 @@ export default function LandingChatSection() {
               더 진하게 남길 수 있어요.
             </p>
           </div>
-
-          {/* 화면 영역 */}
           <div className="relative h-[620px]">
-            {/* 좌측: screen4 (채팅 조 선택 모달) */}
+            {/* screen4 */}
             <div className="absolute left-0 top-[5%] z-20 w-[32%] drop-shadow-2xl">
               <div className="relative">
-                <Image
-                  src="/landing/landing-sixth-screen4.svg"
-                  alt="채팅 조 선택"
-                  width={420}
-                  height={460}
-                  className="w-full rounded-xl"
-                />
-                {/* A조 버튼 위에 group1 오버레이 */}
+                <Image src="/landing/landing-sixth-screen4.svg" alt="채팅 조 선택" width={420} height={460} className="w-full rounded-xl" />
                 <div className="absolute left-[4%] top-[22%] w-[92%]">
-                  <Image
-                    src="/landing/landing-sixth-group1.svg"
-                    alt="A조"
-                    width={400}
-                    height={48}
-                    className="w-full"
-                  />
+                  <Image src="/landing/landing-sixth-group1.svg" alt="A조" width={400} height={48} className="w-full" />
                 </div>
               </div>
             </div>
 
-            {/* A조 → screen5 점선 연결 */}
+            {/* 점선 */}
             <div
               className="absolute z-30"
               style={{
                 left: "32%",
                 top: "calc(5% + 120px)",
-                width: "calc(68% - 32%)",
+                width: "28%",
                 borderTop: "2px dashed #C4A068",
               }}
             />
 
-            {/* 우측: screen5 (채팅창) + chat 버블 + input */}
-            <div className="absolute right-[4%] top-[-18%] z-10 w-[28%] drop-shadow-2xl">
+            {/* screen5 + 버블 */}
+            <div className="absolute right-[12%] top-[-24%] z-10 w-[28%] drop-shadow-2xl">
               <div className="relative">
-                <Image
-                  src="/landing/landing-sixth-screen5.svg"
-                  alt="채팅 화면"
-                  width={740}
-                  height={540}
-                  className="w-full rounded-xl"
-                />
-                {/* chat1 - 왼쪽으로 튀어나옴 (민트) */}
-                <div className="absolute left-[-20%] top-[10%] w-[85%] rounded-2xl bg-[#dff2e1] px-4 py-3 text-[13px] leading-relaxed text-Gray-7 shadow-md">
+                <Image src="/landing/landing-sixth-screen5.svg" alt="채팅 화면" width={740} height={540} className="w-full rounded-xl" />
+                <div className="absolute left-[-20%] top-[10%] w-[85%] rounded-2xl bg-[#dff2e1] px-4 py-3 body_1_2 text-Gray-7 shadow-md">
                   다들 『채식주의자』 읽고 나서 영혜를 어떻게 느꼈어요? 저는 단순히 이상해진 인물이라기보다, 자기 방식으로 끝까지 거부를 드러낸 사람처럼 보였어요.
-                  <div className="mt-1 text-right text-[10px] text-Gray-4">15:50</div>
+                  <div className="mt-1 text-right body_2_2 text-Gray-4">15:50</div>
                 </div>
-                {/* chat2 - 오른쪽으로 튀어나옴 (베이지) */}
-                <div className="absolute right-[-20%] top-[34%] w-[85%] rounded-2xl bg-[#f0ece8] px-4 py-3 text-[13px] leading-relaxed text-Gray-7 shadow-md">
+                <div className="absolute right-[-20%] top-[34%] w-[85%] rounded-2xl bg-[#f0ece8] px-4 py-3 body_1_2 text-Gray-7 shadow-md">
                   저는 영혜가 끝까지 설명되지 않는 인물이라는 점이 오히려 중요하다고 느꼈어요. 독자가 영혜를 완전히 이해하지 못하게 하면서도, 왜 그 자리에 몰렸는지는 분명히 보이더라고요.
-                  <div className="mt-1 text-right text-[10px] text-Gray-4">15:50</div>
+                  <div className="mt-1 text-right body_2_2 text-Gray-4">15:50</div>
                 </div>
-                {/* chat3 - 오른쪽으로 튀어나옴 (베이지) */}
-                <div className="absolute right-[-20%] top-[57%] w-[85%] rounded-2xl bg-[#f0ece8] px-4 py-3 text-[13px] leading-relaxed text-Gray-7 shadow-md">
+                <div className="absolute right-[-20%] top-[57%] w-[85%] rounded-2xl bg-[#f0ece8] px-4 py-3 body_1_2 text-Gray-7 shadow-md">
                   특히 주변 인물들이 영혜를 바라보는 방식이 인상적이었어요. 누구도 영혜 자체를 보지 않고, 각자 자기 입장에서 해석하고 소비하려는 느낌이라서 더 선명하게 읽혔어요.
-                  <div className="mt-1 text-right text-[10px] text-Gray-4">15:50</div>
+                  <div className="mt-1 text-right body_2_2 text-Gray-4">15:50</div>
                 </div>
-                {/* chat4 - 왼쪽으로 튀어나옴 (핑크) */}
-                <div className="absolute left-[-20%] top-[78%] w-[85%] rounded-2xl bg-[#fce8e6] px-4 py-3 text-[13px] leading-relaxed text-Gray-7 shadow-md">
+                <div className="absolute left-[-20%] top-[78%] w-[85%] rounded-2xl bg-[#fce8e6] px-4 py-3 body_1_2 text-Gray-7 shadow-md">
                   맞아요. 그래서 저는 이 소설이 영혜를 설명하는 이야기라기보다, 한 사람을 끝내 이해하지 못하는 사회와 관계를 보여주는 이야기처럼 느껴졌어요.
-                  <div className="mt-1 text-right text-[10px] text-Gray-4">15:50</div>
+                  <div className="mt-1 text-right body_2_2 text-Gray-4">15:50</div>
                 </div>
-                {/* 채팅 입력창 */}
-                <div className="absolute bottom-[2%] left-[3%] flex w-[94%] items-center rounded-full border border-[#C4A068] bg-white px-5 py-3 shadow-sm">
-                  <span className="flex-1 text-[15px] font-semibold text-Gray-7">독서 토론의 처음부터 끝까지, 책모!</span>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="shrink-0">
-                    <path d="M22 2L11 13" stroke="#C4A068" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="#C4A068" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
+              </div>
+              <div className="mt-3 flex w-full items-center rounded-full border border-[#C4A068] bg-white px-5 py-3 shadow-sm">
+                <span className="body_1_1 flex-1 text-Gray-7">독서 토론의 처음부터 끝까지, 책모!</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="shrink-0">
+                  <path d="M22 2L11 13" stroke="#C4A068" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="#C4A068" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </div>
             </div>
           </div>
+        </div>
+        {/* 가입하기 버튼 */}
+        <div className="mt-16 pb-16 t:mt-20 t:pb-24">
+          <button
+            onClick={handleJoin}
+            className="subhead_3_2 rounded-full bg-primary-1 px-8 py-3.5 text-white transition-opacity hover:opacity-80"
+          >
+            지금 가입하기
+          </button>
         </div>
       </div>
     </section>

@@ -24,7 +24,7 @@ export default function LandingHero() {
       />
       <div className="absolute inset-0 bg-black/45" />
 
-      <div className="relative z-10 flex flex-col items-center gap-6 px-6 text-center">
+      <div className="relative z-10 flex flex-col items-center gap-6 px-4 text-center t:px-6">
         <div className="relative h-16 w-28 t:h-20 t:w-36">
           <Image
             src="/logo.svg"
@@ -39,7 +39,7 @@ export default function LandingHero() {
           독서의 처음부터 토론의 끝까지!
         </h1>
 
-        <p className="body_1_2 max-w-[480px] text-white/80 t:text-[16px]">
+        <p className="body_1_2 max-w-[480px] text-white/80 t:subhead_3_2">
           책모는 독서를 사랑하는 모든 사람을 위한 모임 플랫폼입니다.
           <br className="hidden t:block" />
           모임에 참여하고, 책 이야기를 나누고, 깊이 있는 독서 토론을 경험해 보세요.

@@ -24,12 +24,12 @@ export default function LandingNav() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
         scrolled ? "bg-primary-1 shadow-md" : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4 d:px-8">
-        <Link href="/" className="relative h-8 w-14 overflow-hidden">
+      <div className="mx-auto flex max-w-[1200px] items-center justify-between px-4 py-3 t:px-6 t:py-4 d:px-8">
+        <Link href="/" className="relative h-7 w-12 overflow-hidden t:h-8 t:w-14">
           <Image
             src="/logo.svg"
             alt="책모 로고"
@@ -38,16 +38,16 @@ export default function LandingNav() {
             priority
           />
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 t:gap-3">
           <Link
             href="/home"
-            className="body_1_2 rounded-full px-4 py-2 text-white/90 transition-colors hover:text-white"
+            className="body_1_2 hidden rounded-full px-4 py-2 text-white/90 transition-colors hover:text-white t:inline-block"
           >
             바로가기
           </Link>
           <button
             onClick={handleLogin}
-            className="body_1_1 rounded-full bg-primary-1 px-5 py-2 text-white transition-opacity hover:opacity-80"
+            className="body_2_1 rounded-full bg-primary-1 px-4 py-1.5 text-white transition-opacity hover:opacity-80 t:body_1_1 t:px-5 t:py-2"
           >
             로그인/회원가입
           </button>
