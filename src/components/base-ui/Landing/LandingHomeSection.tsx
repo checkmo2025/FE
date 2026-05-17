@@ -5,10 +5,10 @@ export default function LandingHomeSection() {
     <section className="relative overflow-hidden bg-background py-20 t:py-28">
       {/* 좌측 다크 패널 (대각선 클립) */}
       <div
-        className="absolute inset-y-0 left-0 w-[48%]"
+        className="absolute inset-y-0 left-0 w-[50%]"
         style={{
           backgroundColor: "#3C2A22",
-          clipPath: "polygon(0 0, 100% 0, 80% 100%, 0 100%)",
+          clipPath: "polygon(0 0, 100% 0, 0 100%)",
         }}
       />
 
@@ -42,7 +42,7 @@ export default function LandingHomeSection() {
             className="w-full rounded-xl shadow-2xl"
           />
           {/* 북스토리 카드 - 좌 플로팅 */}
-          <div className="absolute -left-4 bottom-4 w-[36%] opacity-70 t:-left-6">
+          <div className="absolute -left-4 bottom-4 w-[36%] t:-left-6">
             <Image
               src="/landing/landing-second-bookstory.svg"
               alt="북스토리"
@@ -52,7 +52,7 @@ export default function LandingHomeSection() {
             />
           </div>
           {/* 캐러셀 카드 - 우하단 플로팅 */}
-          <div className="absolute top-8 -right-14 w-[78%] opacity-70 t:-right-20">
+          <div className="absolute top-8 -right-14 w-[78%] t:-right-20">
             <Image
               src="/landing/landing-second-carousel.svg"
               alt="캐러셀"

@@ -3,9 +3,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function LandingNav() {
   const [scrolled, setScrolled] = useState(false);
+  const router = useRouter();
+  const { openLoginModal } = useAuthStore();
+
+  const handleLogin = () => {
+    openLoginModal();
+    router.push("/home");
+  };
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -36,12 +45,12 @@ export default function LandingNav() {
           >
             바로가기
           </Link>
-          <Link
-            href="/login"
+          <button
+            onClick={handleLogin}
             className="body_1_1 rounded-full bg-primary-1 px-5 py-2 text-white transition-opacity hover:opacity-80"
           >
             로그인/회원가입
-          </Link>
+          </button>
         </div>
       </div>
     </nav>

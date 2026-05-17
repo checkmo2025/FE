@@ -98,7 +98,7 @@ export default function LandingChatSection() {
               className="w-full rounded-xl"
             />
             {/* select1 오버레이 */}
-            <div className="absolute left-[22%] top-[38%] w-[55%]">
+            <div className="absolute left-[22%] top-[38%] w-[75%]">
               <Image
                 src="/landing/landing-seventh-select1.svg"
                 alt="발제 선택 1"
@@ -108,7 +108,7 @@ export default function LandingChatSection() {
               />
             </div>
             {/* select2 오버레이 */}
-            <div className="absolute left-[22%] top-[54%] w-[55%]">
+            <div className="absolute left-[22%] top-[54%] w-[75%]">
               <Image
                 src="/landing/landing-seventh-select2.svg"
                 alt="발제 선택 2"
@@ -129,6 +129,97 @@ export default function LandingChatSection() {
               <br />
               더 깊고 풍성하게 만들어줘요.
             </p>
+          </div>
+        </div>
+
+        {/* 채팅 기능 활용 섹션 */}
+        <div className="mx-auto mt-32 w-full max-w-[1100px] pb-24">
+          {/* 상단 텍스트 (좌측) */}
+          <div className="mb-12 w-[45%]">
+            <h3 className="subhead_1 mb-3 text-white t:headline_3">채팅 기능 활용</h3>
+            <p className="body_1_2 leading-relaxed text-white/70">
+              온·오프라인으로 조원들과 자유롭게 의견을 나눠보세요.
+              <br />
+              토론 전후의 생각까지 이어가며 독서 경험을 더 오래,
+              <br />
+              더 진하게 남길 수 있어요.
+            </p>
+          </div>
+
+          {/* 화면 영역 */}
+          <div className="relative h-[620px]">
+            {/* 좌측: screen4 (채팅 조 선택 모달) */}
+            <div className="absolute left-0 top-[18%] z-20 w-[32%] drop-shadow-2xl">
+              <div className="relative">
+                <Image
+                  src="/landing/landing-seventh-screen4.svg"
+                  alt="채팅 조 선택"
+                  width={420}
+                  height={460}
+                  className="w-full rounded-xl"
+                />
+                {/* A조 버튼 위에 group1 오버레이 */}
+                <div className="absolute left-[4%] top-[22%] w-[92%]">
+                  <Image
+                    src="/landing/landing-seventh-group1.svg"
+                    alt="A조"
+                    width={400}
+                    height={48}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* A조 → screen5 점선 연결 */}
+            <div
+              className="absolute z-30"
+              style={{
+                left: "32%",
+                top: "calc(18% + 120px)",
+                width: "calc(58% - 32%)",
+                borderTop: "2px dashed #C4A068",
+              }}
+            />
+
+            {/* 우측: screen5 (채팅창) + chat 버블 + input */}
+            <div className="absolute right-[4%] top-[-6%] z-10 w-[58%] drop-shadow-2xl">
+              <div className="relative">
+                <Image
+                  src="/landing/landing-seventh-screen5.svg"
+                  alt="채팅 화면"
+                  width={740}
+                  height={540}
+                  className="w-full rounded-xl"
+                />
+                {/* chat1 - 왼쪽 (수신) */}
+                <div className="absolute left-[3%] top-[13%] w-[58%]">
+                  <Image src="/landing/landing-seventh-chat1.svg" alt="채팅 1" width={420} height={80} className="w-full" />
+                </div>
+                {/* chat2 - 오른쪽 (송신) */}
+                <div className="absolute right-[3%] top-[36%] w-[58%]">
+                  <Image src="/landing/landing-seventh-chat2.svg" alt="채팅 2" width={420} height={80} className="w-full" />
+                </div>
+                {/* chat3 - 오른쪽 (송신) */}
+                <div className="absolute right-[3%] top-[55%] w-[58%]">
+                  <Image src="/landing/landing-seventh-chat3.svg" alt="채팅 3" width={420} height={80} className="w-full" />
+                </div>
+                {/* chat4 - 왼쪽 (수신) */}
+                <div className="absolute left-[3%] top-[74%] w-[58%]">
+                  <Image src="/landing/landing-seventh-chat4.svg" alt="채팅 4" width={420} height={80} className="w-full" />
+                </div>
+                {/* 채팅 입력창 */}
+                <div className="absolute bottom-[3%] left-[4%] w-[92%]">
+                  <Image
+                    src="/landing/landing-seventh-chat-input.svg"
+                    alt="채팅 입력창"
+                    width={680}
+                    height={56}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,7 +1,18 @@
+"use client";
+
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function LandingHero() {
+  const router = useRouter();
+  const { openLoginModal } = useAuthStore();
+
+  const handleJoin = () => {
+    openLoginModal();
+    router.push("/home");
+  };
+
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
       <Image
@@ -34,12 +45,12 @@ export default function LandingHero() {
           모임에 참여하고, 책 이야기를 나누고, 깊이 있는 독서 토론을 경험해 보세요.
         </p>
 
-        <Link
-          href="/signup"
+        <button
+          onClick={handleJoin}
           className="subhead_3_2 mt-2 rounded-full bg-primary-1 px-8 py-3.5 text-white transition-opacity hover:opacity-80"
         >
           지금 가입하기
-        </Link>
+        </button>
       </div>
     </section>
   );
