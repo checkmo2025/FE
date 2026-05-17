@@ -19,17 +19,17 @@ export default function LandingNewsSection() {
           <div className="absolute inset-x-0 top-[32%] h-[20%] bg-gradient-to-b from-transparent to-white" />
 
           {/* 카드 cascade - 뒤→앞 */}
-          <div className="absolute bottom-[44%] left-[2%] w-[72%] rotate-[-18deg] drop-shadow-lg">
-            <Image src="/landing/landing-fourth-news1.svg" alt="소식" width={480} height={260} className="w-full rounded-xl" />
+          <div className="absolute bottom-[60%] left-[2%] w-[72%] rotate-[-18deg] drop-shadow-lg">
+            <Image src="/landing/landing-fourth-news4.svg" alt="소식" width={480} height={260} className="w-full rounded-xl" />
           </div>
-          <div className="absolute bottom-[34%] left-[5%] w-[74%] rotate-[-12deg] drop-shadow-lg">
-            <Image src="/landing/landing-fourth-news2.svg" alt="소식" width={500} height={270} className="w-full rounded-xl" />
+          <div className="absolute bottom-[50%] left-[5%] w-[74%] rotate-[-12deg] drop-shadow-lg">
+            <Image src="/landing/landing-fourth-news3.svg" alt="소식" width={500} height={270} className="w-full rounded-xl" />
           </div>
-          <div className="absolute bottom-[22%] left-[8%] w-[78%] rotate-[-6deg] drop-shadow-xl">
-            <Image src="/landing/landing-fourth-news3.svg" alt="소식" width={520} height={280} className="w-full rounded-xl" />
+          <div className="absolute bottom-[38%] left-[8%] w-[78%] rotate-[-6deg] drop-shadow-xl">
+            <Image src="/landing/landing-fourth-news2.svg" alt="소식" width={520} height={280} className="w-full rounded-xl" />
           </div>
-          <div className="absolute bottom-[10%] left-[10%] w-[82%] rotate-[-1deg] drop-shadow-2xl">
-            <Image src="/landing/landing-fourth-news4.svg" alt="소식" width={550} height={300} className="w-full rounded-xl" />
+          <div className="absolute bottom-[26%] left-[10%] w-[82%] rotate-[-1deg] drop-shadow-2xl">
+            <Image src="/landing/landing-fourth-news1.svg" alt="소식" width={550} height={300} className="w-full rounded-xl" />
           </div>
         </div>
 

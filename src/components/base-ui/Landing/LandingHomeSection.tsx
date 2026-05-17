@@ -5,10 +5,10 @@ export default function LandingHomeSection() {
     <section className="relative overflow-hidden bg-background py-20 t:py-28">
       {/* 좌측 다크 패널 (대각선 클립) */}
       <div
-        className="absolute inset-y-0 left-0 w-[50%]"
+        className="absolute inset-y-0 left-0 w-[60%]"
         style={{
           backgroundColor: "#3C2A22",
-          clipPath: "polygon(0 0, 100% 0, 0 100%)",
+          clipPath: "polygon(0 0, 100% 0, 67% 100%, 0 100%)",
         }}
       />
 

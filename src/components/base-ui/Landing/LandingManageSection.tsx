@@ -25,7 +25,7 @@ export default function LandingManageSection() {
         {/* 화면 영역 */}
         <div className="relative h-[600px]">
           {/* 폰 프레임 - 중앙 */}
-          <div className="absolute left-[28%] top-0 z-20 w-[18%]">
+          <div className="absolute left-[28%] z-20 w-[18%]" style={{ top: "-120px" }}>
             <div className="relative overflow-hidden rounded-[40px] border-[6px] border-Gray-7 bg-white shadow-2xl">
               <div className="absolute left-1/2 top-0 z-10 h-5 w-24 -translate-x-1/2 rounded-b-2xl bg-Gray-7" />
               <div className="pt-5">
@@ -44,7 +44,7 @@ export default function LandingManageSection() {
           </div>
 
           {/* 데스크탑 화면들 - 오른쪽 */}
-          <div className="absolute right-[-8%] top-0 z-10 w-[62%] origin-top-right scale-[0.72]">
+          <div className="absolute right-[4%] z-10 w-[62%] origin-top-right scale-[0.72]" style={{ top: "-260px" }}>
             {/* 상단 화면 - 모임 가입 신청 관리 */}
             <div className="w-full drop-shadow-lg">
               <Image
