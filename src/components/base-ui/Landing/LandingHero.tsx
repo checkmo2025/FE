@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
+import { motion } from "framer-motion";
 
 export default function LandingHero() {
   const router = useRouter();
@@ -24,7 +25,12 @@ export default function LandingHero() {
       />
       <div className="absolute inset-0 bg-black/45" />
 
-      <div className="relative z-10 flex flex-col items-center gap-6 px-4 text-center t:px-6">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.65, ease: "easeOut" }}
+        className="relative z-10 flex flex-col items-center gap-6 px-4 text-center t:px-6"
+      >
         <div className="relative h-16 w-28 t:h-20 t:w-36">
           <Image
             src="/logo.svg"
@@ -51,7 +57,7 @@ export default function LandingHero() {
         >
           지금 가입하기
         </button>
-      </div>
+      </motion.div>
     </section>
   );
 }

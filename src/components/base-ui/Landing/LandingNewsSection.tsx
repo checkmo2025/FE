@@ -1,11 +1,11 @@
 import Image from "next/image";
+import FadeInSection from "./FadeInSection";
 
 export default function LandingNewsSection() {
   return (
     <section className="relative overflow-hidden bg-white">
       <div className="flex min-h-[600px] flex-col t:flex-row">
-        {/* 텍스트 - 모바일에서 위, 태블릿에서 오른쪽 */}
-        <div className="order-1 flex flex-col justify-center gap-4 px-4 py-12 t:order-2 t:flex-1 t:px-14 t:py-0">
+        <FadeInSection className="order-1 flex flex-col justify-center gap-4 px-4 py-12 t:order-2 t:flex-1 t:px-14 t:py-0">
           <div className="flex flex-col gap-0.5">
             <span className="subhead_3_1 font-bold text-primary-1">소식</span>
             <span className="body_1_2 text-Gray-4">News</span>
@@ -20,23 +20,13 @@ export default function LandingNewsSection() {
             <br />
             꾸준히 살펴볼 수 있어요.
           </p>
-        </div>
+        </FadeInSection>
 
-        {/* 카드 cascade - 모바일에서 아래, 태블릿에서 왼쪽 */}
-        <div className="relative order-2 min-h-[360px] w-full t:order-1 t:min-h-[500px] t:w-[58%] t:shrink-0">
-          {/* 블러 배경 */}
+        <FadeInSection delay={0.15} className="relative order-2 min-h-[360px] w-full t:order-1 t:min-h-[500px] t:w-[58%] t:shrink-0">
           <div className="absolute inset-x-0 top-0 h-[48%]">
-            <Image
-              src="/landing/landing-fourth-background.svg"
-              alt=""
-              fill
-              className="object-cover object-top"
-            />
+            <Image src="/landing/landing-fourth-background.svg" alt="" fill className="object-cover object-top" />
           </div>
-          {/* 배경→흰색 페이드 */}
           <div className="absolute inset-x-0 top-[32%] h-[20%] bg-gradient-to-b from-transparent to-white" />
-
-          {/* 카드 cascade */}
           <div className="absolute bottom-[60%] left-[2%] w-[72%] rotate-[-18deg] drop-shadow-lg">
             <Image src="/landing/landing-fourth-news4.svg" alt="소식" width={480} height={260} className="w-full rounded-xl" />
           </div>
@@ -49,7 +39,7 @@ export default function LandingNewsSection() {
           <div className="absolute bottom-[26%] left-[10%] w-[82%] rotate-[-1deg] drop-shadow-2xl">
             <Image src="/landing/landing-fourth-news1.svg" alt="소식" width={550} height={300} className="w-full rounded-xl" />
           </div>
-        </div>
+        </FadeInSection>
       </div>
     </section>
   );

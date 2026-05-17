@@ -1,4 +1,5 @@
 import Image from "next/image";
+import FadeInSection from "./FadeInSection";
 
 export default function LandingHomeSection() {
   return (
@@ -19,7 +20,7 @@ export default function LandingHomeSection() {
 
       <div className="relative mx-auto flex max-w-[1200px] flex-col gap-8 px-4 t:flex-row t:items-center t:gap-10 t:px-6 d:px-8">
         {/* 텍스트 */}
-        <div className="flex flex-col gap-4 t:w-[38%] t:shrink-0">
+        <FadeInSection className="flex flex-col gap-4 t:w-[38%] t:shrink-0">
           <div className="flex flex-col gap-0.5">
             <span className="subhead_3_1 font-bold text-white">책모 홈</span>
             <span className="body_1_2 text-Subbrown-3">Main page</span>
@@ -34,10 +35,10 @@ export default function LandingHomeSection() {
             <br />
             소식을 한눈에 확인할 수 있어요.
           </p>
-        </div>
+        </FadeInSection>
 
         {/* 이미지 영역 */}
-        <div className="relative w-full pb-14 t:flex-1 t:pb-16">
+        <FadeInSection delay={0.15} className="relative w-full pb-14 t:flex-1 t:pb-16">
           <Image
             src="/landing/landing-second-screen.svg"
             alt="책모 홈 화면"
@@ -65,7 +66,7 @@ export default function LandingHomeSection() {
               className="w-full rounded-xl shadow-xl"
             />
           </div>
-        </div>
+        </FadeInSection>
       </div>
     </section>
   );

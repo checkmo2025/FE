@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
+import FadeInSection from "./FadeInSection";
 
 export default function LandingChatSection() {
   const router = useRouter();
@@ -25,29 +26,23 @@ export default function LandingChatSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
 
       <div className="relative z-10 flex flex-col items-center px-4 pt-20 pb-10 t:px-6 t:pt-24 t:pb-16 d:px-8">
-        {/* 책 아이콘 */}
-        <div className="mb-6 w-20 t:w-28">
-          <Image
-            src="/landing/landing-sixth-book.svg"
-            alt="책"
-            width={120}
-            height={100}
-            className="w-full"
-          />
-        </div>
-
-        {/* 타이틀 */}
-        <h2 className="subhead_1 mb-3 text-center text-white d:headline_3">
-          독서 토론의 처음부터 끝까지!
-        </h2>
-        <p className="body_1_2 mb-12 text-center text-white/70 t:mb-16">
-          독서 토론의 처음부터 끝까지, 함께 읽는 경험을 더 풍부하게 만들어줘요.
-        </p>
+        {/* 책 아이콘 + 타이틀 */}
+        <FadeInSection className="flex flex-col items-center">
+          <div className="mb-6 w-20 t:w-28">
+            <Image src="/landing/landing-sixth-book.svg" alt="책" width={120} height={100} className="w-full" />
+          </div>
+          <h2 className="subhead_1 mb-3 text-center text-white d:headline_3">
+            독서 토론의 처음부터 끝까지!
+          </h2>
+          <p className="body_1_2 mb-12 text-center text-white/70 t:mb-16">
+            독서 토론의 처음부터 끝까지, 함께 읽는 경험을 더 풍부하게 만들어줘요.
+          </p>
+        </FadeInSection>
 
         {/* ── 한줄평 작성 ── */}
 
         {/* 모바일 */}
-        <div className="w-full t:hidden">
+        <FadeInSection delay={0.1} className="w-full t:hidden">
           <div className="mb-6">
             <h3 className="subhead_1 mb-2 text-white">한줄평 작성</h3>
             <p className="body_1_2 leading-relaxed text-white/70">
@@ -65,10 +60,10 @@ export default function LandingChatSection() {
               <Image src="/landing/landing-sixth-comment4.svg" alt="댓글 4" width={700} height={80} className="w-full" />
             </div>
           </div>
-        </div>
+        </FadeInSection>
 
         {/* 태블릿+ */}
-        <div className="relative mx-auto hidden w-full max-w-[1100px] t:block">
+        <FadeInSection delay={0.1} className="relative mx-auto hidden w-full max-w-[1100px] t:block">
           <div className="relative z-10 w-[52%] drop-shadow-2xl">
             <Image
               src="/landing/landing-sixth-screen1.svg"
@@ -100,12 +95,12 @@ export default function LandingChatSection() {
               발견할 수 있어요.
             </p>
           </div>
-        </div>
+        </FadeInSection>
 
         {/* ── 발제 작성 및 선택 ── */}
 
         {/* 모바일 */}
-        <div className="mt-16 w-full t:hidden">
+        <FadeInSection delay={0.1} className="mt-16 w-full t:hidden">
           <div className="mb-6">
             <h3 className="subhead_1 mb-2 text-white">발제 작성 및 선택</h3>
             <p className="body_1_2 leading-relaxed text-white/70">
@@ -122,10 +117,10 @@ export default function LandingChatSection() {
               <Image src="/landing/landing-sixth-select2.svg" alt="발제 선택 2" width={400} height={48} className="w-full" />
             </div>
           </div>
-        </div>
+        </FadeInSection>
 
         {/* 태블릿+ */}
-        <div className="mx-auto mt-32 hidden w-full max-w-[1100px] items-center gap-12 t:flex">
+        <FadeInSection delay={0.1} className="mx-auto mt-32 hidden w-full max-w-[1100px] items-center gap-12 t:flex">
           <div className="relative w-[60%] shrink-0 drop-shadow-2xl">
             <Image src="/landing/landing-sixth-screen3.svg" alt="발제 화면" width={720} height={480} className="w-full rounded-xl" />
             <div className="absolute left-[22%] top-[38%] w-[75%]">
@@ -145,12 +140,12 @@ export default function LandingChatSection() {
               더 깊고 풍성하게 만들어줘요.
             </p>
           </div>
-        </div>
+        </FadeInSection>
 
         {/* ── 채팅 기능 활용 ── */}
 
         {/* 모바일 */}
-        <div className="mt-16 w-full pb-16 t:hidden">
+        <FadeInSection delay={0.1} className="mt-16 w-full pb-16 t:hidden">
           <div className="mb-6">
             <h3 className="subhead_1 mb-2 text-white">채팅 기능 활용</h3>
             <p className="body_1_2 leading-relaxed text-white/70">
@@ -160,7 +155,7 @@ export default function LandingChatSection() {
           </div>
           <div className="flex flex-col gap-4">
             <Image src="/landing/landing-sixth-screen4.svg" alt="채팅 조 선택" width={420} height={460} className="w-full rounded-xl shadow-xl" />
-            {/* 채팅 UI - 컨테이너 안에 담기 */}
+            {/* 채팅 UI */}
             <div className="overflow-hidden rounded-2xl bg-[#EAE5E2]">
               <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
                 <span className="body_1_2 text-white/50">‹</span>
@@ -202,10 +197,10 @@ export default function LandingChatSection() {
               </svg>
             </div>
           </div>
-        </div>
+        </FadeInSection>
 
         {/* 태블릿+ */}
-        <div className="mx-auto mt-32 hidden w-full max-w-[1100px] pb-24 t:block">
+        <FadeInSection delay={0.1} className="mx-auto mt-32 hidden w-full max-w-[1100px] pb-24 t:block">
           <div className="mb-12 w-[45%]">
             <h3 className="subhead_1 mb-3 text-white d:headline_3">채팅 기능 활용</h3>
             <p className="body_1_2 leading-relaxed text-white/70">
@@ -238,7 +233,7 @@ export default function LandingChatSection() {
               }}
             />
 
-            {/* 채팅 UI - 컨테이너 안에 담기 */}
+            {/* 채팅 UI */}
             <div className="absolute right-[4%] top-[-10%] z-10 w-[36%] drop-shadow-2xl">
               <div className="overflow-hidden rounded-2xl bg-[#EAE5E2]">
                 <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
@@ -282,9 +277,10 @@ export default function LandingChatSection() {
               </div>
             </div>
           </div>
-        </div>
+        </FadeInSection>
+
         {/* 로고 + 가입하기 버튼 */}
-        <div className="mt-16 flex flex-col items-center gap-6 pb-16 t:mt-20 t:pb-24">
+        <FadeInSection delay={0.1} className="mt-16 flex flex-col items-center gap-6 pb-16 t:mt-20 t:pb-24">
           <div className="relative h-12 w-20 t:h-14 t:w-24">
             <Image
               src="/logo.svg"
@@ -299,7 +295,7 @@ export default function LandingChatSection() {
           >
             지금 가입하기
           </button>
-        </div>
+        </FadeInSection>
       </div>
     </section>
   );
