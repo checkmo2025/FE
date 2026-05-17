@@ -5,7 +5,7 @@ export default function LandingHero() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
       <Image
-        src="/background.png"
+        src="/landing-first-background.svg"
         alt="책모 배경"
         fill
         className="object-cover"

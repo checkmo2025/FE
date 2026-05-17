@@ -1,4 +1,4 @@
-import DesktopMockup from "./shared/DesktopMockup";
+import Image from "next/image";
 
 export default function LandingHomeSection() {
   return (
@@ -18,8 +18,35 @@ export default function LandingHomeSection() {
           </p>
         </div>
 
-        <div className="w-full t:flex-1">
-          <DesktopMockup variant="home" />
+        <div className="relative w-full t:flex-1">
+          {/* 메인 스크린 */}
+          <Image
+            src="/landing-second-screen.svg"
+            alt="책모 홈 화면"
+            width={700}
+            height={460}
+            className="w-full rounded-xl shadow-xl"
+          />
+          {/* 캐러셀 카드 - 좌하단 플로팅 */}
+          <div className="absolute -bottom-6 -left-4 w-[45%] t:-left-8">
+            <Image
+              src="/landing-second-carrecel.svg"
+              alt="캐러셀"
+              width={300}
+              height={180}
+              className="w-full rounded-xl shadow-lg"
+            />
+          </div>
+          {/* 북스토리 카드 - 우하단 플로팅 */}
+          <div className="absolute -bottom-4 -right-4 w-[40%] t:-right-6">
+            <Image
+              src="/landing-second-bookstory.svg"
+              alt="북스토리"
+              width={260}
+              height={160}
+              className="w-full rounded-xl shadow-lg"
+            />
+          </div>
         </div>
       </div>
     </section>
