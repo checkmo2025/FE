@@ -10,7 +10,7 @@ export default function LandingNewsSection() {
             <span className="subhead_3_1 font-bold text-primary-1">소식</span>
             <span className="body_1_2 text-Gray-4">News</span>
           </div>
-          <h2 className="subhead_1 text-Gray-7 t:headline_3">
+          <h2 className="subhead_1 text-Gray-7 d:headline_3">
             책과 관련된 행사, 전시, 프로그램
             <br />
             소식을 한 곳에서 확인할 수 있어요.

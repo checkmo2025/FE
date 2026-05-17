@@ -35,7 +35,7 @@ export default function LandingHero() {
           />
         </div>
 
-        <h1 className="headline_3 t:headline_2 text-white">
+        <h1 className="headline_3 text-white d:headline_2">
           독서의 처음부터 토론의 끝까지!
         </h1>
 

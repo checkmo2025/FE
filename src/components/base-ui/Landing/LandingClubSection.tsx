@@ -46,7 +46,7 @@ export default function LandingClubSection() {
             <span className="subhead_2 font-bold text-primary-1">독서 모임</span>
             <span className="body_1_2 text-Gray-4">Club</span>
           </div>
-          <h2 className="subhead_1 text-Gray-7 t:headline_3">
+          <h2 className="subhead_1 text-Gray-7 d:headline_3">
             다양한 독서모임에 직접 참여하거나,
             <br />
             원하는 독서모임을 직접 만들 수 있어요.

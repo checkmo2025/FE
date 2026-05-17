@@ -10,7 +10,7 @@ export default function LandingStorySection() {
             <span className="subhead_3_1 font-bold text-primary-1">책 이야기</span>
             <span className="body_1_2 text-Gray-4">Book Story</span>
           </div>
-          <h2 className="subhead_1 text-Gray-7 t:headline_3">
+          <h2 className="subhead_1 text-Gray-7 d:headline_3">
             읽은 책이 있다면,
             <br />
             당신의 이야기를 들려주세요.

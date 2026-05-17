@@ -10,7 +10,7 @@ export default function LandingManageSection() {
             <span className="subhead_3_1 font-bold text-primary-1">모임 운영</span>
             <span className="body_1_2 text-Gray-4">Club Admin</span>
           </div>
-          <h2 className="subhead_1 text-Gray-7 t:headline_3">
+          <h2 className="subhead_1 text-Gray-7 d:headline_3">
             모임원 관리와 공지, 투표 등 운영에
             <br />
             필요한 기능을 한곳에서 이용할 수 있어요.
@@ -22,58 +22,47 @@ export default function LandingManageSection() {
           </p>
         </div>
 
-        {/* 모바일 레이아웃 */}
+        {/* 모바일 레이아웃 (375 only) */}
         <div className="flex flex-col gap-6 t:hidden">
+          <div className="flex flex-col gap-4">
+            <Image src="/landing/landing-fifth-screen1.svg" alt="모임 가입 신청 관리" width={720} height={200} className="w-full rounded-xl shadow-md" />
+            <div className="relative pb-[18%]">
+              <Image src="/landing/landing-fifth-screen2.svg" alt="투표 화면" width={720} height={420} className="w-full rounded-xl shadow-md" />
+              <div className="absolute left-0 top-[65%] w-[72%] drop-shadow-xl">
+                <Image src="/landing/landing-fifth-screen3.svg" alt="투표 항목" width={560} height={80} className="w-full rounded-xl" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 태블릿 레이아웃 (768~1440) - 세 이미지 가로 배치 */}
+        <div className="hidden t:flex d:hidden items-start gap-5">
           {/* 폰 */}
-          <div className="mx-auto w-[55%]">
+          <div className="w-[28%] shrink-0 pt-2">
             <div className="relative overflow-hidden rounded-[36px] border-[5px] border-Gray-7 bg-white shadow-2xl">
               <div className="absolute left-1/2 top-0 z-10 h-4 w-20 -translate-x-1/2 rounded-b-2xl bg-Gray-7" />
               <div className="pt-4">
-                <Image
-                  src="/landing/landing-fifth-screen.svg"
-                  alt="모임 운영 모바일 화면"
-                  width={280}
-                  height={520}
-                  className="w-full"
-                />
+                <Image src="/landing/landing-fifth-screen.svg" alt="모임 운영 모바일 화면" width={280} height={520} className="w-full" />
               </div>
               <div className="flex justify-center bg-white py-2">
                 <div className="h-1 w-16 rounded-full bg-Gray-3" />
               </div>
             </div>
           </div>
-          {/* 데스크탑 화면 */}
-          <div className="flex flex-col gap-4">
-            <Image
-              src="/landing/landing-fifth-screen1.svg"
-              alt="모임 가입 신청 관리"
-              width={720}
-              height={200}
-              className="w-full rounded-xl shadow-md"
-            />
-            <div className="relative">
-              <Image
-                src="/landing/landing-fifth-screen2.svg"
-                alt="투표 화면"
-                width={720}
-                height={420}
-                className="w-full rounded-xl shadow-md"
-              />
+          {/* 화면 두 개 */}
+          <div className="flex flex-1 flex-col gap-3">
+            <Image src="/landing/landing-fifth-screen1.svg" alt="모임 가입 신청 관리" width={720} height={200} className="w-full rounded-xl shadow-md" />
+            <div className="relative pb-[18%]">
+              <Image src="/landing/landing-fifth-screen2.svg" alt="투표 화면" width={720} height={420} className="w-full rounded-xl shadow-md" />
               <div className="absolute left-0 top-[65%] w-[72%] drop-shadow-xl">
-                <Image
-                  src="/landing/landing-fifth-screen3.svg"
-                  alt="투표 항목"
-                  width={560}
-                  height={80}
-                  className="w-full rounded-xl"
-                />
+                <Image src="/landing/landing-fifth-screen3.svg" alt="투표 항목" width={560} height={80} className="w-full rounded-xl" />
               </div>
             </div>
           </div>
         </div>
 
-        {/* 태블릿+ 레이아웃 */}
-        <div className="relative hidden h-[600px] t:block">
+        {/* 데스크탑 레이아웃 */}
+        <div className="relative hidden h-[600px] d:block">
           {/* 폰 프레임 - 중앙 */}
           <div className="absolute left-[28%] z-20 w-[18%]" style={{ top: "-120px" }}>
             <div className="relative overflow-hidden rounded-[40px] border-[6px] border-Gray-7 bg-white shadow-2xl">

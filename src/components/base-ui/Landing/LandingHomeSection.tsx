@@ -24,7 +24,7 @@ export default function LandingHomeSection() {
             <span className="subhead_3_1 font-bold text-white">책모 홈</span>
             <span className="body_1_2 text-Subbrown-3">Main page</span>
           </div>
-          <h2 className="subhead_1 text-white t:headline_3">
+          <h2 className="subhead_1 text-white d:headline_3">
             책모의 시작은 여기,
             <br />
             홈 화면에서부터!
