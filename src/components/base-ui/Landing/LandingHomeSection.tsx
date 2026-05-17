@@ -35,7 +35,7 @@ export default function LandingHomeSection() {
         <div className="relative w-full pb-16 t:flex-1">
           {/* 메인 스크린 */}
           <Image
-            src="/landing-second-screen.svg"
+            src="/landing/landing-second-screen.svg"
             alt="책모 홈 화면"
             width={720}
             height={460}
@@ -44,7 +44,7 @@ export default function LandingHomeSection() {
           {/* 북스토리 카드 - 좌 플로팅 */}
           <div className="absolute -left-4 bottom-4 w-[48%] t:-left-6">
             <Image
-              src="/landing-second-bookstory.svg"
+              src="/landing/landing-second-bookstory.svg"
               alt="북스토리"
               width={340}
               height={220}
@@ -54,7 +54,7 @@ export default function LandingHomeSection() {
           {/* 캐러셀 카드 - 우하단 플로팅 */}
           <div className="absolute -bottom-10 -right-2 w-[52%] t:-right-4">
             <Image
-              src="/landing-second-carousel.svg"
+              src="/landing/landing-second-carousel.svg"
               alt="캐러셀"
               width={380}
               height={240}
