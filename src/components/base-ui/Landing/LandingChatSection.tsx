@@ -1,69 +1,72 @@
-import Link from "next/link";
 import Image from "next/image";
-
-const FEATURES = [
-  {
-    title: "한줄 비평",
-    desc: "읽은 책에 대한 짧고 강렬한 한 줄 비평을 남기고 다른 독자들의 생각도 확인해보세요.",
-    icon: "/icons_pencil.svg",
-  },
-  {
-    title: "발제 작성 및 선택",
-    desc: "토론 주제를 직접 작성하고, 모임원들과 함께 오늘의 발제를 선택해보세요.",
-    icon: "/Document.svg",
-  },
-  {
-    title: "채팅 기능 활용",
-    desc: "실시간 채팅으로 독서 토론을 더욱 생동감 있게 진행할 수 있어요.",
-    icon: "/icons_chat.svg",
-  },
-];
 
 export default function LandingChatSection() {
   return (
-    <section className="bg-Gray-7 py-20 t:py-28">
-      <div className="mx-auto flex max-w-[1200px] flex-col gap-16 px-6 d:px-8">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <span className="body_2_1 text-Subbrown-3">독서 토론</span>
-          <h2 className="subhead_1 text-white t:headline_3">
-            독서 토론의 의문부터 끝까지!
-          </h2>
-          <p className="body_1_2 text-white/60">
-            책 토론에 필요한 모든 것, 한 곳에서 시작하세요.
-          </p>
+    <section className="relative overflow-hidden bg-[#1a1008]">
+      {/* 배경 이미지 */}
+      <Image
+        src="/landing/landing-seventh-background.svg"
+        alt=""
+        fill
+        className="object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
+
+      <div className="relative z-10 flex flex-col items-center px-6 pt-20 pb-10 t:pt-24 t:pb-16 d:px-8">
+        {/* 책 아이콘 */}
+        <div className="mb-6 w-24 t:w-28">
+          <Image
+            src="/landing/landing-seventh-book.svg"
+            alt="책"
+            width={120}
+            height={100}
+            className="w-full"
+          />
         </div>
 
-        <div className="grid gap-6 t:grid-cols-3">
-          {FEATURES.map((feature) => (
-            <div
-              key={feature.title}
-              className="flex flex-col gap-4 rounded-2xl bg-white/5 p-6 ring-1 ring-white/10"
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-2/30">
-                <Image
-                  src={feature.icon}
-                  alt={feature.title}
-                  width={20}
-                  height={20}
-                  className="brightness-0 invert"
-                />
-              </div>
-              <h3 className="subhead_3_1 text-white">{feature.title}</h3>
-              <p className="body_1_2 text-white/60">{feature.desc}</p>
-            </div>
-          ))}
-        </div>
+        {/* 타이틀 */}
+        <h2 className="subhead_1 mb-3 text-center text-white t:headline_3">
+          독서 토론의 처음부터 끝까지!
+        </h2>
+        <p className="body_1_2 mb-16 text-center text-white/70">
+          독서 토론의 처음부터 끝까지, 함께 읽는 경험을 더 풍부하게 만들어줘요.
+        </p>
 
-        <div className="flex flex-col items-center gap-6 text-center">
-          <p className="subhead_2 text-white t:subhead_1">
-            독서 토론의 의문부터 끝까지, 책모.
-          </p>
-          <Link
-            href="/signup"
-            className="subhead_3_2 rounded-full bg-primary-1 px-10 py-4 text-white transition-opacity hover:opacity-80"
-          >
-            지금 시작하기
-          </Link>
+        {/* 화면 영역 */}
+        <div className="relative mx-auto w-full max-w-[1100px]">
+          {/* 좌측 앱 화면 (screen1) */}
+          <div className="relative z-10 w-[52%] drop-shadow-2xl">
+            <Image
+              src="/landing/landing-seventh-screen1.svg"
+              alt="책모 화면"
+              width={600}
+              height={400}
+              className="w-full rounded-xl"
+            />
+          </div>
+
+          {/* 우측 팝업 화면 (screen2) - 좌측 화면과 겹치게 */}
+          <div className="absolute right-0 top-[-20px] z-20 w-[62%] drop-shadow-2xl">
+            <Image
+              src="/landing/landing-seventh-screen2.svg"
+              alt="한줄평 팝업"
+              width={700}
+              height={520}
+              className="w-full rounded-xl"
+            />
+          </div>
+
+          {/* 하단 좌측 텍스트 */}
+          <div className="mt-8 w-[40%]">
+            <h3 className="subhead_2 mb-2 text-white">한줄평 작성</h3>
+            <p className="body_1_2 leading-relaxed text-white/70">
+              책을 읽고 난 첫 감상을 별점과 함께 짧게 남겨보세요.
+              <br />
+              서로의 한줄평을 통해 같은 책을 다르게 읽은 시선을
+              <br />
+              발견할 수 있어요.
+            </p>
+          </div>
         </div>
       </div>
     </section>
