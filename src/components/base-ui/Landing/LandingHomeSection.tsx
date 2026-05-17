@@ -42,7 +42,7 @@ export default function LandingHomeSection() {
             className="w-full rounded-xl shadow-2xl"
           />
           {/* 북스토리 카드 - 좌 플로팅 */}
-          <div className="absolute -left-4 bottom-4 w-[48%] t:-left-6">
+          <div className="absolute -left-4 bottom-4 w-[36%] t:-left-6">
             <Image
               src="/landing/landing-second-bookstory.svg"
               alt="북스토리"
@@ -52,7 +52,7 @@ export default function LandingHomeSection() {
             />
           </div>
           {/* 캐러셀 카드 - 우하단 플로팅 */}
-          <div className="absolute -bottom-10 -right-2 w-[52%] t:-right-4">
+          <div className="absolute -bottom-10 -right-2 w-[78%] t:-right-4">
             <Image
               src="/landing/landing-second-carousel.svg"
               alt="캐러셀"
