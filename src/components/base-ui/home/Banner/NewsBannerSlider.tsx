@@ -65,7 +65,7 @@ export default function NewsBannerSlider() {
               src={imageSrc}
               alt={news.title}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className="object-cover object-left-top transition-transform duration-700 group-hover:scale-105"
               priority={i === 0}
             />
 
