@@ -16,7 +16,7 @@ export default function LandingNav() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-white shadow-sm" : "bg-transparent"
+        scrolled ? "bg-primary-1 shadow-md" : "bg-transparent"
       }`}
     >
       <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4 d:px-8">
@@ -25,26 +25,22 @@ export default function LandingNav() {
             src="/logo.svg"
             alt="책모 로고"
             fill
-            className={`object-contain transition-all duration-300 ${scrolled ? "" : "brightness-0 invert"}`}
+            className="object-contain brightness-0 invert"
             priority
           />
         </Link>
         <div className="flex items-center gap-3">
           <Link
-            href="/find-account"
-            className={`body_1_2 rounded-full px-4 py-2 transition-colors ${
-              scrolled
-                ? "text-Gray-6 hover:text-primary-1"
-                : "text-white/90 hover:text-white"
-            }`}
+            href="/home"
+            className="body_1_2 rounded-full px-4 py-2 text-white/90 transition-colors hover:text-white"
           >
-            로그인
+            바로가기
           </Link>
           <Link
-            href="/signup"
+            href="/login"
             className="body_1_1 rounded-full bg-primary-1 px-5 py-2 text-white transition-opacity hover:opacity-80"
           >
-            지금 가입하기
+            로그인/회원가입
           </Link>
         </div>
       </div>

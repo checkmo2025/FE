@@ -43,9 +43,19 @@ export default function LandingChatSection() {
               height={400}
               className="w-full rounded-xl"
             />
+            {/* 북 카드 오버레이 */}
+            <div className="absolute bottom-[18%] left-[16%] w-[15%]">
+              <Image
+                src="/landing/landing-seventh-bookcard1.svg"
+                alt="책 카드"
+                width={520}
+                height={160}
+                className="w-full"
+              />
+            </div>
           </div>
 
-          {/* 우측 팝업 화면 (screen2) - 좌측 화면과 겹치게 */}
+          {/* 우측 팝업 화면 (screen2) + comment 스택 */}
           <div className="absolute right-0 top-[-20px] z-20 w-[62%] drop-shadow-2xl">
             <Image
               src="/landing/landing-seventh-screen2.svg"
@@ -54,6 +64,13 @@ export default function LandingChatSection() {
               height={520}
               className="w-full rounded-xl"
             />
+            {/* comment 차곡차곡 */}
+            <div className="mt-2 flex flex-col gap-2">
+              <Image src="/landing/landing-seventh-comment1.svg" alt="댓글 1" width={700} height={80} className="w-full" />
+              <Image src="/landing/landing-seventh-comment2.svg" alt="댓글 2" width={700} height={80} className="w-full" />
+              <Image src="/landing/landing-seventh-comment3.svg" alt="댓글 3" width={700} height={80} className="w-full" />
+              <Image src="/landing/landing-seventh-comment4.svg" alt="댓글 4" width={700} height={80} className="w-full" />
+            </div>
           </div>
 
           {/* 하단 좌측 텍스트 */}
@@ -65,6 +82,52 @@ export default function LandingChatSection() {
               서로의 한줄평을 통해 같은 책을 다르게 읽은 시선을
               <br />
               발견할 수 있어요.
+            </p>
+          </div>
+        </div>
+
+        {/* 발제 작성 및 선택 섹션 */}
+        <div className="mx-auto mt-32 flex w-full max-w-[1100px] items-center gap-12">
+          {/* 좌측: screen3 + select 오버레이 */}
+          <div className="relative w-[60%] shrink-0 drop-shadow-2xl">
+            <Image
+              src="/landing/landing-seventh-screen3.svg"
+              alt="발제 화면"
+              width={720}
+              height={480}
+              className="w-full rounded-xl"
+            />
+            {/* select1 오버레이 */}
+            <div className="absolute left-[22%] top-[38%] w-[55%]">
+              <Image
+                src="/landing/landing-seventh-select1.svg"
+                alt="발제 선택 1"
+                width={400}
+                height={48}
+                className="w-full"
+              />
+            </div>
+            {/* select2 오버레이 */}
+            <div className="absolute left-[22%] top-[54%] w-[55%]">
+              <Image
+                src="/landing/landing-seventh-select2.svg"
+                alt="발제 선택 2"
+                width={400}
+                height={48}
+                className="w-full"
+              />
+            </div>
+          </div>
+
+          {/* 우측: 텍스트 */}
+          <div className="flex flex-col gap-3">
+            <h3 className="subhead_1 text-white t:headline_3">발제 작성 및 선택</h3>
+            <p className="body_1_2 leading-relaxed text-white/70">
+              토론을 이끌 질문을 직접 작성하고, 함께 이야기하고 싶은
+              <br />
+              발제를 선택해 보세요. 좋은 발제 하나가 모임의 대화를
+              <br />
+              더 깊고 풍성하게 만들어줘요.
             </p>
           </div>
         </div>
