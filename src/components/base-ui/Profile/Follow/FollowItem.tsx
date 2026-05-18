@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { isValidUrl } from "@/utils/url";
@@ -21,10 +21,12 @@ type FollowItemProps = {
 export default function FollowItem({ user, onToggleFollow, onDelete }: FollowItemProps) {
     const isDeleted = user.isDeleted ?? false;
 
+    const isDeletingRef = useRef(false);
+
     const handleDelete = () => {
-        if (onDelete && !isDeleted) {
-            onDelete(user.nickname);
-        }
+        if (!onDelete || isDeleted || isDeletingRef.current) return;
+        isDeletingRef.current = true;
+        onDelete(user.nickname);
     };
 
     return (

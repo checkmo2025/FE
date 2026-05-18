@@ -157,15 +157,6 @@ export const useToggleFollowMutation = () => {
 
     return useMutation({
         mutationFn: async ({ nickname, isFollowing }: { nickname: string; isFollowing: boolean }) => {
-            const now = Date.now();
-            const lastTime = followThrottleMap[nickname] || 0;
-
-            // Throttle: 500ms
-            if (now - lastTime < 500) {
-                return; // Ignore rapid clicks
-            }
-            followThrottleMap[nickname] = now;
-
             if (isFollowing) {
                 await memberService.unfollowMember(nickname);
             } else {
@@ -173,6 +164,12 @@ export const useToggleFollowMutation = () => {
             }
         },
         onMutate: async ({ nickname, isFollowing }) => {
+            // Throttle: 500ms — 낙관적 업데이트 자체를 막아 캐시 고착 방지
+            const now = Date.now();
+            const lastTime = followThrottleMap[nickname] || 0;
+            if (now - lastTime < 500) return;
+            followThrottleMap[nickname] = now;
+
             // Cancel outgoing refetches
             await queryClient.cancelQueries({ queryKey: storyKeys.all });
             await queryClient.cancelQueries({ queryKey: memberKeys.recommended() });
@@ -331,6 +328,7 @@ export const useDeleteFollowerMutation = () => {
                 queryKey: memberKeys.followers(),
                 refetchType: "none",
             });
+            queryClient.invalidateQueries({ queryKey: memberKeys.followCount() });
         },
         onError: (error: any, nickname, context) => {
             console.error("Failed to delete follower:", error);
