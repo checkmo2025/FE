@@ -150,7 +150,7 @@ export const useToggleBookLikeMutation = () => {
                             // Inject the new book into the very first page if it's not already in the library,
                             // we are actually liking it, and we are looking at My Library
                             if (index === 0 && isMyLibrary && !isAlreadyInLibrary && fullBookToInject) {
-                                const isLikedAfterMutation = fullBookToInject.likedByMe; // This is the state *after* the mutation execution context (already toggled by previous logic)
+                                const isLikedAfterMutation = !fullBookToInject.likedByMe; // pre-toggle 값이므로 반전하여 post-toggle 상태를 구함
                                 if (isLikedAfterMutation) {
                                     // Make sure to add it as liked
                                     updatedBooks = [{ ...fullBookToInject, likedByMe: true }, ...updatedBooks];

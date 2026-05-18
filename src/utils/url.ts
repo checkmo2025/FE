@@ -8,8 +8,8 @@ export const isValidUrl = (url: string | null | undefined): url is string => {
     if (url.startsWith("/")) return true;
 
     try {
-        new URL(url);
-        return true; // http, https 등 유효한 scheme이 있는 경우
+        const parsed = new URL(url);
+        return parsed.protocol === 'http:' || parsed.protocol === 'https:';
     } catch {
         // 프로토콜 상대 URL 지원 (예: //example.com/image.png)
         if (url.startsWith("//")) {
