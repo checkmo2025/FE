@@ -12,6 +12,13 @@ export const ERROR_MESSAGES: Record<string, string> = {
   DUPLICATE_EMAIL: "이미 사용 중인 이메일입니다.",
   INVALID_TOKEN: "유효하지 않은 토큰입니다.",
   EXPIRED_TOKEN: "만료된 토큰입니다.",
+
+  // Block Errors
+  BLOCK_400: "자기 자신을 차단할 수 없습니다.",
+  BLOCK_401: "이미 차단한 회원입니다.",
+  BLOCK_402: "차단한 회원이 아닙니다.",
+  BLOCK_404: "차단한 사용자입니다.",
+  BLOCK_405: "조회가 불가능한 프로필입니다.",
 };
 
 export function getErrorMessage(code: string): string {

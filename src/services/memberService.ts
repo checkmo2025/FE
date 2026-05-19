@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
-import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest, FollowListResponse, FollowCountResponse, FindEmailRequest, FindEmailResponse, ReportListResponse, LoginStatusResponse, UpdateEmailRequest } from "@/types/member";
+import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest, FollowListResponse, FollowCountResponse, FindEmailRequest, FindEmailResponse, ReportListResponse, LoginStatusResponse, UpdateEmailRequest, BlockListResponse } from "@/types/member";
 import { ApiResponse } from "@/types/auth";
 
 export const memberService = {
@@ -135,6 +135,30 @@ export const memberService = {
         const response = await apiClient.get<ApiResponse<LoginStatusResponse>>(
             MEMBER_ENDPOINTS.GET_LOGIN_STATUS
         );
+        return response.result!;
+    },
+    blockMember: async (nickname: string): Promise<void> => {
+        const response = await apiClient.post<ApiResponse<unknown>>(
+            MEMBER_ENDPOINTS.BLOCK(nickname)
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "차단에 실패했습니다.");
+        }
+    },
+    unblockMember: async (nickname: string): Promise<void> => {
+        const response = await apiClient.delete<ApiResponse<unknown>>(
+            MEMBER_ENDPOINTS.BLOCK(nickname)
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "차단 해제에 실패했습니다.");
+        }
+    },
+    getBlockedList: async (cursorId?: number): Promise<BlockListResponse> => {
+        const url = new URL(MEMBER_ENDPOINTS.GET_MY_BLOCKS);
+        if (cursorId) {
+            url.searchParams.append("cursorId", cursorId.toString());
+        }
+        const response = await apiClient.get<ApiResponse<BlockListResponse>>(url.toString());
         return response.result!;
     },
 };

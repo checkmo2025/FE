@@ -390,3 +390,41 @@ export const useWithdrawMutation = () => {
         },
     });
 };
+
+export const useBlockMemberMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (nickname: string) => {
+            await memberService.blockMember(nickname);
+        },
+        onSuccess: () => {
+            toast.success("차단이 완료되었습니다.");
+            queryClient.invalidateQueries({ queryKey: memberKeys.blocks() });
+        },
+        onError: (error: any) => {
+            console.error("Failed to block member:", error);
+            const errorMessage = error.response?.data?.message || error.message || "차단에 실패했습니다.";
+            toast.error(errorMessage);
+        },
+    });
+};
+
+export const useUnblockMemberMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (nickname: string) => {
+            await memberService.unblockMember(nickname);
+        },
+        onSuccess: () => {
+            toast.success("차단이 해제되었습니다.");
+            queryClient.invalidateQueries({ queryKey: memberKeys.blocks() });
+        },
+        onError: (error: any) => {
+            console.error("Failed to unblock member:", error);
+            const errorMessage = error.response?.data?.message || error.message || "차단 해제에 실패했습니다.";
+            toast.error(errorMessage);
+        },
+    });
+};

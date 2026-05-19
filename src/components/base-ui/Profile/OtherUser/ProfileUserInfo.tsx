@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useOtherProfileQuery } from "@/hooks/queries/useMemberQueries";
 
-import { useToggleFollowMutation, useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
+import { useToggleFollowMutation, useReportMemberMutation, useBlockMemberMutation } from "@/hooks/mutations/useMemberMutations";
 import { ReportType } from "@/types/member";
 import ReportModal from "@/components/common/modals/report-block/ReportModal";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -60,10 +60,11 @@ function StatItem({ label, count, href }: { label: string; count: number, href: 
 }
 
 export default function ProfileUserInfo({ nickname }: { nickname: string }) {
-  const { data: profile, isLoading } = useOtherProfileQuery(nickname);
+  const { data: profile, isLoading, isError, error } = useOtherProfileQuery(nickname);
   const { isLoggedIn, openLoginModal } = useAuthStore();
   const { mutate: toggleFollow } = useToggleFollowMutation();
   const { mutate: reportMember } = useReportMemberMutation();
+  const { mutateAsync: blockMember } = useBlockMemberMutation();
   
   const handleReportSubmitLogic = (type: string, content: string) => {
     const mappedType = REPORT_TYPE_MAP[type] || "GENERAL";
@@ -76,13 +77,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
   };
 
   const handleBlockSubmitLogic = async () => {
-    // TODO: 실제 차단 API 연동 (현재는 Mock 처리)
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        console.log("Member blocked:", nickname);
-        resolve();
-      }, 1000);
-    });
+    await blockMember(nickname);
   };
 
   const {
@@ -103,10 +98,18 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
     );
   }
 
-  if (!profile) {
+  if (isError || !profile) {
+    // TODO: PM 요청 시 차단 상태별 메시지 수정 필요 (BLOCK_404: 내가 차단, BLOCK_405: 상대가 차단)
+    const apiError = error as { code?: string } | null;
+    const message =
+      apiError?.code === "BLOCK_404"
+        ? "차단한 사용자입니다."
+        : apiError?.code === "BLOCK_405"
+        ? "조회가 불가능한 프로필입니다."
+        : "프로필 정보를 불러올 수 없습니다.";
     return (
       <div className="flex justify-center items-center py-10 text-Gray-5 body_1 min-h-[200px]">
-        프로필 정보를 불러올 수 없습니다.
+        {message}
       </div>
     );
   }
