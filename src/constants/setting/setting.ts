@@ -14,8 +14,10 @@ export const SETTINGS_MENU = [
     icon: "/Setting_Smile_emoji.svg",
     items: [
       { label: "내 소식 관리", href: "/setting/news" },
-      { label: "신고 관리", href: "/setting/report" },
       { label: "알림 관리", href: "/setting/notifications" },
+      { label: "신고 관리", href: "/setting/report" },
+      { label: "차단 관리", href: "/setting/block" },
+
     ],
   },
   {

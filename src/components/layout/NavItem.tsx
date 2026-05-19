@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 interface NavItemProps {
   href: string;
@@ -9,19 +10,27 @@ interface NavItemProps {
 
 export function NavItem({ href, label, active, onClick }: NavItemProps) {
   const commonClassName = [
-    "flex t:w-[100px] d:w-32 items-center justify-center gap-2.5 p-2.5 cursor-pointer",
-    active ? "border-b-2 border-white" : "border-b-2 border-transparent",
+    "relative flex t:w-[100px] d:w-32 h-full items-center justify-center gap-2.5 p-2.5 cursor-pointer",
   ].join(" ");
 
   const content = (
-    <span
-      className={[
-        "text-center text-xl font-semibold leading-7",
-        active ? "text-white" : "text-gray-100",
-      ].join(" ")}
-    >
-      {label}
-    </span>
+    <>
+      <span
+        className={[
+          "text-center text-xl font-semibold leading-7 transition-colors duration-200",
+          active ? "text-white" : "text-white/60 hover:text-white/90",
+        ].join(" ")}
+      >
+        {label}
+      </span>
+      {active && (
+        <motion.div
+          layoutId="active-underline"
+          className="absolute bottom-0 left-0 right-0 h-[2px] bg-white"
+          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+        />
+      )}
+    </>
   );
 
   if (onClick) {

@@ -3,6 +3,7 @@
 
 import Image from "next/image";
 import { useRef } from "react";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 interface Props {
   nickname?: string;
@@ -38,7 +39,7 @@ export default function ProfileImageSection({
           h-[100px] w-[100px] xl:h-[138px] xl:w-[138px]"
         >
           <Image
-            src={previewImage || "/profile2.svg"}
+            src={previewImage || DEFAULT_PROFILE_IMAGE}
             alt="프로필 이미지"
             fill
             className="object-cover rounded-full"

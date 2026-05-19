@@ -5,6 +5,7 @@ import Image from "next/image";
 import CommentHeader from "./comment_header";
 import CommentMenu from "./comment_menu";
 import CommentEditForm from "./comment_edit_form";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 type CommentItemProps = {
   id: number;
@@ -28,7 +29,7 @@ type CommentItemProps = {
 export default function CommentItem({
   id,
   authorName,
-  profileImgSrc = "/profile2.svg",
+  profileImgSrc = DEFAULT_PROFILE_IMAGE,
   content,
   createdAt,
   isAuthor = false,

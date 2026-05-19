@@ -91,7 +91,7 @@ export default function SearchGroupSearch({
             'placeholder:text-Gray-3 text-Gray-7',
           ].join(' ')}
         />
-        <button type="submit" className="shrink-0 cursor-pointer">
+        <button type="submit" className="shrink-0 cursor-pointer hover:opacity-70 transition-opacity">
           <Image src="/search.svg" alt="검색" width={24} height={24} />
         </button>
       </form>

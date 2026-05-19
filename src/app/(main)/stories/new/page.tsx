@@ -38,7 +38,7 @@ function StoryNewContent() {
     router.back();
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (status: "PUBLISHED" | "DRAFT" = "PUBLISHED") => {
     if (!selectedBook) {
       toast.error("책을 선택해 주세요.");
       return;
@@ -47,7 +47,7 @@ function StoryNewContent() {
       toast.error("제목을 입력해 주세요.");
       return;
     }
-    if (!detail.trim()) {
+    if (status === "PUBLISHED" && !detail.trim()) {
       toast.error("내용을 입력해 주세요.");
       return;
     }
@@ -56,14 +56,20 @@ function StoryNewContent() {
       isbn: selectedBook.isbn,
       title,
       description: detail,
+      status,
     }, {
       onSuccess: () => {
-        toast.success("스토리가 등록되었습니다!");
-        router.push("/stories");
+        if (status === "DRAFT") {
+          toast.success("임시저장되었습니다.");
+          router.push("/profile/mypage"); // 임시저장 시 마이페이지로 이동
+        } else {
+          toast.success("스토리가 등록되었습니다!");
+          router.push("/stories");
+        }
       },
       onError: (error) => {
         console.error("스토리 등록 실패:", error);
-        toast.error("스토리 등록에 실패했습니다. 다시 시도해 주세요.");
+        toast.error(status === "DRAFT" ? "임시저장에 실패했습니다." : "스토리 등록에 실패했습니다. 다시 시도해 주세요.");
       }
     });
   };
@@ -149,14 +155,15 @@ function StoryNewContent() {
           <div className="flex w-full max-w-[1040px] justify-center t:justify-end gap-4 mt-6">
             <button
               type="button"
-              onClick={handleCancel}
-              className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors"
+              onClick={() => handleSubmit("DRAFT")}
+              disabled={createStoryMutation.isPending}
+              className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors hover:bg-primary-1 disabled:opacity-50"
             >
-              임시저장
+              {createStoryMutation.isPending ? "임시저장 중..." : "임시저장"}
             </button>
             <button
               type="button"
-              onClick={handleSubmit}
+              onClick={() => handleSubmit("PUBLISHED")}
               disabled={createStoryMutation.isPending}
               className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:opacity-90 transition-opacity disabled:opacity-50"
             >

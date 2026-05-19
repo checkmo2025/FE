@@ -57,6 +57,7 @@ export interface FollowMember {
     nickname: string;
     profileImageUrl: string;
     following: boolean;
+    isDeleted?: boolean;
 }
 
 export interface FollowListResponse {

@@ -27,9 +27,10 @@ export const useInfiniteNotificationsQuery = () => {
     });
 };
 
-export const useNotificationPreviewQuery = (size?: number) => {
+export const useNotificationPreviewQuery = (size?: number, enabled?: boolean) => {
     return useQuery({
         queryKey: notificationKeys.preview(size),
         queryFn: () => notificationService.getNotificationPreview(size),
+        enabled,
     });
 };

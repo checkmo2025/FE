@@ -11,10 +11,11 @@ import {
 import { deleteAdminComment } from "@/lib/api/admin/stories";
 import { toast } from "react-hot-toast";
 import ConfirmModal from "@/components/common/ConfirmModal";
-import ReportModal from "@/components/common/ReportModal";
+import ReportModal from "@/components/common/modals/report-block/ReportModal";
 import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
 import { ReportType } from "@/types/member";
 import { useAuthStore } from "@/store/useAuthStore";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 type CommentSectionProps = {
   storyId: number;
@@ -54,7 +55,7 @@ export default function CommentSection({
         authorName: c.authorInfo.nickname,
         profileImgSrc: isValidUrl(c.authorInfo.profileImageUrl)
           ? c.authorInfo.profileImageUrl
-          : "/profile2.svg",
+          : DEFAULT_PROFILE_IMAGE,
         content: c.content,
         createdAt: c.createdAt,
         isAuthor: c.authorInfo.nickname === storyAuthorNickname,

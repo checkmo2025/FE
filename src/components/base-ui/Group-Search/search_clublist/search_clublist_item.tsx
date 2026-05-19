@@ -182,6 +182,7 @@ export default function SearchClubListItem({
                   "bg-primary-2 text-White",
                   "body_2_2 t:body_1_2",
                   "mb-1",
+                  "hover:bg-primary-1 transition-colors",
                 ].join(" ")}
               >
                 <span className="t:hidden">{isOpen ? "신청 닫기" : "가입신청하기"}</span>
@@ -199,6 +200,7 @@ export default function SearchClubListItem({
                 "border border-primary-1",
                 "bg-background text-primary-3",
                 "body_2_2 t:body_1_2",
+                "hover:bg-Subbrown-4 transition-colors",
               ].join(" ")}
             >
               방문하기
@@ -221,7 +223,7 @@ export default function SearchClubListItem({
             disabled={!reason.trim()}
             onClick={() => onSubmitApply(club.clubId, reason)}
             className={[
-              "mt-4 w-full h-[44px] rounded-[10px] body_1_2",
+              "mt-4 w-full h-[44px] rounded-[10px] body_1_2 transition-colors",
               reason.trim() ? "bg-primary-2 hover:bg-primary-1 text-White" : "bg-Gray-2 text-Gray-4",
             ].join(" ")}
           >

@@ -1,4 +1,5 @@
 "use client";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 import { useEffect, useState } from "react";
 import BookstoryDetail from "@/components/base-ui/Admin/stories/bookstory_detail";
@@ -151,7 +152,7 @@ export default function StoryDetailPage() {
             profileImgSrc={
               isValidUrl(story.authorInfo.profileImageUrl)
                 ? story.authorInfo.profileImageUrl
-                : "/profile2.svg"
+                : DEFAULT_PROFILE_IMAGE
             }
             bookTitle={story.bookInfo.title}
             bookAuthor={story.bookInfo.author}

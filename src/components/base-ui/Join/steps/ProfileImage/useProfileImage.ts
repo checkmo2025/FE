@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSignup } from "@/contexts/SignupContext";
 import { authService } from "@/services/authService";
 import { CATEGORY_MAP } from "@/constants/categories";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 export const useProfileImage = () => {
   const {
@@ -34,7 +35,7 @@ export const useProfileImage = () => {
   };
 
   const handleResetImage = () => {
-    setProfileImage("/profile2.svg");
+    setProfileImage(DEFAULT_PROFILE_IMAGE);
     setIsProfileImageSet(true);
     setSelectedFile(null);
   };

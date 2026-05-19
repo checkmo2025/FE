@@ -65,12 +65,12 @@ export default function NewsBannerSlider() {
               src={imageSrc}
               alt={news.title}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className="object-cover object-left-top transition-transform duration-700 group-hover:scale-105"
               priority={i === 0}
             />
 
             {/* Text Overlay */}
-            <div className="absolute inset-y-0 right-0 w-1/2 p-6 t:p-10 flex flex-col justify-center items-end bg-gradient-to-l from-black/50 to-transparent text-right">
+            <div className="absolute inset-y-0 right-0 w-1/2 p-6 t:p-10 flex flex-col justify-center items-end bg-gradient-to-l from-black/90 via-black/50 to-transparent text-right">
               <div className="flex flex-col gap-2 t:gap-3 text-white">
                 <h3 className="text-2xl t:text-4xl font-bold leading-tight drop-shadow-md">
                   {news.title}

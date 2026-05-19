@@ -4,12 +4,13 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import ReportModal from "@/components/common/ReportModal";
+import ReportModal from "@/components/common/modals/report-block/ReportModal";
 import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
 import { deleteAdminBookStory } from "@/lib/api/admin/stories";
 import { ReportType } from "@/types/member";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-hot-toast";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 type BookstoryDetailProps = {
   imageUrl?: string;
@@ -18,7 +19,7 @@ type BookstoryDetailProps = {
   authorNickname: string;
   authorId: string | number;
 
-  profileImgSrc?: string; // 기본: "/profile2.svg"
+  profileImgSrc?: string; // 기본: DEFAULT_PROFILE_IMAGE
   subscribeText?: string; // 기본: "구독"
   isFollowing?: boolean;
   onSubscribeClick?: () => void;
@@ -58,7 +59,7 @@ export default function BookstoryDetail({
   authorName,
   authorNickname,
   authorId,
-  profileImgSrc = "/profile2.svg",
+  profileImgSrc = DEFAULT_PROFILE_IMAGE,
   subscribeText = "구독",
   isFollowing = false,
   onSubscribeClick,
