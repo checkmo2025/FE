@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LogoutPageClient from "./LogoutPageClient";
 
 export const metadata: Metadata = {
-  title: "로그아웃",
+  title: "설정",
 };
 
 export default function LogoutPage() {

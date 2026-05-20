@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import NicknameFollowsClient from "./NicknameFollowsClient";
 
 export const metadata: Metadata = {
-  title: "팔로우",
+  title: "구독",
 };
 
 export default function OtherUserFollowsPage() {

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import MyNewsPageClient from "./MyNewsPageClient";
 
 export const metadata: Metadata = {
-  title: "새소식",
+  title: "설정",
 };
 
 export default function MyNewsPage() {

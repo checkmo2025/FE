@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import SettingsDetailLayout from "@/components/base-ui/Settings/SettingsDetailLayout";
-
-export const metadata: Metadata = {
-  title: "이용약관",
-};
 import TermItem from "@/components/base-ui/Settings/Terms/TermItem";
 import { TERMS_DATA } from "@/constants/setting/terms";
+
+export const metadata: Metadata = {
+  title: "설정",
+};
 
 export default function TermsPage() {
   return (
