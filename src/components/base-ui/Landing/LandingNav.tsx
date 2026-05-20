@@ -32,7 +32,7 @@ export default function LandingNav() {
         <Link href="/" className="relative h-7 w-12 overflow-hidden t:h-8 t:w-14">
           <Image
             src="/logo.svg"
-            alt="책모 로고"
+            alt="책모"
             fill
             className="object-contain brightness-0 invert"
             priority
