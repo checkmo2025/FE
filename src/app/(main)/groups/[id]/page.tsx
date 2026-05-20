@@ -9,20 +9,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/clubs/${id}/home`, {
       next: { revalidate: 3600 },
     });
-    if (!res.ok) return { title: "독서 모임" };
+    if (!res.ok) return { title: "모임" };
     const data = await res.json();
     const club = data.result;
     return {
-      title: `${club.name} - 독서 모임`,
+      title: club.name,
       description: club.description?.slice(0, 100),
       openGraph: {
-        title: `${club.name} - 독서 모임`,
+        title: club.name,
         description: club.description?.slice(0, 100),
         images: club.profileImageUrl ? [club.profileImageUrl] : [],
       },
     };
   } catch {
-    return { title: "독서 모임" };
+    return { title: "모임" };
   }
 }
 
