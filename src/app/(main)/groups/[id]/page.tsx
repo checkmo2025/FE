@@ -11,6 +11,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     });
     if (!res.ok) return { title: "모임" };
     const data = await res.json();
+    if (!data?.result) return { title: "모임" };
     const club = data.result;
     return {
       title: club.name,

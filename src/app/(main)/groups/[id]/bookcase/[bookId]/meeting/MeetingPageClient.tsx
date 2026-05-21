@@ -292,14 +292,6 @@ export default function MeetingPageClient() {
     const matched = teams.find((team) => team.teamName === teamName);
     if (!matched) return;
 
-    console.log("[meeting page] handleSelectTeam", {
-      clickedTeamName: teamName,
-      nextTeamId: matched.teamId,
-      prevSelectedTeamId: selectedTeamId,
-      myTeamId,
-      presentationSubscribeTeamId,
-    });
-
     setSelectedTeamId(matched.teamId);
 
     const next = new URLSearchParams(searchParams.toString());

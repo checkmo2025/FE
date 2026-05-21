@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useCallback } from "react";
 import BookcaseCard from "@/components/base-ui/Bookcase/BookcaseCard";
 import FloatingFab from "@/components/base-ui/Float";
 import { BookcaseApiResponse } from "@/types/groups/bookcasehome";
@@ -27,17 +27,24 @@ export default function BookcasePageClient() {
     hasNextPage,
     isFetchingNextPage,
   } = useClubsBookshelfSimpleInfiniteQuery(groupId, { enabled: Number.isFinite(groupId) && groupId > 0 });
-  const autoFetchCountRef = useRef(0);
-  const AUTO_FETCH_LIMIT = 10;
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  const handleIntersect = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    [hasNextPage, isFetchingNextPage, fetchNextPage],
+  );
 
   useEffect(() => {
-    if (!hasNextPage) return;
-    if (isFetchingNextPage) return;
-    if (autoFetchCountRef.current >= AUTO_FETCH_LIMIT) return;
-
-    autoFetchCountRef.current += 1;
-    fetchNextPage();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(handleIntersect, { threshold: 0.1 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [handleIntersect]);
 
   const mergedBookShelfInfoList = useMemo(() => {
     const pages = data?.pages ?? [];
@@ -150,6 +157,7 @@ export default function BookcasePageClient() {
           onClick={() => router.push(`/groups/${groupId}/admin/bookcase/new`)}
         />
       )}
+      <div ref={sentinelRef} className="col-span-full h-4" />
     </div>
   );
 }

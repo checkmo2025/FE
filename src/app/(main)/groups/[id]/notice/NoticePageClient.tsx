@@ -27,8 +27,8 @@ export default function NoticePageClient() {
     if (!meQuery.isSuccess) return false;
     const me = meQuery.data;
     if (!me) return false;
-    if (typeof (me as any).staff === "boolean") return (me as any).staff;
-    return (me as any).myStatus === "STAFF";
+    if (typeof me.staff === "boolean") return me.staff;
+    return me.myStatus === "STAFF";
   }, [clubId, meQuery.isSuccess, meQuery.data]);
 
   const noticesQuery = useClubNoticesQuery(clubId, currentPage);
