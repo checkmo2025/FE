@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.checkmo.co.kr"),
+  metadataBase: new URL("https://www.checkmo.co.kr"),
   title: {
     template: "%s | 책모",
     default: "책모",
