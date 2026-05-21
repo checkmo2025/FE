@@ -9,6 +9,7 @@ import GlobalLoginModal from "@/components/base-ui/Login/GlobalLoginModal";
 import "@/app/globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GoogleTagManager } from "@next/third-parties/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,6 +48,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID!} />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased pb-[70px] t:pb-0`}
       >
