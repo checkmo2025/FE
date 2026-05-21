@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient, InfiniteData } from "@tanstack/react-query";
-import toast from "react-hot-toast";
 import { memberService } from "@/services/memberService";
+import { toast } from "react-hot-toast";
+import { showCustomToast } from "@/utils/toastUtils";
 import { authService } from "@/services/authService";
 import { useAuthStore } from "@/store/useAuthStore";
 import { ReportMemberRequest, FollowListResponse } from "@/types/member";
@@ -399,8 +400,9 @@ export const useBlockMemberMutation = () => {
             await memberService.blockMember(nickname);
         },
         onSuccess: () => {
-            toast.success("차단이 완료되었습니다.");
+            showCustomToast("차단이 완료되었습니다.");
             queryClient.invalidateQueries({ queryKey: memberKeys.blocks() });
+            queryClient.invalidateQueries({ queryKey: storyKeys.all, refetchType: 'none' });
         },
         onError: (error: any) => {
             console.error("Failed to block member:", error);
@@ -418,8 +420,9 @@ export const useUnblockMemberMutation = () => {
             await memberService.unblockMember(nickname);
         },
         onSuccess: () => {
-            toast.success("차단이 해제되었습니다.");
+            showCustomToast("차단이 해제되었습니다.");
             queryClient.invalidateQueries({ queryKey: memberKeys.blocks() });
+            queryClient.invalidateQueries({ queryKey: storyKeys.all, refetchType: 'none' });
         },
         onError: (error: any) => {
             console.error("Failed to unblock member:", error);

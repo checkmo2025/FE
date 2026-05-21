@@ -51,6 +51,8 @@ export default function CommentSection({
       createdAt: c.createdAt,
       isAuthor: c.authorInfo?.nickname === storyAuthorNickname,
       isMine: c.writtenByMe,
+      // 서버에서 content와 nickname 모두 "차단된 사용자입니다"로 마스킹하여 내려옴
+      isBlocked: !c.deleted && c.authorInfo?.nickname === "차단된 사용자입니다",
       replies: c.replies ? c.replies.map(r => mapNode(r)) : [],
       parentCommentId: c.parentCommentId,
     });
@@ -123,8 +125,12 @@ export default function CommentSection({
         onSuccess: () => {
           toast.success("댓글이 등록되었습니다.");
         },
-        onError: () => {
-          toast.error("댓글 등록에 실패했습니다.");
+        onError: (err: any) => {
+          if (err?.code === "COMMENT_405") {
+            toast.error("차단 관계가 있는 회원에게는 댓글을 작성할 수 없습니다.");
+          } else {
+            toast.error("댓글 등록에 실패했습니다.");
+          }
         }
       }
     );
@@ -142,8 +148,12 @@ export default function CommentSection({
         onSuccess: () => {
           toast.success("답글이 등록되었습니다.");
         },
-        onError: () => {
-          toast.error("답글 등록에 실패했습니다.");
+        onError: (err: any) => {
+          if (err?.code === "COMMENT_405") {
+            toast.error("차단 관계가 있는 회원에게는 댓글을 작성할 수 없습니다.");
+          } else {
+            toast.error("답글 등록에 실패했습니다.");
+          }
         }
       }
     );

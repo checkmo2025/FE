@@ -19,6 +19,12 @@ export const ERROR_MESSAGES: Record<string, string> = {
   BLOCK_402: "차단한 회원이 아닙니다.",
   BLOCK_404: "차단한 사용자입니다.",
   BLOCK_405: "조회가 불가능한 프로필입니다.",
+
+  // Book Story Errors
+  BOOK_STORY_408: "차단 관계가 있는 회원의 책 이야기에는 좋아요를 누를 수 없습니다.",
+
+  // Comment Errors
+  COMMENT_405: "차단 관계가 있는 회원에게는 댓글을 작성할 수 없습니다.",
 };
 
 export function getErrorMessage(code: string): string {

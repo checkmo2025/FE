@@ -15,6 +15,7 @@ type CommentItemProps = {
   createdAt: string;
   isAuthor?: boolean; // 작성자 뱃지용
   isMine?: boolean;
+  isBlocked?: boolean; // 차단된 사용자의 댓글
   isReply?: boolean;
   canEdit?: boolean;
   canDelete?: boolean;
@@ -34,6 +35,7 @@ export default function CommentItem({
   createdAt,
   isAuthor = false,
   isMine = false,
+  isBlocked = false,
   isReply = false,
   canEdit = false,
   canDelete = false,
@@ -79,7 +81,7 @@ export default function CommentItem({
 
       {!isEditing ? (
         <div className="flex items-start justify-between gap-2">
-          <p className="Body_1_2 text-Gray-5 flex-1 whitespace-pre-wrap">
+          <p className={`Body_1_2 flex-1 whitespace-pre-wrap ${isBlocked ? "text-Gray-3 italic" : "text-Gray-5"}`}>
             {content}
           </p>
           {hasMenuAction && (

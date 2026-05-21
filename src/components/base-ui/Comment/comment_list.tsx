@@ -14,6 +14,7 @@ export type Comment = {
   createdAt: string;
   isAuthor?: boolean; // 글 작성자인지 (뱃지용)
   isMine?: boolean; // 내가 쓴 댓글인지
+  isBlocked?: boolean; // 차단된 사용자의 댓글인지 (서버에서 "차단된 사용자입니다"로 마스킹)
   parentCommentId?: number | null;
   replies?: Comment[];
 };
@@ -107,11 +108,12 @@ export default function CommentList({
                 createdAt={comment.createdAt}
                 isAuthor={comment.isAuthor}
                 isMine={comment.isMine}
-                onReply={handleReplyClick}
+                isBlocked={comment.isBlocked}
+                onReply={comment.isBlocked ? undefined : handleReplyClick}
                 onEdit={onEditComment}
                 onDelete={onDeleteComment}
-                onReport={onReportComment}
-                onProfileClick={onProfileClick}
+                onReport={comment.isBlocked ? undefined : onReportComment}
+                onProfileClick={comment.isBlocked ? undefined : onProfileClick}
               />
 
               {/* 답글 입력창  */}
@@ -169,11 +171,12 @@ export default function CommentList({
                     createdAt={reply.createdAt}
                     isAuthor={reply.isAuthor}
                     isMine={reply.isMine}
+                    isBlocked={reply.isBlocked}
                     isReply
                     onEdit={onEditComment}
                     onDelete={onDeleteComment}
-                    onReport={onReportComment}
-                    onProfileClick={onProfileClick}
+                    onReport={reply.isBlocked ? undefined : onReportComment}
+                    onProfileClick={reply.isBlocked ? undefined : onProfileClick}
                   />
                 </div>
               ))}
