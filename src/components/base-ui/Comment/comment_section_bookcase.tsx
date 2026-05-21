@@ -17,6 +17,9 @@ import { ReportType } from "@/types/member";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import { BLOCKED_USER_MASK } from "@/constants/masking";
+import { useBlockStore } from "@/store/useBlockStore";
+import { hasErrorCode } from "@/lib/api/errors";
 
 // 어떤 글의 댓글인지 구분
 type CommentSectionProps = {
@@ -37,6 +40,13 @@ export default function CommentSection({
   const { mutate: reportMember } = useReportMemberMutation();
   const { isLoggedIn, openLoginModal } = useAuthStore();
   const router = useRouter();
+  const { isBlocked: checkLocalBlocked, initializeBlocks } = useBlockStore();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      initializeBlocks();
+    }
+  }, [isLoggedIn, initializeBlocks]);
 
   // API 데이터를 UI용 Comment 형식으로 변환 및 계층 구조화
   const mapApiToUiComments = (apiComments: CommentInfo[]): Comment[] => {
@@ -51,6 +61,11 @@ export default function CommentSection({
       createdAt: c.createdAt,
       isAuthor: c.authorInfo?.nickname === storyAuthorNickname,
       isMine: c.writtenByMe,
+      // 서버에서 content와 nickname 모두 BLOCKED_USER_MASK로 마스킹하여 내려오거나, 로컬에서 차단한 경우 즉시 마스킹
+      isBlocked: !c.deleted && (
+        c.authorInfo?.nickname === BLOCKED_USER_MASK ||
+        (c.authorInfo?.nickname ? checkLocalBlocked(c.authorInfo.nickname) : false)
+      ),
       replies: c.replies ? c.replies.map(r => mapNode(r)) : [],
       parentCommentId: c.parentCommentId,
     });
@@ -98,6 +113,15 @@ export default function CommentSection({
     return rootComments;
   };
 
+  // 댓글/답글 등록 실패 시 공통 에러 핸들러
+  const handleCommentError = (err: unknown, defaultMessage: string) => {
+    if (hasErrorCode(err) && err.code === "COMMENT_405") {
+      toast.error("차단 관계가 있는 회원에게는 댓글을 작성할 수 없습니다.");
+      return;
+    }
+    toast.error(defaultMessage);
+  };
+
   const [comments, setComments] = useState<Comment[]>(() => mapApiToUiComments(initialComments));
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState<number | null>(null);
@@ -123,8 +147,8 @@ export default function CommentSection({
         onSuccess: () => {
           toast.success("댓글이 등록되었습니다.");
         },
-        onError: () => {
-          toast.error("댓글 등록에 실패했습니다.");
+        onError: (err: unknown) => {
+          handleCommentError(err, "댓글 등록에 실패했습니다.");
         }
       }
     );
@@ -142,8 +166,8 @@ export default function CommentSection({
         onSuccess: () => {
           toast.success("답글이 등록되었습니다.");
         },
-        onError: () => {
-          toast.error("답글 등록에 실패했습니다.");
+        onError: (err: unknown) => {
+          handleCommentError(err, "답글 등록에 실패했습니다.");
         }
       }
     );

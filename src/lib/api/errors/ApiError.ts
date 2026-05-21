@@ -9,3 +9,17 @@ export class ApiError extends Error {
         this.response = response;
     }
 }
+
+export interface ErrorWithCode {
+    code: string;
+    message?: string;
+}
+
+export function hasErrorCode(error: unknown): error is ErrorWithCode {
+    return (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        typeof (error as Record<string, unknown>).code === "string"
+    );
+}

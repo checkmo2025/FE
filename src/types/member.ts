@@ -100,3 +100,15 @@ export interface LoginStatusResponse {
     provider: LoginProvider;
     email: string;
 }
+
+export interface BlockedUser {
+    memberId: string;
+    nickname: string;
+    profileImageUrl: string | null;
+}
+
+export interface BlockListResponse {
+    blocks: BlockedUser[];
+    hasNext: boolean;
+    nextCursor: number | null;
+}

@@ -28,7 +28,7 @@ export function useReportBlockFlow(
       }
 
       closeAll();
-      showCustomToast("차단이 완료되었습니다.");
+      // showCustomToast는 useBlockMemberMutation.onSuccess에서 이미 호출되므로 여기서 제거
     } catch (error) {
       console.error("Block action failed:", error);
       // 필요 시 에러 토스트 추가 가능

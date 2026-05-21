@@ -12,6 +12,7 @@ import { isValidUrl } from "@/utils/url";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getErrorMessage } from "@/lib/api/errors";
 
 import {
   useStoryDetailQuery,
@@ -39,7 +40,7 @@ export default function StoryDetailPage() {
     );
   }
 
-  const { data: story, isLoading, isError } = useStoryDetailQuery(storyId);
+  const { data: story, isLoading, isError, error } = useStoryDetailQuery(storyId);
   const { mutate: toggleLike } = useToggleStoryLikeMutation();
   const { mutate: deleteStory, isPending: isDeletePending } = useDeleteBookStoryMutation();
   const { mutate: toggleFollow } = useToggleFollowMutation();
@@ -76,10 +77,16 @@ export default function StoryDetailPage() {
 
   // 스토리가 없으면 404 UI
   if (!story || isError) {
+    // TODO: PM 요청 시 차단 상태별 메시지 수정 필요 (BLOCK_404: 내가 차단, BLOCK_405: 상대가 차단)
+    const apiError = error as { code?: string } | null;
+    const message =
+      (apiError?.code === "BLOCK_404" || apiError?.code === "BLOCK_405")
+        ? getErrorMessage(apiError.code)
+        : "해당 책 이야기를 찾을 수 없습니다.";
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <h2 className="text-2xl font-bold text-Gray-7 mb-4">404</h2>
-        <p className="text-Gray-5">해당 책 이야기를 찾을 수 없습니다.</p>
+        <p className="text-Gray-5">{message}</p>
       </div>
     );
   }
