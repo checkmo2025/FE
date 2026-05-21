@@ -17,6 +17,8 @@ import { ReportType } from "@/types/member";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import { BLOCKED_USER_MASK } from "@/constants/masking";
+import { useBlockStore } from "@/store/useBlockStore";
 
 // 어떤 글의 댓글인지 구분
 type CommentSectionProps = {
@@ -37,6 +39,13 @@ export default function CommentSection({
   const { mutate: reportMember } = useReportMemberMutation();
   const { isLoggedIn, openLoginModal } = useAuthStore();
   const router = useRouter();
+  const { isBlocked: checkLocalBlocked, initializeBlocks } = useBlockStore();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      initializeBlocks();
+    }
+  }, [isLoggedIn, initializeBlocks]);
 
   // API 데이터를 UI용 Comment 형식으로 변환 및 계층 구조화
   const mapApiToUiComments = (apiComments: CommentInfo[]): Comment[] => {
@@ -51,8 +60,11 @@ export default function CommentSection({
       createdAt: c.createdAt,
       isAuthor: c.authorInfo?.nickname === storyAuthorNickname,
       isMine: c.writtenByMe,
-      // 서버에서 content와 nickname 모두 "차단된 사용자입니다"로 마스킹하여 내려옴
-      isBlocked: !c.deleted && c.authorInfo?.nickname === "차단된 사용자입니다",
+      // 서버에서 content와 nickname 모두 BLOCKED_USER_MASK로 마스킹하여 내려오거나, 로컬에서 차단한 경우 즉시 마스킹
+      isBlocked: !c.deleted && (
+        c.authorInfo?.nickname === BLOCKED_USER_MASK ||
+        (c.authorInfo?.nickname ? checkLocalBlocked(c.authorInfo.nickname) : false)
+      ),
       replies: c.replies ? c.replies.map(r => mapNode(r)) : [],
       parentCommentId: c.parentCommentId,
     });

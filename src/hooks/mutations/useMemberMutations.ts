@@ -6,6 +6,7 @@ import { authService } from "@/services/authService";
 import { useAuthStore } from "@/store/useAuthStore";
 import { ReportMemberRequest, FollowListResponse } from "@/types/member";
 import { memberKeys } from "../queries/useMemberQueries";
+import { useBlockStore } from "@/store/useBlockStore";
 
 interface UpdateProfilePayload {
     description: string;
@@ -399,8 +400,9 @@ export const useBlockMemberMutation = () => {
         mutationFn: async (nickname: string) => {
             await memberService.blockMember(nickname);
         },
-        onSuccess: () => {
+        onSuccess: (_data, nickname) => {
             showCustomToast("차단이 완료되었습니다.");
+            useBlockStore.getState().addBlockedNickname(nickname);
             queryClient.invalidateQueries({ queryKey: memberKeys.blocks() });
             queryClient.invalidateQueries({ queryKey: storyKeys.all, refetchType: 'none' });
         },
@@ -419,8 +421,9 @@ export const useUnblockMemberMutation = () => {
         mutationFn: async (nickname: string) => {
             await memberService.unblockMember(nickname);
         },
-        onSuccess: () => {
+        onSuccess: (_data, nickname) => {
             showCustomToast("차단이 해제되었습니다.");
+            useBlockStore.getState().removeBlockedNickname(nickname);
             queryClient.invalidateQueries({ queryKey: memberKeys.blocks() });
             queryClient.invalidateQueries({ queryKey: storyKeys.all, refetchType: 'none' });
         },

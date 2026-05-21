@@ -83,19 +83,31 @@ export const memberService = {
         }
     },
     getFollowerList: async (nickname?: string, cursorId?: number): Promise<FollowListResponse> => {
-        const url = new URL(nickname ? MEMBER_ENDPOINTS.GET_OTHER_FOLLOWERS(nickname) : MEMBER_ENDPOINTS.GET_FOLLOWERS);
+        const endpoint = nickname ? MEMBER_ENDPOINTS.GET_OTHER_FOLLOWERS(nickname) : MEMBER_ENDPOINTS.GET_FOLLOWERS;
+        const params = new URLSearchParams();
         if (cursorId) {
-            url.searchParams.append("cursorId", cursorId.toString());
+            params.append("cursorId", cursorId.toString());
         }
-        const response = await apiClient.get<ApiResponse<FollowListResponse>>(url.toString());
+        const queryString = params.toString();
+        const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+        const response = await apiClient.get<ApiResponse<FollowListResponse>>(url);
+        if (!response.isSuccess) {
+            throw new Error(response.message || "구독자 목록을 불러오는 데 실패했습니다.");
+        }
         return response.result!;
     },
     getFollowingList: async (nickname?: string, cursorId?: number): Promise<FollowListResponse> => {
-        const url = new URL(nickname ? MEMBER_ENDPOINTS.GET_OTHER_FOLLOWINGS(nickname) : MEMBER_ENDPOINTS.GET_FOLLOWINGS);
+        const endpoint = nickname ? MEMBER_ENDPOINTS.GET_OTHER_FOLLOWINGS(nickname) : MEMBER_ENDPOINTS.GET_FOLLOWINGS;
+        const params = new URLSearchParams();
         if (cursorId) {
-            url.searchParams.append("cursorId", cursorId.toString());
+            params.append("cursorId", cursorId.toString());
         }
-        const response = await apiClient.get<ApiResponse<FollowListResponse>>(url.toString());
+        const queryString = params.toString();
+        const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+        const response = await apiClient.get<ApiResponse<FollowListResponse>>(url);
+        if (!response.isSuccess) {
+            throw new Error(response.message || "구독중 목록을 불러오는 데 실패했습니다.");
+        }
         return response.result!;
     },
     getMyFollowCount: async (): Promise<FollowCountResponse> => {
@@ -116,11 +128,17 @@ export const memberService = {
         return response.result!;
     },
     getMyReports: async (cursorId?: number): Promise<ReportListResponse> => {
-        const url = new URL(MEMBER_ENDPOINTS.GET_MY_REPORTS);
+        const endpoint = MEMBER_ENDPOINTS.GET_MY_REPORTS;
+        const params = new URLSearchParams();
         if (cursorId) {
-            url.searchParams.append("cursorId", cursorId.toString());
+            params.append("cursorId", cursorId.toString());
         }
-        const response = await apiClient.get<ApiResponse<ReportListResponse>>(url.toString());
+        const queryString = params.toString();
+        const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+        const response = await apiClient.get<ApiResponse<ReportListResponse>>(url);
+        if (!response.isSuccess) {
+            throw new Error(response.message || "신고 내역을 불러오는 데 실패했습니다.");
+        }
         return response.result!;
     },
     withdraw: async (): Promise<void> => {
@@ -154,11 +172,17 @@ export const memberService = {
         }
     },
     getBlockedList: async (cursorId?: number): Promise<BlockListResponse> => {
-        const url = new URL(MEMBER_ENDPOINTS.GET_MY_BLOCKS);
+        const endpoint = MEMBER_ENDPOINTS.GET_MY_BLOCKS;
+        const params = new URLSearchParams();
         if (cursorId) {
-            url.searchParams.append("cursorId", cursorId.toString());
+            params.append("cursorId", cursorId.toString());
         }
-        const response = await apiClient.get<ApiResponse<BlockListResponse>>(url.toString());
+        const queryString = params.toString();
+        const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+        const response = await apiClient.get<ApiResponse<BlockListResponse>>(url);
+        if (!response.isSuccess) {
+            throw new Error(response.message || "차단 목록을 불러오는 데 실패했습니다.");
+        }
         return response.result!;
     },
 };
