@@ -91,7 +91,7 @@ export default function Header() {
             >
               <Image
                 src="/logo.svg"
-                alt="책모 로고"
+                alt="책모"
                 fill
                 className="object-contain"
                 priority
