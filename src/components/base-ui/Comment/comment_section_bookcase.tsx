@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 import { BLOCKED_USER_MASK } from "@/constants/masking";
 import { useBlockStore } from "@/store/useBlockStore";
+import { hasErrorCode } from "@/lib/api/errors";
 
 // 어떤 글의 댓글인지 구분
 type CommentSectionProps = {
@@ -112,6 +113,15 @@ export default function CommentSection({
     return rootComments;
   };
 
+  // 댓글/답글 등록 실패 시 공통 에러 핸들러
+  const handleCommentError = (err: unknown, defaultMessage: string) => {
+    if (hasErrorCode(err) && err.code === "COMMENT_405") {
+      toast.error("차단 관계가 있는 회원에게는 댓글을 작성할 수 없습니다.");
+      return;
+    }
+    toast.error(defaultMessage);
+  };
+
   const [comments, setComments] = useState<Comment[]>(() => mapApiToUiComments(initialComments));
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState<number | null>(null);
@@ -137,12 +147,8 @@ export default function CommentSection({
         onSuccess: () => {
           toast.success("댓글이 등록되었습니다.");
         },
-        onError: (err: any) => {
-          if (err?.code === "COMMENT_405") {
-            toast.error("차단 관계가 있는 회원에게는 댓글을 작성할 수 없습니다.");
-          } else {
-            toast.error("댓글 등록에 실패했습니다.");
-          }
+        onError: (err: unknown) => {
+          handleCommentError(err, "댓글 등록에 실패했습니다.");
         }
       }
     );
@@ -160,12 +166,8 @@ export default function CommentSection({
         onSuccess: () => {
           toast.success("답글이 등록되었습니다.");
         },
-        onError: (err: any) => {
-          if (err?.code === "COMMENT_405") {
-            toast.error("차단 관계가 있는 회원에게는 댓글을 작성할 수 없습니다.");
-          } else {
-            toast.error("답글 등록에 실패했습니다.");
-          }
+        onError: (err: unknown) => {
+          handleCommentError(err, "답글 등록에 실패했습니다.");
         }
       }
     );

@@ -3,6 +3,7 @@ import { storyService } from "@/services/storyService";
 import { CreateBookStoryRequest, storyKeys } from "@/hooks/queries/useStoryQueries";
 import { toast } from "react-hot-toast";
 import { BookStoryListResponse, BookStoryDetail, UpdateBookStoryRequest } from "@/types/story";
+import { hasErrorCode } from "@/lib/api/errors";
 
 const updateLikeInStoryList = (old: BookStoryListResponse | undefined, bookStoryId: number) => {
     if (!old || !old.basicInfoList) return old;
@@ -284,10 +285,10 @@ export const useToggleStoryLikeMutation = () => {
                 toast.success("좋아요가 취소되었습니다.");
             }
         },
-        onError: (err: any, bookStoryId, context) => {
+        onError: (err: unknown, bookStoryId, context) => {
             console.error("Failed to toggle like:", err);
             // BOOK_STORY_408: 차단 관계에서 새 좋아요 시도 시
-            if (err?.code === "BOOK_STORY_408") {
+            if (hasErrorCode(err) && err.code === "BOOK_STORY_408") {
                 toast.error("차단 관계가 있는 회원의 책 이야기에는 좋아요를 누를 수 없습니다.");
             } else {
                 toast.error("좋아요 상태 업데이트에 실패했습니다.");
