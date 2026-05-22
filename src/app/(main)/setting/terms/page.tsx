@@ -4,7 +4,7 @@ import TermItem from "@/components/base-ui/Settings/Terms/TermItem";
 import { TERMS_DATA } from "@/constants/setting/terms";
 
 export const metadata: Metadata = {
-  title: "설정",
+  title: "이용약관",
 };
 
 export default function TermsPage() {

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SettingsDetailLayout from "@/components/base-ui/Settings/SettingsDetailLayout";
 
 export const metadata: Metadata = {
-  title: "설정",
+  title: "버전 정보",
 };
 export default function VersionPage() {
   return (
