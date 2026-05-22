@@ -9,6 +9,7 @@ import GlobalLoginModal from "@/components/base-ui/Login/GlobalLoginModal";
 import "@/app/globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GoogleTagManager } from "@next/third-parties/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,15 +23,15 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | CheckMo", // 하위 페이지에서 제목을 설정하면 "페이지명 | CheckMo"로 표시됨
-    default: "CheckMo", // 제목이 없는 페이지의 기본값
+    template: "%s | 책모",
+    default: "책모",
   },
-  description: "함께 읽고, 나누고, 성장하는 독서 모임 플랫폼 CheckMo",
+  description: "함께 읽고, 나누고, 성장하는 독서 모임 플랫폼 책모",
   openGraph: {
-    title: "CheckMo",
-    description: "함께 읽고, 나누고, 성장하는 독서 모임 플랫폼 CheckMo",
-    url: "https://check-mo-psi.vercel.app",
-    siteName: "CheckMo",
+    title: "책모",
+    description: "함께 읽고, 나누고, 성장하는 독서 모임 플랫폼 책모",
+    url: "https://www.checkmo.co.kr",
+    siteName: "책모",
     locale: "ko_KR",
     type: "website",
   },
@@ -47,6 +48,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID!} />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased pb-[70px] t:pb-0`}
       >

@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
-import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest, FollowListResponse, FollowCountResponse, FindEmailRequest, FindEmailResponse, ReportListResponse, LoginStatusResponse, UpdateEmailRequest } from "@/types/member";
+import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest, FollowListResponse, FollowCountResponse, FindEmailRequest, FindEmailResponse, ReportListResponse, LoginStatusResponse, UpdateEmailRequest, BlockListResponse } from "@/types/member";
 import { ApiResponse } from "@/types/auth";
 
 export const memberService = {
@@ -83,19 +83,31 @@ export const memberService = {
         }
     },
     getFollowerList: async (nickname?: string, cursorId?: number): Promise<FollowListResponse> => {
-        const url = new URL(nickname ? MEMBER_ENDPOINTS.GET_OTHER_FOLLOWERS(nickname) : MEMBER_ENDPOINTS.GET_FOLLOWERS);
+        const endpoint = nickname ? MEMBER_ENDPOINTS.GET_OTHER_FOLLOWERS(nickname) : MEMBER_ENDPOINTS.GET_FOLLOWERS;
+        const params = new URLSearchParams();
         if (cursorId) {
-            url.searchParams.append("cursorId", cursorId.toString());
+            params.append("cursorId", cursorId.toString());
         }
-        const response = await apiClient.get<ApiResponse<FollowListResponse>>(url.toString());
+        const queryString = params.toString();
+        const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+        const response = await apiClient.get<ApiResponse<FollowListResponse>>(url);
+        if (!response.isSuccess) {
+            throw new Error(response.message || "구독자 목록을 불러오는 데 실패했습니다.");
+        }
         return response.result!;
     },
     getFollowingList: async (nickname?: string, cursorId?: number): Promise<FollowListResponse> => {
-        const url = new URL(nickname ? MEMBER_ENDPOINTS.GET_OTHER_FOLLOWINGS(nickname) : MEMBER_ENDPOINTS.GET_FOLLOWINGS);
+        const endpoint = nickname ? MEMBER_ENDPOINTS.GET_OTHER_FOLLOWINGS(nickname) : MEMBER_ENDPOINTS.GET_FOLLOWINGS;
+        const params = new URLSearchParams();
         if (cursorId) {
-            url.searchParams.append("cursorId", cursorId.toString());
+            params.append("cursorId", cursorId.toString());
         }
-        const response = await apiClient.get<ApiResponse<FollowListResponse>>(url.toString());
+        const queryString = params.toString();
+        const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+        const response = await apiClient.get<ApiResponse<FollowListResponse>>(url);
+        if (!response.isSuccess) {
+            throw new Error(response.message || "구독중 목록을 불러오는 데 실패했습니다.");
+        }
         return response.result!;
     },
     getMyFollowCount: async (): Promise<FollowCountResponse> => {
@@ -116,11 +128,17 @@ export const memberService = {
         return response.result!;
     },
     getMyReports: async (cursorId?: number): Promise<ReportListResponse> => {
-        const url = new URL(MEMBER_ENDPOINTS.GET_MY_REPORTS);
+        const endpoint = MEMBER_ENDPOINTS.GET_MY_REPORTS;
+        const params = new URLSearchParams();
         if (cursorId) {
-            url.searchParams.append("cursorId", cursorId.toString());
+            params.append("cursorId", cursorId.toString());
         }
-        const response = await apiClient.get<ApiResponse<ReportListResponse>>(url.toString());
+        const queryString = params.toString();
+        const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+        const response = await apiClient.get<ApiResponse<ReportListResponse>>(url);
+        if (!response.isSuccess) {
+            throw new Error(response.message || "신고 내역을 불러오는 데 실패했습니다.");
+        }
         return response.result!;
     },
     withdraw: async (): Promise<void> => {
@@ -135,6 +153,36 @@ export const memberService = {
         const response = await apiClient.get<ApiResponse<LoginStatusResponse>>(
             MEMBER_ENDPOINTS.GET_LOGIN_STATUS
         );
+        return response.result!;
+    },
+    blockMember: async (nickname: string): Promise<void> => {
+        const response = await apiClient.post<ApiResponse<unknown>>(
+            MEMBER_ENDPOINTS.BLOCK(nickname)
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "차단에 실패했습니다.");
+        }
+    },
+    unblockMember: async (nickname: string): Promise<void> => {
+        const response = await apiClient.delete<ApiResponse<unknown>>(
+            MEMBER_ENDPOINTS.BLOCK(nickname)
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "차단 해제에 실패했습니다.");
+        }
+    },
+    getBlockedList: async (cursorId?: number): Promise<BlockListResponse> => {
+        const endpoint = MEMBER_ENDPOINTS.GET_MY_BLOCKS;
+        const params = new URLSearchParams();
+        if (cursorId) {
+            params.append("cursorId", cursorId.toString());
+        }
+        const queryString = params.toString();
+        const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+        const response = await apiClient.get<ApiResponse<BlockListResponse>>(url);
+        if (!response.isSuccess) {
+            throw new Error(response.message || "차단 목록을 불러오는 데 실패했습니다.");
+        }
         return response.result!;
     },
 };
