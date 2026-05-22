@@ -22,6 +22,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.checkmo.co.kr"),
   title: {
     template: "%s | 책모",
     default: "책모",
@@ -34,6 +35,18 @@ export const metadata: Metadata = {
     siteName: "책모",
     locale: "ko_KR",
     type: "website",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "책모 - 함께 읽고, 나누고, 성장하는 독서 모임 플랫폼",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/og.png"],
   },
   icons: {
     icon: "/icon.svg",
