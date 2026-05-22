@@ -11,6 +11,7 @@ export const memberKeys = {
     followCount: () => [...memberKeys.all, "follow-count"] as const,
     reports: () => [...memberKeys.all, "reports"] as const,
     loginStatus: () => [...memberKeys.all, "login-status"] as const,
+    blocks: () => [...memberKeys.all, "blocks"] as const,
 };
 
 export const useRecommendedMembersQuery = (enabled: boolean = true) => {
@@ -79,6 +80,16 @@ export const useLoginStatusQuery = (enabled: boolean = true) => {
     return useQuery({
         queryKey: memberKeys.loginStatus(),
         queryFn: () => memberService.getLoginStatus(),
+        enabled,
+    });
+};
+
+export const useBlockedUsersQuery = (enabled: boolean = true) => {
+    return useInfiniteQuery({
+        queryKey: memberKeys.blocks(),
+        queryFn: ({ pageParam }) => memberService.getBlockedList(pageParam),
+        initialPageParam: undefined as number | undefined,
+        getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor ?? undefined : undefined),
         enabled,
     });
 };

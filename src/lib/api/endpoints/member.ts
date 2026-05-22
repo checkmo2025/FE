@@ -19,4 +19,6 @@ export const MEMBER_ENDPOINTS = {
     GET_MY_REPORTS: `${API_BASE_URL}/members/me/reports`,
     WITHDRAWAL: `${API_BASE_URL}/members/withdrawal`,
     GET_LOGIN_STATUS: `${API_BASE_URL}/members/me/login-status`,
+    BLOCK: (nickname: string) => `${API_BASE_URL}/members/${encodeURIComponent(nickname)}/block`,
+    GET_MY_BLOCKS: `${API_BASE_URL}/members/me/blocks`,
 };
