@@ -47,7 +47,11 @@ export default function LandingNav() {
           </Link>
           <button
             onClick={handleLogin}
-            className="body_2_1 rounded-full bg-primary-1 px-4 py-1.5 text-white transition-opacity hover:opacity-80 t:body_1_1 t:px-5 t:py-2"
+            className={`body_2_1 cursor-pointer rounded-full px-4 py-1.5 transition-all active:scale-95 t:body_1_1 t:px-5 t:py-2 ${
+              scrolled
+                ? "bg-white text-primary-1 hover:bg-white/90 hover:shadow-md"
+                : "bg-primary-1 text-white hover:brightness-110 hover:shadow-md"
+            }`}
           >
             로그인/회원가입
           </button>
