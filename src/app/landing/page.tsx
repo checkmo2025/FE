@@ -1,32 +1,17 @@
-"use client";
+import type { Metadata } from "next";
+import LandingPageClient from "./LandingPageClient";
 
-import { useEffect } from "react";
-import LandingNav from "@/components/base-ui/Landing/LandingNav";
-import LandingHero from "@/components/base-ui/Landing/LandingHero";
-import LandingHomeSection from "@/components/base-ui/Landing/LandingHomeSection";
-import LandingClubSection from "@/components/base-ui/Landing/LandingClubSection";
-import LandingStorySection from "@/components/base-ui/Landing/LandingStorySection";
-import LandingNewsSection from "@/components/base-ui/Landing/LandingNewsSection";
-import LandingManageSection from "@/components/base-ui/Landing/LandingManageSection";
-import LandingChatSection from "@/components/base-ui/Landing/LandingChatSection";
-
-const LANDING_KEY = "seen_landing_v1";
+export const metadata: Metadata = {
+  title: {
+    absolute: "독서 모임 플랫폼 CheckMo",
+  },
+  description: "함께 읽고, 나누고, 성장하는 독서 모임 플랫폼",
+  openGraph: {
+    title: "독서 모임 플랫폼 CheckMo",
+    description: "함께 읽고, 나누고, 성장하는 독서 모임 플랫폼",
+  },
+};
 
 export default function LandingPage() {
-  useEffect(() => {
-    localStorage.setItem(LANDING_KEY, String(Date.now()));
-  }, []);
-
-  return (
-    <main className="overflow-x-hidden">
-      <LandingNav />
-      <LandingHero />
-      <LandingHomeSection />
-      <LandingClubSection />
-      <LandingStorySection />
-      <LandingNewsSection />
-      <LandingManageSection />
-      <LandingChatSection />
-    </main>
-  );
+  return <LandingPageClient />;
 }

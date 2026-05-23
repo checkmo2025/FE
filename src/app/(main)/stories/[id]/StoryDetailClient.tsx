@@ -1,0 +1,174 @@
+"use client";
+
+import BookstoryDetail from "@/components/base-ui/BookStory/Detatil/bookstory_detail";
+import StoryNavigation from "@/components/base-ui/BookStory/Detatil/story_navigation";
+import CommentSection from "@/components/base-ui/Comment/comment_section_bookcase";
+import BookshelfDeleteConfirmModal from "@/components/base-ui/Bookcase/bookid/BookshelfDeleteConfirmModal";
+
+import { useState } from "react";
+import Image from "next/image";
+import { isValidUrl } from "@/utils/url";
+import { useParams, useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { useAuthStore } from "@/store/useAuthStore";
+import { getErrorMessage } from "@/lib/api/errors";
+
+import {
+  useStoryDetailQuery,
+} from "@/hooks/queries/useStoryQueries";
+import {
+  useToggleStoryLikeMutation,
+  useDeleteBookStoryMutation,
+} from "@/hooks/mutations/useStoryMutations";
+import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+
+export default function StoryDetailClient() {
+  const router = useRouter();
+  const params = useParams();
+  const id = params?.id as string;
+  const storyId = Number(id);
+
+  if (!id || isNaN(storyId)) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <h2 className="text-2xl font-bold text-Gray-7 mb-4">잘못된 접근</h2>
+        <p className="text-Gray-5">올바른 경로로 접근해주세요.</p>
+      </div>
+    );
+  }
+
+  const { data: story, isLoading, isError, error } = useStoryDetailQuery(storyId);
+  const { mutate: toggleLike } = useToggleStoryLikeMutation();
+  const { mutate: deleteStory, isPending: isDeletePending } = useDeleteBookStoryMutation();
+  const { mutate: toggleFollow } = useToggleFollowMutation();
+  const { isLoggedIn, openLoginModal } = useAuthStore();
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const handleToggleLike = () => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    toggleLike(story!.bookStoryId);
+  };
+
+  const handleToggleFollow = () => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    toggleFollow({
+      nickname: story!.authorInfo.nickname,
+      isFollowing: story!.authorInfo.following
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-2"></div>
+      </div>
+    );
+  }
+
+  if (!story || isError) {
+    const apiError = error as { code?: string } | null;
+    const message =
+      (apiError?.code === "BLOCK_404" || apiError?.code === "BLOCK_405")
+        ? getErrorMessage(apiError.code)
+        : "해당 책 이야기를 찾을 수 없습니다.";
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <h2 className="text-2xl font-bold text-Gray-7 mb-4">404</h2>
+        <p className="text-Gray-5">{message}</p>
+      </div>
+    );
+  }
+
+  const prevId = story.prevBookStoryId !== 0 ? story.prevBookStoryId : null;
+  const nextId = story.nextBookStoryId !== 0 ? story.nextBookStoryId : null;
+
+  return (
+    <div className="relative mx-auto w-full max-w-[1400px] px-4">
+      <div className="t:hidden w-screen -mx-4 border-b border-zinc-300">
+        <div className="px-4 h-[44px] flex gap-5 items-center">
+          <div className="body_1 text-Gray-3">책이야기</div>
+          <div className="relative w-[12px] h-[12px]">
+            <Image src="/triangle.svg" alt="next" fill className="object-contain" />
+          </div>
+          <div className="body_1 text-Gray-7">상세보기</div>
+        </div>
+      </div>
+      <div className="hidden t:flex t:mt-6 h-[44px] gap-5 items-center border-b border-zinc-300">
+        <div className="d:subhead_4_1 text-Gray-3">책이야기</div>
+        <div className="relative w-[12px] h-[12px] d:w-[18px] d:h-[18px]">
+          <Image src="/triangle.svg" alt="next" fill className="object-contain" />
+        </div>
+        <div className="d:subhead_4_1 text-Gray-7">상세보기</div>
+      </div>
+      <div>
+        <StoryNavigation currentId={story.bookStoryId} prevId={prevId} nextId={nextId}>
+          <BookstoryDetail
+            imageUrl={isValidUrl(story.bookInfo.imgUrl) ? story.bookInfo.imgUrl : "/book_example.svg"}
+            authorName={story.authorInfo.nickname}
+            authorNickname={story.authorInfo.nickname}
+            authorId={story.authorInfo.nickname}
+            profileImgSrc={isValidUrl(story.authorInfo.profileImageUrl) ? story.authorInfo.profileImageUrl : DEFAULT_PROFILE_IMAGE}
+            bookTitle={story.bookInfo.title}
+            bookAuthor={story.bookInfo.author}
+            bookDetail={story.description}
+            createdAt={story.createdAt}
+            viewCount={story.viewCount}
+            likeCount={story.likes}
+            likedByMe={story.likedByMe}
+            onLikeClick={handleToggleLike}
+            subscribeText={story.authorInfo.following ? "구독중" : "구독"}
+            isFollowing={story.authorInfo.following}
+            onSubscribeClick={handleToggleFollow}
+            hideSubscribeButton={story.writtenByMe}
+            isMyStory={story.writtenByMe}
+            onEditClick={() => { router.push(`/stories/${story.bookStoryId}/edit`); }}
+            onDeleteClick={() => { setIsDeleteModalOpen(true); }}
+          />
+        </StoryNavigation>
+        <div className="t:border-t-2 border-Gray-1 w-full max-w-[1040px] px-5 t:mx-auto t:mt-10 pt-6">
+          <h2 className="subhead_1 t:headline_3 text-Gray-7">{story.bookStoryTitle}</h2>
+          <p className="body_1_3 t:subhead_4 text-Gray-5 mt-4 whitespace-pre-wrap">
+            {story.description}
+          </p>
+        </div>
+        <div className="border-t-2 border-Gray-1 w-full max-w-[1040px] mx-auto px-5 mt-10 pt-6 pb-10">
+          <CommentSection
+            storyId={story.bookStoryId}
+            initialComments={story.comments}
+            storyAuthorNickname={story.authorInfo.nickname}
+          />
+        </div>
+      </div>
+
+      <BookshelfDeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        isPending={isDeletePending}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={() => {
+          if (!story?.bookStoryId || isDeletePending) return;
+          deleteStory(story.bookStoryId, {
+            onSuccess: () => {
+              toast.success("책 이야기가 삭제되었습니다.");
+              router.replace("/stories");
+            },
+            onError: () => {
+              toast.error("삭제에 실패했습니다. 다시 시도해 주세요.");
+            },
+          });
+        }}
+        title="책 이야기를 삭제할까요?"
+        description="삭제 후에는 복구할 수 없습니다."
+        confirmText="예"
+        cancelText="아니요"
+      />
+    </div>
+  );
+}

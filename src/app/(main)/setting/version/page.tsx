@@ -1,4 +1,9 @@
+import type { Metadata } from "next";
 import SettingsDetailLayout from "@/components/base-ui/Settings/SettingsDetailLayout";
+
+export const metadata: Metadata = {
+  title: "버전 정보",
+};
 export default function VersionPage() {
   return (
     <SettingsDetailLayout title="버전 정보" className="gap-[40px]">
