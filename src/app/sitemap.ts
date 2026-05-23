@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://www.checkmo.co.kr";
+  const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || "https://www.checkmo.co.kr";
 
   return [
     {
