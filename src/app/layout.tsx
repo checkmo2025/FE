@@ -52,6 +52,11 @@ export const metadata: Metadata = {
     icon: "/icon.svg",
     apple: "/apple-icon",
   },
+  verification: {
+    other: {
+      "naver-site-verification": "b449f2f0720582940b42ac7ab6b4233b",
+    },
+  },
 };
 
 export default function RootLayout({
@@ -60,7 +65,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID!} />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased pb-[70px] t:pb-0`}
