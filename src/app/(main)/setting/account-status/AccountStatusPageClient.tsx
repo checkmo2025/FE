@@ -55,7 +55,7 @@ export default function AccountStatusPageClient() {
           <div className="flex w-full pt-[10px] justify-center xl:justify-end">
             <button
               onClick={handleWithdrawClick}
-              className="flex items-center justify-center gap-[10px] rounded-[8px] transition-colors
+              className="flex items-center justify-center gap-[10px] rounded-[8px] transition-colors cursor-pointer
                w-full h-[40px] bg-[#3D3D3D]
                md:w-[420px]
                xl:w-[200px] xl:h-[48px] xl:bg-Subbrown-4 xl:hover:bg-Subbrown-3"
