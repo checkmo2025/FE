@@ -20,7 +20,7 @@ const MyPageTabs = ({ activeTab, onTabChange }: MyPageTabsProps) => {
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
-          className={`flex-1 flex justify-center items-center gap-[10px] p-[10px] text-[14px] font-medium md:text-[20px] md:font-semibold leading-[135%] tracking-[-0.02px] transition-colors ${
+          className={`flex-1 flex justify-center items-center gap-[10px] p-[10px] text-[14px] font-medium md:text-[20px] md:font-semibold leading-[135%] tracking-[-0.02px] transition-colors cursor-pointer ${
             activeTab === tab.id
               ? "text-[#5E4A40] border-b-2 border-[#5E4A40] -mb-[2px]"
               : "text-[#BBB] border-b-2 border-transparent"
