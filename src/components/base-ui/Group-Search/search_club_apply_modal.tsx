@@ -102,7 +102,7 @@ export default function SearchClubApplyModal({ open, club, onClose, onSubmit }: 
             </div>
 
             <div className="flex flex-col items-end gap-2">
-              <button type="button" onClick={onClose} className="shrink-0">
+              <button type="button" onClick={onClose} className="shrink-0 cursor-pointer">
                 <Image src="/cancle_button.svg" alt="닫기" width={24} height={24} />
               </button>
 
@@ -143,6 +143,7 @@ export default function SearchClubApplyModal({ open, club, onClose, onSubmit }: 
                 "bg-primary-2 text-White border border-primary-2",
                 "body_1_2",
                 "hover:bg-primary-1 hover:border-primary-1 transition-all",
+                "cursor-pointer disabled:cursor-not-allowed",
               ].join(" ")}
               disabled={reason.trim().length === 0}
             >

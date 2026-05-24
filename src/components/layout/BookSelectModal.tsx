@@ -116,7 +116,7 @@ export default function BookSelectModal({
               {searchValue && (
                 <button
                   onClick={() => setSearchValue("")}
-                  className="absolute right-2.5 flex items-center justify-center shrink-0 z-10 w-5 h-5 t:w-7 t:h-7"
+                  className="absolute right-2.5 flex items-center justify-center shrink-0 z-10 w-5 h-5 t:w-7 t:h-7 cursor-pointer"
                   aria-label="검색어 지우기"
                 >
                   <Image

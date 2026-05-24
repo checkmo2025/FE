@@ -87,7 +87,7 @@ export function StarSelector({
             key={i}
             type="button"
             onClick={(e) => handlePick(e, i)}
-            className={`relative shrink-0 ${starClassName}`}
+            className={`relative shrink-0 cursor-pointer ${starClassName}`}
             aria-label={`${i + 1}점 선택`}
           >
             {/* 빈 별 */}

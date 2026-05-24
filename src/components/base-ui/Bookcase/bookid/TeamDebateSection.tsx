@@ -56,7 +56,7 @@ export default function TeamDebateSection({
         <button
           type="button"
           onClick={onSortCheckedFirst}
-          className="flex items-center gap-2 text-Gray-5 body_2_3"
+          className="flex items-center gap-2 text-Gray-5 body_2_3 cursor-pointer"
           aria-label="정렬하기"
         >
           <div className="relative w-4 h-4 t:w-5 t:h-5">
@@ -111,7 +111,7 @@ export default function TeamDebateSection({
                 <button
                   type="button"
                   onClick={() => onToggleCheck(id)}
-                  className="relative w-6 h-6 shrink-0 justify-self-end"
+                  className="relative w-6 h-6 shrink-0 justify-self-end cursor-pointer"
                   aria-label="체크 토글"
                 >
                   <Image
