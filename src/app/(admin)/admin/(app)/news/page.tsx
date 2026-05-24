@@ -114,7 +114,7 @@ export default function NewsPage() {
           onKeywordChange={handleKeywordChange}
           onSearch={handleSearch}
           placeholder="검색 하기 (소식 제목)"
-          inputWidthClassName="w-[1040px]"
+          inputWidthClassName="flex-1"
           rightAddon={
             <Link
               href="/admin/news/new"
