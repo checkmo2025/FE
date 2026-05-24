@@ -121,9 +121,9 @@ export default function UsersPage() {
                 users.map((u) => (
                   <tr
                     key={u.memberId}
-                    className="min-h-[48px] border-b border-Subbrown-4 body_1_2"
+                    className="h-[48px] border-b border-Subbrown-4 body_1_2"
                   >
-                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7 break-all">
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
                       {u.memberId}
                     </td>
                     <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
