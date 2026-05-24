@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 import ProfileUserInfo from "@/components/base-ui/Profile/OtherUser/ProfileUserInfo";
 import BookStoryList from "@/components/base-ui/Profile/Lists/BookStoryList";
 import LibraryList from "@/components/base-ui/Profile/Lists/LibraryList";
@@ -12,6 +14,14 @@ import type { OtherProfileTabId } from "@/components/base-ui/Profile/OtherUser/O
 export default function ProfileClient({ encodedNickname }: { encodedNickname: string }) {
   const nickname = encodedNickname ? decodeURIComponent(encodedNickname) : "";
   const [activeTab, setActiveTab] = useState<OtherProfileTabId>("stories");
+  const router = useRouter();
+  const { user, isLoggedIn } = useAuthStore();
+
+  useEffect(() => {
+    if (isLoggedIn && user?.nickname && user.nickname === nickname) {
+      router.replace("/profile/mypage");
+    }
+  }, [isLoggedIn, user?.nickname, nickname, router]);
 
   return (
     <div className="flex flex-col items-center gap-[10px] md:gap-[24px] w-full min-h-screen bg-[#F9F7F6] pb-[100px]">
