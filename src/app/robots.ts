@@ -21,6 +21,6 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: "https://www.checkmo.co.kr/sitemap.xml",
+    sitemap: `${process.env.NEXT_PUBLIC_FRONTEND_URL || "https://www.checkmo.co.kr"}/sitemap.xml`,
   };
 }
