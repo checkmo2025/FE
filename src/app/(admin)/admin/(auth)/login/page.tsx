@@ -2,8 +2,36 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/members/me/login-status`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+        if (!res.ok) return;
+
+        const data = await res.json();
+        if (data.isSuccess && data.result?.admin) {
+          router.replace("/admin/users");
+        }
+      } catch {
+        // 미로그인 상태 — 현재 페이지 유지
+      }
+    };
+
+    checkAdmin();
+  }, [router]);
+
   return (
     <main
       className="
