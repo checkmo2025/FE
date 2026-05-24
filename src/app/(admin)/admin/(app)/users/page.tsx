@@ -123,7 +123,7 @@ export default function UsersPage() {
                     key={u.memberId}
                     className="h-[48px] border-b border-Subbrown-4 body_1_2"
                   >
-                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate" title={u.memberId}>
                       {u.memberId}
                     </td>
                     <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
