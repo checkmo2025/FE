@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
+import { useRef, useState, useEffect } from "react";
 import { NavItem } from "./AdminNavItem";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import { authService } from "@/services/authService";
 
 const ADMIN_NAV = [
   { label: "회원 관리", href: "/admin/users" },
@@ -22,7 +24,28 @@ const getAdminPageTitle = (pathname: string) => {
 
 export default function AdminHeader() {
   const pathname = usePathname();
+  const router = useRouter();
   const pageTitle = getAdminPageTitle(pathname);
+
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    setOpen(false);
+    await authService.logout();
+    router.replace("/");
+  };
 
   return (
     <header className="w-full bg-primary-1">
@@ -69,12 +92,12 @@ export default function AdminHeader() {
             {pageTitle}
           </span>
 
-          {/* 아이콘 */}
-          <div className="flex items-center gap-2.5 t:gap-4 d:mr-1">
-            <Link
-              href="/admin/profile"
+          {/* 프로필 드롭다운 */}
+          <div ref={dropdownRef} className="relative flex items-center gap-2.5 t:gap-4 d:mr-1">
+            <button
+              onClick={() => setOpen((prev) => !prev)}
               aria-label="관리자 프로필"
-              className="relative w-6 h-6"
+              className="relative w-6 h-6 cursor-pointer"
             >
               <Image
                 src={DEFAULT_PROFILE_IMAGE}
@@ -83,7 +106,25 @@ export default function AdminHeader() {
                 className="object-contain"
                 priority
               />
-            </Link>
+            </button>
+
+            {open && (
+              <div className="absolute right-0 top-[calc(100%+8px)] w-[140px] rounded-[8px] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.12)] overflow-hidden z-50">
+                <Link
+                  href="/"
+                  onClick={() => setOpen(false)}
+                  className="block w-full px-4 py-3 text-left body_2 text-gray-800 hover:bg-gray-50 transition-colors"
+                >
+                  홈화면 가기
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full px-4 py-3 text-left body_2 text-red-500 hover:bg-gray-50 transition-colors cursor-pointer"
+                >
+                  로그아웃
+                </button>
+              </div>
+            )}
           </div>
 
         </div>
