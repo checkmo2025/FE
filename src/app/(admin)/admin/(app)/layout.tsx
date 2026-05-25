@@ -27,14 +27,6 @@ export default function AdminLayout({
     pathname.startsWith("/login") ||
     pathname.startsWith("/signup");
 
-  // 어드민 진입 시 scrollbar-gutter: stable 적용 (페이지 이동 시 레이아웃 튐 방지)
-  useEffect(() => {
-    document.documentElement.classList.add("admin-page");
-    return () => {
-      document.documentElement.classList.remove("admin-page");
-    };
-  }, []);
-
   // 관리자 권한 체크 추가
   useEffect(() => {
     if (isAuthPage) {
@@ -88,9 +80,9 @@ export default function AdminLayout({
   if (!authorized) return null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col">
       {!isAuthPage && <AdminHeader />}
-      <div>{children}</div>
+      <div className="flex-1 bg-background">{children}</div>
     </div>
   );
 }

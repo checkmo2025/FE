@@ -183,21 +183,3 @@ body {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
-
-/* 어드민 페이지 전용 스크롤바 (항상 표시) */
-html.admin-page {
-  overflow-y: scroll;
-}
-html.admin-page::-webkit-scrollbar {
-  width: 8px;
-}
-html.admin-page::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-html.admin-page::-webkit-scrollbar-thumb {
-  background: #c1b5aa;
-  border-radius: 4px;
-}
-html.admin-page::-webkit-scrollbar-thumb:hover {
-  background: #826656;
-}
