@@ -19,7 +19,7 @@ export default function MeetingCard({ title, showMoreIcon = false }: Props) {
 
       {/* showMoreIcon이 true일 경우에만 렌더링 */}
       {showMoreIcon && (
-        <button type="button" className="relative h-[24px] w-[24px] shrink-0">
+        <button type="button" className="relative h-[24px] w-[24px] shrink-0 cursor-pointer">
           <Image
             src="/ant-design_more-outlined.svg"
             alt="더보기"

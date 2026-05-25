@@ -34,7 +34,7 @@ const LibraryCard = ({ book }: LibraryCardProps) => {
           e.stopPropagation();
           toggleLike(book.isbn);
         }}
-        className="relative z-10 w-[20px] h-[20px] md:w-[24px] md:h-[24px]"
+        className="relative z-10 w-[20px] h-[20px] md:w-[24px] md:h-[24px] cursor-pointer"
       >
         <Image
           src={book.likedByMe ?? false ? "/red_heart.svg" : "/gray_heart.svg"}

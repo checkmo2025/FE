@@ -33,7 +33,7 @@ const InterestCategorySelector: React.FC<InterestCategorySelectorProps> = ({
             <button
               key={cat.value}
               onClick={() => onToggle(cat.value)}
-              className={`w-full md:w-[122px] h-[44px] flex justify-center items-center rounded-[400px] text-[14px] leading-[145%] tracking-[-0.014px] transition-colors ${isSelected
+              className={`w-full md:w-[122px] h-[44px] flex justify-center items-center rounded-[400px] text-[14px] leading-[145%] tracking-[-0.014px] transition-colors cursor-pointer ${isSelected
                   ? "bg-Subbrown-1 border border-Subbrown-3 text-White font-medium"
                   : "bg-background border border-Subbrown-3 text-Gray-5 font-normal"
                 }`}

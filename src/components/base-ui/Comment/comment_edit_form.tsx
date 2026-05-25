@@ -23,14 +23,14 @@ export default function CommentEditForm({
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 rounded-lg bg-Gray-2 text-Gray-6 subhead_4_1"
+          className="px-4 py-2 rounded-lg bg-Gray-2 text-Gray-6 subhead_4_1 cursor-pointer"
         >
           취소
         </button>
         <button
           type="button"
           onClick={onSave}
-          className="px-4 py-2 rounded-lg bg-primary-3 text-White subhead_4_1"
+          className="px-4 py-2 rounded-lg bg-primary-3 text-White subhead_4_1 cursor-pointer"
         >
           저장
         </button>
