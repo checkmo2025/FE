@@ -1,41 +1,33 @@
-"use client";
+import type { Metadata } from "next";
+import ProfileClient from "./ProfileClient";
 
-import React, { useState } from "react";
-import ProfileUserInfo from "@/components/base-ui/Profile/OtherUser/ProfileUserInfo";
-import BookStoryList from "@/components/base-ui/Profile/Lists/BookStoryList";
-import LibraryList from "@/components/base-ui/Profile/Lists/LibraryList";
-import MeetingList from "@/components/base-ui/Profile/Lists/MeetingList";
-import ProfileBreadcrumb from "@/components/base-ui/Profile/OtherUser/ProfileBreadcrumb";
-import OtherUserProfileTabs from "@/components/base-ui/Profile/OtherUser/OtherUserProfileTabs";
-import type { OtherProfileTabId } from "@/components/base-ui/Profile/OtherUser/OtherUserProfileTabs";
+type Props = { params: Promise<{ nickname: string }> };
 
-type PageProps = {
-  params: Promise<{ nickname: string }>;
-};
-
-export default function OtherUserProfilePage({ params }: PageProps) {
-  return <OtherUserProfileContent params={params} />;
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { nickname: encodedNickname } = await params;
+  const nickname = decodeURIComponent(encodedNickname);
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/members/${encodedNickname}`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return { title: `${nickname}의 프로필` };
+    const data = await res.json();
+    const member = data.result;
+    return {
+      title: `${member.nickname}의 프로필`,
+      description: member.description,
+      openGraph: {
+        title: `${member.nickname}의 프로필`,
+        description: member.description,
+        images: member.profileImageUrl ? [member.profileImageUrl] : [],
+      },
+    };
+  } catch {
+    return { title: `${nickname}의 프로필` };
+  }
 }
 
-function OtherUserProfileContent({ params }: PageProps) {
-  const { nickname: encodedNickname } = React.use(params);
-  const nickname = encodedNickname ? decodeURIComponent(encodedNickname) : "";
-  const [activeTab, setActiveTab] = useState<OtherProfileTabId>("stories");
-
-  return (
-    <div className="flex flex-col items-center gap-[10px] md:gap-[24px] w-full min-h-screen bg-[#F9F7F6] pb-[100px]">
-      <ProfileBreadcrumb nickname={nickname} />
-
-      <div className="mt-[12px] md:mt-[56px]">
-        <ProfileUserInfo nickname={nickname} />
-      </div>
-
-      <div className="flex flex-col items-center w-full max-w-[1440px] px-4 md:px-0 gap-[24px] mt-[10px] md:mt-[72px]">
-        <OtherUserProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />
-        {activeTab === "stories" && <BookStoryList nickname={nickname} />}
-        {activeTab === "library" && <LibraryList nickname={nickname} />}
-        {activeTab === "meetings" && <MeetingList nickname={nickname} />}
-      </div>
-    </div>
-  );
+export default async function OtherUserProfilePage({ params }: Props) {
+  const { nickname: encodedNickname } = await params;
+  return <ProfileClient encodedNickname={encodedNickname} />;
 }

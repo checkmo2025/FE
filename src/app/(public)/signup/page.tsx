@@ -1,14 +1,10 @@
-"use client";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+export const metadata: Metadata = {
+  title: "회원가입",
+};
 
 export default function SignupPage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace("/signup/terms");
-  }, [router]);
-
-  return null;
+  redirect("/signup/terms");
 }

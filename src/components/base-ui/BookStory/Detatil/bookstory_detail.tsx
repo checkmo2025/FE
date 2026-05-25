@@ -80,7 +80,7 @@ export default function BookstoryDetail({
   onEditClick,
   onDeleteClick,
 }: BookstoryDetailProps) {
-  const href = authorHref ?? `/profile/${authorId}`;
+  const href = authorHref ?? (isMyStory ? "/profile/mypage" : `/profile/${encodeURIComponent(authorId)}`);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);

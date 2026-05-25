@@ -53,7 +53,7 @@ export default function LandingHero() {
 
         <button
           onClick={handleJoin}
-          className="subhead_3_2 mt-2 rounded-full bg-primary-1 px-8 py-3.5 text-white transition-opacity hover:opacity-80"
+          className="subhead_3_2 mt-2 cursor-pointer rounded-full bg-primary-1 px-8 py-3.5 text-white transition hover:brightness-110 hover:shadow-lg active:scale-95"
         >
           지금 가입하기
         </button>
