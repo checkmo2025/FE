@@ -80,9 +80,9 @@ export default function AdminLayout({
   if (!authorized) return null;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       {!isAuthPage && <AdminHeader />}
-      <div className="flex-1 bg-background">{children}</div>
+      <div>{children}</div>
     </div>
   );
 }
