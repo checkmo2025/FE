@@ -27,6 +27,14 @@ export default function AdminLayout({
     pathname.startsWith("/login") ||
     pathname.startsWith("/signup");
 
+  // 어드민 진입 시 scrollbar-gutter: stable 적용 (페이지 이동 시 레이아웃 튐 방지)
+  useEffect(() => {
+    document.documentElement.style.scrollbarGutter = "stable";
+    return () => {
+      document.documentElement.style.scrollbarGutter = "";
+    };
+  }, []);
+
   // 관리자 권한 체크 추가
   useEffect(() => {
     if (isAuthPage) {
