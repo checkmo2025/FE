@@ -66,16 +66,6 @@ export const useFollowCountQuery = (enabled: boolean = true) => {
     });
 };
 
-export const useMyReportsQuery = (enabled: boolean = true) => {
-    return useInfiniteQuery({
-        queryKey: memberKeys.reports(),
-        queryFn: ({ pageParam }) => memberService.getMyReports(pageParam),
-        initialPageParam: undefined as number | undefined,
-        getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor : undefined),
-        enabled,
-    });
-};
-
 export const useLoginStatusQuery = (enabled: boolean = true) => {
     return useQuery({
         queryKey: memberKeys.loginStatus(),

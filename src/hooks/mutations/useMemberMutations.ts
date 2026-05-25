@@ -7,6 +7,8 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { ReportMemberRequest, FollowListResponse } from "@/types/member";
 import { memberKeys } from "../queries/useMemberQueries";
 import { useBlockStore } from "@/store/useBlockStore";
+import { useCreateReportMutation } from "./useReportMutations";
+import { ReportReason } from "@/types/report";
 
 interface UpdateProfilePayload {
     description: string;
@@ -345,22 +347,6 @@ export const useDeleteFollowerMutation = () => {
     });
 };
 
-export const useReportMemberMutation = () => {
-    return useMutation({
-        mutationFn: async (payload: ReportMemberRequest) => {
-            await memberService.reportMember(payload);
-        },
-        onSuccess: () => {
-            toast.success("신고가 완료되었습니다.");
-        },
-        onError: (error: any) => {
-            console.error("Failed to report member:", error);
-            const errorMessage = error.response?.data?.message || error.message || "신고에 실패했습니다.";
-            toast.error(errorMessage);
-        },
-    });
-};
-
 export const useFindEmailMutation = () => {
     return useMutation({
         mutationFn: async (payload: FindEmailRequest) => {
@@ -433,4 +419,31 @@ export const useUnblockMemberMutation = () => {
             toast.error(errorMessage);
         },
     });
+};
+
+export const useReportMemberMutation = () => {
+    const { mutate, ...rest } = useCreateReportMutation();
+    const deprecatedMutate = (variables: {
+        reportedMemberNickname: string;
+        reportType: string;
+        content: string;
+    }) => {
+        const reasonMap: Record<string, ReportReason> = {
+            GENERAL: "GENERAL",
+            ABUSE: "INSULT",
+            INSULT: "INSULT",
+            COMMENT: "INSULT",
+            CLUB_MEETING: "GENERAL",
+            INAPPROPRIATE: "INAPPROPRIATE_CONTENT",
+            INAPPROPRIATE_CONTENT: "INAPPROPRIATE_CONTENT",
+            SPAM: "SPAM",
+        };
+        mutate({
+            targetType: variables.reportType === "BOOK_STORY" ? "BOOK_STORY" : "MEMBER",
+            targetId: variables.reportedMemberNickname,
+            reason: reasonMap[variables.reportType] || "GENERAL",
+            content: variables.content,
+        });
+    };
+    return { mutate: deprecatedMutate, ...rest } as any;
 };

@@ -3,8 +3,9 @@
 import Image from "next/image";
 import { useOtherProfileQuery } from "@/hooks/queries/useMemberQueries";
 
-import { useToggleFollowMutation, useReportMemberMutation, useBlockMemberMutation } from "@/hooks/mutations/useMemberMutations";
-import { ReportType } from "@/types/member";
+import { useToggleFollowMutation, useBlockMemberMutation } from "@/hooks/mutations/useMemberMutations";
+import { useCreateReportMutation } from "@/hooks/mutations/useReportMutations";
+import { ReportReason } from "@/types/report";
 import ReportModal from "@/components/common/modals/report-block/ReportModal";
 import { useAuthStore } from "@/store/useAuthStore";
 import Link from "next/link";
@@ -64,15 +65,14 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
   const { data: profile, isLoading, isError, error } = useOtherProfileQuery(nickname);
   const { isLoggedIn, openLoginModal } = useAuthStore();
   const { mutate: toggleFollow } = useToggleFollowMutation();
-  const { mutate: reportMember } = useReportMemberMutation();
+  const { mutate: reportMember } = useCreateReportMutation();
   const { mutateAsync: blockMember } = useBlockMemberMutation();
   
-  const handleReportSubmitLogic = (type: string, content: string) => {
-    const mappedType = REPORT_TYPE_MAP[type] || "GENERAL";
-
+  const handleReportSubmitLogic = (reason: string, content: string) => {
     reportMember({
-      reportedMemberNickname: nickname,
-      reportType: mappedType,
+      targetType: "MEMBER",
+      targetId: nickname,
+      reason: reason as ReportReason,
       content,
     });
   };
@@ -215,7 +215,12 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
           isOpen={modalStep === "report"}
           onClose={closeAll}
           onSubmit={handleReportSubmit}
-          defaultReportType="일반"
+          target={{
+            type: "MEMBER",
+            id: profile.nickname,
+            nickname: profile.nickname,
+            profileImageUrl: profile.profileImageUrl,
+          }}
         />
 
         <BlockConfirmModal

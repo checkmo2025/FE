@@ -2,16 +2,9 @@
 
 import ReportItem from "@/components/base-ui/Settings/Report/ReportItem";
 import SettingsDetailLayout from "@/components/base-ui/Settings/SettingsDetailLayout";
-import { useMyReportsQuery } from "@/hooks/queries/useMemberQueries";
+import { useMyReportsQuery } from "@/hooks/queries/useReportQueries";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
-
-const REPORT_TYPE_MAP: Record<string, string> = {
-  GENERAL: "일반",
-  BOOK_STORY: "책 이야기",
-  COMMENT: "책 이야기(댓글)",
-  CLUB_MEETING: "책모임 내부",
-};
 
 export default function ReportPageClient() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } = useMyReportsQuery();
@@ -54,12 +47,13 @@ export default function ReportPageClient() {
       ) : (
         reports.map((report, idx) => (
           <ReportItem
-            key={`${report.reportDate}-${idx}`}
-            category={REPORT_TYPE_MAP[report.reportType] || "일반"}
-            reporterName={report.reportedMemberNickname}
+            key={`${report.reportId}-${idx}`}
+            category={report.targetTypeDescription || "일반"}
+            reporterName={report.targetId}
             content={report.content}
-            date={report.reportDate.substring(0, 10).replace(/-/g, ".")}
-            profileImageUrl={report.reportedMemberProfileImageUrl}
+            date={report.reportedAt.substring(0, 10).replace(/-/g, ".")}
+            profileImageUrl={undefined}
+            redirectUrl={report.redirectUrl}
           />
         ))
       )}

@@ -73,15 +73,6 @@ export const memberService = {
             throw new Error(response.message || "Failed to delete follower");
         }
     },
-    reportMember: async (data: ReportMemberRequest): Promise<void> => {
-        const response = await apiClient.post<ApiResponse<unknown>>(
-            MEMBER_ENDPOINTS.REPORT,
-            data
-        );
-        if (!response.isSuccess) {
-            throw new Error(response.message || "Failed to report member");
-        }
-    },
     getFollowerList: async (nickname?: string, cursorId?: number): Promise<FollowListResponse> => {
         const endpoint = nickname ? MEMBER_ENDPOINTS.GET_OTHER_FOLLOWERS(nickname) : MEMBER_ENDPOINTS.GET_FOLLOWERS;
         const params = new URLSearchParams();
@@ -124,20 +115,6 @@ export const memberService = {
         if (!response.isSuccess) {
             // Throw the exact error message from backend
             throw new Error(response.message || "해당 회원을 찾을 수 없습니다.");
-        }
-        return response.result!;
-    },
-    getMyReports: async (cursorId?: number): Promise<ReportListResponse> => {
-        const endpoint = MEMBER_ENDPOINTS.GET_MY_REPORTS;
-        const params = new URLSearchParams();
-        if (cursorId) {
-            params.append("cursorId", cursorId.toString());
-        }
-        const queryString = params.toString();
-        const url = queryString ? `${endpoint}?${queryString}` : endpoint;
-        const response = await apiClient.get<ApiResponse<ReportListResponse>>(url);
-        if (!response.isSuccess) {
-            throw new Error(response.message || "신고 내역을 불러오는 데 실패했습니다.");
         }
         return response.result!;
     },

@@ -4,8 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ReportModal from "@/components/common/modals/report-block/ReportModal";
-import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
-import { ReportType } from "@/types/member";
+import { useCreateReportMutation } from "@/hooks/mutations/useReportMutations";
+import { ReportReason } from "@/types/report";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-hot-toast";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
@@ -86,7 +86,7 @@ export default function BookstoryDetail({
   const menuRef = useRef<HTMLDivElement>(null);
   const heartIcon = likedByMe ? "/red_heart.svg" : "/gray_heart.svg";
   const { isLoggedIn, openLoginModal } = useAuthStore();
-  const { mutate: reportMember } = useReportMemberMutation();
+  const { mutate: reportMember } = useCreateReportMutation();
 
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
@@ -99,15 +99,12 @@ export default function BookstoryDetail({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleReportSubmit = (type: string, content: string) => {
-    let mappedType: ReportType = "GENERAL";
-    if (type === "책 이야기") mappedType = "BOOK_STORY";
-    if (type === "책이야기(댓글)") mappedType = "COMMENT";
-    if (type === "책모임 내부") mappedType = "CLUB_MEETING";
-
+  const handleReportSubmit = (reason: string, content: string) => {
+    if (!id) return;
     reportMember({
-      reportedMemberNickname: authorNickname,
-      reportType: mappedType,
+      targetType: "BOOK_STORY",
+      targetId: id.toString(),
+      reason: reason as ReportReason,
       content,
     });
   };
@@ -370,7 +367,13 @@ export default function BookstoryDetail({
         isOpen={isReportModalOpen}
         onClose={() => setIsReportModalOpen(false)}
         onSubmit={handleReportSubmit}
-        defaultReportType="책 이야기"
+        target={{
+          type: "BOOK_STORY",
+          id: id?.toString() || "",
+          nickname: authorNickname,
+          profileImageUrl: profileImgSrc,
+          title: bookTitle,
+        }}
       />
     </div>
   );
