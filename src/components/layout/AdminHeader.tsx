@@ -97,6 +97,8 @@ export default function AdminHeader() {
             <button
               onClick={() => setOpen((prev) => !prev)}
               aria-label="관리자 프로필"
+              aria-expanded={open}
+              aria-haspopup="true"
               className="relative w-6 h-6 cursor-pointer"
             >
               <Image

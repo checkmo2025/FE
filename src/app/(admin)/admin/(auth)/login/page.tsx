@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/lib/api/endpoints";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -11,13 +12,10 @@ export default function AdminLoginPage() {
   useEffect(() => {
     const checkAdmin = async () => {
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/members/me/login-status`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const res = await fetch(`${API_BASE_URL}/members/me/login-status`, {
+          method: "GET",
+          credentials: "include",
+        });
         if (!res.ok) return;
 
         const data = await res.json();
@@ -67,7 +65,7 @@ export default function AdminLoginPage() {
           className="
             px-[32px] py-[12px]
             rounded-[8px]
-            bg-[#826656] text-white
+            bg-primary-1 text-white
             subhead_2
             hover:opacity-80
             transition-opacity
