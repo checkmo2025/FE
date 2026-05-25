@@ -29,9 +29,9 @@ export default function AdminLayout({
 
   // 어드민 진입 시 scrollbar-gutter: stable 적용 (페이지 이동 시 레이아웃 튐 방지)
   useEffect(() => {
-    document.documentElement.style.scrollbarGutter = "stable";
+    document.documentElement.style.overflowY = "scroll";
     return () => {
-      document.documentElement.style.scrollbarGutter = "";
+      document.documentElement.style.overflowY = "";
     };
   }, []);
 
