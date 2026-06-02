@@ -46,7 +46,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ onNext }) => {
               <button
                 onClick={startTimer}
                 disabled={!isEmailValid}
-                className={`flex justify-center items-center w-full t:w-[284px] h-[48px] rounded-[8px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px] transition-colors ${isEmailValid
+                className={`flex justify-center items-center w-full t:w-[284px] h-[48px] rounded-[8px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px] transition-colors cursor-pointer disabled:cursor-not-allowed ${isEmailValid
                     ? "bg-Subbrown-2 text-white"
                     : "bg-Gray-2 text-Gray-4"
                   }`}
@@ -74,7 +74,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ onNext }) => {
             <button
               onClick={handleVerify}
               disabled={!isCodeValid}
-              className={`flex justify-center items-center w-full t:w-[284px] h-[48px] rounded-[8px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px] self-center transition-colors ${isCodeValid
+              className={`flex justify-center items-center w-full t:w-[284px] h-[48px] rounded-[8px] text-[14px] font-semibold leading-[145%] tracking-[-0.014px] self-center transition-colors cursor-pointer disabled:cursor-not-allowed ${isCodeValid
                   ? "bg-Subbrown-2 text-white"
                   : "bg-Gray-2 text-Gray-4"
                 }`}

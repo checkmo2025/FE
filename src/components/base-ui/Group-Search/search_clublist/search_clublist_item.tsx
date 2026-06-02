@@ -183,6 +183,7 @@ export default function SearchClubListItem({
                   "body_2_2 t:body_1_2",
                   "mb-1",
                   "hover:bg-primary-1 transition-colors",
+                  "cursor-pointer",
                 ].join(" ")}
               >
                 <span className="t:hidden">{isOpen ? "신청 닫기" : "가입신청하기"}</span>
@@ -201,6 +202,7 @@ export default function SearchClubListItem({
                 "bg-background text-primary-3",
                 "body_2_2 t:body_1_2",
                 "hover:bg-Subbrown-4 transition-colors",
+                "cursor-pointer",
               ].join(" ")}
             >
               방문하기

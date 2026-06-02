@@ -3,11 +3,11 @@ import LandingPageClient from "./LandingPageClient";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "독서 모임 플랫폼 CheckMo",
+    absolute: "책모 - 독서 모임 플랫폼",
   },
   description: "함께 읽고, 나누고, 성장하는 독서 모임 플랫폼",
   openGraph: {
-    title: "독서 모임 플랫폼 CheckMo",
+    title: "책모 - 독서 모임 플랫폼",
     description: "함께 읽고, 나누고, 성장하는 독서 모임 플랫폼",
   },
 };

@@ -26,7 +26,7 @@ function ActionButton({
   onClick?: () => void;
 }) {
   const baseStyles =
-    "flex items-center justify-center rounded-[8px] transition-colors";
+    "flex items-center justify-center rounded-[8px] transition-colors cursor-pointer";
 
   const variants = {
     primary:

@@ -50,7 +50,7 @@ export default function EmailChangePageClient() {
   };
 
   const buttonStyle =
-    "flex h-[48px] items-center justify-center gap-[10px] rounded-[8px] bg-Gray-1 px-[16px] py-[12px] w-[120px] md:w-[200px] disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:bg-Gray-2";
+    "flex h-[48px] items-center justify-center gap-[10px] rounded-[8px] bg-Gray-1 px-[16px] py-[12px] w-[120px] md:w-[200px] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed transition-colors hover:bg-Gray-2";
   const buttonTextStyle = "body_1_1 text-Gray-4";
 
   return (

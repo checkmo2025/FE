@@ -98,7 +98,7 @@ const JoinInput: React.FC<JoinInputProps> = ({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute top-1/2 right-[12px] transform -translate-y-1/2 text-[#BBB] hover:text-[#8D8D8D]"
+            className="absolute top-1/2 right-[12px] transform -translate-y-1/2 text-[#BBB] hover:text-[#8D8D8D] cursor-pointer"
           >
             {showPassword ? <EyeOffIcon /> : <EyeIcon />}
           </button>

@@ -50,7 +50,7 @@ export default function FollowItem({ user, onToggleFollow, onDelete }: FollowIte
                     disabled={isDeleted}
                     className={`flex px-[17px] py-[8px] justify-center items-center gap-[10px] rounded-[8px] transition-colors ${isDeleted
                         ? "bg-Subbrown-4 text-primary-3 cursor-not-allowed opacity-50"
-                        : "bg-Red text-White"
+                        : "bg-Red text-White cursor-pointer"
                         }`}
                 >
                     <span className="font-sans text-[12px] font-semibold leading-[100%] tracking-[-0.012px]">
@@ -62,7 +62,7 @@ export default function FollowItem({ user, onToggleFollow, onDelete }: FollowIte
                 <button
                     type="button"
                     onClick={() => onToggleFollow(user.id, user.isFollowing)}
-                    className={`flex px-[17px] py-[8px] justify-center items-center gap-[10px] rounded-[8px] transition-colors ${user.isFollowing
+                    className={`flex px-[17px] py-[8px] justify-center items-center gap-[10px] rounded-[8px] transition-colors cursor-pointer ${user.isFollowing
                         ? "bg-Subbrown-4 text-primary-3"
                         : "bg-primary-2 text-White"
                         }`}

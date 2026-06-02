@@ -41,7 +41,7 @@ export default function BlockedUserItem({
       <button
         type="button"
         onClick={onUnblock}
-        className="flex h-[28px] w-[79px] items-center justify-center rounded-[8px] border border-Subbrown-3 bg-White transition-colors hover:bg-gray-50"
+        className="flex h-[28px] w-[79px] items-center justify-center rounded-[8px] border border-Subbrown-3 bg-White transition-colors hover:bg-gray-50 cursor-pointer"
       >
         <span className="text-[12px] font-semibold leading-[100%] text-Gray-5">
           차단 해제

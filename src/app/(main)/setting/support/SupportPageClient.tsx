@@ -40,7 +40,7 @@ export default function SupportPageClient() {
                 <div className="flex flex-col w-[320px] md:w-[400px] gap-4">
                     <button
                         onClick={handleOpenForm}
-                        className="w-full h-[56px] bg-primary-3 text-white rounded-[12px] subhead_4_1 hover:bg-primary-2 transition-colors shadow-md active:scale-[0.98]"
+                        className="w-full h-[56px] bg-primary-3 text-white rounded-[12px] subhead_4_1 hover:bg-primary-2 transition-colors shadow-md active:scale-[0.98] cursor-pointer"
                     >
                         문의하기 폼 열기
                     </button>
@@ -51,7 +51,7 @@ export default function SupportPageClient() {
                         </p>
                         <button
                             onClick={handleOpenForm}
-                            className="text-primary-3 body_2_1 underline underline-offset-4 hover:text-primary-2"
+                            className="text-primary-3 body_2_1 underline underline-offset-4 hover:text-primary-2 cursor-pointer"
                         >
                             직접 링크로 이동하기
                         </button>
