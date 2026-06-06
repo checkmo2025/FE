@@ -91,21 +91,23 @@ export default function LoginModal({ onClose, onSignUp }: Props) {
           <div className="flex flex-col items-start gap-2 shrink-0">
             <p className="text-[12px] text-Gray-4">
               아직 회원이 아니신가요?{" "}
-              <span
+              <button
+                type="button"
                 className="underline underline-offset-auto cursor-pointer"
                 onClick={handleSignUp}
               >
                 회원가입하러가기
-              </span>
+              </button>
             </p>
             <p className="text-[12px] text-Gray-4">
               도움이 필요하신가요?{" "}
-              <span
+              <button
+                type="button"
                 className="underline underline-offset-auto cursor-pointer"
                 onClick={() => { onClose(); router.push("/support"); }}
               >
                 문의하러 가기
-              </span>
+              </button>
             </p>
           </div>
         </div>
