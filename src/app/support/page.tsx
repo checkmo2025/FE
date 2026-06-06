@@ -5,6 +5,7 @@ import {
   DocumentSection,
   PublicDocumentLayout,
 } from "@/components/base-ui/PublicDocument/PublicDocumentLayout";
+import { EXTERNAL_LINKS } from "@/constants/links";
 
 export const metadata: Metadata = {
   title: "고객지원",
@@ -49,6 +50,14 @@ export default function SupportPage() {
         <p className="mt-4 text-[15px] leading-[170%] text-Gray-5">
           문의 접수 후 영업일 기준 2~3일 이내에 답변드립니다.
         </p>
+        <a
+          href={EXTERNAL_LINKS.INQUIRY_FORM_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-block rounded-[8px] border border-Subbrown-3 bg-White px-4 py-3 font-semibold text-primary-3 transition-colors hover:border-primary-2"
+        >
+          구글폼 작성하기
+        </a>
       </section>
 
       <DocumentSection title="문의 가능 항목">
