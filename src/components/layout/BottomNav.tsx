@@ -44,6 +44,8 @@ export default function BottomNav() {
   const router = useRouter();
   const { isLoggedIn, openLoginModal } = useAuthStore();
 
+  if (pathname === "/landing") return null;
+
   const handleNavClick = (e: React.MouseEvent, href: string, label: string) => {
     if (label === "모임" && !isLoggedIn) {
       e.preventDefault();
