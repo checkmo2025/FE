@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -20,4 +21,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+
+
+export default withSentryConfig(nextConfig, {
+  org: "checkmo",
+  project: "checkmo-next",
+  silent: true,
+  widenClientFileUpload: true,
+  hideSourceMaps: true,
+  disableLogger: true,
+  automaticVercelMonitors: false,
+});
+

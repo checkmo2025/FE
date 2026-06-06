@@ -1,8 +1,9 @@
 import { ApiResponse } from "@/types/auth";
+import * as Sentry from "@sentry/nextjs";
 import { useAuthStore } from "@/store/useAuthStore";
 import toast from "react-hot-toast";
-import { getErrorMessage } from "./errorMapper";
-import { ApiError } from "./ApiError";
+import { getErrorMessage } from "./errors";
+import { ApiError } from "./errors";
 
 interface RequestOptions extends RequestInit {
   headers?: Record<string, string>;
@@ -86,6 +87,20 @@ async function request<T>(
   } catch (error) {
     clearTimeout(id);
     console.error("API Request Error:", error);
+
+    if (error instanceof ApiError) {
+      // 5xx 서버 에러만 Sentry에 보고 (4xx, 401은 제외)
+      const statusCode = parseInt(error.code.replace("HTTP", ""), 10);
+      if (!isNaN(statusCode) && statusCode >= 500) {
+        Sentry.captureException(error, {
+          extra: { code: error.code, url: requestUrl, method: options.method },
+        });
+      }
+    } else if (!(error instanceof DOMException && error.name === "AbortError")) {
+      // 타임아웃(AbortError)은 제외, 그 외 예상치 못한 에러는 모두 Sentry에 보고
+      Sentry.captureException(error);
+    }
+
     if (error instanceof DOMException && error.name === "AbortError") {
       toast.error("요청 시간이 초과되었습니다.");
       throw new Error("Request timeout");
