@@ -35,26 +35,26 @@ export default function LoginForm({
           value={form.identifier}
           onChange={onChange}
           placeholder="이메일"
-          className={`flex w-[228px] t:w-[300px] h-[32px] t:h-[44px] px-4 py-3 items-center rounded-lg border bg-white outline-none text-sm leading-[145%] text-Gray-7 transition-colors placeholder:text-Gray-3 disabled:cursor-not-allowed disabled:opacity-60 ${
+          className={`flex w-full h-[32px] t:h-[44px] px-4 py-3 items-center rounded-lg border bg-white outline-none text-sm leading-[145%] text-Gray-7 transition-colors placeholder:text-Gray-3 disabled:cursor-not-allowed disabled:opacity-60 ${
             errors?.identifier ? "border-Red" : "border-Subbrown-4 focus:border-primary-1"
           }`}
           onKeyDown={onKeyDown}
           disabled={isLoading}
         />
         {errors?.identifier && (
-          <span className="w-[228px] t:w-[300px] text-[12px] text-Red text-left">
+          <span className="w-full text-[12px] text-Red text-left">
             {errors.identifier}
           </span>
         )}
 
-        <div className="relative flex items-center justify-center w-full">
+        <div className="relative w-full">
           <input
             name="password"
             type={showPassword ? "text" : "password"}
             value={form.password}
             onChange={onChange}
             placeholder="비밀번호"
-            className={`flex w-[228px] t:w-[300px] h-[32px] t:h-[44px] pl-4 pr-10 py-3 items-center rounded-lg border bg-white outline-none text-sm leading-[145%] text-Gray-7 transition-colors placeholder:text-Gray-3 disabled:cursor-not-allowed disabled:opacity-60 ${
+            className={`flex w-full h-[32px] t:h-[44px] pl-4 pr-10 py-3 items-center rounded-lg border bg-white outline-none text-sm leading-[145%] text-Gray-7 transition-colors placeholder:text-Gray-3 disabled:cursor-not-allowed disabled:opacity-60 ${
               errors?.password ? "border-Red" : "border-Subbrown-4 focus:border-primary-1"
             }`}
             onKeyDown={onKeyDown}
@@ -62,7 +62,7 @@ export default function LoginForm({
           />
           <button
             type="button"
-            className="absolute right-[calc(50%-114px+16px)] t:right-[16px] flex items-center justify-center text-[#BBB] hover:text-[#8D8D8D] cursor-pointer"
+            className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-[#BBB] hover:text-[#8D8D8D] cursor-pointer"
             onClick={() => setShowPassword((prev) => !prev)}
             tabIndex={-1}
           >
@@ -70,7 +70,7 @@ export default function LoginForm({
           </button>
         </div>
         {errors?.password && (
-          <span className="w-[228px] t:w-[300px] text-[12px] text-Red text-left">
+          <span className="w-full text-[12px] text-Red text-left">
             {errors.password}
           </span>
         )}
@@ -102,7 +102,7 @@ export default function LoginForm({
       {/* 로그인 버튼 */}
       <button
         type="button"
-        className="flex items-center justify-center w-[228px] t:w-[300px] h-[32px] t:h-[48px] rounded-lg bg-primary-1 text-White font-semibold text-sm border-none cursor-pointer transition-all active:brightness-90 disabled:bg-Gray-3 disabled:cursor-not-allowed shrink-0"
+        className="flex items-center justify-center w-full h-[32px] t:h-[48px] rounded-lg bg-primary-1 text-White font-semibold text-sm border-none cursor-pointer transition-all active:brightness-90 disabled:bg-Gray-3 disabled:cursor-not-allowed shrink-0"
         onClick={onLogin}
         disabled={isLoading}
       >
