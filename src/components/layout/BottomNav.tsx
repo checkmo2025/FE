@@ -44,6 +44,8 @@ export default function BottomNav() {
   const router = useRouter();
   const { isLoggedIn, openLoginModal } = useAuthStore();
 
+  if (pathname === "/landing") return null;
+
   const handleNavClick = (e: React.MouseEvent, href: string, label: string) => {
     if (label === "모임" && !isLoggedIn) {
       e.preventDefault();
@@ -53,33 +55,36 @@ export default function BottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-White border-Gray-2 t:hidden">
-      <div className="flex items-center justify-around h-[70px] px-2">
-        {NAV_ITEMS.map((item) => {
-          const isActive =
-            item.href === "/"
-              ? pathname === "/"
-              : pathname.startsWith(item.href);
+    <>
+      <div className="h-[70px] t:hidden" />
+      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-White border-Gray-2 t:hidden">
+        <div className="flex items-center justify-around h-[70px] px-2">
+          {NAV_ITEMS.map((item) => {
+            const isActive =
+              item.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(item.href);
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={(e) => handleNavClick(e, item.href, item.label)}
-              className="flex flex-col items-center justify-center gap-1 py-2 "
-            >
-              <div className="relative w-12 h-12">
-                <Image
-                  src={isActive ? item.iconAfter : item.iconBefore}
-                  alt={item.label}
-                  fill
-                  className="object-contain"
-                />
-              </div>
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={(e) => handleNavClick(e, item.href, item.label)}
+                className="flex flex-col items-center justify-center gap-1 py-2 "
+              >
+                <div className="relative w-12 h-12">
+                  <Image
+                    src={isActive ? item.iconAfter : item.iconBefore}
+                    alt={item.label}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+    </>
   );
 }
