@@ -28,8 +28,8 @@ export default withSentryConfig(nextConfig, {
   project: "checkmo-next",
   silent: true,
   widenClientFileUpload: true,
-  hideSourceMaps: true,
-  disableLogger: true,
-  automaticVercelMonitors: false,
+  sourcemaps: {
+    disable: false,
+  },
 });
 
