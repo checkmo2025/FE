@@ -34,7 +34,7 @@ export default function SupportPage() {
   return (
     <PublicDocumentLayout
       title="책모 고객지원"
-      description="책모 이용 중 문제가 있거나 문의가 필요한 경우 아래 이메일로 연락해 주세요."
+      description="책모 이용 중 문제가 있거나 문의가 필요한 경우 아래 이메일로 연락을 주시거나, 구글폼을 작성해주세요."
     >
       <section className="rounded-[8px] border border-Subbrown-3 bg-White p-5 t:p-6">
         <p className="text-[14px] font-medium leading-[145%] text-Gray-4">
