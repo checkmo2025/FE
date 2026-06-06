@@ -42,9 +42,9 @@ export default function LoginForm({
           disabled={isLoading}
         />
         {errors?.identifier && (
-          <span className="w-full text-[12px] text-Red text-left">
+          <p className="w-full text-[12px] text-Red text-left">
             {errors.identifier}
-          </span>
+          </p>
         )}
 
         <div className="relative w-full">
@@ -70,9 +70,9 @@ export default function LoginForm({
           </button>
         </div>
         {errors?.password && (
-          <span className="w-full text-[12px] text-Red text-left">
+          <p className="w-full text-[12px] text-Red text-left">
             {errors.password}
-          </span>
+          </p>
         )}
       </div>
 
