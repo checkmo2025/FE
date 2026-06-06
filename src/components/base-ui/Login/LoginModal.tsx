@@ -88,8 +88,8 @@ export default function LoginModal({ onClose, onSignUp }: Props) {
           </div>
 
           {/* 하단 안내 문구 */}
-          <div className="flex flex-col items-center gap-2 shrink-0">
-            <p className="text-center text-[12px] text-Gray-4">
+          <div className="flex flex-col items-start gap-2 shrink-0">
+            <p className="text-[12px] text-Gray-4">
               아직 회원이 아니신가요?{" "}
               <span
                 className="underline underline-offset-auto cursor-pointer"
@@ -98,12 +98,15 @@ export default function LoginModal({ onClose, onSignUp }: Props) {
                 회원가입하러가기
               </span>
             </p>
-            <span
-              className="text-[12px] text-Gray-4 underline underline-offset-auto cursor-pointer"
-              onClick={() => { onClose(); router.push("/support"); }}
-            >
-              고객센터/문의하기
-            </span>
+            <p className="text-[12px] text-Gray-4">
+              도움이 필요하신가요?{" "}
+              <span
+                className="underline underline-offset-auto cursor-pointer"
+                onClick={() => { onClose(); router.push("/support"); }}
+              >
+                문의하러 가기
+              </span>
+            </p>
           </div>
         </div>
       </div>
