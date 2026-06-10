@@ -64,6 +64,27 @@ export default function SupportPage() {
         <DocumentList items={supportItems} />
       </DocumentSection>
 
+      <section className="rounded-[8px] border border-Subbrown-3 bg-White p-5 t:p-6">
+        <p className="text-[14px] font-medium leading-[145%] text-Gray-4">
+          소식 업로드
+        </p>
+        <p className="mt-2 text-[20px] font-semibold leading-[145%] text-primary-3 t:text-[22px]">
+          책모에 소식을 등록해보세요
+        </p>
+        <p className="mt-4 text-[15px] leading-[170%] text-Gray-5">
+          독서 모임, 출판 행사, 책 관련 소식을 공유하고 싶다면 아래 폼을
+          작성해주세요.
+        </p>
+        <a
+          href={EXTERNAL_LINKS.NEWS_FROM_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-block rounded-[8px] border border-Subbrown-3 bg-White px-4 py-3 font-semibold text-primary-3 transition-colors hover:border-primary-2"
+        >
+          소식 업로드하기
+        </a>
+      </section>
+
       <DocumentSection title="관련 문서">
         <div className="flex flex-col gap-3 t:flex-row">
           <Link
