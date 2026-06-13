@@ -99,6 +99,7 @@ export type LoginProvider = "LOCAL" | "GOOGLE" | "KAKAO" | "NAVER";
 export interface LoginStatusResponse {
     provider: LoginProvider;
     email: string;
+    admin?: boolean;
 }
 
 export interface BlockedUser {
