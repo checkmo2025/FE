@@ -13,9 +13,8 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "checkmo-s3-presigned.s3.ap-northeast-2.amazonaws.com",
+        hostname: "chekcmo-s3.s3.ap-northeast-2.amazonaws.com",
         pathname: "/**",
-
       },
     ],
   },
