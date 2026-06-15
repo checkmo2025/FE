@@ -1,5 +1,5 @@
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://api.checkmo.co.kr/api";
+  process.env.NEXT_PUBLIC_API_URL || "https://api.checkmo.co.kr/api/v1";
 
 export const AUTH_ENDPOINTS = {
   LOGIN: `${API_BASE_URL}/auth/login`,
