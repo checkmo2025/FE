@@ -93,6 +93,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.replace(PROFILE_COMPLETION_BASE_ROUTE);
   };
 
+  const handleCancelGate = () => {
+    // 취소(딤 클릭/ESC 포함) → 로그인 상태 해제 후 홈으로
+    logout();
+    Sentry.setUser(null);
+    router.replace("/");
+  };
+
   return (
     <>
       {children}
@@ -100,7 +107,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isOpen={shouldRequireProfileCompletion}
         message="프로필을 완성해주세요"
         onConfirm={goToProfileCompletion}
-        onCancel={goToProfileCompletion}
+        onCancel={handleCancelGate}
+        closeOnConfirm={false}
       />
     </>
   );

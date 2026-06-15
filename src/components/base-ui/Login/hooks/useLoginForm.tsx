@@ -53,8 +53,8 @@ export default function useLoginForm(onSuccess?: () => void) {
 
       let loggedInUser: User = {
         email: form.identifier,
-        profileCompleted: false,
       };
+      let profileResolved = false;
 
       // 상세 프로필 정보 가져오기
       try {
@@ -66,14 +66,13 @@ export default function useLoginForm(onSuccess?: () => void) {
             ...profileResponse.result,
             email: form.identifier
           };
-          login(loggedInUser);
-        } else {
-          // 프로필 조회 실패 시에도 최소한의 정보로 로그인 처리
-          login(loggedInUser);
+          profileResolved = true;
         }
+
+        login(loggedInUser);
       } catch (profileError) {
         console.error("Profile fetch failed during login:", profileError);
-        // 프로필 로드 실패해도 로그인은 성공한 상태이므로 최소 정보로 진행
+        // 프로필 로드 실패 시 프로필 완성 여부를 단정하지 않고 최소 정보로 로그인 처리
         login(loggedInUser);
       }
 
@@ -82,7 +81,12 @@ export default function useLoginForm(onSuccess?: () => void) {
       router.refresh();
       toast.success("로그인에 성공했습니다!");
       if (onSuccess) onSuccess();
-      router.push(isProfileIncomplete(loggedInUser) ? PROFILE_COMPLETION_ROUTE : "/");
+      // 프로필을 확실히 조회했고 그게 미완성일 때만 완성 페이지로, 그 외(실패/불명)는 홈으로
+      router.push(
+        profileResolved && isProfileIncomplete(loggedInUser)
+          ? PROFILE_COMPLETION_ROUTE
+          : "/"
+      );
     } catch (error) {
       if (error instanceof ApiError) {
         // 비즈니스 에러 (예: 비밀번호 불일치)는 인라인 에러로 처리
