@@ -93,9 +93,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.replace(PROFILE_COMPLETION_BASE_ROUTE);
   };
 
-  const handleCancelGate = () => {
-    // 취소(딤 클릭/ESC 포함) → 로그인 상태 해제 후 홈으로
-    logout();
+  const handleCancelGate = async () => {
+    // 취소(딤 클릭/ESC 포함) → 서버 세션까지 로그아웃 후 홈으로
+    // authService.logout()이 BE /auth/logout 호출 + 클라이언트 상태 정리를 모두 수행
+    await authService.logout();
     Sentry.setUser(null);
     router.replace("/");
   };
