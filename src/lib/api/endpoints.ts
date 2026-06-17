@@ -10,6 +10,7 @@ export const AUTH_ENDPOINTS = {
   ADDITIONAL_INFO: `${API_BASE_URL}/members/additional-info`,
   CHECK_NICKNAME: `${API_BASE_URL}/members/check-nickname`,
   PROFILE: `${API_BASE_URL}/members/me`,
+  LOGIN_STATUS: `${API_BASE_URL}/members/me/login-status`,
   IMAGE_UPLOAD: (type: string) => `${API_BASE_URL}/image/${type}/upload-url`,
   TEMP_PASSWORD: `${API_BASE_URL}/auth/temp-password`,
 };

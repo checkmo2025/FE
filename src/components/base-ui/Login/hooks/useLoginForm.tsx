@@ -3,9 +3,13 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/useAuthStore";
-import { LoginForm } from "@/types/auth";
+import { LoginForm, User } from "@/types/auth";
 import { authService } from "@/services/authService";
 import { ApiError } from "@/lib/api/errors";
+import {
+  isProfileIncomplete,
+  PROFILE_COMPLETION_ROUTE,
+} from "@/utils/profileCompletion";
 
 export default function useLoginForm(onSuccess?: () => void) {
   const router = useRouter();
@@ -45,7 +49,12 @@ export default function useLoginForm(onSuccess?: () => void) {
 
     try {
       // Service Layer 호출
-      const loginData = await authService.login(form);
+      await authService.login(form);
+
+      let loggedInUser: User = {
+        email: form.identifier,
+      };
+      let profileResolved = false;
 
       // 상세 프로필 정보 가져오기
       try {
@@ -53,18 +62,18 @@ export default function useLoginForm(onSuccess?: () => void) {
 
         if (profileResponse.isSuccess && profileResponse.result) {
           // 전역 상태에 상세 정보 저장
-          login({
+          loggedInUser = {
             ...profileResponse.result,
             email: form.identifier
-          });
-        } else {
-          // 프로필 조회 실패 시에도 최소한의 정보로 로그인 처리
-          login({ email: form.identifier });
+          };
+          profileResolved = true;
         }
+
+        login(loggedInUser);
       } catch (profileError) {
         console.error("Profile fetch failed during login:", profileError);
-        // 프로필 로드 실패해도 로그인은 성공한 상태이므로 최소 정보로 진행
-        login({ email: form.identifier });
+        // 프로필 로드 실패 시 프로필 완성 여부를 단정하지 않고 최소 정보로 로그인 처리
+        login(loggedInUser);
       }
 
       // 2. Navigation & UI Feedback
@@ -72,7 +81,12 @@ export default function useLoginForm(onSuccess?: () => void) {
       router.refresh();
       toast.success("로그인에 성공했습니다!");
       if (onSuccess) onSuccess();
-      router.push("/");
+      // 프로필을 확실히 조회했고 그게 미완성일 때만 완성 페이지로, 그 외(실패/불명)는 홈으로
+      router.push(
+        profileResolved && isProfileIncomplete(loggedInUser)
+          ? PROFILE_COMPLETION_ROUTE
+          : "/"
+      );
     } catch (error) {
       if (error instanceof ApiError) {
         // 비즈니스 에러 (예: 비밀번호 불일치)는 인라인 에러로 처리
