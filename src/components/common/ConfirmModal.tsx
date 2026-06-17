@@ -8,9 +8,10 @@ type ConfirmModalProps = {
     message: string;
     onConfirm: () => void;
     onCancel: () => void;
+    closeOnConfirm?: boolean;
 };
 
-export default function ConfirmModal({ isOpen, message, onConfirm, onCancel }: ConfirmModalProps) {
+export default function ConfirmModal({ isOpen, message, onConfirm, onCancel, closeOnConfirm = true }: ConfirmModalProps) {
     useScrollLock(isOpen);
 
     useEffect(() => {
@@ -58,7 +59,7 @@ export default function ConfirmModal({ isOpen, message, onConfirm, onCancel }: C
                             type="button"
                             onClick={() => {
                                 onConfirm();
-                                onCancel();
+                                if (closeOnConfirm) onCancel();
                             }}
                             className="flex-1 h-[48px] rounded-lg bg-primary-3 text-White body_1_2 hover:bg-primary-3/90 transition-colors cursor-pointer"
                         >

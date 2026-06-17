@@ -5,6 +5,11 @@ import SettingsDetailLayout from "@/components/base-ui/Settings/SettingsDetailLa
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useUpdatePasswordMutation } from "@/hooks/mutations/useMemberMutations";
+import {
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_VALIDATION_ERROR_MESSAGE,
+  isPasswordValid,
+} from "@/constants/password";
 
 export default function PasswordChangePageClient() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -24,9 +29,8 @@ export default function PasswordChangePageClient() {
       return;
     }
 
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*]).{6,12}$/;
-    if (!passwordRegex.test(newPassword)) {
-      toast.error("비밀번호는 영문자, 특수문자를 포함하여 6~12자여야 합니다.");
+    if (!isPasswordValid(newPassword)) {
+      toast.error(PASSWORD_VALIDATION_ERROR_MESSAGE);
       return;
     }
 
@@ -39,9 +43,10 @@ export default function PasswordChangePageClient() {
           setNewPassword("");
           setConfirmPassword("");
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
           // Check backend error response format if available, otherwise generic
-          toast.error(error.message || "비밀번호 변경에 실패했습니다. 올바른 기존 비밀번호인지 확인하세요.");
+          const errorMessage = error instanceof Error ? error.message : null;
+          toast.error(errorMessage || "비밀번호 변경에 실패했습니다. 올바른 기존 비밀번호인지 확인하세요.");
         },
       }
     );
@@ -72,6 +77,7 @@ export default function PasswordChangePageClient() {
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+              maxLength={PASSWORD_MAX_LENGTH}
             />
             {/* 비밀번호 확인 인풋 */}
             <div className={inputContainerClass}>
@@ -81,6 +87,7 @@ export default function PasswordChangePageClient() {
                 placeholder="비밀번호 확인"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                maxLength={PASSWORD_MAX_LENGTH}
               />
             </div>
           </div>

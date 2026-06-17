@@ -1,14 +1,12 @@
 import { useState } from "react";
+import { isPasswordValid } from "@/constants/password";
 
 export const usePasswordEntry = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // 6-12자, 영문 최소 1자, 특수문자 최소 1자
-  const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*]).{6,12}$/;
-
   // Derived State (No useEffect)
-  const isComplexityValid = passwordRegex.test(password);
+  const isComplexityValid = isPasswordValid(password);
   const isMatch = password === confirmPassword;
   const isValid =
     isComplexityValid &&

@@ -33,6 +33,7 @@ export default function LoginModal({ onClose, onSignUp }: Props) {
   useScrollLock();
 
   const handleSignUp = () => {
+    onClose();
     if (onSignUp) onSignUp();
     router.push("/signup");
   };

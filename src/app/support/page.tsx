@@ -7,6 +7,13 @@ import {
 } from "@/components/base-ui/PublicDocument/PublicDocumentLayout";
 import { EXTERNAL_LINKS } from "@/constants/links";
 
+const POLICY_LINKS = [
+  { href: "/terms", label: "이용약관" },
+  { href: "/privacy", label: "개인정보처리방침" },
+  { href: "/third-party-consent", label: "개인정보 제3자 제공 동의" },
+  { href: "/marketing-consent", label: "마케팅 및 이벤트 정보 수신 동의" },
+];
+
 export const metadata: Metadata = {
   title: "고객지원",
   description:
@@ -75,30 +82,31 @@ export default function SupportPage() {
           독서 모임, 출판 행사, 책 관련 소식을 공유하고 싶다면 아래 폼을
           작성해주세요.
         </p>
+        <p className="mt-2 text-[14px] leading-[170%] text-Gray-4">
+          관리자가 승인 후 책모 소식에 올라가며, 문의 내용에 따라 추후 관리자가
+          이메일로 연락드릴 수 있습니다.
+        </p>
         <a
           href={EXTERNAL_LINKS.NEWS_FROM_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-4 inline-block rounded-[8px] border border-Subbrown-3 bg-White px-4 py-3 font-semibold text-primary-3 transition-colors hover:border-primary-2"
         >
-          소식 업로드하기
+          소식 업로드 요청하기
         </a>
       </section>
 
       <DocumentSection title="관련 문서">
-        <div className="flex flex-col gap-3 t:flex-row">
-          <Link
-            href="/privacy"
-            className="rounded-[8px] border border-Subbrown-3 bg-White px-4 py-3 font-semibold text-primary-3 transition-colors hover:border-primary-2"
-          >
-            개인정보처리방침
-          </Link>
-          <Link
-            href="/terms"
-            className="rounded-[8px] border border-Subbrown-3 bg-White px-4 py-3 font-semibold text-primary-3 transition-colors hover:border-primary-2"
-          >
-            이용약관
-          </Link>
+        <div className="flex flex-col gap-3 t:flex-row t:flex-wrap">
+          {POLICY_LINKS.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className="rounded-[8px] border border-Subbrown-3 bg-White px-4 py-3 font-semibold text-primary-3 transition-colors hover:border-primary-2"
+            >
+              {label}
+            </Link>
+          ))}
         </div>
       </DocumentSection>
     </PublicDocumentLayout>

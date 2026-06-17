@@ -6,6 +6,11 @@ import JoinButton from "@/components/base-ui/Join/JoinButton";
 import JoinInput from "@/components/base-ui/Join/JoinInput";
 import { useSignup } from "@/contexts/SignupContext";
 import { authService } from "@/services/authService";
+import {
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_REQUIREMENTS_MESSAGE,
+  isPasswordValid,
+} from "@/constants/password";
 
 interface PasswordEntryProps {
   onNext: () => void;
@@ -15,10 +20,8 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
   const { email, password, setPassword, confirmPassword, setConfirmPassword, showToast } = useSignup();
   const [isLoading, setIsLoading] = React.useState(false);
 
-  // 유효성 검사: 6-12자, 영어 최소 1자, 특수문자 최소 1자 포함
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*[!@#$%^&*()_+={}\[\]:;"'<>,.?/-]).{6,12}$/;
   const isMatch =
-    passwordRegex.test(password) && password === confirmPassword;
+    isPasswordValid(password) && password === confirmPassword;
 
   const handleNext = async () => {
     if (!isMatch || isLoading) return;
@@ -44,12 +47,12 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
           {/* Password Input */}
           <JoinInput
             label="비밀번호"
-            description="비밀번호는 6-12자, 영어 최소 1자 이상, 특수문자 최소 1자 이상"
+            description={PASSWORD_REQUIREMENTS_MESSAGE}
             type="password"
             placeholder="비밀번호"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            maxLength={12}
+            maxLength={PASSWORD_MAX_LENGTH}
             className="border-Subbrown-4 placeholder-Gray-3 bg-white"
           />
 
@@ -59,7 +62,7 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
             placeholder="비밀번호 확인"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            maxLength={12}
+            maxLength={PASSWORD_MAX_LENGTH}
             className="border-Subbrown-4 placeholder-Gray-3 bg-white"
           />
         </div>
