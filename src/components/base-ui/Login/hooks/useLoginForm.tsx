@@ -33,7 +33,7 @@ export default function useLoginForm(onSuccess?: () => void) {
   const handleLogin = async () => {
     // 1. Validation (Inline Error)
     const newErrors: Partial<LoginForm> = {};
-    if (!form.identifier) newErrors.identifier = "이메일을 입력해주세요.";
+    if (!form.identifier) newErrors.identifier = "이메일 또는 닉네임을 입력해주세요.";
     if (!form.password) newErrors.password = "비밀번호를 입력해주세요.";
 
     if (Object.keys(newErrors).length > 0) {

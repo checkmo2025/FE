@@ -34,7 +34,7 @@ export default function LoginForm({
           type="text"
           value={form.identifier}
           onChange={onChange}
-          placeholder="이메일"
+          placeholder="이메일 또는 닉네임"
           className={`flex w-full h-[32px] t:h-[44px] px-4 py-3 items-center rounded-lg border bg-white outline-none text-sm leading-[145%] text-Gray-7 transition-colors placeholder:text-Gray-3 disabled:cursor-not-allowed disabled:opacity-60 ${
             errors?.identifier ? "border-Red" : "border-Subbrown-4 focus:border-primary-1"
           }`}
