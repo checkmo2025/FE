@@ -5,6 +5,7 @@ type Props = {
   type?: "text" | "password" | "email";
   value?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  maxLength?: number;
 };
 
 export default function SettingsInputGroup({
@@ -13,6 +14,7 @@ export default function SettingsInputGroup({
   type = "text",
   value,
   onChange,
+  maxLength,
 }: Props) {
   return (
     <div className="flex w-full flex-col items-start gap-[12px] self-stretch">
@@ -27,6 +29,7 @@ export default function SettingsInputGroup({
           placeholder={placeholder}
           value={value || ""}
           onChange={onChange}
+          maxLength={maxLength}
         />
       </div>
     </div>

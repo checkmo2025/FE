@@ -181,7 +181,7 @@ export default function ProfileEditPageClient() {
         <button
           onClick={handleSave}
           disabled={isUpdating}
-          className="flex h-[48px] w-[200px] items-center justify-center gap-[10px] rounded-[8px] bg-primary-1 px-[16px] py-[12px] disabled:opacity-50"
+          className="flex h-[48px] w-[200px] items-center justify-center gap-[10px] rounded-[8px] bg-primary-1 px-[16px] py-[12px] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
         >
           <span className="text-[14px] font-semibold leading-[145%] tracking-[-0.014px] text-White">
             <span className="md:hidden">{isUpdating ? "변경 중..." : "변경하기"}</span>

@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api/client";
-import { AUTH_ENDPOINTS, API_BASE_URL } from "@/lib/api/endpoints";
+import { AUTH_ENDPOINTS } from "@/lib/api/endpoints";
 import { useAuthStore } from "@/store/useAuthStore";
 import {
   LoginForm,
@@ -10,6 +10,7 @@ import {
   SignupForm,
   User
 } from "@/types/auth";
+import { LoginStatusResponse } from "@/types/member";
 
 export const authService = {
   login: async (data: LoginForm): Promise<LoginResponse> => {
@@ -46,6 +47,13 @@ export const authService = {
     return await apiClient.get<ApiResponse<User>>(AUTH_ENDPOINTS.PROFILE, {
       silentAuthError: true,
     });
+  },
+
+  getLoginStatus: async (): Promise<ApiResponse<LoginStatusResponse>> => {
+    return await apiClient.get<ApiResponse<LoginStatusResponse>>(
+      AUTH_ENDPOINTS.LOGIN_STATUS,
+      { silentAuthError: true }
+    );
   },
 
   getPresignedUrl: async (type: "PROFILE" | "CLUB" | "NOTICE", fileName: string, contentType: string): Promise<ApiResponse<{ presignedUrl: string; imageUrl: string }>> => {
@@ -88,4 +96,3 @@ export const authService = {
     );
   },
 };
-

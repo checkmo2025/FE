@@ -68,7 +68,7 @@ export default function RootLayout({
     <html lang="ko">
       <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID!} />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased pb-[70px] t:pb-0`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
           <AuthProvider>

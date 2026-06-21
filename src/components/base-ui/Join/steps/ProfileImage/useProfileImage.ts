@@ -3,9 +3,11 @@ import { useSignup } from "@/contexts/SignupContext";
 import { authService } from "@/services/authService";
 import { CATEGORY_MAP } from "@/constants/categories";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export const useProfileImage = () => {
   const {
+    email,
     nickname,
     name,
     phone: phoneNumber,
@@ -18,6 +20,8 @@ export const useProfileImage = () => {
     setIsProfileImageSet,
     showToast,
   } = useSignup();
+  const login = useAuthStore((state) => state.login);
+  const currentUser = useAuthStore((state) => state.user);
 
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -90,6 +94,35 @@ export const useProfileImage = () => {
         profileImageUrl: finalImageUrl,
         categories,
       });
+
+      const fallbackEmail = currentUser?.email || email;
+      const fallbackUser = {
+        email: fallbackEmail,
+        nickname,
+        name,
+        phoneNumber,
+        description,
+        profileImageUrl: finalImageUrl,
+        categories,
+        profileCompleted: true,
+      };
+
+      try {
+        const profileResponse = await authService.getProfile();
+
+        if (profileResponse.isSuccess && profileResponse.result) {
+          login({
+            ...profileResponse.result,
+            email: profileResponse.result.email || fallbackEmail,
+            profileCompleted: true,
+          });
+        } else {
+          login(fallbackUser);
+        }
+      } catch (profileError) {
+        console.error("Profile fetch failed after profile creation:", profileError);
+        login(fallbackUser);
+      }
 
       onSuccess?.();
     } catch (error: unknown) {

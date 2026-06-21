@@ -49,7 +49,7 @@ export default function ListSubscribeElement({
         <button
           type="button"
           onClick={onSubscribeClick}
-          className={`hidden t:flex px-[10px] t:px-[17px] py-[6px] t:py-[8px] justify-center items-center gap-[10px] rounded-[8px] text-[11px] t:text-[12px] font-semibold leading-[100%] tracking-[-0.012px] whitespace-nowrap shrink-0 transition-colors ${isFollowing
+          className={`hidden t:flex px-[10px] t:px-[17px] py-[6px] t:py-[8px] justify-center items-center gap-[10px] rounded-[8px] text-[11px] t:text-[12px] font-semibold leading-[100%] tracking-[-0.012px] whitespace-nowrap shrink-0 transition-colors cursor-pointer ${isFollowing
             ? "bg-Subbrown-4 text-primary-3"
             : "bg-primary-2 text-white"
             }`}
@@ -60,7 +60,7 @@ export default function ListSubscribeElement({
         <button
           type="button"
           onClick={onSubscribeClick}
-          className={`flex t:hidden w-full px-[17px] py-[6px] justify-center items-center rounded-[10px] text-[11px] font-semibold leading-[100%] tracking-[-0.012px] whitespace-nowrap transition-colors ${isFollowing
+          className={`flex t:hidden w-full px-[17px] py-[6px] justify-center items-center rounded-[10px] text-[11px] font-semibold leading-[100%] tracking-[-0.012px] whitespace-nowrap transition-colors cursor-pointer ${isFollowing
             ? "bg-Subbrown-4 text-primary-3"
             : "bg-primary-2 text-white"
             }`}

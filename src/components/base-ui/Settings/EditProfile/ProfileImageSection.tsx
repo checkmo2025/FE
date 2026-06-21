@@ -81,7 +81,7 @@ export default function ProfileImageSection({
       <div className="flex items-center gap-[12px] self-stretch">
         <button
           onClick={handleUploadClick}
-          className="flex flex-1 items-center justify-center gap-[10px] rounded-[8px] bg-primary-1 px-[16px]
+          className="flex flex-1 items-center justify-center gap-[10px] rounded-[8px] bg-primary-1 px-[16px] cursor-pointer
           h-[36px] md:h-[48px]"
         >
           <span
@@ -94,7 +94,7 @@ export default function ProfileImageSection({
         </button>
         <button
           onClick={onReset}
-          className="flex flex-1 items-center justify-center gap-[10px] rounded-[8px] bg-primary-1 px-[16px]
+          className="flex flex-1 items-center justify-center gap-[10px] rounded-[8px] bg-primary-1 px-[16px] cursor-pointer
           h-[36px] md:h-[48px]"
         >
           <span
