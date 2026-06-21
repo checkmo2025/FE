@@ -41,7 +41,7 @@ export const useEmailVerification = () => {
       const response = await authService.verifyEmail(email);
       if (response.isSuccess) {
         showToast(response.result || "인증번호가 발송되었습니다.");
-        setTimeLeft(300);
+        setTimeLeft(600);
       } else {
         showToast(response.message || "인증번호 발송에 실패했습니다.");
       }
