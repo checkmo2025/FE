@@ -13,7 +13,7 @@ import { toast } from "react-hot-toast";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import ReportModal from "@/components/common/modals/report-block/ReportModal";
 import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
-import { ReportType } from "@/types/member";
+import { ReportReason } from "@/types/report";
 import { useAuthStore } from "@/store/useAuthStore";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
@@ -128,7 +128,7 @@ export default function CommentSection({
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState<number | null>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const [reportTargetNickname, setReportTargetNickname] = useState<string>("");
+  const [reportTargetCommentId, setReportTargetCommentId] = useState<number | null>(null);
 
   useEffect(() => {
     setComments(mapApiToUiComments(initialComments));
@@ -243,21 +243,17 @@ export default function CommentSection({
     }
 
     if (targetComment) {
-      setReportTargetNickname(targetComment.authorName);
+      setReportTargetCommentId(targetComment.id);
       setIsReportModalOpen(true);
     }
   };
 
-  const handleReportSubmit = (type: string, content: string) => {
-    let mappedType: ReportType = "GENERAL";
-    if (type === "책 이야기") mappedType = "BOOK_STORY";
-    if (type === "책이야기(댓글)") mappedType = "COMMENT";
-    if (type === "책모임 내부") mappedType = "CLUB_MEETING";
-
-    if (reportTargetNickname) {
+  const handleReportSubmit = (reason: ReportReason, content: string) => {
+    if (reportTargetCommentId != null) {
       reportMember({
-        reportedMemberNickname: reportTargetNickname,
-        reportType: mappedType,
+        targetType: "BOOK_STORY_COMMENT",
+        targetId: String(reportTargetCommentId),
+        reason,
         content,
       });
     }
@@ -287,10 +283,10 @@ export default function CommentSection({
         isOpen={isReportModalOpen}
         onClose={() => {
           setIsReportModalOpen(false);
-          setReportTargetNickname("");
+          setReportTargetCommentId(null);
         }}
         onSubmit={handleReportSubmit}
-        defaultReportType="책이야기(댓글)"
+        defaultReason="GENERAL"
       />
     </>
   );

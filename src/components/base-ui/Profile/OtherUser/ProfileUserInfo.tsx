@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useOtherProfileQuery } from "@/hooks/queries/useMemberQueries";
 
 import { useToggleFollowMutation, useReportMemberMutation, useBlockMemberMutation } from "@/hooks/mutations/useMemberMutations";
-import { ReportType } from "@/types/member";
 import ReportModal from "@/components/common/modals/report-block/ReportModal";
 import { useAuthStore } from "@/store/useAuthStore";
 import Link from "next/link";
@@ -12,7 +11,7 @@ import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 import ActionSelectionModal from "@/components/common/modals/report-block/ActionSelectionModal";
 import BlockConfirmModal from "@/components/common/modals/report-block/BlockConfirmModal";
 import { useReportBlockFlow } from "@/hooks/useReportBlockFlow";
-import { REPORT_TYPE_MAP } from "@/constants/report";
+import { ReportReason } from "@/types/report";
 import { getErrorMessage } from "@/lib/api/errors";
 
 // [보조 컴포넌트] 액션 버튼 (구독하기 / 신고하기)
@@ -67,12 +66,11 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
   const { mutate: reportMember } = useReportMemberMutation();
   const { mutateAsync: blockMember } = useBlockMemberMutation();
   
-  const handleReportSubmitLogic = (type: string, content: string) => {
-    const mappedType = REPORT_TYPE_MAP[type] || "GENERAL";
-
+  const handleReportSubmitLogic = (reason: ReportReason, content: string) => {
     reportMember({
-      reportedMemberNickname: nickname,
-      reportType: mappedType,
+      targetType: "MEMBER",
+      targetId: nickname,
+      reason,
       content,
     });
   };
@@ -215,7 +213,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
           isOpen={modalStep === "report"}
           onClose={closeAll}
           onSubmit={handleReportSubmit}
-          defaultReportType="일반"
+          defaultReason="GENERAL"
         />
 
         <BlockConfirmModal

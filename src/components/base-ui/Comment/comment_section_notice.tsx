@@ -16,25 +16,12 @@ import {
   useDeleteClubNoticeCommentMutation,
 } from "@/hooks/mutations/useClubNoticeCommentMutations";
 import { useReportMemberMutation } from "@/hooks/mutations/useReportMemberMutations";
+import { ReportReason } from "@/types/report";
 
 type CommentSectionNoticeProps = {
   noticeId: number;
   isAdminView?: boolean;
 };
-
-function mapReportTypeToApi(
-  type: string
-): "GENERAL" | "BOOK_STORY" {
-  switch (type) {
-    case "책 이야기":
-    case "책이야기(댓글)":
-      return "BOOK_STORY";
-    case "일반":
-    case "책모임 내부":
-    default:
-      return "GENERAL";
-  }
-}
 
 export default function CommentSectionNotice({
   noticeId,
@@ -184,20 +171,21 @@ export default function CommentSectionNotice({
     });
   };
 
-  const handleSubmitReport = async (type: string, content: string) => {
+  const handleSubmitReport = async (reason: ReportReason, content: string) => {
     const target = reportTarget;
     if (!target) return;
 
     try {
       await reportMember({
-        reportedMemberNickname: target.reportedMemberNickname,
-        reportType: mapReportTypeToApi(type),
+        targetType: "CLUB_NOTICE_COMMENT",
+        targetId: String(target.commentId),
+        reason,
         content,
       });
 
       toast.success("신고가 접수되었습니다.");
-    } catch (e: any) {
-      const msg = e?.message ?? "";
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "";
       toast.error(msg || "신고 접수에 실패했습니다.");
     }
   };
@@ -245,7 +233,7 @@ export default function CommentSectionNotice({
         isOpen={reportTarget !== null}
         onClose={() => setReportTarget(null)}
         onSubmit={handleSubmitReport}
-        defaultReportType="일반"
+        defaultReason="GENERAL"
       />
     </>
   );

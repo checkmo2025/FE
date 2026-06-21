@@ -4,7 +4,8 @@ import { toast } from "react-hot-toast";
 import { showCustomToast } from "@/utils/toastUtils";
 import { authService } from "@/services/authService";
 import { useAuthStore } from "@/store/useAuthStore";
-import { ReportMemberRequest, FollowListResponse } from "@/types/member";
+import { FollowListResponse } from "@/types/member";
+import { ReportRequest } from "@/types/report";
 import { memberKeys } from "../queries/useMemberQueries";
 import { useBlockStore } from "@/store/useBlockStore";
 
@@ -347,7 +348,7 @@ export const useDeleteFollowerMutation = () => {
 
 export const useReportMemberMutation = () => {
     return useMutation({
-        mutationFn: async (payload: ReportMemberRequest) => {
+        mutationFn: async (payload: ReportRequest) => {
             await memberService.reportMember(payload);
         },
         onSuccess: () => {
