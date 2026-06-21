@@ -103,7 +103,7 @@ export default function Header() {
               {NAV.map((item) => {
                 const active =
                   item.href === "/"
-                    ? pathname === "/"
+                    ? pathname === "/" || pathname === "/home"
                     : pathname.startsWith(item.href);
 
                 return (
