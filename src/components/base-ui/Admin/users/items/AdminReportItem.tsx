@@ -1,74 +1,79 @@
 "use client";
 
-import Image from "next/image";
-import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
-
 type Props = {
-  category: string;
-  reporterName: string;
+  reason: string;
   content: string;
-  date: string;
+  targetLabel: string;
+  targetUrl: string | null;
+  targetAvailable: boolean;
+  reportedAt: string;
 };
 
 export default function ReportItem({
-  category,
-  reporterName,
+  reason,
   content,
-  date,
+  targetLabel,
+  targetUrl,
+  targetAvailable,
+  reportedAt,
 }: Props) {
+  const canOpenTarget =
+    targetAvailable &&
+    targetUrl !== null &&
+    targetUrl.startsWith("/") &&
+    !targetUrl.startsWith("//");
+
   return (
     <div
-      className="flex items-start rounded-[8px] border border-Subbrown-4 bg-White p-[20px]
-      w-full gap-[40px]
-      md:w-[440px]
-      xl:w-[1000px]"
+      className="flex w-full flex-col gap-[16px] rounded-[8px] border border-Subbrown-4 bg-White p-[20px]
+      md:flex-row md:items-start md:gap-[24px] xl:px-[28px]"
     >
-      {/* 카테고리 뱃지 */}
-      <div className="flex w-[60px] shrink-0 items-center justify-center gap-[10px] rounded-[4px] bg-Red p-[4px]">
+      <div className="flex min-w-[72px] shrink-0 items-center justify-center rounded-[4px] bg-Red px-[8px] py-[4px]">
         <span
           className="text-White
           text-[12px] font-medium leading-[145%] tracking-[-0.012px]
           md:body_2_2"
         >
-          {category}
+          {reason}
         </span>
       </div>
 
-      {/* 컨텐츠 영역 */}
-      <div
-        className="flex flex-col items-start
-        w-[199px] gap-[6px]
-        md:w-[280px] md:gap-[12px]
-        xl:w-auto xl:flex-1"
-      >
-        <div className="flex items-start justify-between w-full">
-          <div className="flex items-center gap-[8px]">
-            <div className="relative h-[24px] w-[24px] shrink-0">
-              <Image
-                src={DEFAULT_PROFILE_IMAGE}
-                alt="profile"
-                fill
-                className="object-cover rounded-full"
-              />
-            </div>
-            <span className="body_1_2 text-Gray-7">{reporterName}</span>
+      <div className="flex min-w-0 flex-1 flex-col gap-[14px]">
+        <div className="flex flex-col-reverse gap-[8px] md:flex-row md:items-start md:justify-between">
+          <div className="min-w-0">
+            <p className="body_2_2 text-Gray-6">신고 내용</p>
+            <p className="mt-[4px] whitespace-pre-wrap break-words body_2_3 text-Gray-5">
+              {content}
+            </p>
           </div>
-          <span
-            className="text-Gray-3
-            text-[12px] font-normal leading-[145%] tracking-[-0.012px]
-            md:body_2_3"
-          >
-            {date}
+          <span className="shrink-0 text-[12px] font-normal leading-[145%] tracking-[-0.012px] text-Gray-3 md:body_2_3">
+            {reportedAt}
           </span>
         </div>
 
-        <p
-          className="text-Gray-5 self-stretch whitespace-pre-wrap
-          text-[12px] font-normal leading-[145%] tracking-[-0.012px]
-          md:body_2_3"
-        >
-          {content}
-        </p>
+        <div className="min-w-0 border-t border-Subbrown-4 pt-[12px]">
+          <p className="body_2_2 text-Gray-6">신고 대상</p>
+          {canOpenTarget ? (
+            <a
+              href={targetUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="신고 대상 새 탭에서 열기"
+              className="mt-[4px] inline-block break-all body_2_3 text-primary-1 underline underline-offset-2 hover:text-primary-3 focus-visible:rounded-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-1"
+            >
+              {targetLabel}
+            </a>
+          ) : (
+            <div className="mt-[4px]">
+              <p className="break-words body_2_3 text-Gray-4">
+                {targetLabel || "삭제되었거나 확인할 수 없는 대상"}
+              </p>
+              <p className="mt-[2px] text-[12px] text-Gray-3">
+                대상 페이지 없음
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
