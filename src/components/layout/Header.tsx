@@ -18,7 +18,7 @@ import { useSearchStore } from "@/store/useSearchStore";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 const NAV = [
-  { label: "책모 홈", href: "/" },
+  { label: "책모 홈", href: "/home" },
   { label: "모임", href: "/groups" },
   { label: "책 이야기", href: "/stories" },
   { label: "소식", href: "/news" },
@@ -86,7 +86,7 @@ export default function Header() {
           {/*로고 + 메뉴*/}
           <div className="flex items-center t:gap-2.5 d:gap-8">
             <Link
-              href="/"
+              href="/home"
               className="relative w-[50px] h-[30px] t:w-14 t:h-[34px] overflow-hidden"
             >
               <Image
@@ -101,10 +101,7 @@ export default function Header() {
             {/* 태블릿부터: 네비게이션 메뉴 */}
             <nav className="items-center hidden t:flex t:pl-[30px] d:pl-0">
               {NAV.map((item) => {
-                const active =
-                  item.href === "/"
-                    ? pathname === "/" || pathname === "/home"
-                    : pathname.startsWith(item.href);
+                const active = pathname.startsWith(item.href);
 
                 return (
                   <NavItem
