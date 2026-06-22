@@ -27,7 +27,7 @@ function ListSubscribeElementLarge({
 }: ListSubscribeElementLargeProps) {
   return (
     <div
-      className={`flex w-[296px] h-[66px] px-[14px] py-[8px] gap-[8px] rounded-[8px] border border-Subbrown-4 bg-white transition-colors group ${onProfileClick ? "cursor-pointer hover:bg-stone-100" : ""}`}
+      className={`flex w-full t:w-[296px] h-[66px] px-[14px] py-[8px] gap-[8px] rounded-[8px] border border-Subbrown-4 bg-white transition-colors group ${onProfileClick ? "cursor-pointer hover:bg-stone-100" : ""}`}
       onClick={onProfileClick}
       role={onProfileClick ? "button" : undefined}
       tabIndex={onProfileClick ? 0 : -1}
@@ -94,7 +94,7 @@ export default function ListSubscribeLarge({
 
   return (
     <section
-      className={`w-[336px] ${height} rounded-lg border-2 border-Subbrown-4 bg-stone-50 p-5`}
+      className={`w-full t:w-[336px] ${height} rounded-lg border-2 border-Subbrown-4 bg-stone-50 p-5`}
     >
       <h3 className="subhead_2 text-Gray-7">사용자 추천</h3>
 
