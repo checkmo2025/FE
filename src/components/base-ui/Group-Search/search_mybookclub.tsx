@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -9,6 +9,8 @@ export type GroupSummary = { id: string; name: string };
 type Props = {
   groups: GroupSummary[];
   isLoading?: boolean;
+  /** 박스 하단(내부)에 렌더할 추가 영역. 예: 홈의 모임 검색/생성 버튼 */
+  footer?: ReactNode;
 };
 
 function getLimitByViewport() {
@@ -18,7 +20,7 @@ function getLimitByViewport() {
   return 3;
 }
 
-export default function Mybookclub({ groups, isLoading = false }: Props) {
+export default function Mybookclub({ groups, isLoading = false, footer }: Props) {
   const count = groups.length;
 
   const [open, setOpen] = useState(false);
@@ -108,6 +110,8 @@ export default function Mybookclub({ groups, isLoading = false }: Props) {
           )}
         </>
       )}
+
+      {footer && <div className="mt-3 shrink-0">{footer}</div>}
     </aside>
   );
 }
