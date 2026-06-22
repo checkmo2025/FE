@@ -56,27 +56,6 @@ export const authService = {
     );
   },
 
-  getPresignedUrl: async (type: "PROFILE" | "CLUB" | "NOTICE", fileName: string, contentType: string): Promise<ApiResponse<{ presignedUrl: string; imageUrl: string }>> => {
-    return await apiClient.post<ApiResponse<{ presignedUrl: string; imageUrl: string }>>(
-      AUTH_ENDPOINTS.IMAGE_UPLOAD(type),
-      { originalFileName: fileName, contentType }
-    );
-  },
-
-  uploadToS3: async (presignedUrl: string, file: File): Promise<void> => {
-    const response = await fetch(presignedUrl, {
-      method: "PUT",
-      body: file,
-      headers: {
-        "Content-Type": file.type,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("S3 upload failed");
-    }
-  },
-
   logout: async () => {
     try {
       await apiClient.post(AUTH_ENDPOINTS.LOGOUT);
