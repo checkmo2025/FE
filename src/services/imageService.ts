@@ -31,11 +31,11 @@ export const imageService = {
   getUploadUrl: (type: ImageUploadType, body: PresignedRequest) =>
     apiClient.post<ApiResponse<PresignedResult>>(IMAGE.uploadUrl(type), body),
 
-  // ✅ create 페이지에서 쓰는 "CLUB 업로드 한방"
-  uploadClubImage: async (file: File) => {
+  // 이미지 업로드 공통 헬퍼: presigned URL 발급 → S3 PUT → imageUrl 반환
+  uploadImage: async (type: ImageUploadType, file: File): Promise<string> => {
     const contentType = file.type || "application/octet-stream";
 
-    const presigned = await imageService.getUploadUrl("CLUB", {
+    const presigned = await imageService.getUploadUrl(type, {
       originalFileName: file.name,
       contentType,
     });
@@ -45,4 +45,10 @@ export const imageService = {
     await putToPresignedUrl(presignedUrl, file, contentType);
     return imageUrl;
   },
+
+  // PROFILE 이미지 업로드
+  uploadProfileImage: (file: File) => imageService.uploadImage("PROFILE", file),
+
+  // CLUB 이미지 업로드
+  uploadClubImage: (file: File) => imageService.uploadImage("CLUB", file),
 };
