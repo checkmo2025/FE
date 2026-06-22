@@ -10,6 +10,10 @@ export const reportService = {
       body
     );
 
+    if (!res.isSuccess) {
+      throw new Error(res.message || "신고 접수에 실패했습니다.");
+    }
+
     return res.result;
   },
 } as const;
