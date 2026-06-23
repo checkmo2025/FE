@@ -81,7 +81,7 @@ export default function HomeClubSection({ groups, isLoading }: HomeClubSectionPr
     <div className={containerClasses}>
       <h2 className={titleClasses}>독서모임</h2>
 
-      <Mybookclub groups={myGroups} isLoading={isLoading} footer={clubButtons} />
+      <Mybookclub groups={myGroups} isLoading={isLoading} footer={clubButtons} singleColumn />
     </div>
   );
 }
