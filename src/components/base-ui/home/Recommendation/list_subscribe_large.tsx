@@ -79,6 +79,8 @@ type ListSubscribeLargeProps = {
   }>;
   isError?: boolean;
   isLoading?: boolean;
+  /** true면 박스 안의 "사용자 추천" 제목을 숨김(제목을 박스 밖에서 따로 렌더할 때) */
+  hideTitle?: boolean;
   onProfileClick?: (nickname: string) => void;
   onSubscribeClick?: (nickname: string, isFollowing: boolean) => void;
 };
@@ -88,6 +90,7 @@ export default function ListSubscribeLarge({
   users = [],
   isError = false,
   isLoading = false,
+  hideTitle = false,
   onProfileClick,
   onSubscribeClick,
 }: ListSubscribeLargeProps) {
@@ -96,9 +99,9 @@ export default function ListSubscribeLarge({
     <section
       className={`w-full t:w-[336px] ${height} rounded-lg border-2 border-Subbrown-4 bg-stone-50 p-5`}
     >
-      <h3 className="subhead_2 text-Gray-7">사용자 추천</h3>
+      {!hideTitle && <h3 className="subhead_2 text-Gray-7">사용자 추천</h3>}
 
-      <div className="mt-3 flex flex-col gap-3 h-full">
+      <div className={`${hideTitle ? "" : "mt-3"} flex flex-col gap-3 h-full`}>
         {isLoading && (
           <div className="flex flex-1 items-center justify-center pt-10">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-2"></div>
