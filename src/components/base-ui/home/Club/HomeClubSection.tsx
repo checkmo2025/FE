@@ -36,7 +36,8 @@ export default function HomeClubSection({ groups, isLoading }: HomeClubSectionPr
   };
 
   // 가독성을 위한 클래스 변수 분리
-  const containerClasses = "flex-1 flex flex-col d:w-full";
+  // 태블릿에서는 늘리지 않고 책이야기 카드와 동일한 336px 고정폭(2열 가운데 정렬 매칭)
+  const containerClasses = "flex flex-col w-full t:w-[336px] d:w-full";
   const titleClasses = "pb-2 t:pb-5 body_1 t:text-xl t:font-semibold leading-7 text-zinc-800";
 
   // Mybookclub 에는 검색/생성 버튼이 없으므로 홈에서는 박스 내부(footer)에 노출 (항상 표시)

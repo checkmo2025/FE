@@ -33,11 +33,7 @@ export default function HomePageClient() {
           <div className="order-1 d:order-2 d:flex-1">
             <HomeNewsSection isLoading={false} />
           </div>
-          <div
-            className={`order-2 d:order-1 flex flex-col t:flex-row gap-4 t:gap-6 d:gap-0 justify-center d:justify-start d:w-full d:max-w-[332px] ${
-              showRecommendation ? "" : "t:max-w-[332px]"
-            }`}
-          >
+          <div className="order-2 d:order-1 flex flex-col t:flex-row gap-4 t:gap-5 d:gap-0 justify-center d:justify-start d:w-full d:max-w-[332px]">
             <HomeClubSection
               groups={groups}
               isLoading={isLoadingClubs}

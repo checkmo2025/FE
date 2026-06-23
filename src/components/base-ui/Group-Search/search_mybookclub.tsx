@@ -9,7 +9,7 @@ export type GroupSummary = { id: string; name: string };
 type Props = {
   groups: GroupSummary[];
   isLoading?: boolean;
-  /** 박스 하단(내부)에 렌더할 추가 영역. 예: 홈의 모임 검색/생성 버튼 */
+  /** 박스 하단(내부)에 렌더할 추가 영역(예: 홈의 모임 검색/생성 버튼). 전체보기 토글이 보일 때는 숨겨짐 */
   footer?: ReactNode;
 };
 
@@ -111,7 +111,8 @@ export default function Mybookclub({ groups, isLoading = false, footer }: Props)
         </>
       )}
 
-      {footer && <div className="mt-3 shrink-0">{footer}</div>}
+      {/* 전체보기 토글이 있으면 버튼 생략, 토글이 없을 때(목록이 한도 이내/0개)만 노출 */}
+      {footer && !showToggle && <div className="mt-3 shrink-0">{footer}</div>}
     </aside>
   );
 }
