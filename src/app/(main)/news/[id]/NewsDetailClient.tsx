@@ -117,7 +117,7 @@ export default function NewsDetailClient() {
         )}
       </div>
 
-      <div className="mx-auto w-full max-w-[1040px] px-4 t:px-0 mt-8 t:mt-12">
+      <div className="mx-auto w-full max-w-[1040px] px-4 t:px-6 mt-8 t:mt-12">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-4 border-b border-Gray-1 pb-6">
           <h1 className="subhead_1 t:headline_3 text-Gray-7 leading-tight">{news.title}</h1>
           <p className="body_1_2 text-Gray-3">{news.publishStartAt}</p>
