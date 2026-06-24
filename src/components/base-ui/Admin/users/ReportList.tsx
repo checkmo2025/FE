@@ -99,6 +99,7 @@ export default function ReportList({ memberNickname }: Props) {
       !inView ||
       !hasNext ||
       nextCursor === null ||
+      isNextPageError ||
       fetchingNextPageRef.current
     ) {
       return;
@@ -146,6 +147,7 @@ export default function ReportList({ memberNickname }: Props) {
     hasNext,
     nextCursor,
     memberNickname,
+    isNextPageError,
   ]);
 
   if (loading) {

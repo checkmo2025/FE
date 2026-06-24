@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 type Props = {
   reason: string;
   content: string;
@@ -17,11 +19,15 @@ export default function ReportItem({
   targetAvailable,
   reportedAt,
 }: Props) {
-  const canOpenTarget =
+  // 안전한 내부 URL("/..."으로 시작, "//" 외부 링크 제외)만 열 수 있도록 보장.
+  // 통과한 값은 string으로 좁혀져 next/link의 href 타입과 호환된다.
+  const safeTargetUrl =
     targetAvailable &&
     targetUrl !== null &&
     targetUrl.startsWith("/") &&
-    !targetUrl.startsWith("//");
+    !targetUrl.startsWith("//")
+      ? targetUrl
+      : null;
 
   return (
     <div
@@ -53,16 +59,16 @@ export default function ReportItem({
 
         <div className="min-w-0 border-t border-Subbrown-4 pt-[12px]">
           <p className="body_2_2 text-Gray-6">신고 대상</p>
-          {canOpenTarget ? (
-            <a
-              href={targetUrl}
+          {safeTargetUrl ? (
+            <Link
+              href={safeTargetUrl}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="신고 대상 새 탭에서 열기"
               className="mt-[4px] inline-block break-all body_2_3 text-primary-1 underline underline-offset-2 hover:text-primary-3 focus-visible:rounded-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-1"
             >
               {targetLabel}
-            </a>
+            </Link>
           ) : (
             <div className="mt-[4px]">
               <p className="break-words body_2_3 text-Gray-4">
