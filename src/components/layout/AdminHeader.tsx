@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { NavItem } from "./AdminNavItem";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 import { authService } from "@/services/authService";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 const ADMIN_NAV = [
   { label: "회원 관리", href: "/admin/users" },
@@ -29,17 +31,10 @@ export default function AdminHeader() {
 
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const user = useAuthStore((state) => state.user);
 
   // 외부 클릭 시 닫기
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  useClickOutside(dropdownRef, () => setOpen(false));
 
   const handleLogout = async () => {
     setOpen(false);
@@ -102,10 +97,10 @@ export default function AdminHeader() {
               className="relative w-6 h-6 cursor-pointer"
             >
               <Image
-                src={DEFAULT_PROFILE_IMAGE}
+                src={user?.profileImageUrl || DEFAULT_PROFILE_IMAGE}
                 alt="프로필"
                 fill
-                className="object-contain"
+                className={`object-cover ${user?.profileImageUrl ? "rounded-full" : "object-contain"}`}
                 priority
               />
             </button>

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { API_BASE_URL } from "@/lib/api/endpoints";
+import { authService } from "@/services/authService";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -12,14 +12,8 @@ export default function AdminLoginPage() {
   useEffect(() => {
     const checkAdmin = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/members/me/login-status`, {
-          method: "GET",
-          credentials: "include",
-        });
-        if (!res.ok) return;
-
-        const data = await res.json();
-        if (data.isSuccess && data.result?.admin) {
+        const res = await authService.getLoginStatus();
+        if (res.isSuccess && res.result?.admin) {
           router.replace("/admin/users");
         }
       } catch {
