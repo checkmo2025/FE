@@ -72,7 +72,7 @@ export default function NoticeDetailPageClient() {
   }
 
   return (
-    <div className="relative mx-auto w-full max-w-[1400px] px-[18px]">
+    <div className="relative mx-auto w-full max-w-[1400px] px-4 t:px-6">
       <div>
         <div className="w-full max-w-[1040px] px-0 t:mx-auto pt-6">
           <NoticeDetail
@@ -91,7 +91,7 @@ export default function NoticeDetailPageClient() {
           />
         </div>
 
-        <div className="border-t-2 border-Gray-1 w-full max-w-[1040px] mx-auto px-[18px] mt-10 pt-6 pb-10">
+        <div className="border-t-2 border-Gray-1 w-full max-w-[1040px] mx-auto px-0 mt-10 pt-6 pb-10">
           <CommentSectionNotice noticeId={noticeId} isAdminView={isAdmin} />
         </div>
       </div>
