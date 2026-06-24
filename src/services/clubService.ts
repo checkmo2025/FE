@@ -5,8 +5,11 @@ import type { ApiResponse } from "@/lib/api/types";
 import { ClubAdminDetailResponse, UpdateClubAdminRequest, UpdateClubAdminResponse } from "@/types/groups/clubAdminEdit";
 import { CreateClubRequest } from "@/types/groups/clubCreate";
 import { ClubJoinRequest, ClubJoinResponse, ClubSearchParams, ClubSearchResponse, MyClubsResponse, RecommendationsResponse } from "@/types/groups/clubsearch";
-import { ClubHomeResponse, ClubHomeResponseResult, LatestNoticeResponse, MyClubStatusResponse, MyClubStatusResponseResult, NextMeetingResponse } from "@/types/groups/grouphome";
+import { ClubHomeResponse, ClubHomeResponseResult, ClubParticipantsResponse, ClubParticipantsResponseResult, LatestNoticeResponse, MyClubStatusResponse, MyClubStatusResponseResult, NextMeetingResponse } from "@/types/groups/grouphome";
 
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : "";
+}
 
 export const clubService = {
   // GET /api/clubs/check-name?clubName=...
@@ -77,8 +80,8 @@ export const clubService = {
     try {
       const res = await apiClient.get<LatestNoticeResponse>(CLUBS.latestNotice(clubId));
       return res.result;
-    } catch (e: any) {
-      const msg = e?.message ?? "";
+    } catch (e: unknown) {
+      const msg = getErrorMessage(e);
       if (
         msg.includes("공지") && (msg.includes("없") || msg.includes("존재하지"))
       ) {
@@ -92,8 +95,8 @@ export const clubService = {
     try {
       const res = await apiClient.get<NextMeetingResponse>(CLUBS.nextMeeting(clubId));
       return res.result;
-    } catch (e: any) {
-      const msg = e?.message ?? "";
+    } catch (e: unknown) {
+      const msg = getErrorMessage(e);
       if (msg.includes("다음 정기모임이 존재하지 않습니다")) {
         return null;
       }
@@ -102,6 +105,18 @@ export const clubService = {
       }
       throw e;
     }
+  },
+  getClubParticipants: async (params: {
+    clubId: number;
+    cursorId?: number | null;
+  }): Promise<ClubParticipantsResponseResult> => {
+    const { clubId, cursorId } = params;
+    const res = await apiClient.get<ClubParticipantsResponse>(CLUBS.participants(clubId), {
+      params: {
+        cursorId: cursorId ?? null,
+      },
+    });
+    return res.result;
   },
   getAdminClubDetail: async (clubId: number) => {
     const res = await apiClient.get<ClubAdminDetailResponse>(CLUBS.detail(clubId));
@@ -118,4 +133,3 @@ export const clubService = {
   },
 
 };
-

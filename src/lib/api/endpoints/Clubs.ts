@@ -17,6 +17,7 @@ export const CLUBS = {
 
   members: (clubId: number) => `${API_BASE_URL}/clubs/${clubId}/members`, // GET
   member: (clubId: number, clubMemberId: number) => `${API_BASE_URL}/clubs/${clubId}/members/${clubMemberId}`, // PATCH
+  participants: (clubId: number) => `${API_BASE_URL}/clubs/${clubId}/participants`,
 
   detail: (clubId: number) => `${API_BASE_URL}/clubs/${clubId}`,
   update: (clubId: number) => `${API_BASE_URL}/clubs/${clubId}`,
