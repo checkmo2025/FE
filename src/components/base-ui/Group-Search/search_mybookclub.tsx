@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -9,6 +9,10 @@ export type GroupSummary = { id: string; name: string };
 type Props = {
   groups: GroupSummary[];
   isLoading?: boolean;
+  /** 박스 하단(내부)에 렌더할 추가 영역(예: 홈의 모임 검색/생성 버튼). 전체보기 토글이 보일 때는 숨겨짐 */
+  footer?: ReactNode;
+  /** true면 모든 화면에서 모임 목록을 1열로 표시(태블릿 2열 분기 제거). 예: 홈 */
+  singleColumn?: boolean;
 };
 
 function getLimitByViewport() {
@@ -18,7 +22,7 @@ function getLimitByViewport() {
   return 3;
 }
 
-export default function Mybookclub({ groups, isLoading = false }: Props) {
+export default function Mybookclub({ groups, isLoading = false, footer, singleColumn = false }: Props) {
   const count = groups.length;
 
   const [open, setOpen] = useState(false);
@@ -68,7 +72,8 @@ export default function Mybookclub({ groups, isLoading = false }: Props) {
         <>
           <div
             className={[
-              "grid grid-cols-1 t:grid-cols-2 d:grid-cols-1 flex-col gap-2",
+              "grid gap-2 flex-col",
+              singleColumn ? "grid-cols-1" : "grid-cols-1 t:grid-cols-2 d:grid-cols-1",
               open && showToggle ? "overflow-y-auto pr-1 no-scrollbar" : "",
             ].join(" ")}
           >
@@ -108,6 +113,9 @@ export default function Mybookclub({ groups, isLoading = false }: Props) {
           )}
         </>
       )}
+
+      {/* 전체보기 토글이 있으면 버튼 생략, 토글이 없을 때(목록이 한도 이내/0개)만 노출 */}
+      {footer && !showToggle && <div className="mt-3 shrink-0">{footer}</div>}
     </aside>
   );
 }

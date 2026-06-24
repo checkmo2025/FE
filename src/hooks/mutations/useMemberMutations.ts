@@ -3,6 +3,7 @@ import { memberService } from "@/services/memberService";
 import { toast } from "react-hot-toast";
 import { showCustomToast } from "@/utils/toastUtils";
 import { authService } from "@/services/authService";
+import { imageService } from "@/services/imageService";
 import { useAuthStore } from "@/store/useAuthStore";
 import { FollowListResponse } from "@/types/member";
 import { ReportRequest } from "@/types/report";
@@ -26,16 +27,7 @@ export const useUpdateProfileMutation = () => {
 
             // 1. Image Upload (If file is selected)
             if (payload.profileImageFile) {
-                // Assume default mime if not present
-                const contentType = payload.profileImageFile.type || "image/jpeg";
-                // Get Pre-signed URL
-                const presignedRes = await authService.getPresignedUrl("PROFILE", payload.profileImageFile.name, contentType);
-
-                // Upload to S3
-                await authService.uploadToS3(presignedRes.result!.presignedUrl, payload.profileImageFile);
-
-                // Use the returned image URL for update
-                imgUrl = presignedRes.result!.imageUrl;
+                imgUrl = await imageService.uploadProfileImage(payload.profileImageFile);
             } else if (payload.currentProfileImageUrl && payload.currentProfileImageUrl.startsWith("blob:")) {
                 // In case blob URL leaked without file, though shouldn't happen, clear it
                 imgUrl = undefined;

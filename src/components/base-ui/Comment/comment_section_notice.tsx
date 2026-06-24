@@ -17,6 +17,8 @@ import {
 } from "@/hooks/mutations/useClubNoticeCommentMutations";
 import { useReportMemberMutation } from "@/hooks/mutations/useReportMemberMutations";
 import { ReportReason } from "@/types/report";
+import { isValidUrl } from "@/utils/url";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 type CommentSectionNoticeProps = {
   noticeId: number;
@@ -61,7 +63,9 @@ export default function CommentSectionNotice({
       return {
         id: comment.commentId,
         authorName: comment.authorInfo.nickname,
-        profileImgSrc: comment.authorInfo.profileImageUrl || undefined,
+        profileImgSrc: isValidUrl(comment.authorInfo.profileImageUrl)
+          ? comment.authorInfo.profileImageUrl
+          : DEFAULT_PROFILE_IMAGE,
         content: comment.content,
         createdAt: comment.createdAt,
 

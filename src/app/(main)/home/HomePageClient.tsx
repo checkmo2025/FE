@@ -23,6 +23,9 @@ export default function HomePageClient() {
   const groups = myClubsData?.clubList || [];
   const recommendedUsers = membersData?.friends || [];
 
+  // 추천이 없으면(비로그인 포함) 데스크탑과 동일하게 모바일/태블릿에서도 숨김
+  const showRecommendation = isLoadingMembers || recommendedUsers.length > 0;
+
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 t:px-6">
       <div className="flex flex-col gap-6 w-full">
@@ -30,20 +33,22 @@ export default function HomePageClient() {
           <div className="order-1 d:order-2 d:flex-1">
             <HomeNewsSection isLoading={false} />
           </div>
-          <div className="order-2 d:order-1 flex flex-row gap-4 t:gap-6 d:gap-0 justify-center d:justify-start d:w-full d:max-w-[332px]">
+          <div className="order-2 d:order-1 flex flex-col t:flex-row gap-4 t:gap-5 d:gap-0 justify-center d:justify-start d:w-full d:max-w-[332px]">
             <HomeClubSection
               groups={groups}
               isLoading={isLoadingClubs}
             />
-            <div className="flex-1 t:flex-none d:hidden">
-              <HomeRecommendationSection
-                users={recommendedUsers}
-                isError={isErrorMembers}
-                isLoading={isLoadingMembers}
-                onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
-                onSubscribeClick={handleToggleFollow}
-              />
-            </div>
+            {showRecommendation && (
+              <div className="flex-1 t:flex-none d:hidden">
+                <HomeRecommendationSection
+                  users={recommendedUsers}
+                  isError={isErrorMembers}
+                  isLoading={isLoadingMembers}
+                  onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
+                  onSubscribeClick={handleToggleFollow}
+                />
+              </div>
+            )}
           </div>
         </div>
 

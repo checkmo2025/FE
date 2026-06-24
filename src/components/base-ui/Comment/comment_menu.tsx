@@ -46,7 +46,7 @@ export default function CommentMenu({
 
       {/* 드롭다운 메뉴 */}
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-[137px] rounded-lg bg-White shadow-lg z-10 overflow-hidden">
+        <div className="absolute right-0 bottom-full mb-1 w-[137px] rounded-lg bg-White shadow-lg z-10 overflow-hidden">
           
           {/* 답글달기 - 상위 댓글일 때만 표시 */}
           {hasReplyAction && (

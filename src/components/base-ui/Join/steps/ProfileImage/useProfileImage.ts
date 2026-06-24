@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSignup } from "@/contexts/SignupContext";
+import { imageService } from "@/services/imageService";
 import { authService } from "@/services/authService";
 import { CATEGORY_MAP } from "@/constants/categories";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
@@ -63,21 +64,7 @@ export const useProfileImage = () => {
 
       // 1. If a new image is selected, upload to S3 using Presigned URL
       if (selectedFile) {
-        const presignedResponse = await authService.getPresignedUrl(
-          "PROFILE",
-          selectedFile.name,
-          selectedFile.type
-        );
-
-        if (presignedResponse.isSuccess && presignedResponse.result) {
-          const { presignedUrl, imageUrl } = presignedResponse.result;
-          await authService.uploadToS3(presignedUrl, selectedFile);
-          finalImageUrl = imageUrl;
-        } else {
-          showToast(presignedResponse.message || "이미지 업로드 준비 중 오류가 발생했습니다.");
-          setIsLoading(false);
-          return;
-        }
+        finalImageUrl = await imageService.uploadProfileImage(selectedFile);
       } else if (imgUrl && !imgUrl.startsWith("blob:")) {
         // Includes uploaded S3 URL or default image path (e.g. /profile2.svg)
         finalImageUrl = imgUrl;
