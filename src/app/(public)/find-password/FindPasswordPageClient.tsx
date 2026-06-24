@@ -33,11 +33,11 @@ export default function FindPasswordPageClient() {
 
     return (
         <div
-            className="min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat py-12"
+            className="min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat py-12 px-4"
             style={{ backgroundImage: "url('/background.png')" }}
         >
             <div
-                className="flex w-[766px] px-[120px] py-[99px] items-center justify-center flex-col gap-[30px] rounded-lg bg-white shadow-xl"
+                className="flex w-full max-w-[766px] mx-auto px-6 t:px-[120px] py-10 t:py-[99px] items-center justify-center flex-col gap-[30px] rounded-lg bg-white shadow-xl"
             >
                 <div className="flex flex-col items-center gap-[80px] w-full">
                     <div className="flex flex-col items-center gap-[24px]">
