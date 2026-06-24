@@ -1,7 +1,5 @@
 import { RecommendedMember } from "@/types/member";
-import ListSubscribeElement from "./list_subscribe_element";
 import ListSubscribeLarge from "./list_subscribe_large";
-import { RecommendationSkeleton } from "../shared/HomeSkeleton";
 
 interface HomeRecommendationSectionProps {
   users: RecommendedMember[];
@@ -11,7 +9,8 @@ interface HomeRecommendationSectionProps {
   onSubscribeClick: (nickname: string, isFollowing: boolean) => void;
 }
 
-const MOBILE_LIMIT = 3;
+// 독서모임(HomeClubSection) 제목과 동일한 스타일 — 제목을 박스 밖 위에 두고 글자 크기도 통일
+const titleClasses = "pb-2 t:pb-5 body_1 t:text-xl t:font-semibold leading-7 text-zinc-800";
 
 export default function HomeRecommendationSection({
   users,
@@ -20,51 +19,19 @@ export default function HomeRecommendationSection({
   onProfileClick,
   onSubscribeClick,
 }: HomeRecommendationSectionProps) {
-  if (isLoading) {
-    return <RecommendationSkeleton />;
-  }
-
-  const mobileTitleClasses = "pb-2 body_1 leading-7 text-zinc-800";
-
+  // 로딩/에러/빈 상태 처리는 ListSubscribeLarge 내부 로직으로 일원화
   return (
-    <>
-      {/* 모바일 버전 */}
-      <div className="t:hidden flex-1">
-        <h2 className={mobileTitleClasses}>사용자 추천</h2>
-        <div className="flex flex-col gap-3">
-          {isError ? (
-            <div className="flex flex-1 items-center justify-center py-4">
-              <p className="text-Gray-4 text-[14px]">추천 목록을 불러오지 못했어요.</p>
-            </div>
-          ) : users.length === 0 ? (
-            <div className="flex flex-1 items-center justify-center py-4">
-              <p className="text-Gray-4 text-[14px]">사용자 추천이 없습니다.</p>
-            </div>
-          ) : (
-            users.slice(0, MOBILE_LIMIT).map((u) => (
-              <ListSubscribeElement
-                key={u.nickname}
-                name={u.nickname}
-                profileSrc={u.profileImageUrl}
-                isFollowing={u.isFollowing}
-                onProfileClick={() => onProfileClick?.(u.nickname)}
-                onSubscribeClick={() => onSubscribeClick(u.nickname, u.isFollowing)}
-              />
-            ))
-          )}
-        </div>
-      </div>
-
-      {/* 태블릿 & 데스크톱 버전 */}
-      <div className="hidden t:block">
-        <ListSubscribeLarge
-          height="h-[424px] d:h-[380px]"
-          users={users}
-          isError={isError}
-          onProfileClick={onProfileClick}
-          onSubscribeClick={onSubscribeClick}
-        />
-      </div>
-    </>
+    <div className="flex flex-col w-full t:w-[336px]">
+      <h2 className={titleClasses}>사용자 추천</h2>
+      <ListSubscribeLarge
+        height="h-auto"
+        users={users}
+        isError={isError}
+        isLoading={isLoading}
+        hideTitle
+        onProfileClick={onProfileClick}
+        onSubscribeClick={onSubscribeClick}
+      />
+    </div>
   );
 }
