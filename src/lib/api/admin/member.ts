@@ -133,35 +133,50 @@ export async function fetchAdminMemberDetail(
 
 export type AdminMemberReportItem = {
   reportId: number;
-  reportedMemberNickname: string;
-  reportedMemberProfileImageUrl: string;
-  reportType: string;
-  content: string;
-  createdAt: string;
+  reason: string;
+  reasonDescription: string;
+  content: string | null;
+  targetType: string;
+  targetTypeDescription: string;
+  targetId: string;
+  targetLabel: string;
+  targetAvailable: boolean;
+  targetUrl: string | null;
+  reportedAt: string;
 };
 
 export type AdminMemberReportsResult = {
   reports: AdminMemberReportItem[];
+  hasNext: boolean;
+  nextCursor: number | null;
 };
 
 export type AdminMemberReportsResponse = ApiResponse<AdminMemberReportsResult>;
 
 export async function fetchAdminMemberReports(
-  memberNickName: string
+  memberNickName: string,
+  cursorId?: number | null
 ): Promise<AdminMemberReportsResponse> {
   const encodedNickname = encodeURIComponent(memberNickName);
+  const params = new URLSearchParams();
 
-  const res = await fetch(
-    ADMIN_MEMBER_ENDPOINTS.GET_MEMBER_REPORTS(encodedNickname),
-    {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        Accept: "application/json",
-      },
-      cache: "no-store",
-    }
-  );
+  if (cursorId !== undefined && cursorId !== null) {
+    params.append("cursorId", String(cursorId));
+  }
+
+  const query = params.toString();
+  const url = query
+    ? `${ADMIN_MEMBER_ENDPOINTS.GET_MEMBER_REPORTS(encodedNickname)}?${query}`
+    : ADMIN_MEMBER_ENDPOINTS.GET_MEMBER_REPORTS(encodedNickname);
+
+  const res = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+    },
+    cache: "no-store",
+  });
 
   if (!res.ok) {
     throw new Error(`회원 신고 목록 조회 실패 (${res.status})`);

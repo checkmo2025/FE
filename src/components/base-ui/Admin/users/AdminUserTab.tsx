@@ -8,6 +8,7 @@ const USER_TABS: Array<{ id: AdminUserTabId; label: string }> = [
   { id: "meetings", label: "가입 모임" },
   { id: "stories", label: "책 이야기" },
   { id: "posts", label: "등록 소식" },
+  // 선택한 회원이 작성한 신고 이력
   { id: "reports", label: "신고 목록" },
 ];
 
