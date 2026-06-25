@@ -63,7 +63,7 @@ export default function FindAccountPageClient() {
                     </p>
                 </div>
 
-                <div className="flex flex-col items-center gap-[140px]">
+                <div className="flex flex-col items-center gap-[140px] w-full">
                     <div className="flex flex-col items-start gap-[24px] w-full max-w-[526px]">
                         <InputField
                             type="text"
