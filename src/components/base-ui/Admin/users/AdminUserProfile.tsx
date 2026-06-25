@@ -2,6 +2,8 @@
 
 import React from "react";
 import Image from "next/image";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import { isValidUrl } from "@/utils/url";
 
 type AdminUserProfileProps = {
   user: {
@@ -23,16 +25,12 @@ const AdminUserProfile = ({ user }: AdminUserProfileProps) => {
       <div className="grid grid-rows-[auto_1fr] h-full">
         <div className="flex items-start gap-[24px]">
           <div className="w-[112px] h-[112px] rounded-full overflow-hidden relative shrink-0 bg-Subbrown-4">
-            {user.profileImage ? (
-              <Image
-                src={user.profileImage}
-                alt="Profile"
-                fill
-                className="object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-Subbrown-4" />
-            )}
+            <Image
+              src={isValidUrl(user.profileImage) ? user.profileImage : DEFAULT_PROFILE_IMAGE}
+              alt="Profile"
+              fill
+              className="object-cover"
+            />
           </div>
 
           <dl className="grid grid-cols-[64px_1fr] gap-x-[18px] gap-y-[8px] pt-[6px]">

@@ -3,13 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import AdminHeader from "@/components/layout/AdminHeader";
-
-type LoginStatusResponse = {
-  isSuccess: boolean;
-  result?: {
-    admin: boolean;
-  };
-};
+import { authService } from "@/services/authService";
 
 export default function AdminLayout({
   children,
@@ -37,22 +31,9 @@ export default function AdminLayout({
 
     const checkAdmin = async () => {
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/members/me/login-status`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const res = await authService.getLoginStatus();
 
-        if (!res.ok) {
-          router.replace("/admin/login");
-          return;
-        }
-
-        const data: LoginStatusResponse = await res.json();
-
-        if (data.isSuccess && data.result?.admin) {
+        if (res.isSuccess && res.result?.admin) {
           setAuthorized(true);
         } else {
           router.replace("/admin/login");
