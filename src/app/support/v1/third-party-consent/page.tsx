@@ -8,13 +8,13 @@ export const metadata: Metadata = {
   description:
     "책모 개인정보 제3자 제공 동의 안내입니다. 제3자 제공 여부와 동의 거부 권리를 안내합니다.",
   alternates: {
-    canonical: "/third-party-consent",
+    canonical: "/support/v1/third-party-consent",
   },
   openGraph: {
     title: "책모 개인정보 제3자 제공 동의",
     description:
       "책모 개인정보 제3자 제공 동의 안내입니다. 제3자 제공 여부와 동의 거부 권리를 안내합니다.",
-    url: "/third-party-consent",
+    url: "/support/v1/third-party-consent",
   },
 };
 
