@@ -58,7 +58,7 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
         >
             {/* Modal Container */}
             <div
-                className="flex w-[734px] p-[40px] flex-col items-start gap-[16px] rounded-[8px] border border-Subbrown-4 bg-background animate-slide-down"
+                className="flex w-full max-w-[734px] p-5 t:p-[40px] flex-col items-start gap-[16px] rounded-[8px] border border-Subbrown-4 bg-background animate-slide-down"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header: Title and Close button */}
@@ -79,7 +79,7 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
                     {/* Report Reason Section */}
                     <div className="flex flex-col items-start gap-[8px] self-stretch">
                         <span className="self-stretch text-Gray-3 body_1_3">사유</span>
-                        <div className="flex items-center gap-[12px] self-stretch">
+                        <div className="flex flex-wrap items-center gap-[12px] self-stretch">
                             {REPORT_REASONS.map(({ label, value }) => {
                                 const isSelected = reason === value;
                                 return (
@@ -87,7 +87,7 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
                                         key={value}
                                         type="button"
                                         onClick={() => setReason(value)}
-                                        className={`flex w-[144px] h-[45px] p-[10px] justify-center items-center gap-[10px] rounded-[8px] border transition-colors ${isSelected
+                                        className={`flex flex-1 min-w-[100px] t:w-[144px] t:flex-none h-[45px] p-[10px] justify-center items-center gap-[10px] rounded-[8px] border transition-colors ${isSelected
                                             ? "border-primary-1 bg-primary-1 text-White"
                                             : "border-Gray-2 bg-Gray-1 text-Gray-3"
                                             }`}
@@ -111,7 +111,7 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
                     </div>
 
                     {/* Submit CTA Section */}
-                    <div className="flex w-[614px] flex-col items-start gap-[8px]">
+                    <div className="flex w-full flex-col items-start gap-[8px]">
                         <button
                             type="button"
                             disabled={!isSubmitEnabled}

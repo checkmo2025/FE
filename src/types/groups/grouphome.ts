@@ -71,6 +71,27 @@ export interface NextMeetingResponseResult {
 
 export type NextMeetingResponse = ApiResponse<NextMeetingResponseResult>;
 
+// 5) 모임 참여자 목록: GET /api/clubs/{clubId}/participants
+export type ClubParticipantStatus = "MEMBER" | "STAFF" | "OWNER";
+
+export interface ClubParticipant {
+  clubMemberId: number;
+  nickname: string;
+  profileImageUrl: string | null;
+  following: boolean;
+  clubMemberStatus: ClubParticipantStatus;
+  staff: boolean;
+}
+
+export interface ClubParticipantsResponseResult {
+  clubMembers: ClubParticipant[];
+  totalCount: number;
+  hasNext: boolean;
+  nextCursor: number | null;
+}
+
+export type ClubParticipantsResponse = ApiResponse<ClubParticipantsResponseResult>;
+
 
 export const CLUB_CATEGORY_CODE_TO_NUM: Record<string, number> = {
   TRAVEL: 1,

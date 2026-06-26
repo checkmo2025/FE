@@ -8,7 +8,7 @@ type Props = React.DetailedHTMLProps<
 export default function PrimaryButton({ className = "", children, ...props }: Props) {
     return (
         <button
-            className={`flex w-[258px] h-[48px] px-[16px] py-[12px] justify-center items-center rounded-lg bg-primary-1 text-White body_1_1 hover:bg-primary-3 transition-colors cursor-pointer ${className}`}
+            className={`flex w-full t:w-[258px] h-[48px] px-[16px] py-[12px] justify-center items-center rounded-lg bg-primary-1 text-White body_1_1 hover:bg-primary-3 transition-colors cursor-pointer ${className}`}
             {...props}
         >
             {children}

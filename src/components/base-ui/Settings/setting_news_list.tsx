@@ -46,7 +46,7 @@ export default function Setting_NewsList({
         </div>
 
         {/* 최소 120px 확보 + 날짜 오른쪽 고정 */}
-        <div className="shrink-0 min-w-[180px] text-right">
+        <div className="shrink-0 min-w-[80px] t:min-w-[180px] text-right">
           <p className="text-[color:var(--Gray_3,#BBB)] body_1_2">{date}</p>
         </div>
       </div>

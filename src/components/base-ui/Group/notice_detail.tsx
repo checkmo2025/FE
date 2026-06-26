@@ -462,7 +462,7 @@ export default function NoticeDetail({
             </h2>
           </div>
 
-          <p className="body_1_3 text-Gray-5 whitespace-pre-wrap min-w-[300px] max-w-full">
+          <p className="body_1_3 text-Gray-5 whitespace-pre-wrap min-w-0 t:min-w-[300px] max-w-full">
             {content}
           </p>
         </div>

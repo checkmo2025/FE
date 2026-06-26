@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery, type InfiniteData } from "@tanstack/react-query";
 import { clubService } from "@/services/clubService";
+import type { ClubParticipantsResponseResult } from "@/types/groups/grouphome";
 
 export const clubhomeKeys = {
   all: (clubId: number) => ["clubhome", clubId] as const,
@@ -7,6 +8,7 @@ export const clubhomeKeys = {
   home: (clubId: number) => [...clubhomeKeys.all(clubId), "home"] as const,
   latestNotice: (clubId: number) => [...clubhomeKeys.all(clubId), "latestNotice"] as const,
   nextMeeting: (clubId: number) => [...clubhomeKeys.all(clubId), "nextMeeting"] as const,
+  participants: (clubId: number) => [...clubhomeKeys.all(clubId), "participants"] as const,
 };
 
 export function useClubhomeQueries(clubId: number) {
@@ -53,5 +55,29 @@ export function useClubMeQuery(clubId: number) {
     queryKey: clubhomeKeys.me(clubId),
     queryFn: () => clubService.getMyStatus(clubId),
     enabled,
+  });
+}
+
+export function useClubParticipantsInfiniteQuery(clubId: number, enabled = true) {
+  const canFetch = enabled && Number.isFinite(clubId) && clubId > 0;
+
+  return useInfiniteQuery<
+    ClubParticipantsResponseResult,
+    Error,
+    InfiniteData<ClubParticipantsResponseResult, number | null>,
+    ReturnType<typeof clubhomeKeys.participants>,
+    number | null
+  >({
+    queryKey: clubhomeKeys.participants(clubId),
+    enabled: canFetch,
+    initialPageParam: null,
+    queryFn: ({ pageParam }) =>
+      clubService.getClubParticipants({
+        clubId,
+        cursorId: pageParam ?? null,
+      }),
+    getNextPageParam: (lastPage) =>
+      lastPage.hasNext ? lastPage.nextCursor ?? undefined : undefined,
+    retry: false,
   });
 }
