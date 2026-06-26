@@ -9,12 +9,12 @@ export const metadata: Metadata = {
   title: "이용약관",
   description: "책모 서비스 이용약관입니다.",
   alternates: {
-    canonical: "/terms",
+    canonical: "/support/v1/terms",
   },
   openGraph: {
     title: "책모 이용약관",
     description: "책모 서비스 이용약관입니다.",
-    url: "/terms",
+    url: "/support/v1/terms",
   },
 };
 

@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ReportModal from "@/components/common/modals/report-block/ReportModal";
 import { useReportMemberMutation } from "@/hooks/mutations/useMemberMutations";
-import { ReportType } from "@/types/member";
+import { ReportReason } from "@/types/report";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-hot-toast";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
@@ -99,15 +99,12 @@ export default function BookstoryDetail({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleReportSubmit = (type: string, content: string) => {
-    let mappedType: ReportType = "GENERAL";
-    if (type === "책 이야기") mappedType = "BOOK_STORY";
-    if (type === "책이야기(댓글)") mappedType = "COMMENT";
-    if (type === "책모임 내부") mappedType = "CLUB_MEETING";
-
+  const handleReportSubmit = (reason: ReportReason, content: string) => {
+    if (id == null) return;
     reportMember({
-      reportedMemberNickname: authorNickname,
-      reportType: mappedType,
+      targetType: "BOOK_STORY",
+      targetId: String(id),
+      reason,
       content,
     });
   };
@@ -370,7 +367,7 @@ export default function BookstoryDetail({
         isOpen={isReportModalOpen}
         onClose={() => setIsReportModalOpen(false)}
         onSubmit={handleReportSubmit}
-        defaultReportType="책 이야기"
+        defaultReason="GENERAL"
       />
     </div>
   );

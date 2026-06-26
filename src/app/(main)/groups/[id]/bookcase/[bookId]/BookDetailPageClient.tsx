@@ -30,23 +30,12 @@ import {
   useDeleteBookshelfMutation,
 } from "@/hooks/mutations/useClubsBookshelfMutations";
 import { useReportMemberMutation } from "@/hooks/mutations/useReportMemberMutations";
+import { ReportReason, ReportTargetType } from "@/types/report";
 
 import { useAuthStore } from "@/store/useAuthStore";
 
 function isTabKey(v: string | null): v is TabKey {
   return v === "topic" || v === "review" || v === "meeting";
-}
-
-function mapReportTypeToApi(type: string): "GENERAL" | "BOOK_STORY" {
-  switch (type) {
-    case "책 이야기":
-    case "책이야기(댓글)":
-      return "BOOK_STORY";
-    case "일반":
-    case "책모임 내부":
-    default:
-      return "GENERAL";
-  }
 }
 
 export default function BookDetailPageClient() {
@@ -73,7 +62,8 @@ export default function BookDetailPageClient() {
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [reportTarget, setReportTarget] = useState<{
-    reportedMemberNickname: string;
+    targetType: ReportTargetType;
+    targetId: string;
   } | null>(null);
 
   const { data: meData } = useClubMeQuery(clubId);
@@ -208,7 +198,8 @@ export default function BookDetailPageClient() {
     }
 
     setReportTarget({
-      reportedMemberNickname: target.name,
+      targetType: "CLUB_TOPIC",
+      targetId: String(target.id),
     });
   };
 
@@ -226,24 +217,26 @@ export default function BookDetailPageClient() {
     }
 
     setReportTarget({
-      reportedMemberNickname: target.name,
+      targetType: "CLUB_BOOK_REVIEW",
+      targetId: String(target.id),
     });
   };
 
-  const handleSubmitReport = async (type: string, content: string) => {
+  const handleSubmitReport = async (reason: ReportReason, content: string) => {
     const target = reportTarget;
     if (!target) return;
 
     try {
       await reportMember({
-        reportedMemberNickname: target.reportedMemberNickname,
-        reportType: mapReportTypeToApi(type),
+        targetType: target.targetType,
+        targetId: target.targetId,
+        reason,
         content,
       });
 
       toast.success("신고가 접수되었습니다.");
-    } catch (e: any) {
-      const msg = e?.message ?? "";
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "";
       toast.error(msg || "신고 접수에 실패했습니다.");
     }
   };
@@ -265,7 +258,7 @@ export default function BookDetailPageClient() {
         isOpen={reportTarget !== null}
         onClose={() => setReportTarget(null)}
         onSubmit={handleSubmitReport}
-        defaultReportType="책모임 내부"
+        defaultReason="GENERAL"
       />
 
       <div className="flex flex-col w-full items-start gap-[40px]">
