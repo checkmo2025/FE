@@ -79,7 +79,7 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
                     {/* Report Reason Section */}
                     <div className="flex flex-col items-start gap-[8px] self-stretch">
                         <span className="self-stretch text-Gray-3 body_1_3">사유</span>
-                        <div className="flex items-center gap-[12px] self-stretch">
+                        <div className="flex flex-wrap items-center gap-[12px] self-stretch">
                             {REPORT_REASONS.map(({ label, value }) => {
                                 const isSelected = reason === value;
                                 return (
@@ -87,7 +87,7 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
                                         key={value}
                                         type="button"
                                         onClick={() => setReason(value)}
-                                        className={`flex w-[144px] h-[45px] p-[10px] justify-center items-center gap-[10px] rounded-[8px] border transition-colors ${isSelected
+                                        className={`flex flex-1 min-w-[100px] t:w-[144px] t:flex-none h-[45px] p-[10px] justify-center items-center gap-[10px] rounded-[8px] border transition-colors ${isSelected
                                             ? "border-primary-1 bg-primary-1 text-White"
                                             : "border-Gray-2 bg-Gray-1 text-Gray-3"
                                             }`}
