@@ -1,19 +1,20 @@
 import type { Metadata } from "next";
-import { PublicDocumentLayout } from "@/components/base-ui/PublicDocument/PublicDocumentLayout";
-import TermsMarkdown from "@/components/common/TermsMarkdown";
-import { TERMS_CONTENT } from "@/constants/signupTerms";
+import {
+  DocumentList,
+  DocumentSection,
+  PublicDocumentLayout,
+} from "@/components/base-ui/PublicDocument/PublicDocumentLayout";
+import { THIRD_PARTY_DATA } from "@/constants/setting/thirdParty";
 
 export const metadata: Metadata = {
   title: "개인정보 제3자 제공 동의",
-  description:
-    "책모 개인정보 제3자 제공 동의 안내입니다. 제3자 제공 여부와 동의 거부 권리를 안내합니다.",
+  description: "책모 서비스 이용을 위한 개인정보 제3자 제공 동의서입니다.",
   alternates: {
     canonical: "/third-party-consent",
   },
   openGraph: {
     title: "책모 개인정보 제3자 제공 동의",
-    description:
-      "책모 개인정보 제3자 제공 동의 안내입니다. 제3자 제공 여부와 동의 거부 권리를 안내합니다.",
+    description: "책모 서비스 이용을 위한 개인정보 제3자 제공 동의서입니다.",
     url: "/third-party-consent",
   },
 };
@@ -21,7 +22,19 @@ export const metadata: Metadata = {
 export default function ThirdPartyConsentPage() {
   return (
     <PublicDocumentLayout title="개인정보 제3자 제공 동의">
-      <TermsMarkdown content={TERMS_CONTENT.thirdParty.content} />
+      {THIRD_PARTY_DATA.map((term) => (
+        <DocumentSection key={term.title} title={term.title}>
+          {Array.isArray(term.content) ? (
+            <DocumentList items={term.content} />
+          ) : (
+            <div className="flex flex-col gap-2">
+              {term.content.split("\n").map((line, index) => (
+                <p key={`${line.trim()}-${index}`}>{line.trim()}</p>
+              ))}
+            </div>
+          )}
+        </DocumentSection>
+      ))}
     </PublicDocumentLayout>
   );
 }
