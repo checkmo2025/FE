@@ -1,6 +1,7 @@
 import { API_BASE_URL } from "../endpoints";
 
 export const CLUBS = {
+  sitemap: `${API_BASE_URL}/clubs/sitemap`,
   create: `${API_BASE_URL}/clubs`, // POST /api/clubs
   checkName: `${API_BASE_URL}/clubs/check-name`, // GET /api/clubs/check-name?clubName=
   memberClubs: `${API_BASE_URL}/clubs`, // GET /api/clubs?memberNickname=
