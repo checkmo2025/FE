@@ -1,6 +1,7 @@
 import { API_BASE_URL } from "./base";
 
 export const STORY_ENDPOINTS = {
+    SITEMAP: `${API_BASE_URL}/book-stories/sitemap`,
     LIST: `${API_BASE_URL}/book-stories`,
     FOLLOWING: `${API_BASE_URL}/book-stories/following`,
     ME: `${API_BASE_URL}/book-stories/me`,
