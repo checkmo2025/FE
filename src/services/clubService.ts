@@ -11,7 +11,15 @@ function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "";
 }
 
+import { SitemapListResponse } from "@/types/sitemap";
+
 export const clubService = {
+  getClubsSitemap: async (cursorId?: number, limit: number = 1000): Promise<SitemapListResponse> => {
+    const res = await apiClient.get<ApiResponse<SitemapListResponse>>(CLUBS.sitemap, {
+      params: { cursorId, limit },
+    });
+    return res.result!;
+  },
   // GET /api/clubs/check-name?clubName=...
   // result: boolean (보통 true=중복, false=사용가능)
   checkNameDuplicate: (clubName: string) =>
