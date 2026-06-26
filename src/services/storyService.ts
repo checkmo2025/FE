@@ -3,7 +3,16 @@ import { STORY_ENDPOINTS } from "@/lib/api/endpoints/bookstory";
 import { BookStoryListResponse, BookStoryDetail, CreateBookStoryRequest, UpdateBookStoryRequest } from "@/types/story";
 import { ApiResponse } from "@/types/auth";
 
+import { SitemapListResponse } from "@/types/sitemap";
+
 export const storyService = {
+    getStoriesSitemap: async (cursorId?: number, limit: number = 1000): Promise<SitemapListResponse> => {
+        const response = await apiClient.get<ApiResponse<SitemapListResponse>>(
+            STORY_ENDPOINTS.SITEMAP,
+            { params: { cursorId, limit } }
+        );
+        return extractResult(response);
+    },
     getAllStories: async (cursorId?: number): Promise<BookStoryListResponse> => {
         const response = await apiClient.get<ApiResponse<BookStoryListResponse>>(
             STORY_ENDPOINTS.LIST,
