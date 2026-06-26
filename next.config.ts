@@ -18,6 +18,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // 약관 페이지를 버전 경로(/support/v1/*)로 이동. 기존 색인/외부 링크 보존용 301 리다이렉트.
+  async redirects() {
+    return [
+      { source: "/terms", destination: "/support/v1/terms", permanent: true },
+      { source: "/privacy", destination: "/support/v1/privacy", permanent: true },
+      { source: "/third-party-consent", destination: "/support/v1/third-party-consent", permanent: true },
+      { source: "/marketing-consent", destination: "/support/v1/marketing-consent", permanent: true },
+    ];
+  },
 };
 
 

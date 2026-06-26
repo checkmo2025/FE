@@ -8,10 +8,10 @@ import {
 import { EXTERNAL_LINKS } from "@/constants/links";
 
 const POLICY_LINKS = [
-  { href: "/terms", label: "이용약관" },
-  { href: "/privacy", label: "개인정보처리방침" },
-  { href: "/third-party-consent", label: "개인정보 제3자 제공 동의" },
-  { href: "/marketing-consent", label: "마케팅 및 이벤트 정보 수신 동의" },
+  { href: "/support/v1/terms", label: "이용약관" },
+  { href: "/support/v1/privacy", label: "개인정보처리방침" },
+  { href: "/support/v1/third-party-consent", label: "개인정보 제3자 제공 동의" },
+  { href: "/support/v1/marketing-consent", label: "마케팅 및 이벤트 정보 수신 동의" },
 ];
 
 export const metadata: Metadata = {

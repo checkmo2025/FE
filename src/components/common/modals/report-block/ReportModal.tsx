@@ -3,22 +3,22 @@
 import { useEffect, useState } from "react";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import Image from "next/image";
-
-type ReportType = "일반" | "책 이야기" | "책이야기(댓글)" | "책모임 내부" | null;
+import { REPORT_REASONS } from "@/constants/report";
+import { ReportReason } from "@/types/report";
 
 type ReportModalProps = {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (type: string, content: string) => void;
-    defaultReportType?: ReportType;
+    /** 선택한 신고 사유(reason)와 내용을 전달 */
+    onSubmit: (reason: ReportReason, content: string) => void;
+    defaultReason?: ReportReason | null;
 };
 
-export default function ReportModal({ isOpen, onClose, onSubmit, defaultReportType = null }: ReportModalProps) {
-    const [reportType, setReportType] = useState<ReportType>(defaultReportType);
+export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason = null }: ReportModalProps) {
+    const [reason, setReason] = useState<ReportReason | null>(defaultReason);
     const [reportContent, setReportContent] = useState("");
 
-    const reportTypes: ReportType[] = ["일반", "책 이야기", "책이야기(댓글)", "책모임 내부"];
-    const isSubmitEnabled = reportType !== null && reportContent.trim().length > 0;
+    const isSubmitEnabled = reason !== null && reportContent.trim().length > 0;
 
     useScrollLock(isOpen);
 
@@ -31,17 +31,17 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReportTy
 
         if (isOpen) {
             document.addEventListener("keydown", handleEscape);
-            setReportType(defaultReportType);
+            setReason(defaultReason);
         } else {
             // Reset state when closed
-            setReportType(defaultReportType);
+            setReason(defaultReason);
             setReportContent("");
         }
 
         return () => {
             document.removeEventListener("keydown", handleEscape);
         };
-    }, [isOpen, onClose, defaultReportType]);
+    }, [isOpen, onClose, defaultReason]);
 
     if (!isOpen) return null;
 
@@ -73,26 +73,26 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReportTy
                     </button>
                 </div>
 
-                {/* Body: Report Type and Content */}
+                {/* Body: Report Reason and Content */}
                 <div className="flex px-[20px] flex-col justify-center items-center gap-[24px] self-stretch">
 
-                    {/* Report Type Section */}
+                    {/* Report Reason Section */}
                     <div className="flex flex-col items-start gap-[8px] self-stretch">
-                        <span className="self-stretch text-Gray-3 body_1_3">종류</span>
-                        <div className="flex flex-wrap items-center gap-[12px] self-stretch">
-                            {reportTypes.map((type) => {
-                                const isSelected = reportType === type;
+                        <span className="self-stretch text-Gray-3 body_1_3">사유</span>
+                        <div className="flex items-center gap-[12px] self-stretch">
+                            {REPORT_REASONS.map(({ label, value }) => {
+                                const isSelected = reason === value;
                                 return (
                                     <button
-                                        key={type}
+                                        key={value}
                                         type="button"
-                                        onClick={() => setReportType(type)}
-                                        className={`flex flex-1 min-w-[100px] t:w-[144px] t:flex-none h-[45px] p-[10px] justify-center items-center gap-[10px] rounded-[8px] border transition-colors ${isSelected
+                                        onClick={() => setReason(value)}
+                                        className={`flex w-[144px] h-[45px] p-[10px] justify-center items-center gap-[10px] rounded-[8px] border transition-colors ${isSelected
                                             ? "border-primary-1 bg-primary-1 text-White"
                                             : "border-Gray-2 bg-Gray-1 text-Gray-3"
                                             }`}
                                     >
-                                        <span className="subhead_4_1">{type}</span>
+                                        <span className="subhead_4_1">{label}</span>
                                     </button>
                                 );
                             })}
@@ -116,8 +116,8 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReportTy
                             type="button"
                             disabled={!isSubmitEnabled}
                             onClick={() => {
-                                if (reportType && isSubmitEnabled) {
-                                    onSubmit(reportType, reportContent);
+                                if (reason && isSubmitEnabled) {
+                                    onSubmit(reason, reportContent);
                                     onClose();
                                 }
                             }}
