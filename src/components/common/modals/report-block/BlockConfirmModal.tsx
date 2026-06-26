@@ -75,17 +75,17 @@ export default function BlockConfirmModal({
             <div className="flex flex-row items-center justify-center gap-3 w-full max-w-[332px]">
               <button
                 type="button"
-                onClick={onConfirmBlock}
-                className="flex-1 h-[48px] bg-primary-1 text-White rounded-[8px] subhead_4_1 transition-colors hover:bg-primary-1/90 cursor-pointer"
-              >
-                차단
-              </button>
-              <button
-                type="button"
                 onClick={onClose}
                 className="flex-1 h-[48px] bg-White border border-Subbrown-3 text-Gray-5 rounded-[8px] subhead_4_1 transition-colors hover:bg-gray-50 cursor-pointer"
               >
                 취소
+              </button>
+              <button
+                type="button"
+                onClick={onConfirmBlock}
+                className="flex-1 h-[48px] bg-primary-1 text-White rounded-[8px] subhead_4_1 transition-colors hover:bg-primary-1/90 cursor-pointer"
+              >
+                차단
               </button>
             </div>
           </motion.div>

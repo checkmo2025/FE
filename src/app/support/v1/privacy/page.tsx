@@ -10,13 +10,13 @@ export const metadata: Metadata = {
   description:
     "책모 개인정보처리방침입니다. 개인정보 수집 항목, 이용 목적, 보관 및 파기, 이용자 권리를 안내합니다.",
   alternates: {
-    canonical: "/privacy",
+    canonical: "/support/v1/privacy",
   },
   openGraph: {
     title: "책모 개인정보처리방침",
     description:
       "책모 개인정보처리방침입니다. 개인정보 수집 항목, 이용 목적, 보관 및 파기, 이용자 권리를 안내합니다.",
-    url: "/privacy",
+    url: "/support/v1/privacy",
   },
 };
 
