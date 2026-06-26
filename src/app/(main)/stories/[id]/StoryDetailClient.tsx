@@ -133,13 +133,13 @@ export default function StoryDetailClient() {
             onDeleteClick={() => { setIsDeleteModalOpen(true); }}
           />
         </StoryNavigation>
-        <div className="t:border-t-2 border-Gray-1 w-full max-w-[1040px] px-5 t:mx-auto t:mt-10 pt-6">
+        <div className="t:border-t-2 border-Gray-1 w-full max-w-[1040px] px-5 t:px-6 t:mx-auto t:mt-10 pt-6">
           <h2 className="subhead_1 t:headline_3 text-Gray-7">{story.bookStoryTitle}</h2>
           <p className="body_1_3 t:subhead_4 text-Gray-5 mt-4 whitespace-pre-wrap">
             {story.description}
           </p>
         </div>
-        <div className="border-t-2 border-Gray-1 w-full max-w-[1040px] mx-auto px-5 mt-10 pt-6 pb-10">
+        <div className="border-t-2 border-Gray-1 w-full max-w-[1040px] mx-auto px-5 t:px-6 mt-10 pt-6 pb-10">
           <CommentSection
             storyId={story.bookStoryId}
             initialComments={story.comments}

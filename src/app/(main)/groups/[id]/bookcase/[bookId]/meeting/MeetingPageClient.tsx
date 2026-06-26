@@ -427,7 +427,7 @@ export default function MeetingPageClient() {
   if (isMeetingLoading) {
     return (
       <div className="w-full flex justify-center">
-        <div className="w-full max-w-[1040px] px-5 t:px-0 py-6">
+        <div className="w-full max-w-[1040px] px-5 t:px-6 py-6">
           <div className="rounded-[8px] bg-[#F2EFEE] p-5 text-Gray-4 body_1_2">
             팀 정보를 불러오는 중...
           </div>
@@ -439,7 +439,7 @@ export default function MeetingPageClient() {
   if (isMeetingError || !meetingData) {
     return (
       <div className="w-full flex justify-center">
-        <div className="w-full max-w-[1040px] px-5 t:px-0 py-6">
+        <div className="w-full max-w-[1040px] px-5 t:px-6 py-6">
           <div className="rounded-[8px] bg-[#F2EFEE] p-5 text-Red-500 body_1_2">
             팀 정보를 불러오지 못했습니다.
           </div>
@@ -450,7 +450,7 @@ export default function MeetingPageClient() {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-full max-w-[1040px] px-5 t:px-0 py-6 flex flex-col gap-[16px]">
+      <div className="w-full max-w-[1040px] px-5 t:px-6 py-6 flex flex-col gap-[16px]">
         <div className="w-full border-b border-Subbrown-4">
           <div
             className="

@@ -30,7 +30,7 @@ export default function TeamSection({ teamName, members }: Props) {
   return (
     <div className="flex w-full flex-col items-start gap-[16px] self-stretch">
       {/* 헤더 (Frame 2087328792) */}
-      <div className="flex items-center justify-between w-full px-5 t:px-0">
+      <div className="flex items-center justify-between w-full px-5 t:px-6">
         <span className="text-Gray-7 subhead_4_1">{teamName}</span>
 
         {/* 이동 버튼 */}

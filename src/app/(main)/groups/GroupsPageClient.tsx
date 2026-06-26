@@ -174,7 +174,7 @@ export default function GroupsPageClient() {
   };
 
   return (
-    <div className="max-w-[1440px] flex flex-col gap-6 d:flex-row mt-3 sm:mt-5 d:mt-6 mx-auto px-6">
+    <div className="max-w-[1440px] flex flex-col gap-6 d:flex-row mt-3 sm:mt-5 d:mt-6 mx-auto px-4 t:px-6">
       <aside className="d:w-[332px]">
         <p className="body_1 t:subhead_2">독서 모임</p>
         <div className="flex w-full t:hidden mt-5 mb-2">

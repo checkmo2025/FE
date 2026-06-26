@@ -21,7 +21,7 @@ export default function Setting_ReportList({
   return (
     <div
       className={`
-        flex w-[1000px] p-[20px] items-start gap-[40px]
+        flex w-full max-w-[1000px] p-[20px] items-start gap-[40px]
         rounded-[8px] border border-[color:var(--Subbrown_4,#EAE5E2)]
         bg-[color:var(--White,#FFF)]
         ${className}
