@@ -88,7 +88,7 @@ export default function HomeBookclub({ groups }: Props) {
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
-              className="w-full h-[38px] rounded-[6px] bg-transparent text-[13px] flex items-center justify-center gap-[6px] text-Gray-3"
+              className="w-full h-[38px] rounded-[6px] bg-transparent text-[13px] flex items-center justify-center gap-[6px] text-Gray-3 cursor-pointer transition-colors hover:bg-white/50"
             >
               {open ? (
                 <div className="flex items-center justify-center gap-1">
@@ -107,8 +107,7 @@ export default function HomeBookclub({ groups }: Props) {
               <button
                 type="button"
                 onClick={handleSearchGroup}
-                className="w-full h-[32px] t:h-[48px] py-3 rounded-[8px] bg-white border border-[#E6E6E6]
-                          text-[13px] flex items-center justify-center gap-2"
+                className="w-full h-[32px] t:h-[48px] py-3 rounded-[8px] bg-white border border-[#E6E6E6] text-[13px] flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-98 hover:-translate-y-[1px]"
               >
                 <Image
                   src="/search.svg"
@@ -123,8 +122,7 @@ export default function HomeBookclub({ groups }: Props) {
               <button
                 type="button"
                 onClick={handleCreateGroup}
-                className="w-full h-[32px] t:h-[48px] py-3 rounded-[6px] bg-[#6B5448] text-white
-                          text-[13px] flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full h-[32px] t:h-[48px] py-3 rounded-[6px] bg-[#6B5448] text-white text-[13px] flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-90 hover:-translate-y-[1px]"
               >
                 <Image
                   src="/icon_plus.svg"

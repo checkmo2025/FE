@@ -2,24 +2,43 @@
 
 import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
+import { useInView } from "react-intersection-observer";
 import toast from "react-hot-toast";
 
 import ClubCategoryTags from "@/components/base-ui/Group-Search/search_clublist/search_club_category_tags";
 import ButtonWithoutImg from "@/components/base-ui/button_without_img";
 import GroupAdminMenu from "@/components/base-ui/Group/group_admin_menu";
 
-import { useClubhomeQueries } from "@/hooks/queries/useClubhomeQueries";
+import { clubhomeKeys, useClubhomeQueries, useClubParticipantsInfiniteQuery } from "@/hooks/queries/useClubhomeQueries";
+import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 import { isClubMember } from "@/hooks/useClubAccessGuard";
+import { useAuthStore } from "@/store/useAuthStore";
+import FollowItem from "@/components/base-ui/Profile/Follow/FollowItem";
 
 const DEFAULT_CLUB_IMG = "/default_profile_1.svg";
+const PRIVATE_PARTICIPANTS_MESSAGE = "모임 회원은 가입 후에 조회 가능합니다";
 
 export default function GroupDetailClient() {
   const router = useRouter();
   const params = useParams();
   const groupId = Number(params.id);
+  const queryClient = useQueryClient();
+  const currentNickname = useAuthStore((state) => state.user?.nickname);
+  const toggleFollowMutation = useToggleFollowMutation();
 
   const { meQuery, homeQuery, latestNoticeQuery, nextMeetingQuery } = useClubhomeQueries(groupId);
+  const participantsQuery = useClubParticipantsInfiniteQuery(groupId, Number.isFinite(groupId) && groupId > 0);
+
+  // 회원 목록 무한 스크롤 (하단 sentinel이 보이면 다음 페이지 자동 로드)
+  const { ref: loadMoreRef, inView: loadMoreInView } = useInView({ rootMargin: "200px" });
+  useEffect(() => {
+    if (loadMoreInView && participantsQuery.hasNextPage && !participantsQuery.isFetchingNextPage) {
+      participantsQuery.fetchNextPage();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadMoreInView, participantsQuery.hasNextPage, participantsQuery.isFetchingNextPage, participantsQuery.fetchNextPage]);
 
   const isLoading =
     meQuery.isLoading || homeQuery.isLoading || latestNoticeQuery.isLoading || nextMeetingQuery.isLoading;
@@ -27,6 +46,19 @@ export default function GroupDetailClient() {
   const isError = meQuery.isError || homeQuery.isError;
 
   const [isContactOpen, setIsContactOpen] = useState(false);
+
+  const modalLinks = useMemo(() => {
+    const list = homeQuery.data?.links ?? [];
+    return list
+      .map((x, idx) => {
+        const raw = (x.link ?? "").trim();
+        if (!raw) return null;
+        const url = /^(https?:\/\/)/i.test(raw) ? raw : `http://${raw}`;
+        const label = (x.label ?? "").trim() || `링크 ${idx + 1}`;
+        return { id: `${idx}`, url, label };
+      })
+      .filter(Boolean) as { id: string; url: string; label: string }[];
+  }, [homeQuery.data?.links]);
 
   if (!Number.isFinite(groupId) || groupId <= 0) {
     return (
@@ -64,6 +96,11 @@ export default function GroupDetailClient() {
 
   const isAdmin = me.staff === true;
   const canAccessMemberOnlyPage = isClubMember(me);
+  const participants = participantsQuery.data?.pages.flatMap((page) => page.clubMembers) ?? [];
+  const totalParticipants = participantsQuery.data?.pages[0]?.totalCount ?? null;
+  const participantsErrorMessage = participantsQuery.error?.message ?? "";
+  const isParticipantsPrivateBlocked =
+    participantsQuery.isError && participantsErrorMessage.includes(PRIVATE_PARTICIPANTS_MESSAGE);
 
   const noticeText = latestNotice?.title ?? "아직 등록된 공지사항이 없습니다.";
   const hasNotice = Boolean(latestNotice?.id);
@@ -79,19 +116,6 @@ export default function GroupDetailClient() {
   const joinMeetingId = nextMeeting?.meetingId ?? null;
   const joinUrl = joinMeetingId ? `/groups/${groupId}/bookcase/${joinMeetingId}` : null;
 
-  const modalLinks = useMemo(() => {
-    const list = home.links ?? [];
-    return list
-      .map((x, idx) => {
-        const raw = (x.link ?? "").trim();
-        if (!raw) return null;
-        const url = /^(https?:\/\/)/i.test(raw) ? raw : `http://${raw}`;
-        const label = (x.label ?? "").trim() || `링크 ${idx + 1}`;
-        return { id: `${idx}`, url, label };
-      })
-      .filter(Boolean) as { id: string; url: string; label: string }[];
-  }, [home.links]);
-
   const onClickJoin = () => {
     if (!canAccessMemberOnlyPage) {
       toast.error("회원만 접근이 가능합니다.");
@@ -102,6 +126,20 @@ export default function GroupDetailClient() {
       return;
     }
     router.push(joinUrl);
+  };
+
+  const handleToggleFollow = (id: string | number, isFollowing: boolean) => {
+    toggleFollowMutation.mutate(
+      {
+        nickname: String(id),
+        isFollowing,
+      },
+      {
+        onSettled: () => {
+          queryClient.invalidateQueries({ queryKey: clubhomeKeys.participants(groupId) });
+        },
+      }
+    );
   };
 
   return (
@@ -241,6 +279,85 @@ export default function GroupDetailClient() {
             </div>
           </div>
         </div>
+
+        <section className="mt-10 w-full">
+          <div className="mb-4 flex flex-col gap-1 t:flex-row t:items-end t:justify-between">
+            <div>
+              <h2 className="subhead_3_1 text-Gray-7">모임 회원</h2>
+              <p className="body_1_3 text-Gray-4">
+                {totalParticipants == null ? "참여 인원을 확인하고 있습니다." : `총 ${totalParticipants}명`}
+              </p>
+            </div>
+          </div>
+
+          {participantsQuery.isLoading && (
+            <div className="rounded-[8px] border border-Subbrown-3 bg-White px-4 py-6 body_1_2 text-Gray-5">
+              모임 회원 불러오는 중...
+            </div>
+          )}
+
+          {!participantsQuery.isLoading && isParticipantsPrivateBlocked && (
+            <div className="rounded-[8px] border border-Subbrown-3 bg-White px-4 py-6 body_1_2 text-Gray-5">
+              {PRIVATE_PARTICIPANTS_MESSAGE}
+            </div>
+          )}
+
+          {!participantsQuery.isLoading && participantsQuery.isError && !isParticipantsPrivateBlocked && (
+            <div className="rounded-[8px] border border-Subbrown-3 bg-White px-4 py-6 body_1_2 text-Red">
+              모임 회원을 불러오지 못했습니다.
+            </div>
+          )}
+
+          {!participantsQuery.isLoading && !participantsQuery.isError && participants.length === 0 && (
+            <div className="rounded-[8px] border border-Subbrown-3 bg-White px-4 py-6 body_1_2 text-Gray-5">
+              아직 참여 중인 회원이 없습니다.
+            </div>
+          )}
+
+          {!participantsQuery.isLoading && !participantsQuery.isError && participants.length > 0 && (
+            <div className="flex w-full flex-col items-start gap-2">
+              {participants.map((participant) => {
+                const isMe = currentNickname === participant.nickname;
+                const roleLabel =
+                  participant.clubMemberStatus === "OWNER"
+                    ? "개설자"
+                    : participant.clubMemberStatus === "STAFF"
+                      ? "운영진"
+                      : "회원";
+
+                return (
+                  <FollowItem
+                    key={participant.clubMemberId}
+                    user={{
+                      id: participant.nickname,
+                      nickname: participant.nickname,
+                      profileImageUrl: participant.profileImageUrl ?? undefined,
+                      isFollowing: participant.following,
+                    }}
+                    onToggleFollow={handleToggleFollow}
+                    hideFollow={isMe}
+                    subLabel={roleLabel}
+                    badge={
+                      participant.staff ? (
+                        <span className="inline-flex h-6 shrink-0 items-center gap-1 rounded-full bg-Subbrown-4 px-2 text-[12px] font-medium leading-none text-primary-3">
+                          <Image src="/admin.svg" alt="" width={14} height={14} className="object-contain" />
+                          운영진
+                        </span>
+                      ) : undefined
+                    }
+                  />
+                );
+              })}
+
+              {participantsQuery.hasNextPage && (
+                <div ref={loadMoreRef} className="h-5 w-full shrink-0" />
+              )}
+              {participantsQuery.isFetchingNextPage && (
+                <div className="w-full py-3 text-center body_2_3 text-Gray-4">불러오는 중...</div>
+              )}
+            </div>
+          )}
+        </section>
       </div>
 
       {isContactOpen && (
