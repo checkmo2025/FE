@@ -4,25 +4,27 @@ import {
   DocumentSection,
   PublicDocumentLayout,
 } from "@/components/base-ui/PublicDocument/PublicDocumentLayout";
-import { THIRD_PARTY_DATA } from "@/constants/setting/thirdParty";
+import { PRIVACY_DATA } from "@/constants/setting/privacy";
 
 export const metadata: Metadata = {
-  title: "개인정보 제3자 제공 동의",
-  description: "책모 서비스 이용을 위한 개인정보 제3자 제공 동의서입니다.",
+  title: "개인정보처리방침",
+  description:
+    "책모 개인정보처리방침입니다. 개인정보 수집 항목, 이용 목적, 보관 및 파기, 이용자 권리를 안내합니다.",
   alternates: {
-    canonical: "/third-party-consent",
+    canonical: "/support/v1/privacy",
   },
   openGraph: {
-    title: "책모 개인정보 제3자 제공 동의",
-    description: "책모 서비스 이용을 위한 개인정보 제3자 제공 동의서입니다.",
-    url: "/third-party-consent",
+    title: "책모 개인정보처리방침",
+    description:
+      "책모 개인정보처리방침입니다. 개인정보 수집 항목, 이용 목적, 보관 및 파기, 이용자 권리를 안내합니다.",
+    url: "/support/v1/privacy",
   },
 };
 
-export default function ThirdPartyConsentPage() {
+export default function PrivacyPage() {
   return (
-    <PublicDocumentLayout title="개인정보 제3자 제공 동의">
-      {THIRD_PARTY_DATA.map((term) => (
+    <PublicDocumentLayout title="개인정보처리방침" effectiveDate="2026년 6월 5일">
+      {PRIVACY_DATA.map((term) => (
         <DocumentSection key={term.title} title={term.title}>
           {Array.isArray(term.content) ? (
             <DocumentList items={term.content} />

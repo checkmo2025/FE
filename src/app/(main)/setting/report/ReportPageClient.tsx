@@ -6,13 +6,6 @@ import { useMyReportsQuery } from "@/hooks/queries/useMemberQueries";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 
-const REPORT_TYPE_MAP: Record<string, string> = {
-  GENERAL: "일반",
-  BOOK_STORY: "책 이야기",
-  COMMENT: "책 이야기(댓글)",
-  CLUB_MEETING: "책모임 내부",
-};
-
 export default function ReportPageClient() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } = useMyReportsQuery();
   const { ref, inView } = useInView();
@@ -52,14 +45,14 @@ export default function ReportPageClient() {
           신고 내역이 없습니다.
         </div>
       ) : (
-        reports.map((report, idx) => (
+        reports.map((report) => (
           <ReportItem
-            key={`${report.reportDate}-${idx}`}
-            category={REPORT_TYPE_MAP[report.reportType] || "일반"}
-            reporterName={report.reportedMemberNickname}
+            key={report.reportId}
+            category={report.reasonDescription}
+            reporterName={report.displayName}
             content={report.content}
-            date={report.reportDate.substring(0, 10).replace(/-/g, ".")}
-            profileImageUrl={report.reportedMemberProfileImageUrl}
+            date={report.reportedAt.substring(0, 10).replace(/-/g, ".")}
+            profileImageUrl={report.displayImageUrl}
           />
         ))
       )}

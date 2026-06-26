@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { showCustomToast } from "@/utils/toastUtils";
+import { ReportReason } from "@/types/report";
 
 type ModalStep = "none" | "selection" | "report" | "block";
 
 export function useReportBlockFlow(
-  onReportSubmit: (type: string, content: string) => void,
+  onReportSubmit: (reason: ReportReason, content: string) => void,
   onBlockSubmit?: () => Promise<void>
 ) {
   const [modalStep, setModalStep] = useState<ModalStep>("none");
@@ -15,8 +15,8 @@ export function useReportBlockFlow(
   const selectReport = () => setModalStep("report");
   const selectBlock = () => setModalStep("block");
 
-  const handleReportSubmit = (type: string, content: string) => {
-    onReportSubmit(type, content);
+  const handleReportSubmit = (reason: ReportReason, content: string) => {
+    onReportSubmit(reason, content);
     closeAll();
   };
 

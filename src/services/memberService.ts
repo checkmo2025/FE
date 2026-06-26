@@ -1,6 +1,7 @@
 import { apiClient } from "@/lib/api/client";
 import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
-import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, ReportMemberRequest, FollowListResponse, FollowCountResponse, FindEmailRequest, FindEmailResponse, ReportListResponse, LoginStatusResponse, UpdateEmailRequest, BlockListResponse } from "@/types/member";
+import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, FollowListResponse, FollowCountResponse, FindEmailRequest, FindEmailResponse, LoginStatusResponse, UpdateEmailRequest, BlockListResponse } from "@/types/member";
+import { ReportRequest, MyReportList } from "@/types/report";
 import { ApiResponse } from "@/types/auth";
 
 export const memberService = {
@@ -73,8 +74,8 @@ export const memberService = {
             throw new Error(response.message || "Failed to delete follower");
         }
     },
-    reportMember: async (data: ReportMemberRequest): Promise<void> => {
-        const response = await apiClient.post<ApiResponse<unknown>>(
+    reportMember: async (data: ReportRequest): Promise<void> => {
+        const response = await apiClient.post<ApiResponse<number>>(
             MEMBER_ENDPOINTS.REPORT,
             data
         );
@@ -127,7 +128,7 @@ export const memberService = {
         }
         return response.result!;
     },
-    getMyReports: async (cursorId?: number): Promise<ReportListResponse> => {
+    getMyReports: async (cursorId?: number): Promise<MyReportList> => {
         const endpoint = MEMBER_ENDPOINTS.GET_MY_REPORTS;
         const params = new URLSearchParams();
         if (cursorId) {
@@ -135,7 +136,7 @@ export const memberService = {
         }
         const queryString = params.toString();
         const url = queryString ? `${endpoint}?${queryString}` : endpoint;
-        const response = await apiClient.get<ApiResponse<ReportListResponse>>(url);
+        const response = await apiClient.get<ApiResponse<MyReportList>>(url);
         if (!response.isSuccess) {
             throw new Error(response.message || "신고 내역을 불러오는 데 실패했습니다.");
         }

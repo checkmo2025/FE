@@ -10,12 +10,12 @@ export const metadata: Metadata = {
   title: "마케팅 및 이벤트 정보 수신 동의",
   description: "책모의 다양한 혜택과 이벤트 소식을 받아보세요.",
   alternates: {
-    canonical: "/marketing-consent",
+    canonical: "/support/v1/marketing-consent",
   },
   openGraph: {
     title: "책모 마케팅 및 이벤트 정보 수신 동의",
     description: "책모의 다양한 혜택과 이벤트 소식을 받아보세요.",
-    url: "/marketing-consent",
+    url: "/support/v1/marketing-consent",
   },
 };
 
