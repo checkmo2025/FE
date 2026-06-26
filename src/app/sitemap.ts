@@ -101,38 +101,49 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  try {
-    // 1. 책 이야기 (Stories)
-    const stories = await fetchAllSitemapItems(storyService.getStoriesSitemap);
-    const storyRoutes: MetadataRoute.Sitemap = stories.map((item) => ({
+  // 동적 사이트맵 데이터 수집 (Promise.allSettled를 이용한 병렬 처리 및 부분 성공 허용)
+  const results = await Promise.allSettled([
+    fetchAllSitemapItems(storyService.getStoriesSitemap),
+    fetchAllSitemapItems(clubService.getClubsSitemap),
+    fetchAllSitemapItems(newsService.getNewsSitemap),
+  ]);
+
+  let storyRoutes: MetadataRoute.Sitemap = [];
+  let clubRoutes: MetadataRoute.Sitemap = [];
+  let newsRoutes: MetadataRoute.Sitemap = [];
+
+  if (results[0].status === "fulfilled") {
+    storyRoutes = results[0].value.map((item) => ({
       url: `${baseUrl}/stories/${item.id}`,
       lastModified: new Date(item.updatedAt),
       changeFrequency: "daily",
       priority: 0.8,
     }));
+  } else {
+    console.error("Failed to fetch stories sitemap:", results[0].reason);
+  }
 
-    // 2. 독서 모임 (Groups - 프론트 경로는 /groups)
-    const clubs = await fetchAllSitemapItems(clubService.getClubsSitemap);
-    const clubRoutes: MetadataRoute.Sitemap = clubs.map((item) => ({
+  if (results[1].status === "fulfilled") {
+    clubRoutes = results[1].value.map((item) => ({
       url: `${baseUrl}/groups/${item.id}`,
       lastModified: new Date(item.updatedAt),
       changeFrequency: "daily",
       priority: 0.8,
     }));
+  } else {
+    console.error("Failed to fetch clubs sitemap:", results[1].reason);
+  }
 
-    // 3. 소식 (News)
-    const newsList = await fetchAllSitemapItems(newsService.getNewsSitemap);
-    const newsRoutes: MetadataRoute.Sitemap = newsList.map((item) => ({
+  if (results[2].status === "fulfilled") {
+    newsRoutes = results[2].value.map((item) => ({
       url: `${baseUrl}/news/${item.id}`,
       lastModified: new Date(item.updatedAt),
       changeFrequency: "daily",
       priority: 0.7,
     }));
-
-    return [...staticRoutes, ...storyRoutes, ...clubRoutes, ...newsRoutes];
-  } catch (error) {
-    console.error("Failed to generate dynamic sitemap", error);
-    // 에러 발생 시 최소한 정적 사이트맵을 반환하여 사이트맵 구조를 유지
-    return staticRoutes;
+  } else {
+    console.error("Failed to fetch news sitemap:", results[2].reason);
   }
+
+  return [...staticRoutes, ...storyRoutes, ...clubRoutes, ...newsRoutes];
 }

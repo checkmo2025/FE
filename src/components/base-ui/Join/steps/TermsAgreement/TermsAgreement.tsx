@@ -6,9 +6,25 @@ import React, { useState } from "react";
 import Image from "next/image";
 import JoinLayout from "@/components/base-ui/Join/JoinLayout";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
-import TermsMarkdown from "@/components/common/TermsMarkdown";
-import { TERMS_DATA, TERMS_CONTENT } from "@/constants/signupTerms";
+import { PRIVACY_DATA } from "@/constants/setting/privacy";
+import { TERMS_DATA as TERMS_OF_USE_DATA } from "@/constants/setting/terms";
+import { THIRD_PARTY_DATA } from "@/constants/setting/thirdParty";
+import { MARKETING_DATA } from "@/constants/setting/marketing";
 import { useSignup } from "@/contexts/SignupContext";
+
+const TERMS_DATA = [
+  { id: "servicePrivacy", label: "서비스 이용을 위한 필수 개인정보 수집·이용 동의 (필수)", required: true },
+  { id: "termsOfUse", label: "책모 이용약관 동의 (필수)", required: true },
+  { id: "thirdParty", label: "개인정보 제3자 제공 동의 (선택)", required: false },
+  { id: "marketing", label: "마케팅 및 이벤트 정보 수신 동의 (선택)", required: false },
+];
+
+const TERMS_CONTENT_MAP: Record<string, { title: string; content: string | string[] }[]> = {
+  servicePrivacy: PRIVACY_DATA,
+  termsOfUse: TERMS_OF_USE_DATA,
+  thirdParty: THIRD_PARTY_DATA,
+  marketing: MARKETING_DATA,
+};
 
 interface TermsAgreementProps {
   onNext: () => void;
@@ -41,7 +57,7 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
   };
 
   if (selectedTermId) {
-    const term = TERMS_CONTENT[selectedTermId];
+    const termData = TERMS_CONTENT_MAP[selectedTermId];
     return (
       <JoinLayout title="약관 동의">
         <div className="flex flex-col items-center w-full">
@@ -67,8 +83,25 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
             </button>
             <div className="flex flex-col w-full h-full overflow-hidden">
               <div className="flex-1 overflow-y-auto px-[8px] t:px-[64px] custom-scrollbar">
-                <div className="flex flex-col w-full">
-                  <TermsMarkdown content={term.content} />
+                <div className="flex flex-col w-full gap-6">
+                  {termData.map((term, i) => (
+                    <div key={i} className="flex flex-col gap-2">
+                      <h3 className="text-[16px] font-semibold text-Gray-7">{term.title}</h3>
+                      {Array.isArray(term.content) ? (
+                        <ul className="flex list-disc flex-col gap-1 pl-5 text-[14px] text-Gray-5">
+                          {term.content.map((item, idx) => (
+                            <li key={idx}>{item}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <div className="flex flex-col gap-1 text-[14px] text-Gray-5">
+                          {term.content.split("\n").map((line, idx) => (
+                            <p key={idx}>{line.trim()}</p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
