@@ -4,6 +4,7 @@ import { useState } from "react";
 import CommentInput from "./comment_input";
 import CommentItem from "./comment_item";
 import Image from "next/image";
+import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
 // 댓글 목록 (댓글 입력창 + 댓글 + 대댓글) 컴포넌트
 export type Comment = {
@@ -42,8 +43,38 @@ export default function CommentList({
   const [replyInputOpen, setReplyInputOpen] = useState<Record<number, boolean>>({});
   // 각 댓글의 답글 입력 내용을 관리
   const [replyContents, setReplyContents] = useState<Record<number, string>>({});
+  const hasReplyDraft = Object.values(replyContents).some((content) => content.trim());
+  const { confirmNavigation } = useUnsavedChangesGuard({
+    isDirty: hasReplyDraft,
+    variant: "create",
+    title: "작성 중인 답글이 있어요",
+    description: "이 화면을 나가면 입력한 답글이 저장되지 않습니다.",
+  });
 
   const handleReplyClick = (commentId: number) => {
+    if (replyInputOpen[commentId] && replyContents[commentId]?.trim()) {
+      confirmNavigation(
+        () => {
+          setReplyInputOpen((prev) => ({
+            ...prev,
+            [commentId]: false,
+          }));
+          setReplyContents((prev) => {
+            const next = { ...prev };
+            delete next[commentId];
+            return next;
+          });
+        },
+        {
+          title: "작성 중인 답글이 있어요",
+          description: "답글 작성을 취소하면 입력한 내용이 사라집니다.",
+          leaveText: "취소하기",
+          stayText: "계속 작성",
+        }
+      );
+      return;
+    }
+
     setReplyInputOpen((prev) => ({
       ...prev,
       [commentId]: !prev[commentId],

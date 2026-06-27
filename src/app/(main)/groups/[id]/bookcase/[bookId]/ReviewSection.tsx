@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import LongtermChatInput from "@/components/base-ui/LongtermInput";
 import ReviewList, { ReviewItem } from "@/components/base-ui/Bookcase/bookid/ReviewList";
 import { StarSelector } from "@/components/base-ui/Bookcase/bookid/StarRating";
+import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
 type Props = {
   myName: string;
@@ -57,6 +58,13 @@ export default function ReviewSection({
 }: Props) {
   const profileSrc = myProfileImageUrl || defaultProfileUrl;
   const [newRating, setNewRating] = useState<number>(0);
+  const [draftText, setDraftText] = useState("");
+  const { confirmNavigation } = useUnsavedChangesGuard({
+    isDirty: isWriting && (Boolean(draftText.trim()) || newRating >= 0.5),
+    variant: "create",
+    title: "작성 중인 한줄평이 있어요",
+    description: "이 화면을 나가면 입력한 한줄평이 저장되지 않습니다.",
+  });
 
   const { ref: loadMoreRef, inView } = useInView({
     rootMargin: "300px 0px",
@@ -69,6 +77,27 @@ export default function ReviewSection({
 
     onLoadMore();
   }, [inView, hasNextPage, isFetchingNextPage, onLoadMore]);
+
+  const handleToggleWriting = () => {
+    if (isWriting && (draftText.trim() || newRating >= 0.5)) {
+      confirmNavigation(
+        () => {
+          setDraftText("");
+          setNewRating(0);
+          onToggleWriting();
+        },
+        {
+          title: "작성 중인 한줄평이 있어요",
+          description: "한줄평 작성을 취소하면 입력한 내용이 사라집니다.",
+          leaveText: "취소하기",
+          stayText: "계속 작성",
+        }
+      );
+      return;
+    }
+
+    onToggleWriting();
+  };
 
   const handleSend = (text: string) => {
     if (newRating < 0.5) {
@@ -92,7 +121,7 @@ export default function ReviewSection({
 
         <button
           type="button"
-          onClick={onToggleWriting}
+          onClick={handleToggleWriting}
           className="relative w-6 h-6 shrink-0 hover:brightness-0 cursor-pointer"
           aria-label="한줄평 작성 열기"
         >
@@ -136,6 +165,7 @@ export default function ReviewSection({
           <div className="min-w-0 flex-1">
             <LongtermChatInput
               onSend={handleSend}
+              onDraftChange={setDraftText}
               placeholder="한줄평을 입력해 주세요"
               buttonIconSrc="/Send.svg"
             />

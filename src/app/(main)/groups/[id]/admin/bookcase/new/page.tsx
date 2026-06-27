@@ -11,6 +11,7 @@ import { useBookDetailQuery } from '@/hooks/queries/useBookQueries';
 import { useHeaderTitle } from '@/contexts/HeaderTitleContext';
 import { useCreateBookshelfMutation } from '@/hooks/mutations/useClubsBookshelfMutations';
 import { CreateBookshelfRequest } from '@/types/bookshelf';
+import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
 
 const TAGS = [
   { label: '여행', colorClass: 'bg-Secondary-2' },
@@ -116,6 +117,20 @@ export default function NewBookshelfPage() {
   const [isBookSelectModalOpen, setIsBookSelectModalOpen] = useState(false);
 
   const createBookshelfMutation = useCreateBookshelfMutation();
+  const isDirty = Boolean(
+    selectedIsbn ||
+      generation !== '1' ||
+      selectedTags.length > 0 ||
+      meetingName.trim() ||
+      meetingLocation.trim() ||
+      meetingDate.trim()
+  );
+  const { confirmNavigation, runWithoutGuard } = useUnsavedChangesGuard({
+    isDirty,
+    variant: 'create',
+    title: '작성 중인 책장 정보가 있어요',
+    description: '이 화면을 나가면 입력한 책장 정보가 저장되지 않습니다.',
+  });
 
   // ✅ 버튼 막기 조건
   const selectedTagIndex = selectedTags[0];
@@ -131,7 +146,7 @@ export default function NewBookshelfPage() {
     !meetingDateError;
 
   const handleCancel = () => {
-    router.back();
+    confirmNavigation(() => router.back());
   };
 
   const handleSubmit = async () => {
@@ -158,7 +173,7 @@ export default function NewBookshelfPage() {
       });
 
       toast.success('책장 생성 완료!');
-      router.push(`/groups/${groupId}/bookcase`);
+      runWithoutGuard(() => router.push(`/groups/${groupId}/bookcase`));
     } catch (e: any) {
       console.error(e);
       const msg =
@@ -184,7 +199,7 @@ export default function NewBookshelfPage() {
   };
 
   const handleBack = () => {
-    router.back();
+    confirmNavigation(() => router.back());
   };
 
   return (

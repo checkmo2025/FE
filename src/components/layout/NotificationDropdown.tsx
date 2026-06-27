@@ -9,19 +9,23 @@ import { getNotificationText, getNotificationRedirectUrl } from "@/utils/notific
 import { NotificationBasicInfo } from "@/types/notification";
 import { useAuthStore } from "@/store/useAuthStore";
 import { motion } from "framer-motion";
+import { useUnsavedChangesNavigation } from "@/hooks/useUnsavedChangesGuard";
 
 export default function NotificationDropdown() {
     const { isLoggedIn } = useAuthStore();
     const { data: notificationsData, isLoading } = useNotificationPreviewQuery(5, isLoggedIn);
     const notifications = isLoggedIn ? notificationsData : []; const { mutate: readNotification } = useReadNotificationMutation();
     const router = useRouter();
+    const { confirmNavigation } = useUnsavedChangesNavigation();
 
     const handleNotificationClick = (notification: NotificationBasicInfo) => {
-        if (!notification.read) {
-            readNotification(notification.notificationId);
-        }
         const redirectUrl = getNotificationRedirectUrl(notification);
-        router.push(redirectUrl);
+        confirmNavigation(() => {
+            if (!notification.read) {
+                readNotification(notification.notificationId);
+            }
+            router.push(redirectUrl);
+        });
     };
 
     return (
@@ -78,7 +82,7 @@ export default function NotificationDropdown() {
 
             {/* 전체보기 버튼 */}
             <div
-                onClick={() => router.push("/profile/mypage?tab=notifications")}
+                onClick={() => confirmNavigation(() => router.push("/profile/mypage?tab=notifications"))}
                 className="flex w-full items-center justify-center py-[16px] cursor-pointer hover:bg-black/5 transition-colors"
             >
                 <span className="text-Gray-7 font-normal text-[18px] leading-[135%] tracking-[-0.018px]">

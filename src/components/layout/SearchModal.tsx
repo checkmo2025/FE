@@ -13,6 +13,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useInView } from "react-intersection-observer";
 import { Book } from "@/types/book";
 import { EXTERNAL_LINKS } from "@/constants/links";
+import { useUnsavedChangesNavigation } from "@/hooks/useUnsavedChangesGuard";
 
 type SearchModalProps = {
   isOpen: boolean;
@@ -21,11 +22,11 @@ type SearchModalProps = {
 
 export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const router = useRouter();
-  const [topOffset, setTopOffset] = useState(0);
   const [searchValue, setSearchValue] = useState("");
   const debouncedSearchValue = useDebounce(searchValue, 300);
   const { isLoggedIn, openLoginModal } = useAuthStore();
   const { mutate: toggleLike } = useToggleBookLikeMutation();
+  const { confirmNavigation } = useUnsavedChangesNavigation();
 
   const handleLikeChange = (isbn: string) => {
     if (!isLoggedIn) {
@@ -65,9 +66,11 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
   const handleSearch = () => {
     if (searchValue.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchValue.trim())}`);
-      setSearchValue("");
-      onClose();
+      confirmNavigation(() => {
+        router.push(`/search?q=${encodeURIComponent(searchValue.trim())}`);
+        setSearchValue("");
+        onClose();
+      });
     }
   };
 
@@ -77,14 +80,10 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     }
   };
 
-  useEffect(() => {
-    if (isOpen) {
-      const header = document.querySelector("header");
-      if (header) {
-        setTopOffset(header.offsetHeight);
-      }
-    }
-  }, [isOpen]);
+  const topOffset =
+    isOpen && typeof document !== "undefined"
+      ? document.querySelector("header")?.clientHeight ?? 0
+      : 0;
 
   // isOpen 상태에 따라 body 스크롤 잠금/복원 (카운터 방식으로 중첩 모달과 안전하게 공존)
   useScrollLock(isOpen);
@@ -175,8 +174,10 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     <div
                       key={book.isbn}
                       onClick={() => {
-                        router.push(`/books/${book.isbn}`);
-                        onClose();
+                        confirmNavigation(() => {
+                          router.push(`/books/${book.isbn}`);
+                          onClose();
+                        });
                       }}
                       className="flex items-center gap-4 p-3 hover:bg-white/10 cursor-pointer rounded-lg transition-colors"
                     >
@@ -228,8 +229,10 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                           liked={book.likedByMe || false}
                           onLikeChange={() => handleLikeChange(book.isbn)}
                           onCardClick={() => {
-                            router.push(`/books/${book.isbn}`);
-                            onClose();
+                            confirmNavigation(() => {
+                              router.push(`/books/${book.isbn}`);
+                              onClose();
+                            });
                           }}
                         />
                       </div>

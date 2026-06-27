@@ -9,6 +9,7 @@ import { useStoryDetailQuery } from "@/hooks/queries/useStoryQueries";
 import { useUpdateBookStoryMutation } from "@/hooks/mutations/useStoryMutations";
 import { useAuthStore } from "@/store/useAuthStore";
 import BookstoryChoosebook from "@/components/base-ui/BookStory/Editor/bookstory_choosebook";
+import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
 export default function StoryEditPageClient() {
   const router = useRouter();
@@ -22,6 +23,15 @@ export default function StoryEditPageClient() {
 
   const [description, setDescription] = useState("");
   const [isDescriptionInitialized, setIsDescriptionInitialized] = useState(false);
+  const isDirty = Boolean(
+    story &&
+      isDescriptionInitialized &&
+      description !== story.description
+  );
+  const { confirmNavigation, runWithoutGuard } = useUnsavedChangesGuard({
+    isDirty,
+    variant: "edit",
+  });
 
   // 초기 description 세팅 (데이터 로드 후 한 번만)
   useEffect(() => {
@@ -48,7 +58,7 @@ export default function StoryEditPageClient() {
   }, [story, bookStoryId, router]);
 
   const handleCancel = () => {
-    router.back();
+    confirmNavigation(() => router.back());
   };
 
   const handleSubmit = (targetStatus?: "PUBLISHED" | "DRAFT") => {
@@ -70,10 +80,10 @@ export default function StoryEditPageClient() {
         onSuccess: () => {
           if (targetStatus === "DRAFT") {
             toast.success("임시저장되었습니다.");
-            router.push("/profile/mypage");
+            runWithoutGuard(() => router.push("/profile/mypage"));
           } else {
             toast.success(targetStatus === "PUBLISHED" && story?.status === "DRAFT" ? "발행이 완료되었습니다." : "수정이 완료되었습니다.");
-            router.push(`/stories/${bookStoryId}`);
+            runWithoutGuard(() => router.push(`/stories/${bookStoryId}`));
           }
         },
         onError: () => {

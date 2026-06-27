@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createAdminNewsWithImages } from "@/lib/api/admin/news";
 import NewsNewForm from "@/components/base-ui/Admin/news/NewForm";
 import Toast from "@/components/base-ui/Admin/Toast";
+import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
 type CarouselType = "PROMOTION" | "GENERAL";
 
@@ -26,6 +27,22 @@ export default function AdminNewsNewPage() {
 
   const [submitting, setSubmitting] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const isDirty = Boolean(
+    requesterEmail.trim() ||
+      title.trim() ||
+      content.trim() ||
+      originalLink.trim() ||
+      dateRange.trim() ||
+      repFile ||
+      extraFiles.length > 0 ||
+      carousel !== "PROMOTION"
+  );
+  const { runWithoutGuard } = useUnsavedChangesGuard({
+    isDirty,
+    variant: "create",
+    title: "작성 중인 소식이 있어요",
+    description: "이 화면을 나가면 입력한 소식이 저장되지 않습니다.",
+  });
 
   const closeToast = () => {
     setToastMessage("");
@@ -137,8 +154,10 @@ export default function AdminNewsNewPage() {
       setToastMessage("소식 등록 성공");
 
       setTimeout(() => {
-        router.push("/admin/news");
-        router.refresh();
+        runWithoutGuard(() => {
+          router.push("/admin/news");
+          router.refresh();
+        });
       }, 500);
     } catch (err) {
       console.error(err);
