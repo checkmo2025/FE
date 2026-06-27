@@ -20,6 +20,7 @@ import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 import { BLOCKED_USER_MASK } from "@/constants/masking";
 import { useBlockStore } from "@/store/useBlockStore";
 import { hasErrorCode } from "@/lib/api/errors";
+import { useUnsavedChangesNavigation } from "@/hooks/useUnsavedChangesGuard";
 
 // 어떤 글의 댓글인지 구분
 type CommentSectionProps = {
@@ -40,6 +41,7 @@ export default function CommentSection({
   const { mutate: reportMember } = useReportMemberMutation();
   const { isLoggedIn, openLoginModal } = useAuthStore();
   const router = useRouter();
+  const { confirmNavigation } = useUnsavedChangesNavigation();
   const { isBlocked: checkLocalBlocked, initializeBlocks } = useBlockStore();
 
   useEffect(() => {
@@ -256,7 +258,7 @@ export default function CommentSection({
         onEditComment={handleEditComment}
         onDeleteComment={handleDeleteComment}
         onReportComment={handleReportComment}
-        onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
+        onProfileClick={(nickname) => confirmNavigation(() => router.push(`/profile/${nickname}`))}
       />
       <ConfirmModal
         isOpen={isConfirmOpen}

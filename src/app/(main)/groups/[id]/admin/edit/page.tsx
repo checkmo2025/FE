@@ -24,6 +24,7 @@ import { useUploadClubImageMutation } from "@/hooks/mutations/useCreateClubMutat
 // ✅ 너가 방금 만들라고 한 edit용 hooks
 import { useClubAdminDetailQuery } from "@/hooks/queries/useClubAdminEditQueries";
 import { useUpdateClubAdminMutation } from "@/hooks/mutations/useClubAdminEditMutations";
+import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
 type NameCheckState = "idle" | "checking" | "available" | "duplicate";
 type SnsLink = { label: string; url: string };
@@ -31,6 +32,11 @@ type SnsLink = { label: string; url: string };
 function cx(...classes: (string | false | null | undefined)[]) {
   return classes.filter(Boolean).join(" ");
 }
+
+const normalizeLinks = (links: SnsLink[]) =>
+  links
+    .map((link) => ({ label: link.label.trim(), url: link.url.trim() }))
+    .filter((link) => link.label || link.url);
 
 const autoResize = (el: HTMLTextAreaElement) => {
   el.style.height = "0px";
@@ -187,6 +193,69 @@ export default function EditClubPage() {
     setLinks((prev) => prev.filter((_, i) => i !== idx));
   };
 
+  const currentSnapshot = useMemo(
+    () => ({
+      name: clubName.trim(),
+      description: clubDescription.trim(),
+      profileMode,
+      profileImageUrl: profileMode === "upload" ? profileImageUrl ?? "" : "",
+      open,
+      categories: [...selectedCategories].sort(),
+      participants: [...selectedParticipants].sort(),
+      region: activityArea.trim(),
+      links: normalizeLinks(links),
+    }),
+    [
+      clubName,
+      clubDescription,
+      profileMode,
+      profileImageUrl,
+      open,
+      selectedCategories,
+      selectedParticipants,
+      activityArea,
+      links,
+    ]
+  );
+
+  const initialSnapshot = useMemo(() => {
+    if (!data) return null;
+
+    return {
+      name: (data.name ?? "").trim(),
+      description: (data.description ?? "").trim(),
+      profileMode: data.profileImageUrl ? "upload" : "default",
+      profileImageUrl: data.profileImageUrl ?? "",
+      open: Boolean(data.open),
+      categories: (data.category ?? [])
+        .map((category) => category.description as BookCategory)
+        .filter(Boolean)
+        .sort(),
+      participants: (data.participantTypes ?? [])
+        .map((participant) => participant.description as ParticipantLabel)
+        .filter(Boolean)
+        .sort(),
+      region: (data.region ?? "").trim(),
+      links: normalizeLinks(
+        (data.links ?? []).map((link) => ({
+          label: link.label ?? "",
+          url: link.link ?? "",
+        }))
+      ),
+    };
+  }, [data]);
+
+  const isDirty = Boolean(
+    initialSnapshot &&
+      JSON.stringify(currentSnapshot) !== JSON.stringify(initialSnapshot)
+  );
+  const { confirmNavigation, runWithoutGuard } = useUnsavedChangesGuard({
+    isDirty,
+    variant: "edit",
+    title: "저장되지 않은 모임 정보가 있어요",
+    description: "이 화면을 나가면 수정한 모임 정보가 저장되지 않습니다.",
+  });
+
   // ✅ create의 canNext 조건을 “전체 저장 가능 조건”으로 그대로 유지
   const canSave = useMemo(() => {
     // Step1 조건
@@ -251,7 +320,7 @@ export default function EditClubPage() {
 
       await updateClub.mutateAsync(payload as any);
       toast.success("모임 정보가 수정되었습니다.");
-      router.back();
+      runWithoutGuard(() => router.back());
     } catch {
       toast.error("모임 수정 실패");
     }
@@ -589,7 +658,7 @@ export default function EditClubPage() {
           <div className="mt-10 flex justify-between">
             <button
               type="button"
-              onClick={() => router.back()}
+              onClick={() => confirmNavigation(() => router.back())}
               className={cx(
                 "hidden t:flex justify-center items-center gap-[10px] w-[148px] h-[48px] px-4 py-3 rounded-[8px]",
                 "bg-primary-1 hover:bg-primary-3 text-White",
