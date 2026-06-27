@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import NewsNewForm from "@/components/base-ui/Admin/news/NewForm";
 import Toast from "@/components/base-ui/Admin/Toast";
@@ -9,6 +9,7 @@ import {
   updateAdminNewsWithImages,
   deleteAdminNews,
 } from "@/lib/api/admin/news";
+import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
 type CarouselType = "PROMOTION" | "GENERAL";
 
@@ -36,6 +37,7 @@ export default function AdminNewsEditPage() {
 
   const [submitting, setSubmitting] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const initialSnapshotRef = useRef<string | null>(null);
 
   const closeToast = () => {
     setToastMessage("");
@@ -69,6 +71,20 @@ export default function AdminNewsEditPage() {
             url,
           }))
         );
+
+        initialSnapshotRef.current = JSON.stringify({
+          requesterEmail: news.requesterEmail,
+          title: news.title,
+          content: news.content,
+          originalLink: news.originalLink,
+          dateRange: `${news.publishStartAt.replaceAll("-", "/")}~${news.publishEndAt.replaceAll("-", "/")}`,
+          carousel: news.carousel,
+          thumbnailUrl: news.thumbnailUrl || null,
+          extraImages: (news.imageUrls ?? []).map((url: string) => ({
+            type: "existing",
+            url,
+          })),
+        });
       } catch (err) {
         console.error(err);
         alert("소식 상세 조회 실패");
@@ -154,6 +170,45 @@ export default function AdminNewsEditPage() {
     });
   };
 
+  const currentSnapshot = useMemo(
+    () =>
+      JSON.stringify({
+        requesterEmail,
+        title,
+        content,
+        originalLink,
+        dateRange,
+        carousel,
+        thumbnailUrl: repFile ? repPreview : existingThumbnailUrl,
+        extraImages: extraImages.map((image) =>
+          image.type === "existing"
+            ? { type: "existing", url: image.url }
+            : { type: "new", previewUrl: image.previewUrl }
+        ),
+      }),
+    [
+      requesterEmail,
+      title,
+      content,
+      originalLink,
+      dateRange,
+      carousel,
+      repFile,
+      repPreview,
+      existingThumbnailUrl,
+      extraImages,
+    ]
+  );
+  const isDirty = Boolean(
+    initialSnapshotRef.current && currentSnapshot !== initialSnapshotRef.current
+  );
+  const { runWithoutGuard } = useUnsavedChangesGuard({
+    isDirty,
+    variant: "edit",
+    title: "저장되지 않은 소식이 있어요",
+    description: "이 화면을 나가면 수정한 소식이 저장되지 않습니다.",
+  });
+
   const parseDateRange = (v: string) => {
     const raw = v.trim();
     const parts = raw.split("~").map((s) => s.trim());
@@ -215,8 +270,10 @@ export default function AdminNewsEditPage() {
         }
 
         alert("게시 종료일이 지나 소식이 삭제되었습니다.");
-        router.push("/admin/news");
-        router.refresh();
+        runWithoutGuard(() => {
+          router.push("/admin/news");
+          router.refresh();
+        });
         return;
       }
 
@@ -240,8 +297,10 @@ export default function AdminNewsEditPage() {
       setToastMessage("소식 수정 성공");
 
       setTimeout(() => {
-        router.push(`/admin/news/${newsId}`);
-        router.refresh();
+        runWithoutGuard(() => {
+          router.push(`/admin/news/${newsId}`);
+          router.refresh();
+        });
       }, 500);
     } catch (err) {
       console.error(err);

@@ -6,6 +6,7 @@ import CommentHeader from "./comment_header";
 import CommentMenu from "./comment_menu";
 import CommentEditForm from "./comment_edit_form";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
 type CommentItemProps = {
   id: number;
@@ -49,6 +50,13 @@ export default function CommentItem({
   const [menuOpen, setMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(content);
+  const isEditDirty = isEditing && editContent !== content;
+  const { confirmNavigation } = useUnsavedChangesGuard({
+    isDirty: isEditDirty,
+    variant: "edit",
+    title: "수정 중인 댓글이 있어요",
+    description: "이 화면을 나가면 수정한 댓글이 저장되지 않습니다.",
+  });
 
   useEffect(() => {
     setEditContent(content);
@@ -59,6 +67,27 @@ export default function CommentItem({
       onEdit?.(id, editContent);
     }
     setIsEditing(false);
+  };
+
+  const handleCancelEdit = () => {
+    if (!isEditDirty) {
+      setEditContent(content);
+      setIsEditing(false);
+      return;
+    }
+
+    confirmNavigation(
+      () => {
+        setEditContent(content);
+        setIsEditing(false);
+      },
+      {
+        title: "수정 중인 댓글이 있어요",
+        description: "댓글 수정을 취소하면 입력한 내용이 사라집니다.",
+        leaveText: "취소하기",
+        stayText: "계속 수정",
+      }
+    );
   };
 
   const derivedCanEdit = canEdit || isMine;
@@ -105,10 +134,7 @@ export default function CommentItem({
           value={editContent}
           onChange={setEditContent}
           onSave={handleSaveEdit}
-          onCancel={() => {
-            setEditContent(content);
-            setIsEditing(false);
-          }}
+          onCancel={handleCancelEdit}
         />
       )}
     </div>

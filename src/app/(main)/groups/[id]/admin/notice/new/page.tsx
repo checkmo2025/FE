@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import { useClubsBookshelfSimpleInfiniteQuery } from "@/hooks/queries/useClubsBookshelfQueries";
 import { imageService } from "@/services/imageService";
 import { useCreateClubNoticeMutation } from "@/hooks/mutations/useClubNotificationMutations";
+import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
 type Book = {
   id: number; // meetingId로 사용
@@ -87,6 +88,25 @@ export default function NewNoticePage() {
     ta.style.height = "auto";
     ta.style.height = `${ta.scrollHeight}px`;
   };
+  const isDirty = Boolean(
+    title.trim() ||
+      content.trim() ||
+      isVoteEnabled ||
+      isPinned ||
+      voteItems.some((item) => item.trim()) ||
+      isMultiple ||
+      isAnonymous ||
+      deadlineDate ||
+      deadlineTime ||
+      selectedBook ||
+      imageFiles.length > 0
+  );
+  const { runWithoutGuard } = useUnsavedChangesGuard({
+    isDirty,
+    variant: "create",
+    title: "작성 중인 공지사항이 있어요",
+    description: "이 화면을 나가면 입력한 공지사항이 저장되지 않습니다.",
+  });
 
   useEffect(() => {
     setCustomTitle("공지사항 작성");
@@ -102,8 +122,6 @@ export default function NewNoticePage() {
       imagePreviews.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [imagePreviews]);
-
-  const handleCancel = () => router.back();
 
   const handleBookSelect = (book: Book) => {
     setSelectedBook(book);
@@ -230,7 +248,7 @@ export default function NewNoticePage() {
 
       toast.dismiss(tid);
       toast.success("공지사항 등록 성공");
-      router.push(`/groups/${groupId}/notice`);
+      runWithoutGuard(() => router.push(`/groups/${groupId}/notice`));
     } catch (e: any) {
       toast.dismiss(tid);
 

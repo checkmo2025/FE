@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "@/lib/api/endpoints";
+import { API_BASE_URL } from "./base";
 
 export const CLUBS_BOOKSHELF_ENDPOINTS = {
   

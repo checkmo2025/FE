@@ -1,5 +1,6 @@
 import { apiClient } from "@/lib/api/client";
-import { AUTH_ENDPOINTS } from "@/lib/api/endpoints";
+import { AUTH_ENDPOINTS } from "@/lib/api/endpoints/auth";
+import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
 import { useAuthStore } from "@/store/useAuthStore";
 import {
   LoginForm,
@@ -34,24 +35,24 @@ export const authService = {
   },
 
   checkNickname: async (nickname: string): Promise<ApiResponse<boolean>> => {
-    return await apiClient.post<ApiResponse<boolean>>(AUTH_ENDPOINTS.CHECK_NICKNAME, null, {
+    return await apiClient.post<ApiResponse<boolean>>(MEMBER_ENDPOINTS.CHECK_NICKNAME, null, {
       params: { nickname }
     });
   },
 
   additionalInfo: async (data: AdditionalInfo): Promise<ApiResponse<unknown>> => {
-    return await apiClient.post<ApiResponse<unknown>>(AUTH_ENDPOINTS.ADDITIONAL_INFO, data);
+    return await apiClient.post<ApiResponse<unknown>>(MEMBER_ENDPOINTS.ADDITIONAL_INFO, data);
   },
 
   getProfile: async (): Promise<ApiResponse<User>> => {
-    return await apiClient.get<ApiResponse<User>>(AUTH_ENDPOINTS.PROFILE, {
+    return await apiClient.get<ApiResponse<User>>(MEMBER_ENDPOINTS.GET_PROFILE, {
       silentAuthError: true,
     });
   },
 
   getLoginStatus: async (): Promise<ApiResponse<LoginStatusResponse>> => {
     return await apiClient.get<ApiResponse<LoginStatusResponse>>(
-      AUTH_ENDPOINTS.LOGIN_STATUS,
+      MEMBER_ENDPOINTS.GET_LOGIN_STATUS,
       { silentAuthError: true }
     );
   },

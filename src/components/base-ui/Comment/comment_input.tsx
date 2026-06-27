@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
 //댓글 입력창 컴포넌트
 type CommentInputProps = {
@@ -13,6 +14,12 @@ export default function CommentInput({
   placeholder = "댓글 내용",
 }: CommentInputProps) {
   const [content, setContent] = useState("");
+  useUnsavedChangesGuard({
+    isDirty: Boolean(content.trim()),
+    variant: "create",
+    title: "작성 중인 댓글이 있어요",
+    description: "이 화면을 나가면 입력한 댓글이 저장되지 않습니다.",
+  });
 
   const handleSubmit = () => {
     if (!content.trim()) return;
