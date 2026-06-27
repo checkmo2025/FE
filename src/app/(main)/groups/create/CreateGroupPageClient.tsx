@@ -23,6 +23,7 @@ import {
   useCreateClubMutation,
   useUploadClubImageMutation,
 } from "@/hooks/mutations/useCreateClubMutation";
+import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
 type NameCheckState = "idle" | "checking" | "available" | "duplicate";
 type SnsLink = { label: string; url: string };
@@ -172,6 +173,40 @@ export default function CreateGroupPageClient() {
     setLinks((prev) => prev.filter((_, i) => i !== idx));
   };
 
+  const isDirty = useMemo(
+    () =>
+      Boolean(
+        clubName.trim() ||
+          clubDescription.trim() ||
+          profileMode !== "default" ||
+          selectedImageUrl ||
+          profileImageUrl ||
+          open !== null ||
+          selectedCategories.length > 0 ||
+          selectedParticipants.length > 0 ||
+          activityArea.trim() ||
+          links.some((link) => link.label.trim() || link.url.trim())
+      ),
+    [
+      clubName,
+      clubDescription,
+      profileMode,
+      selectedImageUrl,
+      profileImageUrl,
+      open,
+      selectedCategories,
+      selectedParticipants,
+      activityArea,
+      links,
+    ]
+  );
+  const { runWithoutGuard } = useUnsavedChangesGuard({
+    isDirty,
+    variant: "create",
+    title: "작성 중인 모임 정보가 있어요",
+    description: "이 화면을 나가면 입력한 모임 정보가 저장되지 않습니다.",
+  });
+
   // 모임 생성 (최종)
   const onSubmitCreateClub = async () => {
     // 안전장치: Step2 open 미선택이면 막기
@@ -205,7 +240,7 @@ export default function CreateGroupPageClient() {
       const msg = await createClub.mutateAsync(payload);
       toast.success(msg.result);
 
-      router.push("/groups");
+      runWithoutGuard(() => router.push("/groups"));
     } catch {
       toast.error("모임 생성 실패");
     }

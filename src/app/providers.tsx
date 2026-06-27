@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
+import { UnsavedChangesProvider } from "@/hooks/useUnsavedChangesGuard";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     const [queryClient] = useState(
@@ -21,7 +22,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
     return (
         <QueryClientProvider client={queryClient}>
-            {children}
+            <UnsavedChangesProvider>{children}</UnsavedChangesProvider>
             <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
     );

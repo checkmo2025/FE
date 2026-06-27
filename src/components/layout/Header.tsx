@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import { useSearchStore } from "@/store/useSearchStore";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import { useUnsavedChangesNavigation } from "@/hooks/useUnsavedChangesGuard";
 
 const NAV = [
   { label: "책모 홈", href: "/home" },
@@ -41,6 +42,7 @@ export default function Header() {
   const { user, isLoggedIn, openLoginModal } = useAuthStore();
   const pageTitle = customTitle || defaultTitle;
   const { isSearchOpen, toggleSearch, closeSearch } = useSearchStore();
+  const { confirmNavigation } = useUnsavedChangesNavigation();
 
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
@@ -75,7 +77,7 @@ export default function Header() {
       openLoginModal();
       return;
     }
-    router.push(href);
+    confirmNavigation(() => router.push(href));
   };
   return (
     <header 

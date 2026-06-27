@@ -19,6 +19,7 @@ import { useReportMemberMutation } from "@/hooks/mutations/useReportMemberMutati
 import { ReportReason } from "@/types/report";
 import { isValidUrl } from "@/utils/url";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import { useUnsavedChangesNavigation } from "@/hooks/useUnsavedChangesGuard";
 
 type CommentSectionNoticeProps = {
   noticeId: number;
@@ -32,6 +33,7 @@ export default function CommentSectionNotice({
   const params = useParams();
   const router = useRouter();
   const clubId = Number(params.id);
+  const { confirmNavigation } = useUnsavedChangesNavigation();
 
   const { user } = useAuthStore();
   const myName = user?.nickname ?? "";
@@ -220,7 +222,7 @@ export default function CommentSectionNotice({
         onEditComment={handleEditComment}
         onDeleteComment={handleDeleteComment}
         onReportComment={handleReportComment}
-        onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
+        onProfileClick={(nickname) => confirmNavigation(() => router.push(`/profile/${nickname}`))}
         onLoadMore={handleLoadMore}
         hasNextPage={!!commentsQuery.hasNextPage}
         isFetchingNextPage={!!commentsQuery.isFetchingNextPage}

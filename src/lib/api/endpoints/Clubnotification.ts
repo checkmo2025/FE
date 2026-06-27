@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "../endpoints";
+import { API_BASE_URL } from "./base";
 
 export const CLUB_NOTIFICATION = {
   // GET / POST

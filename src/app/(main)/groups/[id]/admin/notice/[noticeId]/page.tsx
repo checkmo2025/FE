@@ -13,6 +13,7 @@ import { useClubsBookshelfSimpleInfiniteQuery } from "@/hooks/queries/useClubsBo
 import { useClubNoticeDetailQuery } from "@/hooks/queries/useClubNotificationQueries";
 import { imageService } from "@/services/imageService";
 import { useUpdateClubNoticeMutation } from "@/hooks/mutations/useClubNotificationMutations";
+import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
 type Book = {
   id: number; // meetingId로 사용
@@ -129,6 +130,62 @@ export default function EditNoticePage() {
     return dt.toISOString();
   }, [deadlineDate, deadlineTime]);
 
+  const initialSnapshot = useMemo(() => {
+    if (!noticeData) return null;
+    const initialDeadline = noticeData.voteDetail?.deadline
+      ? splitLocalDateTimeFromISO(noticeData.voteDetail.deadline)
+      : null;
+
+    return {
+      title: noticeData.title,
+      content: noticeData.content,
+      isPinned: noticeData.isPinned,
+      meetingId: noticeData.meetingDetail?.meetingId ?? null,
+      imageItems: (noticeData.imageUrls ?? []).map((url) => ({
+        previewUrl: url,
+        isLocal: false,
+      })),
+      deadlineDate: initialDeadline?.date ?? "",
+      deadlineTime: initialDeadline?.time ?? "",
+    };
+  }, [noticeData]);
+
+  const currentSnapshot = useMemo(
+    () => ({
+      title,
+      content,
+      isPinned,
+      meetingId: selectedBook?.id ?? null,
+      imageItems: imageItems.map((item) => ({
+        previewUrl: item.previewUrl,
+        isLocal: item.isLocal,
+      })),
+      deadlineDate: isVoteEnabled ? deadlineDate : "",
+      deadlineTime: isVoteEnabled ? deadlineTime : "",
+    }),
+    [
+      title,
+      content,
+      isPinned,
+      selectedBook,
+      imageItems,
+      isVoteEnabled,
+      deadlineDate,
+      deadlineTime,
+    ]
+  );
+
+  const isDirty = Boolean(
+    initialSnapshot &&
+      JSON.stringify(currentSnapshot) !== JSON.stringify(initialSnapshot)
+  );
+  const { runWithoutGuard } = useUnsavedChangesGuard({
+    isDirty,
+    variant: "edit",
+    title: "저장되지 않은 공지사항이 있어요",
+    description: "이 화면을 나가면 수정한 공지사항이 저장되지 않습니다.",
+  });
+
   useEffect(() => {
     setCustomTitle("공지사항 수정");
     return () => setCustomTitle(null);
@@ -141,7 +198,6 @@ export default function EditNoticePage() {
   useEffect(() => {
     if (!noticeData || initializedRef.current) return;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTitle(noticeData.title);
     setContent(noticeData.content);
     setIsPinned(noticeData.isPinned);
@@ -308,7 +364,7 @@ export default function EditNoticePage() {
 
       toast.dismiss(tid);
       toast.success("공지사항 수정 성공");
-      router.push(`/groups/${groupId}/notice/${noticeId}`);
+      runWithoutGuard(() => router.push(`/groups/${groupId}/notice/${noticeId}`));
     } catch (e: any) {
       toast.dismiss(tid);
 
