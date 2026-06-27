@@ -10,6 +10,7 @@ import BookSelectModal from "@/components/layout/BookSelectModal";
 import { useBookDetailQuery } from "@/hooks/queries/useBookQueries";
 import { useCreateBookStoryMutation } from "@/hooks/mutations/useStoryMutations";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
 function StoryNewContent() {
   const router = useRouter();
@@ -30,13 +31,14 @@ function StoryNewContent() {
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
   const [isBookSelectModalOpen, setIsBookSelectModalOpen] = useState(false);
+  const isDirty = Boolean(title.trim() || detail.trim());
+  const { runWithoutGuard } = useUnsavedChangesGuard({
+    isDirty,
+    variant: "create",
+  });
 
   const { data: selectedBook } = useBookDetailQuery(isbn || "");
   const createStoryMutation = useCreateBookStoryMutation();
-
-  const handleCancel = () => {
-    router.back();
-  };
 
   const handleSubmit = (status: "PUBLISHED" | "DRAFT" = "PUBLISHED") => {
     if (!selectedBook) {
@@ -61,10 +63,10 @@ function StoryNewContent() {
       onSuccess: () => {
         if (status === "DRAFT") {
           toast.success("임시저장되었습니다.");
-          router.push("/profile/mypage"); // 임시저장 시 마이페이지로 이동
+          runWithoutGuard(() => router.push("/profile/mypage")); // 임시저장 시 마이페이지로 이동
         } else {
           toast.success("스토리가 등록되었습니다!");
-          router.push("/stories");
+          runWithoutGuard(() => router.push("/stories"));
         }
       },
       onError: (error) => {
@@ -75,7 +77,7 @@ function StoryNewContent() {
   };
 
   const handleBookSelect = (selectedIsbn: string) => {
-    router.push(`/stories/new?isbn=${selectedIsbn}`);
+    runWithoutGuard(() => router.push(`/stories/new?isbn=${selectedIsbn}`));
   };
 
   return (

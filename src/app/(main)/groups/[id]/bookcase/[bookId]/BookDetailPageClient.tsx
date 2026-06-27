@@ -33,6 +33,7 @@ import { useReportMemberMutation } from "@/hooks/mutations/useReportMemberMutati
 import { ReportReason, ReportTargetType } from "@/types/report";
 
 import { useAuthStore } from "@/store/useAuthStore";
+import { useUnsavedChangesNavigation } from "@/hooks/useUnsavedChangesGuard";
 
 function isTabKey(v: string | null): v is TabKey {
   return v === "topic" || v === "review" || v === "meeting";
@@ -65,6 +66,7 @@ export default function BookDetailPageClient() {
     targetType: ReportTargetType;
     targetId: string;
   } | null>(null);
+  const { confirmNavigation, runWithoutGuard } = useUnsavedChangesNavigation();
 
   const { data: meData } = useClubMeQuery(clubId);
   const isStaff = !!meData?.staff;
@@ -103,10 +105,14 @@ export default function BookDetailPageClient() {
   }, [searchParams]);
 
   const handleTabChange = (tab: TabKey) => {
-    setActiveTab(tab);
-    const next = new URLSearchParams(searchParams.toString());
-    next.set("tab", tab);
-    router.replace(`${pathname}?${next.toString()}`, { scroll: false });
+    if (tab === activeTab) return;
+
+    confirmNavigation(() => {
+      setActiveTab(tab);
+      const next = new URLSearchParams(searchParams.toString());
+      next.set("tab", tab);
+      router.replace(`${pathname}?${next.toString()}`, { scroll: false });
+    });
   };
 
   const meetingNameForQuery = useMemo(() => {
@@ -114,13 +120,15 @@ export default function BookDetailPageClient() {
   }, [bookshelfDetail?.bookDetailInfo?.title]);
 
   const handleManageTeams = () => {
-    router.push(
-      `/groups/${groupIdParam}/admin/bookcase/${meetingId}?meetingName=${encodeURIComponent(meetingNameForQuery)}`
+    confirmNavigation(() =>
+      router.push(
+        `/groups/${groupIdParam}/admin/bookcase/${meetingId}?meetingName=${encodeURIComponent(meetingNameForQuery)}`
+      )
     );
   };
 
   const handleEditBookshelf = () => {
-    router.push(`/groups/${groupIdParam}/admin/bookcase/${meetingId}/edit`);
+    confirmNavigation(() => router.push(`/groups/${groupIdParam}/admin/bookcase/${meetingId}/edit`));
   };
 
   const openDeleteModal = () => setIsDeleteModalOpen(true);
@@ -134,7 +142,7 @@ export default function BookDetailPageClient() {
       await deleteBookshelf({ clubId, meetingId });
       setIsDeleteModalOpen(false);
       toast.success("삭제되었습니다.");
-      router.push(`/groups/${groupIdParam}/bookcase`);
+      runWithoutGuard(() => router.push(`/groups/${groupIdParam}/bookcase`));
     } catch {
       toast.error("삭제에 실패했습니다.");
     }
@@ -181,7 +189,7 @@ export default function BookDetailPageClient() {
   }, [reviewsQuery.data]);
 
   const handleClickAuthor = (nickname: string) => {
-    router.push(`/profile/${nickname}`);
+    confirmNavigation(() => router.push(`/profile/${nickname}`));
   };
 
   const handleOpenTopicReport = (id: number | string) => {

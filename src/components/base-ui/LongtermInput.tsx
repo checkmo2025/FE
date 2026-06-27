@@ -9,6 +9,7 @@ interface ChatInputProps {
   buttonIconSrc?: string;
   className?: string;
   initialValue?: string;
+  onDraftChange?: (text: string) => void;
 }
 
 export default function LongtermChatInput({
@@ -17,6 +18,7 @@ export default function LongtermChatInput({
   buttonIconSrc = "/Send.svg",
   className = "",
   initialValue,
+  onDraftChange,
 }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -40,6 +42,7 @@ export default function LongtermChatInput({
     if (ok === false) return;
 
     ta.value = "";
+    onDraftChange?.("");
     adjustHeight();
   };
 
@@ -48,8 +51,9 @@ export default function LongtermChatInput({
     const ta = textareaRef.current;
     if (!ta) return;
     ta.value = initialValue;
+    onDraftChange?.(initialValue);
     adjustHeight();
-  }, [initialValue]);
+  }, [initialValue, onDraftChange]);
 
   return (
     <div className={`min-w-0 flex-1 flex items-center ${className}`}>
@@ -57,7 +61,10 @@ export default function LongtermChatInput({
         ref={textareaRef}
         rows={1}
         placeholder={placeholder}
-        onInput={adjustHeight}
+        onInput={(event) => {
+          adjustHeight();
+          onDraftChange?.(event.currentTarget.value);
+        }}
         className="
           min-w-0 flex-1
           bg-transparent outline-none resize-none

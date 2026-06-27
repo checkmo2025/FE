@@ -15,6 +15,7 @@ import { useHeaderTitle } from '@/contexts/HeaderTitleContext';
 import { BookshelfPatchRequest } from '@/types/bookshelf';
 import { useBookshelfEditQuery } from '@/hooks/queries/useClubsBookshelfQueries';
 import { usePatchBookshelfMutation } from '@/hooks/mutations/useClubsBookshelfMutations';
+import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
 
 const TAGS = [
   { label: '여행', colorClass: 'bg-Secondary-2' },
@@ -162,8 +163,35 @@ export default function EditBookshelfPage() {
     !!meetingTimeISO &&
     !meetingDateError;
 
+  const initialSnapshot = editData
+    ? {
+        title: editData.meetingInfo.title ?? '',
+        location: editData.meetingInfo.location ?? '',
+        generation: String(editData.meetingInfo.generation ?? 1),
+        tag: editData.meetingInfo.tag ?? '',
+        date: isoToDateDot(editData.meetingInfo.meetingTime ?? ''),
+      }
+    : null;
+  const currentSnapshot = {
+    title: meetingName.trim(),
+    location: meetingLocation.trim(),
+    generation,
+    tag: tagString,
+    date: meetingDate,
+  };
+  const isDirty = Boolean(
+    initialSnapshot &&
+      JSON.stringify(currentSnapshot) !== JSON.stringify(initialSnapshot)
+  );
+  const { confirmNavigation, runWithoutGuard } = useUnsavedChangesGuard({
+    isDirty,
+    variant: 'edit',
+    title: '저장되지 않은 책장 정보가 있어요',
+    description: '이 화면을 나가면 수정한 책장 정보가 저장되지 않습니다.',
+  });
+
   const handleCancel = () => {
-    router.back();
+    confirmNavigation(() => router.back());
   };
 
   const handleSubmit = async () => {
@@ -189,7 +217,7 @@ export default function EditBookshelfPage() {
       });
 
       toast.success('책장 수정 완료!');
-      router.push(`/groups/${clubId}/bookcase`);
+      runWithoutGuard(() => router.push(`/groups/${clubId}/bookcase`));
     } catch (e: any) {
       console.error(e);
       const msg =
@@ -215,7 +243,7 @@ export default function EditBookshelfPage() {
   };
 
   const handleBack = () => {
-    router.back();
+    confirmNavigation(() => router.back());
   };
 
   // 로딩 처리(최소)

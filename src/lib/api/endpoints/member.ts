@@ -1,6 +1,8 @@
 import { API_BASE_URL } from "./base";
 
 export const MEMBER_ENDPOINTS = {
+    ADDITIONAL_INFO: `${API_BASE_URL}/members/additional-info`,
+    CHECK_NICKNAME: `${API_BASE_URL}/members/check-nickname`,
     GET_PROFILE: `${API_BASE_URL}/members/me`,
     RECOMMEND: `${API_BASE_URL}/members/me/recommend`,
     UPDATE_PROFILE: `${API_BASE_URL}/members/me`,

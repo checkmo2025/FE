@@ -1,13 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 
 import LongtermChatInput from "@/components/base-ui/LongtermInput";
 import BookshelfDeleteConfirmModal from "@/components/base-ui/Bookcase/bookid/BookshelfDeleteConfirmModal";
 import { StarRating, StarSelector } from "./StarRating";
 import ItemMoreMenu from "../ItemMoreMenu";
+import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
 export type ReviewItem = {
   id: number | string;
@@ -49,27 +50,68 @@ export default function ReviewList({
     if (editingId == null) return null;
     return items.find((x) => String(x.id) === String(editingId)) ?? null;
   }, [editingId, items]);
+  const isEditDirty = Boolean(
+    editingItem &&
+      (draftText !== (editingItem.content ?? "") || draftRating !== (editingItem.rating ?? 0))
+  );
+  const { confirmNavigation } = useUnsavedChangesGuard({
+    isDirty: isEditDirty,
+    variant: "edit",
+    title: "수정 중인 한줄평이 있어요",
+    description: "이 화면을 나가면 수정한 한줄평이 저장되지 않습니다.",
+  });
 
   const startEdit = (item: ReviewItem) => {
+    if (isEditDirty) {
+      confirmNavigation(
+        () => {
+          setEditingId(item.id);
+          setDraftText(item.content ?? "");
+          setDraftRating(item.rating ?? 0);
+        },
+        {
+          title: "수정 중인 한줄평이 있어요",
+          description: "다른 한줄평을 수정하면 현재 입력한 내용이 사라집니다.",
+          leaveText: "이동하기",
+          stayText: "계속 수정",
+        }
+      );
+      return;
+    }
+
     setEditingId(item.id);
     setDraftText(item.content ?? "");
     setDraftRating(item.rating ?? 0);
   };
 
-  const cancelEdit = () => {
+  const cancelEdit = useCallback(() => {
     setEditingId(null);
     setDraftText("");
     setDraftRating(0);
-  };
+  }, []);
+
+  const handleCancelEdit = useCallback(() => {
+    if (!isEditDirty) {
+      cancelEdit();
+      return;
+    }
+
+    confirmNavigation(cancelEdit, {
+      title: "수정 중인 한줄평이 있어요",
+      description: "한줄평 수정을 취소하면 입력한 내용이 사라집니다.",
+      leaveText: "취소하기",
+      stayText: "계속 수정",
+    });
+  }, [cancelEdit, confirmNavigation, isEditDirty]);
 
   useEffect(() => {
     if (editingId == null) return;
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") cancelEdit();
+      if (e.key === "Escape") handleCancelEdit();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [editingId]);
+  }, [editingId, handleCancelEdit]);
 
   const openDelete = (id: ReviewItem["id"]) => setDeleteTargetId(id);
   const closeDelete = () => setDeleteTargetId(null);
@@ -151,6 +193,7 @@ export default function ReviewList({
                     <div className="mt-2">
                       <LongtermChatInput
                         initialValue={draftText}
+                        onDraftChange={setDraftText}
                         placeholder="한줄평을 수정해 주세요"
                         buttonIconSrc="/Send.svg"
                         onSend={(text) => {
@@ -222,6 +265,7 @@ export default function ReviewList({
                     <>
                       <LongtermChatInput
                         initialValue={draftText}
+                        onDraftChange={setDraftText}
                         placeholder="한줄평을 수정해 주세요"
                         buttonIconSrc="/Send.svg"
                         onSend={(text) => {
