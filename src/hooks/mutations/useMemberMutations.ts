@@ -42,7 +42,8 @@ export const useUpdateProfileMutation = () => {
             });
         },
         onSuccess: async () => {
-            queryClient.invalidateQueries({ queryKey: ["member", "me"] });
+            // 실제 프로필 쿼리 키(memberKeys.profile())로 무효화 — 기존 ["member","me"]는 매칭되지 않아 no-op였음
+            queryClient.invalidateQueries({ queryKey: memberKeys.profile() });
             // Fetch the updated profile and sync it to the global auth store so the Header updates
             const response = await authService.getProfile();
             if (response.isSuccess && response.result) {
