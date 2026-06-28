@@ -15,7 +15,9 @@ type Props = {
   onManageTeamsClick?: () => void;
 };
 
-function formatDateDot(iso: string) {
+function formatDateDot(iso?: string | null) {
+  if (!iso?.trim()) return "";
+
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) {
     return iso.slice(0, 10).replaceAll("-", ".");
@@ -110,9 +112,9 @@ export default function MeetingTabSection({ clubId, meetingId, onManageTeamsClic
     <div className="w-full flex flex-col items-start gap-[24px] self-stretch">
       <MeetingInfo
         meetingId={data.meetingId}
-        meetingName={data.title}
-        date={formatDateDot(data.meetingTime)}
-        location={data.location}
+        meetingName={data.title?.trim() || "정기모임"}
+        date={formatDateDot(data.meetingTime) || "날짜 미정"}
+        location={data.location?.trim() || "장소 미정"}
         isAdmin={!!data.isStaff}
         onManageGroupClick={onManageTeamsClick}
       />

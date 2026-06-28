@@ -28,9 +28,9 @@ export type MeetingTeamMembersGroup = {
 
 export type GetMeetingDetailResult = {
   meetingId: number;
-  title: string;
-  meetingTime: string;
-  location: string;
+  title: string | null;
+  meetingTime: string | null;
+  location: string | null;
   existingTeams: ExistingTeamItem[];
   teamMembers: MeetingTeamMembersGroup[];
   isStaff: boolean;
