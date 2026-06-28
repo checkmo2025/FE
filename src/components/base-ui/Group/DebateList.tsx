@@ -7,6 +7,7 @@ import LongtermChatInput from "@/components/base-ui/LongtermInput";
 import BookshelfDeleteConfirmModal from "@/components/base-ui/Bookcase/bookid/BookshelfDeleteConfirmModal";
 import ItemMoreMenu from "../Bookcase/ItemMoreMenu";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
 
 export type DebateItem = {
   id: number | string;
@@ -158,6 +159,8 @@ export default function DebateList({
                         onDraftChange={setDraftText}
                         placeholder="발제를 수정해 주세요"
                         buttonIconSrc="/Send.svg"
+                        maxLength={INPUT_LIMITS.BOOKSHELF_COMPOSER}
+                        overLimitMessage={`발제는 ${INPUT_LIMITS.BOOKSHELF_COMPOSER}자 이하여야 합니다.`}
                         onSend={(text) => {
                           setDraftText(text);
                           onUpdate(item.id, text);
@@ -211,6 +214,8 @@ export default function DebateList({
                         onDraftChange={setDraftText}
                         placeholder="발제를 수정해 주세요"
                         buttonIconSrc="/Send.svg"
+                        maxLength={INPUT_LIMITS.BOOKSHELF_COMPOSER}
+                        overLimitMessage={`발제는 ${INPUT_LIMITS.BOOKSHELF_COMPOSER}자 이하여야 합니다.`}
                         onSend={(text) => {
                           setDraftText(text);
                           onUpdate(item.id, text);

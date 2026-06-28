@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useCallback, useLayoutEffect, useRef } from "react";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { clampTextToLimit } from "@/utils/inputLimit";
 
 type BookstoryTextProps = {
   title: string;
@@ -40,7 +42,13 @@ export default function BookstoryText({
       const insert = "  ";
       const next = detail.slice(0, start) + insert + detail.slice(end);
 
-      onChangeDetail(next);
+      onChangeDetail(
+        clampTextToLimit(
+          next,
+          INPUT_LIMITS.BOOK_STORY_CONTENT,
+          `책이야기 본문은 ${INPUT_LIMITS.BOOK_STORY_CONTENT}자 이하여야 합니다.`
+        )
+      );
 
       requestAnimationFrame(() => {
         el.selectionStart = el.selectionEnd = start + insert.length;
@@ -61,7 +69,16 @@ export default function BookstoryText({
       <div className="flex p-[10px] items-center gap-[10px] border-b border-b-Subbrown-4">
         <input
           value={title}
-          onChange={(e) => onChangeTitle(e.target.value)}
+          onChange={(e) =>
+            onChangeTitle(
+              clampTextToLimit(
+                e.target.value,
+                INPUT_LIMITS.BOOK_STORY_TITLE,
+                `책이야기 제목은 ${INPUT_LIMITS.BOOK_STORY_TITLE}자 이하여야 합니다.`
+              )
+            )
+          }
+          maxLength={INPUT_LIMITS.BOOK_STORY_TITLE}
           placeholder="제목을 입력해주세요"
           className="
             w-full bg-transparent outline-none
@@ -76,9 +93,18 @@ export default function BookstoryText({
         <textarea
           ref={textareaRef}
           value={detail}
-          onChange={(e) => onChangeDetail(e.target.value)}
+          onChange={(e) =>
+            onChangeDetail(
+              clampTextToLimit(
+                e.target.value,
+                INPUT_LIMITS.BOOK_STORY_CONTENT,
+                `책이야기 본문은 ${INPUT_LIMITS.BOOK_STORY_CONTENT}자 이하여야 합니다.`
+              )
+            )
+          }
           onKeyDown={handleDetailKeyDown}
-          placeholder="자신의 책이야기를 들려주세요. (최대 5000자)"
+          maxLength={INPUT_LIMITS.BOOK_STORY_CONTENT}
+          placeholder={`자신의 책이야기를 들려주세요. (최대 ${INPUT_LIMITS.BOOK_STORY_CONTENT}자)`}
           rows={6}
           className="
             w-full resize-none bg-transparent outline-none

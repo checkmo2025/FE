@@ -13,6 +13,8 @@ import { useClubsBookshelfSimpleInfiniteQuery } from "@/hooks/queries/useClubsBo
 import { imageService } from "@/services/imageService";
 import { useCreateClubNoticeMutation } from "@/hooks/mutations/useClubNotificationMutations";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
 
 type Book = {
   id: number; // meetingId로 사용
@@ -131,11 +133,28 @@ export default function NewNoticePage() {
   const handleRemoveBook = () => setSelectedBook(null);
 
   const handleVoteItemChange = (index: number, value: string) => {
-    setVoteItems((prev) => prev.map((it, i) => (i === index ? value : it)));
+    setVoteItems((prev) =>
+      prev.map((it, i) =>
+        i === index
+          ? clampTextToLimit(
+              value,
+              INPUT_LIMITS.NOTICE_POLL_OPTION,
+              `투표 항목은 ${INPUT_LIMITS.NOTICE_POLL_OPTION}자 이하여야 합니다.`
+            )
+          : it
+      )
+    );
   };
 
   const addVoteItem = () => {
-    setVoteItems((prev) => (prev.length >= 6 ? prev : [...prev, ""]));
+    setVoteItems((prev) => {
+      if (prev.length >= INPUT_LIMITS.NOTICE_POLL_OPTION_COUNT) {
+        toast.error(`투표 항목은 최대 ${INPUT_LIMITS.NOTICE_POLL_OPTION_COUNT}개까지 추가할 수 있습니다.`);
+        return prev;
+      }
+
+      return [...prev, ""];
+    });
   };
 
   const handleImageFile = () => {
@@ -148,9 +167,20 @@ export default function NewNoticePage() {
     if (!files || files.length === 0) return;
 
     const fileArr = Array.from(files);
-    const urls = fileArr.map((file) => URL.createObjectURL(file));
+    const remaining = INPUT_LIMITS.NOTICE_IMAGE_COUNT - imageFiles.length;
+    if (remaining <= 0) {
+      toast.error(`공지 이미지는 최대 ${INPUT_LIMITS.NOTICE_IMAGE_COUNT}개까지 첨부할 수 있습니다.`);
+      e.target.value = "";
+      return;
+    }
 
-    setImageFiles((prev) => [...prev, ...fileArr]);
+    const selectedFiles = fileArr.slice(0, remaining);
+    if (fileArr.length > remaining) {
+      toast.error(`공지 이미지는 최대 ${INPUT_LIMITS.NOTICE_IMAGE_COUNT}개까지 첨부할 수 있습니다.`);
+    }
+    const urls = selectedFiles.map((file) => URL.createObjectURL(file));
+
+    setImageFiles((prev) => [...prev, ...selectedFiles]);
     setImagePreviews((prev) => [...prev, ...urls]);
 
     e.target.value = "";
@@ -174,7 +204,10 @@ export default function NewNoticePage() {
   }, [deadlineDate, deadlineTime]);
 
   const mapVoteItemsToRequest = (items: string[]) => {
-    const trimmed = items.map((v) => v.trim()).filter(Boolean).slice(0, 6);
+    const trimmed = items
+      .map((v) => v.trim())
+      .filter(Boolean)
+      .slice(0, INPUT_LIMITS.NOTICE_POLL_OPTION_COUNT);
     return {
       item1: trimmed[0],
       item2: trimmed[1],
@@ -191,6 +224,28 @@ export default function NewNoticePage() {
       return;
     }
     if (isPending) return;
+    if (!title.trim()) {
+      toast.error("공지 제목을 입력해 주세요.");
+      return;
+    }
+    if (!content.trim()) {
+      toast.error("공지 내용을 입력해 주세요.");
+      return;
+    }
+    if (
+      isTextOverLimit(
+        title,
+        INPUT_LIMITS.NOTICE_TITLE,
+        `공지 제목은 ${INPUT_LIMITS.NOTICE_TITLE}자 이하여야 합니다.`
+      ) ||
+      isTextOverLimit(
+        content,
+        INPUT_LIMITS.NOTICE_CONTENT,
+        `공지 내용은 ${INPUT_LIMITS.NOTICE_CONTENT}자 이하여야 합니다.`
+      )
+    ) {
+      return;
+    }
 
     const now = new Date();
     const nowISO = now.toISOString();
@@ -209,9 +264,23 @@ export default function NewNoticePage() {
         return;
       }
     }
-    if (content.length > 1000) {
-      toast.error("공지사항은 1000자 이내로 작성 가능합니다.");
-      return;
+    if (isVoteEnabled) {
+      const trimmedVoteItems = voteItems.map((item) => item.trim()).filter(Boolean);
+      if (trimmedVoteItems.length < 2) {
+        toast.error("투표 항목은 최소 2개 이상 입력해 주세요.");
+        return;
+      }
+      if (
+        trimmedVoteItems.some((item) =>
+          isTextOverLimit(
+            item,
+            INPUT_LIMITS.NOTICE_POLL_OPTION,
+            `투표 항목은 ${INPUT_LIMITS.NOTICE_POLL_OPTION}자 이하여야 합니다.`
+          )
+        )
+      ) {
+        return;
+      }
     }
     // inned 5개 제한 “사전 차단”은 pinned 개수를 알아야 가능
     const tid = toast.loading("공지사항 등록 중...");
@@ -311,7 +380,16 @@ export default function NewNoticePage() {
                   <div className="flex px-6 py-4 items-center border-b border-b-Subbrown-4">
                     <input
                       value={title}
-                      onChange={(e) => setTitle(e.target.value)}
+                      onChange={(e) =>
+                        setTitle(
+                          clampTextToLimit(
+                            e.target.value,
+                            INPUT_LIMITS.NOTICE_TITLE,
+                            `공지 제목은 ${INPUT_LIMITS.NOTICE_TITLE}자 이하여야 합니다.`
+                          )
+                        )
+                      }
+                      maxLength={INPUT_LIMITS.NOTICE_TITLE}
                       placeholder="제목을 입력해주세요."
                       className="w-full bg-transparent outline-none text-Gray-7 subhead_4_1 placeholder:text-Gray-3"
                     />
@@ -321,11 +399,19 @@ export default function NewNoticePage() {
                   <textarea
                     ref={contentRef}
                     value={content}
-                    onChange={(e) => setContent(e.target.value.slice(0, 1000))}
+                    onChange={(e) =>
+                      setContent(
+                        clampTextToLimit(
+                          e.target.value,
+                          INPUT_LIMITS.NOTICE_CONTENT,
+                          `공지 내용은 ${INPUT_LIMITS.NOTICE_CONTENT}자 이하여야 합니다.`
+                        )
+                      )
+                    }
                     onInput={adjustContentHeight}
                     placeholder="내용을 입력해주세요"
                     rows={1}
-                    maxLength={1000}
+                    maxLength={INPUT_LIMITS.NOTICE_CONTENT}
                     className="
                       w-full min-w-0 resize-none bg-transparent outline-none
                       overflow-hidden
@@ -336,7 +422,7 @@ export default function NewNoticePage() {
 
                   <div className="mt-2 flex justify-end">
                     <span className="text-[12px] leading-[16px] text-Gray-3">
-                      {content.length}/1000
+                      {content.length}/{INPUT_LIMITS.NOTICE_CONTENT}
                     </span>
                   </div>
                 </div>
@@ -359,13 +445,14 @@ export default function NewNoticePage() {
                                 onChange={(e) =>
                                   handleVoteItemChange(index, e.target.value)
                                 }
+                                maxLength={INPUT_LIMITS.NOTICE_POLL_OPTION}
                                 placeholder={`투표 항목 ${index + 1} 입력`}
                                 className="w-full bg-transparent outline-none text-Gray-7 body_1_2 placeholder:text-Gray-3"
                               />
                             </div>
                           ))}
 
-                          {voteItems.length < 6 && (
+                          {voteItems.length < INPUT_LIMITS.NOTICE_POLL_OPTION_COUNT && (
                             <button
                               type="button"
                               onClick={addVoteItem}

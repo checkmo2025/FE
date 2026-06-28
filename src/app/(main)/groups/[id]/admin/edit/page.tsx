@@ -25,6 +25,8 @@ import { useUploadClubImageMutation } from "@/hooks/mutations/useCreateClubMutat
 import { useClubAdminDetailQuery } from "@/hooks/queries/useClubAdminEditQueries";
 import { useUpdateClubAdminMutation } from "@/hooks/mutations/useClubAdminEditMutations";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
 
 type NameCheckState = "idle" | "checking" | "available" | "duplicate";
 type SnsLink = { label: string; url: string };
@@ -138,6 +140,15 @@ export default function EditClubPage() {
   const onCheckName = async () => {
     const name = clubName.trim();
     if (!name) return;
+    if (
+      isTextOverLimit(
+        name,
+        INPUT_LIMITS.CLUB_NAME,
+        `모임 이름은 ${INPUT_LIMITS.CLUB_NAME}자 이하여야 합니다.`
+      )
+    ) {
+      return;
+    }
 
     // ✅ 이름이 원래랑 같으면 그냥 통과
     if (name === initialName) {
@@ -179,7 +190,10 @@ export default function EditClubPage() {
 
   const toggleWithLimit = <T,>(arr: T[], item: T, limit: number) => {
     if (arr.includes(item)) return arr.filter((x) => x !== item);
-    if (arr.length >= limit) return arr;
+    if (arr.length >= limit) {
+      toast.error(`최대 ${limit}개까지 선택할 수 있습니다.`, { id: `selection-limit-${limit}` });
+      return arr;
+    }
     return [...arr, item];
   };
 
@@ -187,7 +201,15 @@ export default function EditClubPage() {
     setLinks((prev) => prev.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
   };
 
-  const addLinkRow = () => setLinks((prev) => [...prev, { label: "", url: "" }]);
+  const addLinkRow = () =>
+    setLinks((prev) => {
+      if (prev.length >= INPUT_LIMITS.CLUB_LINK_COUNT) {
+        toast.error(`문의 링크는 최대 ${INPUT_LIMITS.CLUB_LINK_COUNT}개까지 입력할 수 있습니다.`);
+        return prev;
+      }
+
+      return [...prev, { label: "", url: "" }];
+    });
 
   const removeLinkRow = (idx: number) => {
     setLinks((prev) => prev.filter((_, i) => i !== idx));
@@ -296,6 +318,25 @@ export default function EditClubPage() {
       toast.error("공개/비공개를 선택해주세요.");
       return;
     }
+    if (
+      isTextOverLimit(
+        clubName.trim(),
+        INPUT_LIMITS.CLUB_NAME,
+        `모임 이름은 ${INPUT_LIMITS.CLUB_NAME}자 이하여야 합니다.`
+      ) ||
+      isTextOverLimit(
+        clubDescription.trim(),
+        INPUT_LIMITS.CLUB_DESCRIPTION,
+        `모임 소개글은 ${INPUT_LIMITS.CLUB_DESCRIPTION}자 이하여야 합니다.`
+      ) ||
+      isTextOverLimit(
+        activityArea.trim(),
+        INPUT_LIMITS.CLUB_REGION,
+        `활동 지역은 ${INPUT_LIMITS.CLUB_REGION}자 이하여야 합니다.`
+      )
+    ) {
+      return;
+    }
 
     try {
       const category = mapBookCategoriesToCodes(selectedCategories);
@@ -306,6 +347,30 @@ export default function EditClubPage() {
       const linksPayload = links
         .map((l) => ({ label: l.label.trim(), link: l.url.trim() }))
         .filter((l) => l.label && l.link);
+
+      if (linksPayload.length > INPUT_LIMITS.CLUB_LINK_COUNT) {
+        toast.error(`문의 링크는 최대 ${INPUT_LIMITS.CLUB_LINK_COUNT}개까지 입력할 수 있습니다.`);
+        return;
+      }
+
+      if (
+        linksPayload.some((link) =>
+          isTextOverLimit(
+            link.label,
+            INPUT_LIMITS.CLUB_LINK_LABEL,
+            `문의 링크 이름은 ${INPUT_LIMITS.CLUB_LINK_LABEL}자 이하여야 합니다.`
+          )
+        ) ||
+        linksPayload.some((link) =>
+          isTextOverLimit(
+            link.link,
+            INPUT_LIMITS.CLUB_LINK_URL,
+            `문의 링크는 ${INPUT_LIMITS.CLUB_LINK_URL}자 이하여야 합니다.`
+          )
+        )
+      ) {
+        return;
+      }
 
       const payload = {
         name: clubName.trim(),
@@ -350,11 +415,17 @@ export default function EditClubPage() {
               <input
                 value={clubName}
                 onChange={(e) => {
-                  setClubName(e.target.value);
+                  const nextName = clampTextToLimit(
+                    e.target.value,
+                    INPUT_LIMITS.CLUB_NAME,
+                    `모임 이름은 ${INPUT_LIMITS.CLUB_NAME}자 이하여야 합니다.`
+                  );
+                  setClubName(nextName);
                   // ✅ edit: 이름이 바뀌면 다시 체크 요구
-                  if (e.target.value.trim() === initialName) setNameCheck("available");
+                  if (nextName.trim() === initialName) setNameCheck("available");
                   else setNameCheck("idle");
                 }}
+                maxLength={INPUT_LIMITS.CLUB_NAME}
                 placeholder="독서 모임 이름을 입력해주세요."
                 className="w-full h-[44px] t:h-[56px] rounded-[8px] border border-[#EAE5E2] p-4 outline-none bg-white body_1_3 t:subhead_4_1"
               />
@@ -401,11 +472,18 @@ export default function EditClubPage() {
             <textarea
               value={clubDescription}
               onChange={(e) => {
-                setClubDescription(e.target.value);
+                setClubDescription(
+                  clampTextToLimit(
+                    e.target.value,
+                    INPUT_LIMITS.CLUB_DESCRIPTION,
+                    `모임 소개글은 ${INPUT_LIMITS.CLUB_DESCRIPTION}자 이하여야 합니다.`
+                  )
+                );
                 autoResize(e.currentTarget);
               }}
               onInput={(e) => autoResize(e.currentTarget)}
-              placeholder="자유롭게 입력해주세요! (500자 제한)"
+              maxLength={INPUT_LIMITS.CLUB_DESCRIPTION}
+              placeholder={`자유롭게 입력해주세요! (${INPUT_LIMITS.CLUB_DESCRIPTION}자 제한)`}
               className="
                 w-full
                 min-h-[200px] t:min-h-[260px]
@@ -555,8 +633,17 @@ export default function EditClubPage() {
             <h2 className="mt-10 text-[18px] font-semibold text-[#2C2C2C]">활동 지역을 입력해주세요!</h2>
             <input
               value={activityArea}
-              onChange={(e) => setActivityArea(e.target.value)}
-              placeholder="활동 지역을 입력해주세요 (40자 제한)"
+              onChange={(e) =>
+                setActivityArea(
+                  clampTextToLimit(
+                    e.target.value,
+                    INPUT_LIMITS.CLUB_REGION,
+                    `활동 지역은 ${INPUT_LIMITS.CLUB_REGION}자 이하여야 합니다.`
+                  )
+                )
+              }
+              maxLength={INPUT_LIMITS.CLUB_REGION}
+              placeholder={`활동 지역을 입력해주세요 (${INPUT_LIMITS.CLUB_REGION}자 제한)`}
               className="mt-4 w-full h-[44px] t:h-[56px] rounded-[8px] border border-[#EAE5E2] body_1_3 bg-white px-4 outline-none"
             />
 
@@ -585,9 +672,17 @@ export default function EditClubPage() {
                 <div key={idx} className="flex flex-col gap-4 py-3 t:flex-row t:items-center">
                   <input
                     value={it.label}
-                    onChange={(e) => updateLink(idx, { label: e.target.value })}
-                    placeholder="링크 대체 텍스트 입력(최대 20자)"
-                    maxLength={20}
+                    onChange={(e) =>
+                      updateLink(idx, {
+                        label: clampTextToLimit(
+                          e.target.value,
+                          INPUT_LIMITS.CLUB_LINK_LABEL,
+                          `문의 링크 이름은 ${INPUT_LIMITS.CLUB_LINK_LABEL}자 이하여야 합니다.`
+                        ),
+                      })
+                    }
+                    placeholder={`링크 대체 텍스트 입력(최대 ${INPUT_LIMITS.CLUB_LINK_LABEL}자)`}
+                    maxLength={INPUT_LIMITS.CLUB_LINK_LABEL}
                     className="
                       w-full t:w-[35%] h-[44px] t:h-[56px]
                       rounded-[8px]
@@ -603,9 +698,17 @@ export default function EditClubPage() {
                   <div className="flex gap-3 w-full t:flex-1">
                     <input
                       value={it.url}
-                      onChange={(e) => updateLink(idx, { url: e.target.value })}
-                      placeholder="링크 입력(최대 100자)"
-                      maxLength={100}
+                      onChange={(e) =>
+                        updateLink(idx, {
+                          url: clampTextToLimit(
+                            e.target.value,
+                            INPUT_LIMITS.CLUB_LINK_URL,
+                            `문의 링크는 ${INPUT_LIMITS.CLUB_LINK_URL}자 이하여야 합니다.`
+                          ),
+                        })
+                      }
+                      placeholder={`링크 입력(최대 ${INPUT_LIMITS.CLUB_LINK_URL}자)`}
+                      maxLength={INPUT_LIMITS.CLUB_LINK_URL}
                       className="
                         flex-1
                         h-[44px] t:h-[56px]
@@ -639,14 +742,16 @@ export default function EditClubPage() {
               ))}
 
               <button
-                type="button"
-                onClick={addLinkRow}
-                className="
-                  w-full h-[56px] rounded-[8px]
-                  bg-Gray-1
-                  flex items-center justify-center
-                  hover:bg-Gray-2
-                "
+              type="button"
+              onClick={addLinkRow}
+              disabled={links.length >= INPUT_LIMITS.CLUB_LINK_COUNT}
+              className="
+                w-full h-[56px] rounded-[8px]
+                bg-Gray-1
+                flex items-center justify-center
+                hover:bg-Gray-2
+                disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-Gray-1
+              "
                 title="추가"
               >
                 <Image src={"/icon_plus_1.svg"} alt="" width={24} height={24} />

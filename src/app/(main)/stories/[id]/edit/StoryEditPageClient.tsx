@@ -10,6 +10,8 @@ import { useUpdateBookStoryMutation } from "@/hooks/mutations/useStoryMutations"
 import { useAuthStore } from "@/store/useAuthStore";
 import BookstoryChoosebook from "@/components/base-ui/BookStory/Editor/bookstory_choosebook";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
 
 export default function StoryEditPageClient() {
   const router = useRouter();
@@ -65,6 +67,15 @@ export default function StoryEditPageClient() {
     // PUBLISHED일 경우 description 밸리데이션 처리
     if (targetStatus === "PUBLISHED" && !description.trim()) {
       toast.error("내용을 입력해 주세요.");
+      return;
+    }
+    if (
+      isTextOverLimit(
+        description,
+        INPUT_LIMITS.BOOK_STORY_CONTENT,
+        `책이야기 본문은 ${INPUT_LIMITS.BOOK_STORY_CONTENT}자 이하여야 합니다.`
+      )
+    ) {
       return;
     }
 
@@ -160,8 +171,17 @@ export default function StoryEditPageClient() {
             <p className="body_1_2 text-Gray-4 mb-1">내용</p>
             <textarea
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="책 이야기 내용을 입력해 주세요."
+              onChange={(e) =>
+                setDescription(
+                  clampTextToLimit(
+                    e.target.value,
+                    INPUT_LIMITS.BOOK_STORY_CONTENT,
+                    `책이야기 본문은 ${INPUT_LIMITS.BOOK_STORY_CONTENT}자 이하여야 합니다.`
+                  )
+                )
+              }
+              maxLength={INPUT_LIMITS.BOOK_STORY_CONTENT}
+              placeholder={`책 이야기 내용을 입력해 주세요. (최대 ${INPUT_LIMITS.BOOK_STORY_CONTENT}자)`}
               className="w-full min-h-[300px] px-4 py-3 rounded-lg border border-Gray-2 bg-background body_1_3 text-Gray-7 resize-none focus:outline-none focus:border-primary-2 transition-colors"
             />
           </div>

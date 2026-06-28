@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useMeetingChatsInfiniteQuery } from "@/hooks/queries/useMeetingChatQueries";
 import type { ChatTeam } from "@/components/base-ui/Bookcase/ChatTeamSelectModal";
 import type { MeetingChatMessageItem } from "@/types/groups/meetingChats";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
 
 type Props = {
   isOpen: boolean;
@@ -165,6 +167,15 @@ export default function MeetingChatModal({
     const content = draft.trim();
     if (!content) return;
     if (!isSocketConnected || !canSendMessage) return;
+    if (
+      isTextOverLimit(
+        content,
+        INPUT_LIMITS.CHAT_MESSAGE,
+        `채팅은 ${INPUT_LIMITS.CHAT_MESSAGE}자 이하로 입력해 주세요.`
+      )
+    ) {
+      return;
+    }
 
     onSendMessage(content);
     setDraft("");
@@ -331,9 +342,18 @@ export default function MeetingChatModal({
           >
             <input
               value={draft}
-              onChange={(e) => setDraft(e.target.value)}
+              onChange={(e) =>
+                setDraft(
+                  clampTextToLimit(
+                    e.target.value,
+                    INPUT_LIMITS.CHAT_MESSAGE,
+                    `채팅은 ${INPUT_LIMITS.CHAT_MESSAGE}자 이하로 입력해 주세요.`
+                  )
+                )
+              }
               onKeyDown={handleKeyDown}
               disabled={!isSocketConnected || !canSendMessage}
+              maxLength={INPUT_LIMITS.CHAT_MESSAGE}
               className="body_1_2 flex-1 bg-transparent text-Gray-5 outline-none"
               placeholder={inputPlaceholder}
             />

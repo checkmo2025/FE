@@ -5,6 +5,8 @@ import CommentInput from "./comment_input";
 import CommentItem from "./comment_item";
 import Image from "next/image";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
 
 // 댓글 목록 (댓글 입력창 + 댓글 + 대댓글) 컴포넌트
 export type Comment = {
@@ -90,6 +92,15 @@ export default function CommentList({
   const handleReplySubmit = (commentId: number) => {
     const replyContent = replyContents[commentId]?.trim();
     if (!replyContent) return;
+    if (
+      isTextOverLimit(
+        replyContent,
+        INPUT_LIMITS.BOOK_STORY_COMMENT,
+        `댓글은 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자 이하여야 합니다.`
+      )
+    ) {
+      return;
+    }
 
     // 답글 추가
     if (onAddReply) {
@@ -111,7 +122,11 @@ export default function CommentList({
   const handleReplyContentChange = (commentId: number, content: string) => {
     setReplyContents((prev) => ({
       ...prev,
-      [commentId]: content,
+      [commentId]: clampTextToLimit(
+        content,
+        INPUT_LIMITS.BOOK_STORY_COMMENT,
+        `댓글은 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자 이하여야 합니다.`
+      ),
     }));
   };
 
@@ -175,7 +190,8 @@ export default function CommentList({
                             handleReplySubmit(comment.parentCommentId || comment.id);
                           }
                         }}
-                        placeholder="답글 내용을 입력해주세요"
+                        maxLength={INPUT_LIMITS.BOOK_STORY_COMMENT}
+                        placeholder={`답글 내용을 입력해주세요 (최대 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자)`}
                         className="flex-1 min-w-0 h-[36px] t:h-[56px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White Body_1_2 text-Gray-7 placeholder:text-Gray-3 outline-none"
                         autoFocus
                       />

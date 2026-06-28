@@ -5,6 +5,8 @@ import React from "react";
 import ClubCategoryTags from "./search_club_category_tags";
 import type { ApplyType, ParticipantType } from "@/types/groups/groups";
 import type { ClubCategoryDTO } from "@/types/groups/clubsearch";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { clampTextToLimit } from "@/utils/inputLimit";
 const DEFAULT_CLUB_IMG = "/default_profile_1.svg";
 
 // participantTypes 한글 매핑
@@ -216,8 +218,17 @@ export default function SearchClubListItem({
         <div className="t:hidden w-full">
           <textarea
             value={reason}
-            onChange={(e) => setReason(e.target.value.slice(0, 300))}
-            placeholder="신청 사유를 입력해보세요(300자 제한)"
+            onChange={(e) =>
+              setReason(
+                clampTextToLimit(
+                  e.target.value,
+                  INPUT_LIMITS.APPLY_REASON,
+                  `신청 사유는 ${INPUT_LIMITS.APPLY_REASON}자 이하여야 합니다.`
+                )
+              )
+            }
+            maxLength={INPUT_LIMITS.APPLY_REASON}
+            placeholder={`신청 사유를 입력해보세요(${INPUT_LIMITS.APPLY_REASON}자 제한)`}
             className="w-full min-h-[220px] rounded-[12px] bg-Gray-1 p-4 body_2_2 outline-none"
           />
           <button

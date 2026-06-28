@@ -4,6 +4,8 @@ import type { ClubSummary } from "@/components/base-ui/Group-Search/search_clubl
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import ClubCategoryTags from "./search_clublist/search_club_category_tags";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { clampTextToLimit } from "@/utils/inputLimit";
 
 const DEFAULT_CLUB_IMG = "/default_profile_1.svg";
 
@@ -118,11 +120,17 @@ export default function SearchClubApplyModal({ open, club, onClose, onSubmit }: 
               ref={taRef}
               value={reason}
               onChange={(e) => {
-                setReason(e.target.value);
+                setReason(
+                  clampTextToLimit(
+                    e.target.value,
+                    INPUT_LIMITS.APPLY_REASON,
+                    `신청 사유는 ${INPUT_LIMITS.APPLY_REASON}자 이하여야 합니다.`
+                  )
+                );
                 autoResize();
               }}
-              maxLength={300}
-              placeholder="신청 사유를 입력해주세요(300자 제한)"
+              maxLength={INPUT_LIMITS.APPLY_REASON}
+              placeholder={`신청 사유를 입력해주세요(${INPUT_LIMITS.APPLY_REASON}자 제한)`}
               className={[
                 "w-full",
                 "resize-none overflow-hidden",
