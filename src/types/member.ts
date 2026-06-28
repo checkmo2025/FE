@@ -9,6 +9,7 @@ export interface RecommendResponse {
 }
 
 export interface UpdateProfileRequest {
+    nickname?: string;
     description: string;
     categories: string[];
     phoneNumber: string;

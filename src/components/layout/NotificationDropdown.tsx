@@ -11,7 +11,11 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { motion } from "framer-motion";
 import { useUnsavedChangesNavigation } from "@/hooks/useUnsavedChangesGuard";
 
-export default function NotificationDropdown() {
+type NotificationDropdownProps = {
+    onClose: () => void;
+};
+
+export default function NotificationDropdown({ onClose }: NotificationDropdownProps) {
     const { isLoggedIn } = useAuthStore();
     const { data: notificationsData, isLoading } = useNotificationPreviewQuery(5, isLoggedIn);
     const notifications = isLoggedIn ? notificationsData : []; const { mutate: readNotification } = useReadNotificationMutation();
@@ -25,6 +29,7 @@ export default function NotificationDropdown() {
                 readNotification(notification.notificationId);
             }
             router.push(redirectUrl);
+            onClose();
         });
     };
 
@@ -82,7 +87,12 @@ export default function NotificationDropdown() {
 
             {/* 전체보기 버튼 */}
             <div
-                onClick={() => confirmNavigation(() => router.push("/profile/mypage?tab=notifications"))}
+                onClick={() =>
+                    confirmNavigation(() => {
+                        router.push("/profile/mypage?tab=notifications");
+                        onClose();
+                    })
+                }
                 className="flex w-full items-center justify-center py-[16px] cursor-pointer hover:bg-black/5 transition-colors"
             >
                 <span className="text-Gray-7 font-normal text-[18px] leading-[135%] tracking-[-0.018px]">
