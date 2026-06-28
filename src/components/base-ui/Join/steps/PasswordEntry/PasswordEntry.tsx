@@ -17,7 +17,7 @@ interface PasswordEntryProps {
 }
 
 const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
-  const { email, password, setPassword, confirmPassword, setConfirmPassword, showToast } = useSignup();
+  const { email, password, setPassword, confirmPassword, setConfirmPassword, agreements, showToast } = useSignup();
   const [isLoading, setIsLoading] = React.useState(false);
 
   const isMatch =
@@ -28,7 +28,11 @@ const PasswordEntry: React.FC<PasswordEntryProps> = ({ onNext }) => {
 
     setIsLoading(true);
     try {
-      await authService.signup({ email, password });
+      const agreedTermsIds = Object.entries(agreements)
+        .filter(([, agreed]) => agreed)
+        .map(([id]) => Number(id));
+
+      await authService.signup({ email, password, agreedTermsIds });
       await authService.login({ identifier: email, password });
       onNext();
     } catch (error: unknown) {

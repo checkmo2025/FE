@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import JoinLayout from "@/components/base-ui/Join/JoinLayout";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
@@ -11,19 +11,14 @@ import { TERMS_DATA as TERMS_OF_USE_DATA } from "@/constants/setting/terms";
 import { THIRD_PARTY_DATA } from "@/constants/setting/thirdParty";
 import { MARKETING_DATA } from "@/constants/setting/marketing";
 import { useSignup } from "@/contexts/SignupContext";
-
-const TERMS_DATA = [
-  { id: "servicePrivacy", label: "서비스 이용을 위한 필수 개인정보 수집·이용 동의 (필수)", required: true },
-  { id: "termsOfUse", label: "책모 이용약관 동의 (필수)", required: true },
-  { id: "thirdParty", label: "개인정보 제3자 제공 동의 (선택)", required: false },
-  { id: "marketing", label: "마케팅 및 이벤트 정보 수신 동의 (선택)", required: false },
-];
+import { memberService } from "@/services/memberService";
+import { Term } from "@/types/auth";
 
 const TERMS_CONTENT_MAP: Record<string, { title: string; content: string | string[] }[]> = {
-  servicePrivacy: PRIVACY_DATA,
-  termsOfUse: TERMS_OF_USE_DATA,
-  thirdParty: THIRD_PARTY_DATA,
-  marketing: MARKETING_DATA,
+  PRIVACY_COLLECTION: PRIVACY_DATA,
+  SERVICE_TERMS: TERMS_OF_USE_DATA,
+  THIRD_PARTY_PROVISION: THIRD_PARTY_DATA,
+  MARKETING: MARKETING_DATA,
 };
 
 interface TermsAgreementProps {
@@ -31,33 +26,117 @@ interface TermsAgreementProps {
 }
 
 const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
-  const { agreements, setAgreements } = useSignup();
-  const [selectedTermId, setSelectedTermId] = useState<string | null>(null);
+  const { agreements, setAgreements, isSocial, showToast } = useSignup();
+  const [termsData, setTermsData] = useState<Term[]>([]);
+  const [selectedTermId, setSelectedTermId] = useState<number | null>(null);
+  const [isFetching, setIsFetching] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const allAgreed = TERMS_DATA.every((term) => agreements[term.id]);
-  const isButtonEnabled = TERMS_DATA.filter((term) => term.required).every(
+  useEffect(() => {
+    const fetchTerms = async () => {
+      try {
+        const { terms } = await memberService.getTerms();
+        setTermsData(terms);
+
+        if (isSocial) {
+          try {
+            const myTerms = await memberService.getMyTerms();
+            
+            // 필수 약관에 이미 동의했다면 바로 넘어갑니다
+            if (!myTerms.requiresRequiredAgreement) {
+              onNext();
+              return;
+            }
+
+            const newAgreements: Record<number, boolean> = {};
+            myTerms.terms.forEach(term => {
+              newAgreements[term.id] = term.agreed;
+            });
+            setAgreements(newAgreements);
+          } catch (e) {
+            console.error("Failed to fetch my terms", e);
+            // Ignore error, user will start fresh
+          }
+        } else {
+          // Initialize agreements if not already set
+          if (Object.keys(agreements).length === 0) {
+            const initialAgreements: Record<number, boolean> = {};
+            terms.forEach(term => {
+              initialAgreements[term.id] = false;
+            });
+            setAgreements(initialAgreements);
+          }
+        }
+      } catch (error) {
+        showToast("약관을 불러오는데 실패했습니다.");
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    fetchTerms();
+  }, [isSocial, onNext, setAgreements, showToast]);
+
+  const allAgreed = termsData.length > 0 && termsData.every((term) => agreements[term.id]);
+  const isButtonEnabled = termsData.length > 0 && termsData.filter((term) => term.required).every(
     (term) => agreements[term.id]
   );
 
-  const handleNext = () => {
-    onNext();
+  const handleNext = async () => {
+    if (!isButtonEnabled || isSubmitting) return;
+
+    if (isSocial) {
+      setIsSubmitting(true);
+      try {
+        const payload = {
+          agreements: termsData.map((term) => ({
+            termsId: term.id,
+            agreed: !!agreements[term.id],
+          })),
+        };
+        await memberService.saveMyTerms(payload);
+        onNext();
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          showToast(error.message || "약관 동의 저장에 실패했습니다.");
+        } else {
+          showToast("약관 동의 저장에 실패했습니다.");
+        }
+      } finally {
+        setIsSubmitting(false);
+      }
+    } else {
+      onNext();
+    }
   };
 
-  const handleAgreementChange = (id: string, checked: boolean) => {
+  const handleAgreementChange = (id: number, checked: boolean) => {
     setAgreements({ ...agreements, [id]: checked });
   };
 
   const handleAllAgreementChange = () => {
     const checked = !allAgreed;
-    const newAgreements = TERMS_DATA.reduce((acc, term) => {
+    const newAgreements = termsData.reduce((acc, term) => {
       acc[term.id] = checked;
       return acc;
-    }, {} as Record<string, boolean>);
+    }, {} as Record<number, boolean>);
     setAgreements(newAgreements);
   };
 
-  if (selectedTermId) {
-    const termData = TERMS_CONTENT_MAP[selectedTermId];
+  if (isFetching) {
+    return (
+      <JoinLayout title="약관 동의">
+        <div className="flex flex-col items-center w-full">
+          <p className="text-Gray-5">약관을 불러오는 중입니다...</p>
+        </div>
+      </JoinLayout>
+    );
+  }
+
+  if (selectedTermId !== null) {
+    const selectedTerm = termsData.find(t => t.id === selectedTermId);
+    const termDataContent = selectedTerm ? TERMS_CONTENT_MAP[selectedTerm.termsType] : null;
+
     return (
       <JoinLayout title="약관 동의">
         <div className="flex flex-col items-center w-full">
@@ -84,24 +163,42 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
             <div className="flex flex-col w-full h-full overflow-hidden">
               <div className="flex-1 overflow-y-auto px-[8px] t:px-[64px] custom-scrollbar">
                 <div className="flex flex-col w-full gap-6">
-                  {termData.map((term, i) => (
-                    <div key={i} className="flex flex-col gap-2">
-                      <h3 className="text-[16px] font-semibold text-Gray-7">{term.title}</h3>
-                      {Array.isArray(term.content) ? (
-                        <ul className="flex list-disc flex-col gap-1 pl-5 text-[14px] text-Gray-5">
-                          {term.content.map((item, idx) => (
-                            <li key={idx}>{item}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <div className="flex flex-col gap-1 text-[14px] text-Gray-5">
-                          {term.content.split("\n").map((line, idx) => (
-                            <p key={idx}>{line.trim()}</p>
-                          ))}
-                        </div>
-                      )}
+                  {termDataContent ? (
+                    termDataContent.map((term, i) => (
+                      <div key={i} className="flex flex-col gap-2">
+                        <h3 className="text-[16px] font-semibold text-Gray-7">{term.title}</h3>
+                        {Array.isArray(term.content) ? (
+                          <ul className="flex list-disc flex-col gap-1 pl-5 text-[14px] text-Gray-5">
+                            {term.content.map((item, idx) => (
+                              <li key={idx}>{item}</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <div className="flex flex-col gap-1 text-[14px] text-Gray-5">
+                            {term.content.split("\n").map((line, idx) => (
+                              <p key={idx}>{line.trim()}</p>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full text-Gray-5">
+                      <p>약관 내용을 불러올 수 없습니다.</p>
                     </div>
-                  ))}
+                  )}
+                  {selectedTerm?.termUrl && (
+                    <div className="flex justify-center w-full mt-4 pb-4">
+                      <a 
+                        href={selectedTerm.termUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-[14px] text-[#BBAA9B] underline hover:text-[#9c8e80]"
+                      >
+                        새 창으로 보기
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -127,7 +224,7 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
         <div className="flex flex-col justify-center w-[270px] h-[297px] px-[24px] gap-[24px] rounded-[12px] bg-background t:w-[584px] t:h-[386px] t:px-[40px] t:pt-[24px] t:pb-[36px]">
           {/* 개별 약관 리스트 */}
           <div className="flex flex-col gap-[20px]">
-            {TERMS_DATA.map((term) => (
+            {termsData.map((term) => (
               <div
                 key={term.id}
                 className="flex items-center justify-between w-full gap-[12px]"
@@ -136,7 +233,7 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
                   className="flex-1 text-[#353535] font-sans text-[12px] font-normal leading-[145%] tracking-[-0.012px] t:text-[19.861px] t:leading-[15.605px] cursor-pointer hover:underline pr-[4px]"
                   onClick={() => setSelectedTermId(term.id)}
                 >
-                  {term.label}
+                  {term.title}
                 </span>
                 <div
                   className="relative w-[15px] h-[15px] shrink-0 t:w-[24px] t:h-[24px] cursor-pointer"
@@ -178,11 +275,11 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
         </div>
 
         <JoinButton
-          disabled={!isButtonEnabled}
+          disabled={!isButtonEnabled || isSubmitting}
           onClick={handleNext}
           className="w-[270px] t:w-[526px]"
         >
-          다음
+          {isSubmitting ? "처리 중..." : "다음"}
         </JoinButton>
       </div>
     </JoinLayout>

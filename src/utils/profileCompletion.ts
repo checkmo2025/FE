@@ -1,9 +1,10 @@
 import { User } from "@/types/auth";
 
-export const PROFILE_COMPLETION_BASE_ROUTE = "/signup/profile?isSocial=true";
+export const PROFILE_COMPLETION_BASE_ROUTE = "/signup/terms?isSocial=true";
 export const PROFILE_COMPLETION_ROUTE = `${PROFILE_COMPLETION_BASE_ROUTE}&profileRequired=true`;
 
 const PROFILE_COMPLETION_PATHS = new Set([
+  "/signup/terms",
   "/signup/profile",
   "/signup/profile-image",
 ]);
