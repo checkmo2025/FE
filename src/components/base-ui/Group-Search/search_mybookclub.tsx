@@ -81,9 +81,10 @@ export default function Mybookclub({ groups, isLoading = false, footer, singleCo
               <div
                 key={group.id}
                 onClick={() => router.push(`/groups/${group.id}`)}
-                className="flex w-full h-[36px] t:h-[52px] py-3 px-4 items-center rounded-lg bg-white hover:brightness-98 hover:-translate-y-[1px] cursor-pointer"
+                className="flex w-full min-w-0 h-[36px] t:h-[52px] py-3 px-4 items-center overflow-hidden rounded-lg bg-white hover:brightness-98 hover:-translate-y-[1px] cursor-pointer"
+                title={group.name}
               >
-                <span className="text-Gray-7 body_1_2 t:subhead_4_1">
+                <span className="block w-full min-w-0 truncate text-Gray-7 body_1_2 t:subhead_4_1">
                   {group.name}
                 </span>
               </div>
