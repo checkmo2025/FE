@@ -11,6 +11,7 @@ import { memberKeys } from "../queries/useMemberQueries";
 import { useBlockStore } from "@/store/useBlockStore";
 
 interface UpdateProfilePayload {
+    nickname?: string;
     description: string;
     categories: string[];
     phoneNumber: string;
@@ -35,6 +36,7 @@ export const useUpdateProfileMutation = () => {
 
             // 2. Update Profile Information
             await memberService.updateProfile({
+                nickname: payload.nickname,
                 description: payload.description,
                 categories: payload.categories,
                 phoneNumber: payload.phoneNumber,
