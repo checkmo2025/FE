@@ -161,7 +161,9 @@ export default function Header() {
                 )}
               </motion.button>
               <AnimatePresence>
-                {isNotificationOpen && <NotificationDropdown />}
+                {isNotificationOpen && (
+                  <NotificationDropdown onClose={() => setIsNotificationOpen(false)} />
+                )}
               </AnimatePresence>
             </div>
 
