@@ -7,6 +7,7 @@ import { useInView } from "react-intersection-observer";
 import LongtermChatInput from "@/components/base-ui/LongtermInput";
 import DebateList, { DebateItem } from "@/components/base-ui/Group/DebateList";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
 
 type Props = {
   myName: string;
@@ -132,6 +133,8 @@ export default function DebateSection({
               onDraftChange={setDraftText}
               placeholder="발제를 입력해 주세요"
               buttonIconSrc="/Send.svg"
+              maxLength={INPUT_LIMITS.BOOKSHELF_COMPOSER}
+              overLimitMessage={`발제는 ${INPUT_LIMITS.BOOKSHELF_COMPOSER}자 이하여야 합니다.`}
             />
           </div>
         </div>

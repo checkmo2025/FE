@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import Image from "next/image";
+import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
 
 interface ChatInputProps {
   onSend: (text: string) => boolean | void;
@@ -10,6 +11,8 @@ interface ChatInputProps {
   className?: string;
   initialValue?: string;
   onDraftChange?: (text: string) => void;
+  maxLength?: number;
+  overLimitMessage?: string;
 }
 
 export default function LongtermChatInput({
@@ -19,6 +22,8 @@ export default function LongtermChatInput({
   className = "",
   initialValue,
   onDraftChange,
+  maxLength,
+  overLimitMessage,
 }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -37,6 +42,12 @@ export default function LongtermChatInput({
 
     const text = ta.value; // ✅ trim 금지: 내용 변형하면 UX가 쓰레기됨
     if (isOnlyWhitespace(text)) return;
+    if (
+      maxLength !== undefined &&
+      isTextOverLimit(text, maxLength, overLimitMessage ?? `${maxLength}자 이하로 입력해 주세요.`)
+    ) {
+      return;
+    }
 
     const ok = onSend(text);
     if (ok === false) return;
@@ -50,10 +61,18 @@ export default function LongtermChatInput({
     if (initialValue === undefined) return;
     const ta = textareaRef.current;
     if (!ta) return;
-    ta.value = initialValue;
-    onDraftChange?.(initialValue);
+    const nextValue =
+      maxLength === undefined
+        ? initialValue
+        : clampTextToLimit(
+            initialValue,
+            maxLength,
+            overLimitMessage ?? `${maxLength}자 이하로 입력해 주세요.`
+          );
+    ta.value = nextValue;
+    onDraftChange?.(nextValue);
     adjustHeight();
-  }, [initialValue, onDraftChange]);
+  }, [initialValue, maxLength, onDraftChange, overLimitMessage]);
 
   return (
     <div className={`min-w-0 flex-1 flex items-center ${className}`}>
@@ -62,8 +81,19 @@ export default function LongtermChatInput({
         rows={1}
         placeholder={placeholder}
         onInput={(event) => {
+          const nextValue =
+            maxLength === undefined
+              ? event.currentTarget.value
+              : clampTextToLimit(
+                  event.currentTarget.value,
+                  maxLength,
+                  overLimitMessage ?? `${maxLength}자 이하로 입력해 주세요.`
+                );
+          if (nextValue !== event.currentTarget.value) {
+            event.currentTarget.value = nextValue;
+          }
           adjustHeight();
-          onDraftChange?.(event.currentTarget.value);
+          onDraftChange?.(nextValue);
         }}
         className="
           min-w-0 flex-1

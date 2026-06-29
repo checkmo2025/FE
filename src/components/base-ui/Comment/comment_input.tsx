@@ -2,16 +2,22 @@
 
 import { useState } from "react";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
 
 //댓글 입력창 컴포넌트
 type CommentInputProps = {
   onSubmit: (content: string) => void;
   placeholder?: string;
+  maxLength?: number;
+  overLimitMessage?: string;
 };
 
 export default function CommentInput({
   onSubmit,
   placeholder = "댓글 내용",
+  maxLength = INPUT_LIMITS.BOOK_STORY_COMMENT,
+  overLimitMessage = `댓글은 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자 이하여야 합니다.`,
 }: CommentInputProps) {
   const [content, setContent] = useState("");
   useUnsavedChangesGuard({
@@ -23,6 +29,7 @@ export default function CommentInput({
 
   const handleSubmit = () => {
     if (!content.trim()) return;
+    if (isTextOverLimit(content, maxLength, overLimitMessage)) return;
     onSubmit(content);
     setContent("");
   };
@@ -32,7 +39,7 @@ export default function CommentInput({
       <input
         type="text"
         value={content}
-        onChange={(e) => setContent(e.target.value)}
+        onChange={(e) => setContent(clampTextToLimit(e.target.value, maxLength, overLimitMessage))}
         onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
         placeholder={placeholder}
         className="flex-1 w-[240px] h-[36px] t:w-[850px] t:h-[56px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White Body_1_2 text-Gray-7 placeholder:text-Gray-3 outline-none"

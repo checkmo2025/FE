@@ -9,6 +9,7 @@ import LongtermChatInput from "@/components/base-ui/LongtermInput";
 import ReviewList, { ReviewItem } from "@/components/base-ui/Bookcase/bookid/ReviewList";
 import { StarSelector } from "@/components/base-ui/Bookcase/bookid/StarRating";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
 
 type Props = {
   myName: string;
@@ -168,6 +169,8 @@ export default function ReviewSection({
               onDraftChange={setDraftText}
               placeholder="한줄평을 입력해 주세요"
               buttonIconSrc="/Send.svg"
+              maxLength={INPUT_LIMITS.BOOKSHELF_COMPOSER}
+              overLimitMessage={`한줄평은 ${INPUT_LIMITS.BOOKSHELF_COMPOSER}자 이하여야 합니다.`}
             />
           </div>
         </div>

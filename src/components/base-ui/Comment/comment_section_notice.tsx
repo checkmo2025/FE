@@ -20,6 +20,8 @@ import { ReportReason } from "@/types/report";
 import { isValidUrl } from "@/utils/url";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 import { useUnsavedChangesNavigation } from "@/hooks/useUnsavedChangesGuard";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { isTextOverLimit } from "@/utils/inputLimit";
 
 type CommentSectionNoticeProps = {
   noticeId: number;
@@ -88,6 +90,15 @@ export default function CommentSectionNotice({
       toast.error("댓글 내용을 입력해주세요.");
       return;
     }
+    if (
+      isTextOverLimit(
+        trimmed,
+        INPUT_LIMITS.NOTICE_COMMENT,
+        `댓글은 ${INPUT_LIMITS.NOTICE_COMMENT}자 이하여야 합니다.`
+      )
+    ) {
+      return;
+    }
 
     if (!Number.isFinite(clubId) || !Number.isFinite(noticeId)) {
       toast.error("잘못된 접근입니다.");
@@ -113,6 +124,15 @@ export default function CommentSectionNotice({
 
     if (!trimmed) {
       toast.error("댓글 내용을 입력해주세요.");
+      return;
+    }
+    if (
+      isTextOverLimit(
+        trimmed,
+        INPUT_LIMITS.NOTICE_COMMENT,
+        `댓글은 ${INPUT_LIMITS.NOTICE_COMMENT}자 이하여야 합니다.`
+      )
+    ) {
       return;
     }
 

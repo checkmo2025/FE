@@ -16,6 +16,8 @@ import { BookshelfPatchRequest } from '@/types/bookshelf';
 import { useBookshelfEditQuery } from '@/hooks/queries/useClubsBookshelfQueries';
 import { usePatchBookshelfMutation } from '@/hooks/mutations/useClubsBookshelfMutations';
 import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
+import { INPUT_LIMITS } from '@/constants/inputLimits';
+import { clampTextToLimit, isTextOverLimit } from '@/utils/inputLimit';
 
 const TAGS = [
   { label: '여행', colorClass: 'bg-Secondary-2' },
@@ -181,6 +183,20 @@ export default function EditBookshelfPage() {
   const handleSubmit = async () => {
     if (!canSubmit) {
       toast.error('필수 입력값을 확인해 주세요.');
+      return;
+    }
+    if (
+      isTextOverLimit(
+        meetingName,
+        INPUT_LIMITS.BOOKSHELF_MEETING_TITLE,
+        `정기모임 이름은 ${INPUT_LIMITS.BOOKSHELF_MEETING_TITLE}자 이하여야 합니다.`
+      ) ||
+      isTextOverLimit(
+        meetingLocation,
+        INPUT_LIMITS.BOOKSHELF_MEETING_LOCATION,
+        `모임 장소는 ${INPUT_LIMITS.BOOKSHELF_MEETING_LOCATION}자 이하여야 합니다.`
+      )
+    ) {
       return;
     }
 
@@ -360,9 +376,16 @@ export default function EditBookshelfPage() {
               <input
                 type="text"
                 value={meetingName}
-                onChange={(e) => setMeetingName(e.target.value)}
-                placeholder="정기모임 이름을 입력해주세요 (최대 12자)"
-                maxLength={12}
+                onChange={(e) =>
+                  setMeetingName(
+                    clampTextToLimit(
+                      e.target.value,
+                      INPUT_LIMITS.BOOKSHELF_MEETING_TITLE,
+                      `정기모임 이름은 ${INPUT_LIMITS.BOOKSHELF_MEETING_TITLE}자 이하여야 합니다.`
+                    )
+                  )
+                }
+                placeholder={`정기모임 이름을 입력해주세요 (최대 ${INPUT_LIMITS.BOOKSHELF_MEETING_TITLE}자)`}
                 className="px-4 py-3 h-14 rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 body_1_3 placeholder:text-Gray-3"
               />
             </div>
@@ -373,9 +396,16 @@ export default function EditBookshelfPage() {
               <input
                 type="text"
                 value={meetingLocation}
-                onChange={(e) => setMeetingLocation(e.target.value)}
-                placeholder="모임 장소를 입력해주세요 (최대 12자)"
-                maxLength={12}
+                onChange={(e) =>
+                  setMeetingLocation(
+                    clampTextToLimit(
+                      e.target.value,
+                      INPUT_LIMITS.BOOKSHELF_MEETING_LOCATION,
+                      `모임 장소는 ${INPUT_LIMITS.BOOKSHELF_MEETING_LOCATION}자 이하여야 합니다.`
+                    )
+                  )
+                }
+                placeholder={`모임 장소를 입력해주세요 (최대 ${INPUT_LIMITS.BOOKSHELF_MEETING_LOCATION}자)`}
                 className="px-4 py-3 h-14 rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 body_1_3 placeholder:text-Gray-3"
               />
             </div>

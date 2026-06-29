@@ -21,6 +21,8 @@ import { BLOCKED_USER_MASK } from "@/constants/masking";
 import { useBlockStore } from "@/store/useBlockStore";
 import { hasErrorCode } from "@/lib/api/errors";
 import { useUnsavedChangesNavigation } from "@/hooks/useUnsavedChangesGuard";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { isTextOverLimit } from "@/utils/inputLimit";
 
 // 어떤 글의 댓글인지 구분
 type CommentSectionProps = {
@@ -143,6 +145,15 @@ export default function CommentSection({
       openLoginModal();
       return;
     }
+    if (
+      isTextOverLimit(
+        content,
+        INPUT_LIMITS.BOOK_STORY_COMMENT,
+        `댓글은 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자 이하여야 합니다.`
+      )
+    ) {
+      return;
+    }
     createCommentMutation.mutate(
       { content },
       {
@@ -162,6 +173,15 @@ export default function CommentSection({
       openLoginModal();
       return;
     }
+    if (
+      isTextOverLimit(
+        content,
+        INPUT_LIMITS.BOOK_STORY_COMMENT,
+        `댓글은 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자 이하여야 합니다.`
+      )
+    ) {
+      return;
+    }
     createCommentMutation.mutate(
       { content, parentCommentId: parentId },
       {
@@ -176,6 +196,15 @@ export default function CommentSection({
   };
 
   const handleEditComment = (id: number, content: string) => {
+    if (
+      isTextOverLimit(
+        content,
+        INPUT_LIMITS.BOOK_STORY_COMMENT,
+        `댓글은 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자 이하여야 합니다.`
+      )
+    ) {
+      return;
+    }
     updateCommentMutation.mutate(
       { commentId: id, content },
       {

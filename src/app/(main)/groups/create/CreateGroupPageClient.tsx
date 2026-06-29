@@ -24,6 +24,8 @@ import {
   useUploadClubImageMutation,
 } from "@/hooks/mutations/useCreateClubMutation";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
 
 type NameCheckState = "idle" | "checking" | "available" | "duplicate";
 type SnsLink = { label: string; url: string };
@@ -117,6 +119,15 @@ export default function CreateGroupPageClient() {
   const onCheckName = async () => {
     const name = clubName.trim();
     if (!name) return;
+    if (
+      isTextOverLimit(
+        name,
+        INPUT_LIMITS.CLUB_NAME,
+        `모임 이름은 ${INPUT_LIMITS.CLUB_NAME}자 이하여야 합니다.`
+      )
+    ) {
+      return;
+    }
 
     setNameCheck("checking");
 
@@ -159,7 +170,10 @@ export default function CreateGroupPageClient() {
 
   const toggleWithLimit = <T,>(arr: T[], item: T, limit: number) => {
     if (arr.includes(item)) return arr.filter((x) => x !== item);
-    if (arr.length >= limit) return arr;
+    if (arr.length >= limit) {
+      toast.error(`최대 ${limit}개까지 선택할 수 있습니다.`, { id: `selection-limit-${limit}` });
+      return arr;
+    }
     return [...arr, item];
   };
 
@@ -167,7 +181,15 @@ export default function CreateGroupPageClient() {
     setLinks((prev) => prev.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
   };
 
-  const addLinkRow = () => setLinks((prev) => [...prev, { label: "", url: "" }]);
+  const addLinkRow = () =>
+    setLinks((prev) => {
+      if (prev.length >= INPUT_LIMITS.CLUB_LINK_COUNT) {
+        toast.error(`문의 링크는 최대 ${INPUT_LIMITS.CLUB_LINK_COUNT}개까지 입력할 수 있습니다.`);
+        return prev;
+      }
+
+      return [...prev, { label: "", url: "" }];
+    });
 
   const removeLinkRow = (idx: number) => {
     setLinks((prev) => prev.filter((_, i) => i !== idx));
@@ -214,6 +236,25 @@ export default function CreateGroupPageClient() {
       toast.error("공개/비공개를 선택해주세요.");
       return;
     }
+    if (
+      isTextOverLimit(
+        clubName.trim(),
+        INPUT_LIMITS.CLUB_NAME,
+        `모임 이름은 ${INPUT_LIMITS.CLUB_NAME}자 이하여야 합니다.`
+      ) ||
+      isTextOverLimit(
+        clubDescription.trim(),
+        INPUT_LIMITS.CLUB_DESCRIPTION,
+        `모임 소개글은 ${INPUT_LIMITS.CLUB_DESCRIPTION}자 이하여야 합니다.`
+      ) ||
+      isTextOverLimit(
+        activityArea.trim(),
+        INPUT_LIMITS.CLUB_REGION,
+        `활동 지역은 ${INPUT_LIMITS.CLUB_REGION}자 이하여야 합니다.`
+      )
+    ) {
+      return;
+    }
 
     try {
       const category = mapBookCategoriesToCodes(selectedCategories);
@@ -224,6 +265,30 @@ export default function CreateGroupPageClient() {
       const linksPayload = links
         .map((l) => ({ label: l.label.trim(), link: l.url.trim() }))
         .filter((l) => l.label && l.link);
+
+      if (linksPayload.length > INPUT_LIMITS.CLUB_LINK_COUNT) {
+        toast.error(`문의 링크는 최대 ${INPUT_LIMITS.CLUB_LINK_COUNT}개까지 입력할 수 있습니다.`);
+        return;
+      }
+
+      if (
+        linksPayload.some((link) =>
+          isTextOverLimit(
+            link.label,
+            INPUT_LIMITS.CLUB_LINK_LABEL,
+            `문의 링크 이름은 ${INPUT_LIMITS.CLUB_LINK_LABEL}자 이하여야 합니다.`
+          )
+        ) ||
+        linksPayload.some((link) =>
+          isTextOverLimit(
+            link.link,
+            INPUT_LIMITS.CLUB_LINK_URL,
+            `문의 링크는 ${INPUT_LIMITS.CLUB_LINK_URL}자 이하여야 합니다.`
+          )
+        )
+      ) {
+        return;
+      }
 
       const payload = {
         name: clubName.trim(),
@@ -280,7 +345,13 @@ export default function CreateGroupPageClient() {
                 <input
                   value={clubName}
                   onChange={(e) => {
-                    setClubName(e.target.value);
+                    setClubName(
+                      clampTextToLimit(
+                        e.target.value,
+                        INPUT_LIMITS.CLUB_NAME,
+                        `모임 이름은 ${INPUT_LIMITS.CLUB_NAME}자 이하여야 합니다.`
+                      )
+                    );
                     setNameCheck("idle");
                   }}
                   placeholder="독서 모임 이름을 입력해주세요."
@@ -329,11 +400,17 @@ export default function CreateGroupPageClient() {
               <textarea
                 value={clubDescription}
                 onChange={(e) => {
-                  setClubDescription(e.target.value);
+                  setClubDescription(
+                    clampTextToLimit(
+                      e.target.value,
+                      INPUT_LIMITS.CLUB_DESCRIPTION,
+                      `모임 소개글은 ${INPUT_LIMITS.CLUB_DESCRIPTION}자 이하여야 합니다.`
+                    )
+                  );
                   autoResize(e.currentTarget);
                 }}
                 onInput={(e) => autoResize(e.currentTarget)}
-                placeholder="자유롭게 입력해주세요! (500자 제한)"
+                placeholder={`자유롭게 입력해주세요! (${INPUT_LIMITS.CLUB_DESCRIPTION}자 제한)`}
                 className="
                   w-full
                   min-h-[200px] t:min-h-[260px]
@@ -545,8 +622,16 @@ export default function CreateGroupPageClient() {
               <h2 className="mt-10 text-[18px] font-semibold text-[#2C2C2C]">활동 지역을 입력해주세요!</h2>
               <input
                 value={activityArea}
-                onChange={(e) => setActivityArea(e.target.value)}
-                placeholder="활동 지역을 입력해주세요 (40자 제한)"
+                onChange={(e) =>
+                  setActivityArea(
+                    clampTextToLimit(
+                      e.target.value,
+                      INPUT_LIMITS.CLUB_REGION,
+                      `활동 지역은 ${INPUT_LIMITS.CLUB_REGION}자 이하여야 합니다.`
+                    )
+                  )
+                }
+                placeholder={`활동 지역을 입력해주세요 (${INPUT_LIMITS.CLUB_REGION}자 제한)`}
                 className="mt-4 w-full h-[44px] t:h-[56px] rounded-[8px] border border-[#EAE5E2] body_1_3 bg-white px-4 outline-none"
               />
 
@@ -605,9 +690,16 @@ export default function CreateGroupPageClient() {
                   <div key={idx} className="flex flex-col gap-4 py-3 t:flex-row t:items-center">
                     <input
                       value={it.label}
-                      onChange={(e) => updateLink(idx, { label: e.target.value })}
-                      placeholder="링크 대체 텍스트 입력(최대 20자)"
-                      maxLength={20}
+                      onChange={(e) =>
+                        updateLink(idx, {
+                          label: clampTextToLimit(
+                            e.target.value,
+                            INPUT_LIMITS.CLUB_LINK_LABEL,
+                            `문의 링크 이름은 ${INPUT_LIMITS.CLUB_LINK_LABEL}자 이하여야 합니다.`
+                          ),
+                        })
+                      }
+                      placeholder={`링크 대체 텍스트 입력(최대 ${INPUT_LIMITS.CLUB_LINK_LABEL}자)`}
                       className="
                         w-full t:w-[35%] h-[44px] t:h-[56px]
                         rounded-[8px]
@@ -623,9 +715,16 @@ export default function CreateGroupPageClient() {
                     <div className="flex gap-3 w-full t:flex-1">
                       <input
                         value={it.url}
-                        onChange={(e) => updateLink(idx, { url: e.target.value })}
-                        placeholder="링크 입력(최대 100자)"
-                        maxLength={100}
+                        onChange={(e) =>
+                          updateLink(idx, {
+                            url: clampTextToLimit(
+                              e.target.value,
+                              INPUT_LIMITS.CLUB_LINK_URL,
+                              `문의 링크는 ${INPUT_LIMITS.CLUB_LINK_URL}자 이하여야 합니다.`
+                            ),
+                          })
+                        }
+                        placeholder={`링크 입력(최대 ${INPUT_LIMITS.CLUB_LINK_URL}자)`}
                         className="
                           flex-1
                           h-[44px] t:h-[56px]
@@ -661,11 +760,13 @@ export default function CreateGroupPageClient() {
                 <button
                   type="button"
                   onClick={addLinkRow}
+                  disabled={links.length >= INPUT_LIMITS.CLUB_LINK_COUNT}
                   className="
                     w-full h-[56px] rounded-[8px]
                     bg-Gray-1
                     flex items-center justify-center
                     hover:bg-Gray-2
+                    disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-Gray-1
                   "
                   title="추가"
                 >
