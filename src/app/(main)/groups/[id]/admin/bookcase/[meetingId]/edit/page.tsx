@@ -62,22 +62,25 @@ function meetingDateToISO(dateInput: string) {
   const mo = Number(m[2]) - 1;
   const d = Number(m[3]);
 
-  const dt = new Date(y, mo, d, 0, 0, 0);
+  // 실제 존재하는 날짜인지 UTC 기준으로 검증(예: 2026-02-31 차단).
+  // 로컬 Date로 검증하면 시간대 보정으로 잘못된 날짜가 통과할 수 있다.
+  const dt = new Date(Date.UTC(y, mo, d));
   if (Number.isNaN(dt.getTime())) return null;
-  if (dt.getFullYear() !== y || dt.getMonth() !== mo || dt.getDate() !== d) return null;
+  if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== mo || dt.getUTCDate() !== d) return null;
 
-  return dt.toISOString();
+  // meetingTime은 백엔드에서 LocalDateTime(시간대 없음)으로 다루는 날짜 값이다.
+  // toISOString()으로 'Z'(UTC)를 붙여 보내면 시간대 차이로 날짜가 하루 밀릴 수 있으므로,
+  // 시간대 변환 없이 로컬 자정 ISO 문자열을 그대로 전송한다.
+  return `${m[1]}-${m[2]}-${m[3]}T00:00:00`;
 }
 
 function isoToDateInput(iso: string | null) {
   if (!iso) return '';
 
-  const dt = new Date(iso);
-  if (Number.isNaN(dt.getTime())) return '';
-  const y = dt.getFullYear();
-  const m = String(dt.getMonth() + 1).padStart(2, '0');
-  const d = String(dt.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
+  // new Date()로 파싱하면 시간대에 따라 날짜가 하루 밀릴 수 있어 날짜 부분만 추출한다.
+  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return '';
+  return `${m[1]}-${m[2]}-${m[3]}`;
 }
 
 function formatDateInputLabel(dateInput: string) {
