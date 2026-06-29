@@ -180,7 +180,6 @@ export default function StoryEditPageClient() {
                   )
                 )
               }
-              maxLength={INPUT_LIMITS.BOOK_STORY_CONTENT}
               placeholder={`책 이야기 내용을 입력해 주세요. (최대 ${INPUT_LIMITS.BOOK_STORY_CONTENT}자)`}
               className="w-full min-h-[300px] px-4 py-3 rounded-lg border border-Gray-2 bg-background body_1_3 text-Gray-7 resize-none focus:outline-none focus:border-primary-2 transition-colors"
             />

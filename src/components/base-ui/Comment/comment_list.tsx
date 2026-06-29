@@ -190,7 +190,6 @@ export default function CommentList({
                             handleReplySubmit(comment.parentCommentId || comment.id);
                           }
                         }}
-                        maxLength={INPUT_LIMITS.BOOK_STORY_COMMENT}
                         placeholder={`답글 내용을 입력해주세요 (최대 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자)`}
                         className="flex-1 min-w-0 h-[36px] t:h-[56px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White Body_1_2 text-Gray-7 placeholder:text-Gray-3 outline-none"
                         autoFocus

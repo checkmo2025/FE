@@ -80,7 +80,6 @@ export default function LongtermChatInput({
         ref={textareaRef}
         rows={1}
         placeholder={placeholder}
-        maxLength={maxLength}
         onInput={(event) => {
           const nextValue =
             maxLength === undefined

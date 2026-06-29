@@ -353,7 +353,6 @@ export default function MeetingChatModal({
               }
               onKeyDown={handleKeyDown}
               disabled={!isSocketConnected || !canSendMessage}
-              maxLength={INPUT_LIMITS.CHAT_MESSAGE}
               className="body_1_2 flex-1 bg-transparent text-Gray-5 outline-none"
               placeholder={inputPlaceholder}
             />

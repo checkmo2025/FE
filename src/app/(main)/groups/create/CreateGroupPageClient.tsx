@@ -354,7 +354,6 @@ export default function CreateGroupPageClient() {
                     );
                     setNameCheck("idle");
                   }}
-                  maxLength={INPUT_LIMITS.CLUB_NAME}
                   placeholder="독서 모임 이름을 입력해주세요."
                   className="w-full h-[44px] t:h-[56px] rounded-[8px] border border-[#EAE5E2] p-4 outline-none bg-white body_1_3 t:subhead_4_1"
                 />
@@ -411,7 +410,6 @@ export default function CreateGroupPageClient() {
                   autoResize(e.currentTarget);
                 }}
                 onInput={(e) => autoResize(e.currentTarget)}
-                maxLength={INPUT_LIMITS.CLUB_DESCRIPTION}
                 placeholder={`자유롭게 입력해주세요! (${INPUT_LIMITS.CLUB_DESCRIPTION}자 제한)`}
                 className="
                   w-full
@@ -633,7 +631,6 @@ export default function CreateGroupPageClient() {
                     )
                   )
                 }
-                maxLength={INPUT_LIMITS.CLUB_REGION}
                 placeholder={`활동 지역을 입력해주세요 (${INPUT_LIMITS.CLUB_REGION}자 제한)`}
                 className="mt-4 w-full h-[44px] t:h-[56px] rounded-[8px] border border-[#EAE5E2] body_1_3 bg-white px-4 outline-none"
               />
@@ -703,7 +700,6 @@ export default function CreateGroupPageClient() {
                         })
                       }
                       placeholder={`링크 대체 텍스트 입력(최대 ${INPUT_LIMITS.CLUB_LINK_LABEL}자)`}
-                      maxLength={INPUT_LIMITS.CLUB_LINK_LABEL}
                       className="
                         w-full t:w-[35%] h-[44px] t:h-[56px]
                         rounded-[8px]
@@ -729,7 +725,6 @@ export default function CreateGroupPageClient() {
                           })
                         }
                         placeholder={`링크 입력(최대 ${INPUT_LIMITS.CLUB_LINK_URL}자)`}
-                        maxLength={INPUT_LIMITS.CLUB_LINK_URL}
                         className="
                           flex-1
                           h-[44px] t:h-[56px]

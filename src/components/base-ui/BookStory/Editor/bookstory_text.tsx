@@ -78,7 +78,6 @@ export default function BookstoryText({
               )
             )
           }
-          maxLength={INPUT_LIMITS.BOOK_STORY_TITLE}
           placeholder="제목을 입력해주세요"
           className="
             w-full bg-transparent outline-none
@@ -103,7 +102,6 @@ export default function BookstoryText({
             )
           }
           onKeyDown={handleDetailKeyDown}
-          maxLength={INPUT_LIMITS.BOOK_STORY_CONTENT}
           placeholder={`자신의 책이야기를 들려주세요. (최대 ${INPUT_LIMITS.BOOK_STORY_CONTENT}자)`}
           rows={6}
           className="

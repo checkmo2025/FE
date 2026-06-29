@@ -129,7 +129,6 @@ export default function SearchClubApplyModal({ open, club, onClose, onSubmit }: 
                 );
                 autoResize();
               }}
-              maxLength={INPUT_LIMITS.APPLY_REASON}
               placeholder={`신청 사유를 입력해주세요(${INPUT_LIMITS.APPLY_REASON}자 제한)`}
               className={[
                 "w-full",

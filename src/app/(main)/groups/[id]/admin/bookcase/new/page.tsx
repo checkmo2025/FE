@@ -353,7 +353,6 @@ export default function NewBookshelfPage() {
                   )
                 }
                 placeholder="정기모임 이름을 입력해주세요"
-                maxLength={INPUT_LIMITS.BOOKSHELF_MEETING_TITLE}
                 className="px-4 py-3 h-14 rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 body_1_3 placeholder:text-Gray-3"
               />
             </div>
@@ -374,7 +373,6 @@ export default function NewBookshelfPage() {
                   )
                 }
                 placeholder="모임 장소를 입력해주세요"
-                maxLength={INPUT_LIMITS.BOOKSHELF_MEETING_LOCATION}
                 className="px-4 py-3 h-14 rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 body_1_3 placeholder:text-Gray-3"
               />
             </div>

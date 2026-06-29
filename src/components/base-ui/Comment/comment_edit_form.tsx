@@ -28,7 +28,6 @@ export default function CommentEditForm({
       <textarea
         value={value}
         onChange={(e) => onChange(clampTextToLimit(e.target.value, maxLength, overLimitMessage))}
-        maxLength={maxLength}
         className="w-full min-h-[80px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White Body_1_2 text-Gray-7 outline-none focus:border-primary-3 resize-none whitespace-pre-wrap"
         autoFocus
       />

@@ -247,7 +247,6 @@ export default function ProfileEditPageClient() {
                 )
               }
               placeholder={`${INPUT_LIMITS.MEMBER_DESCRIPTION}자 이내로 작성해주세요`}
-              maxLength={INPUT_LIMITS.MEMBER_DESCRIPTION}
             />
           </div>
         </div>

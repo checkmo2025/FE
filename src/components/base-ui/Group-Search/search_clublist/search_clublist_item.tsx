@@ -227,7 +227,6 @@ export default function SearchClubListItem({
                 )
               )
             }
-            maxLength={INPUT_LIMITS.APPLY_REASON}
             placeholder={`신청 사유를 입력해보세요(${INPUT_LIMITS.APPLY_REASON}자 제한)`}
             className="w-full min-h-[220px] rounded-[12px] bg-Gray-1 p-4 body_2_2 outline-none"
           />

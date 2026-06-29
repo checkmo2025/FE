@@ -481,7 +481,6 @@ export default function EditNoticePage() {
                           )
                         )
                       }
-                      maxLength={INPUT_LIMITS.NOTICE_TITLE}
                       placeholder="제목을 입력해주세요."
                       className="w-full bg-transparent outline-none text-Gray-7 subhead_4_1 placeholder:text-Gray-3"
                     />
@@ -503,7 +502,6 @@ export default function EditNoticePage() {
                       onInput={adjustContentHeight}
                       placeholder="내용을 입력해주세요"
                       rows={1}
-                      maxLength={INPUT_LIMITS.NOTICE_CONTENT}
                       className="
                         w-full min-w-0 resize-none bg-transparent outline-none
                         overflow-hidden

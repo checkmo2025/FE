@@ -112,7 +112,6 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
                             value={reportContent}
                             onChange={handleContentChange}
                             placeholder={`신고 내용 작성 (최대 ${INPUT_LIMITS.REPORT_CONTENT}자)`}
-                            maxLength={INPUT_LIMITS.REPORT_CONTENT}
                             className="flex h-[284px] p-[20px] items-start gap-[10px] self-stretch rounded-[8px] bg-White border-none resize-none focus:outline-none focus:ring-1 focus:ring-primary-1 text-Gray-7 subhead_4_1 placeholder:text-Gray-3"
                         />
                         <span className="self-end text-[12px] leading-[16px] text-Gray-3">
