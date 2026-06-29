@@ -5,6 +5,8 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 import Image from "next/image";
 import { REPORT_REASONS } from "@/constants/report";
 import { ReportReason } from "@/types/report";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
 
 type ReportModalProps = {
     isOpen: boolean;
@@ -46,9 +48,13 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
     if (!isOpen) return null;
 
     const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        if (e.target.value.length <= 400) {
-            setReportContent(e.target.value);
-        }
+        setReportContent(
+            clampTextToLimit(
+                e.target.value,
+                INPUT_LIMITS.REPORT_CONTENT,
+                `신고 내용은 ${INPUT_LIMITS.REPORT_CONTENT}자 이하여야 합니다.`
+            )
+        );
     };
 
     return (
@@ -105,9 +111,12 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
                         <textarea
                             value={reportContent}
                             onChange={handleContentChange}
-                            placeholder="신고 내용 작성 (최대 400자)"
+                            placeholder={`신고 내용 작성 (최대 ${INPUT_LIMITS.REPORT_CONTENT}자)`}
                             className="flex h-[284px] p-[20px] items-start gap-[10px] self-stretch rounded-[8px] bg-White border-none resize-none focus:outline-none focus:ring-1 focus:ring-primary-1 text-Gray-7 subhead_4_1 placeholder:text-Gray-3"
                         />
+                        <span className="self-end text-[12px] leading-[16px] text-Gray-3">
+                            {reportContent.length}/{INPUT_LIMITS.REPORT_CONTENT}
+                        </span>
                     </div>
 
                     {/* Submit CTA Section */}
@@ -116,6 +125,15 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
                             type="button"
                             disabled={!isSubmitEnabled}
                             onClick={() => {
+                                if (
+                                    isTextOverLimit(
+                                        reportContent,
+                                        INPUT_LIMITS.REPORT_CONTENT,
+                                        `신고 내용은 ${INPUT_LIMITS.REPORT_CONTENT}자 이하여야 합니다.`
+                                    )
+                                ) {
+                                    return;
+                                }
                                 if (reason && isSubmitEnabled) {
                                     onSubmit(reason, reportContent);
                                     onClose();

@@ -11,6 +11,8 @@ import { useBookDetailQuery } from "@/hooks/queries/useBookQueries";
 import { useCreateBookStoryMutation } from "@/hooks/mutations/useStoryMutations";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { isTextOverLimit } from "@/utils/inputLimit";
 
 function StoryNewContent() {
   const router = useRouter();
@@ -47,6 +49,20 @@ function StoryNewContent() {
     }
     if (!title.trim()) {
       toast.error("제목을 입력해 주세요.");
+      return;
+    }
+    if (
+      isTextOverLimit(
+        title,
+        INPUT_LIMITS.BOOK_STORY_TITLE,
+        `책이야기 제목은 ${INPUT_LIMITS.BOOK_STORY_TITLE}자 이하여야 합니다.`
+      ) ||
+      isTextOverLimit(
+        detail,
+        INPUT_LIMITS.BOOK_STORY_CONTENT,
+        `책이야기 본문은 ${INPUT_LIMITS.BOOK_STORY_CONTENT}자 이하여야 합니다.`
+      )
+    ) {
       return;
     }
     if (status === "PUBLISHED" && !detail.trim()) {

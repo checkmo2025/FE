@@ -8,6 +8,8 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useUpdateProfileMutation } from "@/hooks/mutations/useMemberMutations";
 import { authService } from "@/services/authService";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
 
 export default function ProfileEditPageClient() {
   const { user } = useAuthStore();
@@ -135,9 +137,18 @@ export default function ProfileEditPageClient() {
       toast.error("닉네임 중복확인을 해주세요!");
       return;
     }
+    if (
+      isTextOverLimit(
+        intro,
+        INPUT_LIMITS.MEMBER_DESCRIPTION,
+        `소개는 ${INPUT_LIMITS.MEMBER_DESCRIPTION}자 이하여야 합니다.`
+      )
+    ) {
+      return;
+    }
     updateProfile({
       nickname,
-      description: intro.slice(0, 20),
+      description: intro,
       categories: selectedCategories,
       phoneNumber: phone,
       profileImageFile,
@@ -226,9 +237,16 @@ export default function ProfileEditPageClient() {
             <input
               className={inputClass}
               value={intro}
-              onChange={(e) => setIntro(e.target.value)}
-              placeholder="20자 이내로 작성해주세요"
-              maxLength={20}
+              onChange={(e) =>
+                setIntro(
+                  clampTextToLimit(
+                    e.target.value,
+                    INPUT_LIMITS.MEMBER_DESCRIPTION,
+                    `소개는 ${INPUT_LIMITS.MEMBER_DESCRIPTION}자 이하여야 합니다.`
+                  )
+                )
+              }
+              placeholder={`${INPUT_LIMITS.MEMBER_DESCRIPTION}자 이내로 작성해주세요`}
             />
           </div>
         </div>
@@ -280,4 +298,3 @@ export default function ProfileEditPageClient() {
     </SettingsDetailLayout>
   );
 }
-

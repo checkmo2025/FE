@@ -10,6 +10,7 @@ import {
   appendChatMessageToChatsCache,
   applyPresentationEventToTopicsCache,
 } from "@/lib/socket/meetingRealtimeCache";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
 import type {
   MeetingChatMessageEvent,
   MeetingPresentationEvent,
@@ -271,8 +272,8 @@ export function useMeetingRealtime({
         throw new Error("메시지를 입력해 주세요.");
       }
 
-      if (content.length > 400) {
-        throw new Error("채팅은 400자 이하로 입력해 주세요.");
+      if (content.length > INPUT_LIMITS.CHAT_MESSAGE) {
+        throw new Error(`채팅은 ${INPUT_LIMITS.CHAT_MESSAGE}자 이하로 입력해 주세요.`);
       }
 
       if (!isStaff && myTeamId !== teamId) {

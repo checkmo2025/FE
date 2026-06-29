@@ -53,7 +53,7 @@ export type SearchBooksParams = {
 
 export type CreateBookshelfRequest = {
   title: string;
-  meetingTime: string; // ISO String
+  meetingTime: string | null; // ISO String
   location: string;
   generation: number;
   tag: string;
@@ -73,7 +73,7 @@ export type BookshelfEditGetResponse = {
     meetingInfo: {
       meetingId: number;
       title: string;
-      meetingTime: string; // ISO
+      meetingTime: string | null; // ISO
       location: string;
       generation: number;
       tag: BookshelfTag;
@@ -93,7 +93,7 @@ export type BookshelfEditGetResult = BookshelfEditGetResponse["result"];
 
 export type BookshelfPatchRequest = {
   title: string;
-  meetingTime: string; // ISO
+  meetingTime: string | null; // ISO
   location: string;
   generation: number;
   tag: BookshelfTag;

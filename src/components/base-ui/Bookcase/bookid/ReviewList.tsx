@@ -9,6 +9,7 @@ import BookshelfDeleteConfirmModal from "@/components/base-ui/Bookcase/bookid/Bo
 import { StarRating, StarSelector } from "./StarRating";
 import ItemMoreMenu from "../ItemMoreMenu";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
+import { INPUT_LIMITS } from "@/constants/inputLimits";
 
 export type ReviewItem = {
   id: number | string;
@@ -196,6 +197,8 @@ export default function ReviewList({
                         onDraftChange={setDraftText}
                         placeholder="한줄평을 수정해 주세요"
                         buttonIconSrc="/Send.svg"
+                        maxLength={INPUT_LIMITS.BOOKSHELF_COMPOSER}
+                        overLimitMessage={`한줄평은 ${INPUT_LIMITS.BOOKSHELF_COMPOSER}자 이하여야 합니다.`}
                         onSend={(text) => {
                           if (draftRating < 1) return false;
                           setDraftText(text);
@@ -268,6 +271,8 @@ export default function ReviewList({
                         onDraftChange={setDraftText}
                         placeholder="한줄평을 수정해 주세요"
                         buttonIconSrc="/Send.svg"
+                        maxLength={INPUT_LIMITS.BOOKSHELF_COMPOSER}
+                        overLimitMessage={`한줄평은 ${INPUT_LIMITS.BOOKSHELF_COMPOSER}자 이하여야 합니다.`}
                         onSend={(text) => {
                           if (draftRating < 1) return false;
                           setDraftText(text);
