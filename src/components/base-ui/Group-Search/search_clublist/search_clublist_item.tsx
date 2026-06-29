@@ -105,9 +105,9 @@ export default function SearchClubListItem({
               className="object-cover"
             />
           </div>
-          <div className="min-w-0">
-            <div className="min-w-0">
-              <p className="subhead_2 text-Gray-7 truncate">{club.name}</p>
+          <div className="min-w-0 overflow-hidden">
+            <div className="min-w-0 overflow-hidden">
+              <p className="block w-full min-w-0 truncate subhead_2 text-Gray-7" title={club.name}>{club.name}</p>
               <div className="mt-1">
                 <ClubCategoryTags category={club.category} />
               </div>
@@ -126,8 +126,8 @@ export default function SearchClubListItem({
 
         {/* Left - Mobile */}
         <div className="t:hidden flex flex-1 flex-col min-w-0">
-          <div className="min-w-0">
-            <p className="body_1 text-Gray-7 truncate">{club.name}</p>
+          <div className="min-w-0 overflow-hidden">
+            <p className="block w-full min-w-0 truncate body_1 text-Gray-7" title={club.name}>{club.name}</p>
             <div className="mt-1">
               <ClubCategoryTags category={club.category} className="body_2_2" />
             </div>
