@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { memberService } from "@/services/memberService";
 import { Term } from "@/types/auth";
 import { useSignup } from "@/contexts/SignupContext";
@@ -8,19 +8,25 @@ export const useTermsAgreement = (onNext: () => void) => {
   const [termsData, setTermsData] = useState<Term[]>([]);
   const [isFetching, setIsFetching] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const hasFetchedRef = useRef(false);
 
   useEffect(() => {
+    if (hasFetchedRef.current) return;
+    hasFetchedRef.current = true;
+
+    let isMounted = true;
+
     const fetchTerms = async () => {
       try {
         const { terms } = await memberService.getTerms();
-        setTermsData(terms);
+        if (isMounted) setTermsData(terms);
 
         if (isSocial) {
           try {
             const myTerms = await memberService.getMyTerms();
             
             if (!myTerms.requiresRequiredAgreement) {
-              onNext();
+              if (isMounted) onNext();
               return;
             }
 
@@ -28,9 +34,10 @@ export const useTermsAgreement = (onNext: () => void) => {
             myTerms.terms.forEach(term => {
               newAgreements[term.id] = term.agreed;
             });
-            setAgreements(newAgreements);
+            if (isMounted) setAgreements(newAgreements);
           } catch (e) {
             console.error("Failed to fetch my terms", e);
+            throw e; // 에러를 밖으로 던져 UI에서 처리하도록 함
           }
         } else {
           if (Object.keys(agreements).length === 0) {
@@ -38,18 +45,22 @@ export const useTermsAgreement = (onNext: () => void) => {
             terms.forEach(term => {
               initialAgreements[term.id] = false;
             });
-            setAgreements(initialAgreements);
+            if (isMounted) setAgreements(initialAgreements);
           }
         }
       } catch (error) {
-        showToast("약관을 불러오는데 실패했습니다.");
+        if (isMounted) showToast("약관을 불러오는데 실패했습니다.");
       } finally {
-        setIsFetching(false);
+        if (isMounted) setIsFetching(false);
       }
     };
 
     fetchTerms();
-  }, [isSocial, onNext, setAgreements, showToast]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isSocial, onNext, setAgreements, showToast, agreements]); // 이제 agreements를 의존성 배열에 넣어도 초기 호출 방어가 됨
 
   const allAgreed = termsData.length > 0 && termsData.every((term) => agreements[term.id]);
   const isButtonEnabled = termsData.length > 0 && termsData.filter((term) => term.required).every(
