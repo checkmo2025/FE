@@ -23,4 +23,6 @@ export const MEMBER_ENDPOINTS = {
     GET_LOGIN_STATUS: `${API_BASE_URL}/members/me/login-status`,
     BLOCK: (nickname: string) => `${API_BASE_URL}/members/${encodeURIComponent(nickname)}/block`,
     GET_MY_BLOCKS: `${API_BASE_URL}/members/me/blocks`,
+    TERMS: `${API_BASE_URL}/terms`,
+    MY_TERMS: `${API_BASE_URL}/members/me/terms`,
 };

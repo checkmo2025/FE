@@ -40,4 +40,34 @@ export interface AdditionalInfo {
 export interface SignupForm {
   email: string;
   password: string;
+  agreedTermsIds: number[];
+}
+
+export interface Term {
+  id: number;
+  termsType: string;
+  title: string;
+  termUrl: string;
+  version: number;
+  required: boolean;
+}
+
+export interface TermsResponse {
+  terms: Term[];
+}
+
+export interface MemberTerm extends Term {
+  agreed: boolean;
+}
+
+export interface MemberTermsStatus {
+  requiresRequiredAgreement: boolean;
+  terms: MemberTerm[];
+}
+
+export interface UpdateAgreementsRequest {
+  agreements: {
+    termsId: number;
+    agreed: boolean;
+  }[];
 }
