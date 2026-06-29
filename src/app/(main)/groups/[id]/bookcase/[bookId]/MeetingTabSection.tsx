@@ -15,15 +15,14 @@ type Props = {
   onManageTeamsClick?: () => void;
 };
 
-function formatDateDot(iso: string) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) {
-    return iso.slice(0, 10).replaceAll("-", ".");
-  }
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}.${m}.${day}`;
+function formatDateDot(iso?: string | null) {
+  if (!iso?.trim()) return "";
+
+  // meetingTime은 백엔드 LocalDateTime(시간대 없음) 날짜 값이라
+  // new Date()로 파싱하면 시간대에 따라 하루 밀릴 수 있다. 날짜 부분만 추출한다.
+  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return `${m[1]}.${m[2]}.${m[3]}`;
+  return iso.slice(0, 10).replaceAll("-", ".");
 }
 
 function teamNumberToLabel(teamNumber: number) {
@@ -110,9 +109,9 @@ export default function MeetingTabSection({ clubId, meetingId, onManageTeamsClic
     <div className="w-full flex flex-col items-start gap-[24px] self-stretch">
       <MeetingInfo
         meetingId={data.meetingId}
-        meetingName={data.title}
-        date={formatDateDot(data.meetingTime)}
-        location={data.location}
+        meetingName={data.title?.trim() || "정기모임"}
+        date={formatDateDot(data.meetingTime) || "날짜 미정"}
+        location={data.location?.trim() || "장소 미정"}
         isAdmin={!!data.isStaff}
         onManageGroupClick={onManageTeamsClick}
       />

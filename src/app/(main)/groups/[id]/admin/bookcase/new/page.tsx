@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
@@ -37,55 +37,44 @@ const getTagBgColor = (index: number) => {
   return TAGS[index]?.colorClass ?? 'bg-Subbrown-4';
 };
 
-// ✅ 날짜 입력: 뒤로가기/삭제 가능하게 "숫자만" 기반으로 포맷
-function formatMeetingDateLoose(input: string) {
-  const digits = input.replace(/\D/g, '').slice(0, 8);
-  const y = digits.slice(0, 4);
-  const m = digits.slice(4, 6);
-  const d = digits.slice(6, 8);
+const getBookshelfErrorMessage = (error: unknown, fallback: string) => {
+  const apiMessage =
+    typeof error === 'object' && error !== null && 'response' in error
+      ? (error as { response?: { data?: { message?: unknown } } }).response?.data?.message
+      : undefined;
 
-  // 강제적으로 '.' 찍지 말고, 있는 만큼만 자연스럽게 보여준다.
-  if (digits.length <= 4) return y;
-  if (digits.length <= 6) return `${y}.${m}`;
-  return `${y}.${m}.${d}`;
-}
+  if (typeof apiMessage === 'string' && apiMessage) return apiMessage;
+  if (error instanceof Error && error.message) return error.message;
+  return fallback;
+};
 
-function meetingDateToISO(dateDot: string) {
-  // "YYYY.MM.DD" -> ISO
-  const m = dateDot.trim().match(/^(\d{4})\.(\d{2})\.(\d{2})$/);
+function meetingDateToISO(dateInput: string) {
+  if (!dateInput.trim()) return null;
+
+  const m = dateInput.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!m) return null;
 
   const y = Number(m[1]);
   const mo = Number(m[2]) - 1;
   const d = Number(m[3]);
 
-  const dt = new Date(y, mo, d, 0, 0, 0);
+  // 실제 존재하는 날짜인지 UTC 기준으로 검증(예: 2026-02-31 차단).
+  // 로컬 Date로 검증하면 시간대 보정으로 잘못된 날짜가 통과할 수 있다.
+  const dt = new Date(Date.UTC(y, mo, d));
   if (Number.isNaN(dt.getTime())) return null;
-  return dt.toISOString();
+  if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== mo || dt.getUTCDate() !== d) return null;
+
+  // meetingTime은 백엔드에서 LocalDateTime(시간대 없음)으로 다루는 날짜 값이다.
+  // toISOString()으로 'Z'(UTC)를 붙여 보내면 시간대 차이로 날짜가 하루 밀릴 수 있으므로,
+  // 시간대 변환 없이 로컬 자정 ISO 문자열을 그대로 전송한다.
+  return `${m[1]}-${m[2]}-${m[3]}T00:00:00`;
 }
 
-function parseDateDotToLocalDate(dateDot: string) {
-  // "YYYY.MM.DD" only
-  const m = dateDot.trim().match(/^(\d{4})\.(\d{2})\.(\d{2})$/);
-  if (!m) return null;
+function formatDateInputLabel(dateInput: string) {
+  const m = dateInput.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return '날짜를 선택해주세요';
 
-  const y = Number(m[1]);
-  const mo = Number(m[2]) - 1;
-  const d = Number(m[3]);
-
-  const dt = new Date(y, mo, d, 0, 0, 0, 0); // local midnight
-  if (Number.isNaN(dt.getTime())) return null;
-
-  // 날짜가 실제로 존재하는지(예: 2026.02.31 방지)
-  if (dt.getFullYear() !== y || dt.getMonth() !== mo || dt.getDate() !== d) return null;
-
-  return dt;
-}
-
-function isBeforeTodayLocal(date: Date) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return date.getTime() < today.getTime();
+  return `${m[1]}.${m[2]}.${m[3]}`;
 }
 
 export default function NewBookshelfPage() {
@@ -96,8 +85,6 @@ export default function NewBookshelfPage() {
 
   const [selectedIsbn, setSelectedIsbn] = useState<string>('');
   const { data: selectedBook } = useBookDetailQuery(selectedIsbn);
-
-  const [meetingDateError, setMeetingDateError] = useState<string>('');
 
   // 모바일 헤더 타이틀 설정
   useEffect(() => {
@@ -136,14 +123,12 @@ export default function NewBookshelfPage() {
   const selectedTagIndex = selectedTags[0];
   const tagString = selectedTagIndex !== undefined ? TAG_LABELS[selectedTagIndex] : '';
   const meetingTimeISO = meetingDateToISO(meetingDate);
+  const isMeetingDateValid = meetingDate.trim().length === 0 || !!meetingTimeISO;
 
   const canSubmit =
     !!selectedBook &&
-    meetingName.trim().length > 0 &&
-    meetingLocation.trim().length > 0 &&
     !!tagString &&
-    !!meetingTimeISO &&
-    !meetingDateError;
+    isMeetingDateValid;
 
   const handleCancel = () => {
     confirmNavigation(() => router.back());
@@ -156,10 +141,9 @@ export default function NewBookshelfPage() {
     }
     if (!selectedBook) return;
 
-    // meetingTimeISO는 canSubmit에서 이미 보장
     const body: CreateBookshelfRequest = {
       title: meetingName.trim(),
-      meetingTime: meetingTimeISO as string,
+      meetingTime: meetingTimeISO,
       location: meetingLocation.trim(),
       generation: Number(generation),
       tag: tagString,
@@ -174,13 +158,9 @@ export default function NewBookshelfPage() {
 
       toast.success('책장 생성 완료!');
       runWithoutGuard(() => router.push(`/groups/${groupId}/bookcase`));
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
-      const msg =
-        e?.response?.data?.message ||
-        e?.message ||
-        '책장 생성에 실패했습니다.';
-      toast.error(msg);
+      toast.error(getBookshelfErrorMessage(e, '책장 생성에 실패했습니다.'));
     }
   };
 
@@ -323,68 +303,59 @@ export default function NewBookshelfPage() {
 
             {/* 정기모임이름 */}
             <div className="flex flex-col gap-2 t:pt-5">
-              <label className="subhead_4_1 text-Gray-7">정기모임이름</label>
+              <label className="subhead_4_1 text-Gray-7">정기모임 이름 (선택)</label>
               <input
                 type="text"
                 value={meetingName}
                 onChange={(e) => setMeetingName(e.target.value)}
-                placeholder="정기모임 이름을 입력해주세요"
+                placeholder="정기모임 이름을 입력해주세요 (최대 12자)"
+                maxLength={12}
                 className="px-4 py-3 h-14 rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 body_1_3 placeholder:text-Gray-3"
               />
             </div>
 
             {/* 모임 장소 */}
             <div className="flex flex-col gap-2 t:pt-5">
-              <label className="subhead_4_1 text-Gray-7">모임 장소</label>
+              <label className="subhead_4_1 text-Gray-7">모임 장소 (선택)</label>
               <input
                 type="text"
                 value={meetingLocation}
                 onChange={(e) => setMeetingLocation(e.target.value)}
-                placeholder="모임 장소를 입력해주세요"
+                placeholder="모임 장소를 입력해주세요 (최대 12자)"
+                maxLength={12}
                 className="px-4 py-3 h-14 rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 body_1_3 placeholder:text-Gray-3"
               />
             </div>
 
             {/* 모임 날짜 */}
             <div className="flex flex-col gap-2 t:pt-5">
-              <label className="subhead_4_1 text-Gray-7">모임 날짜</label>
-              <div className="flex gap-2">
+              <label className="subhead_4_1 text-Gray-7">모임 날짜 (선택)</label>
+              <div className="relative h-14">
                 <input
-                  type="text"
+                  type="date"
                   value={meetingDate}
-                  onChange={(e) => {
-                    const next = formatMeetingDateLoose(e.target.value);
-                    setMeetingDate(next);
-
-                    // 8자리(YYYYMMDD) 다 입력된 상태에서만 검사
-                    const digits = next.replace(/\D/g, '');
-                    if (digits.length < 8) {
-                      setMeetingDateError('');
-                      return;
-                    }
-
-                    const dt = parseDateDotToLocalDate(next);
-                    if (!dt) {
-                      setMeetingDateError('날짜 형식이 아니거나 현재날짜보다 과거입니다.');
-                      return;
-                    }
-
-                    if (isBeforeTodayLocal(dt)) {
-                      setMeetingDateError('날짜 형식이 아니거나 현재날짜보다 과거입니다.');
-                      return;
-                    }
-
-                    setMeetingDateError('');
-                  }}
-                  placeholder="2000.00.00의 양식으로 작성해주세요"
-                  className="flex-1 px-4 py-3 h-14 rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 body_1_3 placeholder:text-Gray-3"
+                  onChange={(e) => setMeetingDate(e.target.value)}
+                  onClick={(e) => e.currentTarget.showPicker?.()}
+                  aria-label="모임 날짜 선택"
+                  className="peer absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
                 />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none flex h-14 w-full items-center justify-between rounded-[8px] border border-Subbrown-4 bg-White px-4 py-3 transition-colors peer-focus:border-primary-2"
+                >
+                  <span className={`body_1_3 ${meetingDate ? 'text-Gray-7' : 'text-Gray-3'}`}>
+                    {formatDateInputLabel(meetingDate)}
+                  </span>
+                  <Image
+                    src="/Calendar.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="object-contain opacity-80"
+                  />
+                </div>
               </div>
-              {meetingDateError ? (
-                <p className="mt-1 text-[12px] leading-[140%] text-[#FF5151]">
-                  {meetingDateError}
-                </p>
-              ) : null}
+              <p className="text-Gray-4 body_2_2">선택하지 않으면 날짜 없이 등록됩니다.</p>
             </div>
 
             {/* 하단 버튼 */}
