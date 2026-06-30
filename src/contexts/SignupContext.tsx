@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, ReactNode, useCallback, use
 
 interface SignupState {
     // Terms
-    agreements: Record<string, boolean>;
+    agreements: Record<number, boolean>;
 
     // Email
     email: string;
@@ -36,7 +36,7 @@ interface SignupState {
 }
 
 interface SignupActions {
-    setAgreements: (agreements: Record<string, boolean>) => void;
+    setAgreements: (agreements: Record<number, boolean>) => void;
     setEmail: (email: string) => void;
     setVerificationCode: (code: string) => void;
     setIsVerified: (verified: boolean) => void;

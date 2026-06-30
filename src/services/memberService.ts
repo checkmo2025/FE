@@ -2,8 +2,7 @@ import { apiClient } from "@/lib/api/client";
 import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
 import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, FollowListResponse, FollowCountResponse, FindEmailRequest, FindEmailResponse, LoginStatusResponse, UpdateEmailRequest, BlockListResponse } from "@/types/member";
 import { ReportRequest, MyReportList } from "@/types/report";
-import { ApiResponse } from "@/types/auth";
-
+import { ApiResponse, TermsResponse, MemberTermsStatus, UpdateAgreementsRequest } from "@/types/auth";
 export const memberService = {
     getRecommendedMembers: async (): Promise<RecommendResponse> => {
         const response = await apiClient.get<ApiResponse<RecommendResponse>>(
@@ -185,5 +184,32 @@ export const memberService = {
             throw new Error(response.message || "차단 목록을 불러오는 데 실패했습니다.");
         }
         return response.result!;
+    },
+    getTerms: async (): Promise<TermsResponse> => {
+        const response = await apiClient.get<ApiResponse<TermsResponse>>(
+            MEMBER_ENDPOINTS.TERMS
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "약관을 불러오는 데 실패했습니다.");
+        }
+        return response.result!;
+    },
+    getMyTerms: async (): Promise<MemberTermsStatus> => {
+        const response = await apiClient.get<ApiResponse<MemberTermsStatus>>(
+            MEMBER_ENDPOINTS.MY_TERMS
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "내 약관 동의 상태를 불러오는 데 실패했습니다.");
+        }
+        return response.result!;
+    },
+    saveMyTerms: async (data: UpdateAgreementsRequest): Promise<void> => {
+        const response = await apiClient.post<ApiResponse<unknown>>(
+            MEMBER_ENDPOINTS.MY_TERMS,
+            data
+        );
+        if (!response.isSuccess) {
+            throw new Error(response.message || "약관 동의 상태를 저장하는 데 실패했습니다.");
+        }
     },
 };

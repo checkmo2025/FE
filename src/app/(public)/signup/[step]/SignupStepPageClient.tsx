@@ -52,7 +52,7 @@ export default function SignupStepPageClient() {
                 setEmail(newEmail);
             }
 
-            if (step === "terms" || step === "email" || step === "password") {
+            if (step === "email" || step === "password") {
                 router.replace(PROFILE_COMPLETION_ROUTE);
             }
         }
