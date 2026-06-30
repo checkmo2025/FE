@@ -2,7 +2,7 @@
 import Image from "next/image";
 
 type Props = {
-  provider: "local" | "kakao" | "google" | "naver"; // 확장성을 위해 타입 정의
+  provider: "local" | "kakao" | "google" | "naver" | "apple"; // 확장성을 위해 타입 정의
   email: string;
 };
 
@@ -18,6 +18,7 @@ const PROVIDER_STYLES = {
   // 추후 google, naver 등 추가 가능
   google: { bgColor: "bg-White border border-Gray-2", icon: "/googleLogo.svg" },
   naver: { bgColor: "bg-[#03C75A]", icon: "/naverLogo.svg" },
+  apple: { bgColor: "bg-black text-white", icon: "/appleLogo.svg" },
 };
 
 export default function SocialLoginCard({ provider, email }: Props) {
