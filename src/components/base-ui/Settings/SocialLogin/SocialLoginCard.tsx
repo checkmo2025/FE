@@ -1,8 +1,10 @@
 // src/components/base-ui/Settings/SocialLoginCard.tsx
 import Image from "next/image";
 
+import { LoginProvider } from "@/types/member";
+
 type Props = {
-  provider: "local" | "kakao" | "google" | "naver" | "apple"; // 확장성을 위해 타입 정의
+  provider: Lowercase<LoginProvider>;
   email: string;
 };
 

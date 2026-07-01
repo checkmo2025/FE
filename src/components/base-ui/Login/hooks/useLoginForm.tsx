@@ -115,7 +115,11 @@ export default function useLoginForm(onSuccess?: () => void) {
         authUrl = process.env.NEXT_PUBLIC_NAVER_AUTH_URL || "";
         break;
       case "apple":
-        authUrl = process.env.NEXT_PUBLIC_APPLE_AUTH_URL || "";
+        if (!process.env.NEXT_PUBLIC_APPLE_AUTH_URL) {
+          toast.error("애플 로그인 주소 설정이 누락되었습니다.");
+          return;
+        }
+        authUrl = process.env.NEXT_PUBLIC_APPLE_AUTH_URL;
         break;
       default:
         toast.error("지원하지 않는 로그인 방식입니다.");
