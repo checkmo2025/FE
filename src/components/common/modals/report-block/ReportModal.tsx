@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import Image from "next/image";
 import { REPORT_REASONS } from "@/constants/report";
@@ -24,26 +24,27 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
 
     useScrollLock(isOpen);
 
+    const handleClose = useCallback(() => {
+        setReason(defaultReason);
+        setReportContent("");
+        onClose();
+    }, [defaultReason, onClose]);
+
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === "Escape" && isOpen) {
-                onClose();
+                handleClose();
             }
         };
 
         if (isOpen) {
             document.addEventListener("keydown", handleEscape);
-            setReason(defaultReason);
-        } else {
-            // Reset state when closed
-            setReason(defaultReason);
-            setReportContent("");
         }
 
         return () => {
             document.removeEventListener("keydown", handleEscape);
         };
-    }, [isOpen, onClose, defaultReason]);
+    }, [isOpen, handleClose]);
 
     if (!isOpen) return null;
 
@@ -59,33 +60,33 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
 
     return (
         <div
-            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fade-in"
-            onClick={onClose}
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-3 t:p-4 animate-fade-in"
+            onClick={handleClose}
         >
             {/* Modal Container */}
             <div
-                className="flex w-full max-w-[734px] p-5 t:p-[40px] flex-col items-start gap-[16px] rounded-[8px] border border-Subbrown-4 bg-background animate-slide-down"
+                className="flex w-full max-w-[734px] max-h-[90dvh] overflow-y-auto p-4 t:p-[40px] flex-col items-start gap-[16px] rounded-[8px] border border-Subbrown-4 bg-background animate-slide-down"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header: Title and Close button */}
-                <div className="flex px-[20px] justify-between items-start self-stretch">
-                    <h2 className="text-Gray-7 subhead_2">신고하기</h2>
+                <div className="flex px-0 t:px-[20px] justify-between items-center t:items-start self-stretch">
+                    <h2 className="text-Gray-7 subhead_4_1 t:subhead_2">신고하기</h2>
                     <button
                         type="button"
-                        onClick={onClose}
-                        className="w-[32px] h-[32px] relative cursor-pointer"
+                        onClick={handleClose}
+                        className="w-[28px] h-[28px] t:w-[32px] t:h-[32px] relative cursor-pointer"
                     >
                         <Image src="/reportCancle.svg" alt="닫기" fill />
                     </button>
                 </div>
 
                 {/* Body: Report Reason and Content */}
-                <div className="flex px-[20px] flex-col justify-center items-center gap-[24px] self-stretch">
+                <div className="flex px-0 t:px-[20px] flex-col justify-center items-center gap-4 t:gap-[24px] self-stretch">
 
                     {/* Report Reason Section */}
                     <div className="flex flex-col items-start gap-[8px] self-stretch">
                         <span className="self-stretch text-Gray-3 body_1_3">사유</span>
-                        <div className="flex flex-wrap items-center gap-[12px] self-stretch">
+                        <div className="flex flex-wrap items-center gap-2 t:gap-[12px] self-stretch">
                             {REPORT_REASONS.map(({ label, value }) => {
                                 const isSelected = reason === value;
                                 return (
@@ -93,12 +94,12 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
                                         key={value}
                                         type="button"
                                         onClick={() => setReason(value)}
-                                        className={`flex flex-1 min-w-[100px] t:w-[144px] t:flex-none h-[45px] p-[10px] justify-center items-center gap-[10px] rounded-[8px] border transition-colors ${isSelected
+                                        className={`flex flex-1 min-w-[calc(50%-4px)] t:min-w-[100px] t:w-[144px] t:flex-none h-10 t:h-[45px] px-3 t:p-[10px] justify-center items-center gap-[10px] rounded-[8px] border transition-colors ${isSelected
                                             ? "border-primary-1 bg-primary-1 text-White"
                                             : "border-Gray-2 bg-Gray-1 text-Gray-3"
                                             }`}
                                     >
-                                        <span className="subhead_4_1">{label}</span>
+                                        <span className="body_1_2 t:subhead_4_1">{label}</span>
                                     </button>
                                 );
                             })}
@@ -112,7 +113,7 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
                             value={reportContent}
                             onChange={handleContentChange}
                             placeholder={`신고 내용 작성 (최대 ${INPUT_LIMITS.REPORT_CONTENT}자)`}
-                            className="flex h-[284px] p-[20px] items-start gap-[10px] self-stretch rounded-[8px] bg-White border-none resize-none focus:outline-none focus:ring-1 focus:ring-primary-1 text-Gray-7 subhead_4_1 placeholder:text-Gray-3"
+                            className="flex h-[144px] t:h-[284px] p-4 t:p-[20px] items-start gap-[10px] self-stretch rounded-[8px] bg-White border-none resize-none focus:outline-none focus:ring-1 focus:ring-primary-1 text-Gray-7 body_1_3 t:subhead_4_1 placeholder:text-Gray-3"
                         />
                         <span className="self-end text-[12px] leading-[16px] text-Gray-3">
                             {reportContent.length}/{INPUT_LIMITS.REPORT_CONTENT}
@@ -136,15 +137,15 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
                                 }
                                 if (reason && isSubmitEnabled) {
                                     onSubmit(reason, reportContent);
-                                    onClose();
+                                    handleClose();
                                 }
                             }}
-                            className={`flex h-[56px] p-[20px] justify-center items-center gap-[10px] self-stretch rounded-[8px] transition-colors pb-[20px] ${isSubmitEnabled
+                            className={`flex h-12 t:h-[56px] p-4 t:p-[20px] justify-center items-center gap-[10px] self-stretch rounded-[8px] transition-colors ${isSubmitEnabled
                                 ? "bg-primary-1 text-White hover:bg-primary-1/90 cursor-pointer"
                                 : "bg-Gray-1 text-Gray-3 cursor-not-allowed"
                                 }`}
                         >
-                            <span className="text-[18px] font-normal leading-[135%] tracking-[-0.018px]">
+                            <span className="body_1_1 t:text-[18px] t:font-normal t:leading-[135%] t:tracking-[-0.018px]">
                                 신고 등록
                             </span>
                         </button>
