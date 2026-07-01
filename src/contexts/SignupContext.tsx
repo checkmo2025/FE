@@ -36,7 +36,7 @@ interface SignupState {
 }
 
 interface SignupActions {
-    setAgreements: (agreements: Record<number, boolean>) => void;
+    setAgreements: (agreements: Record<number, boolean> | ((prev: Record<number, boolean>) => Record<number, boolean>)) => void;
     setEmail: (email: string) => void;
     setVerificationCode: (code: string) => void;
     setIsVerified: (verified: boolean) => void;
@@ -105,7 +105,7 @@ export const SignupProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     const actions = useMemo((): SignupActions => ({
-        setAgreements: (agreements) => setState((prev) => ({ ...prev, agreements })),
+        setAgreements: (agreements) => setState((prev) => ({ ...prev, agreements: typeof agreements === "function" ? agreements(prev.agreements) : agreements })),
         setEmail: (email) => setState((prev) => ({ ...prev, email })),
         setVerificationCode: (verificationCode) => setState((prev) => ({ ...prev, verificationCode })),
         setIsVerified: (isVerified) => setState((prev) => ({ ...prev, isVerified })),
