@@ -24,7 +24,7 @@ export default function ProfileClient({ encodedNickname }: { encodedNickname: st
   }, [isLoggedIn, user?.nickname, nickname, router]);
 
   return (
-    <div className="flex flex-col items-center gap-[10px] md:gap-[24px] w-full min-h-screen bg-[#F9F7F6] pb-[100px]">
+    <div className="flex flex-col items-center gap-[10px] t:gap-[24px] w-full min-h-screen bg-[#F9F7F6] pb-[120px] t:pb-[100px]">
       <ProfileBreadcrumb nickname={nickname} />
 
       <div className="mt-[12px] md:mt-[56px]">
