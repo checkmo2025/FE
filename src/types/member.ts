@@ -74,7 +74,7 @@ export interface FindEmailResponse {
 }
 
 
-export type LoginProvider = "LOCAL" | "GOOGLE" | "KAKAO" | "NAVER";
+export type LoginProvider = "LOCAL" | "GOOGLE" | "KAKAO" | "NAVER" | "APPLE";
 
 export interface LoginStatusResponse {
     provider: LoginProvider;

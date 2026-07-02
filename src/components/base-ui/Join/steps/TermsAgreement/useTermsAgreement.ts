@@ -8,15 +8,11 @@ export const useTermsAgreement = (onNext: () => void) => {
   const [termsData, setTermsData] = useState<Term[]>([]);
   const [isFetching, setIsFetching] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const hasFetchedRef = useRef(false);
-
   useEffect(() => {
-    if (hasFetchedRef.current) return;
-    hasFetchedRef.current = true;
-
     let isMounted = true;
 
     const fetchTerms = async () => {
+      setIsFetching(true);
       try {
         const { terms } = await memberService.getTerms();
         if (isMounted) setTermsData(terms);
@@ -30,22 +26,31 @@ export const useTermsAgreement = (onNext: () => void) => {
               return;
             }
 
-            const newAgreements: Record<number, boolean> = {};
-            myTerms.terms.forEach(term => {
-              newAgreements[term.id] = term.agreed;
-            });
-            if (isMounted) setAgreements(newAgreements);
+            if (isMounted) {
+              setAgreements((prev) => {
+                const newAgreements = { ...prev };
+                myTerms.terms.forEach(term => {
+                  newAgreements[term.id] = term.agreed;
+                });
+                return newAgreements;
+              });
+            }
           } catch (e) {
             console.error("Failed to fetch my terms", e);
             throw e; // 에러를 밖으로 던져 UI에서 처리하도록 함
           }
         } else {
-          if (Object.keys(agreements).length === 0) {
-            const initialAgreements: Record<number, boolean> = {};
-            terms.forEach(term => {
-              initialAgreements[term.id] = false;
+          if (isMounted) {
+            setAgreements((prev) => {
+              if (Object.keys(prev).length === 0) {
+                const initialAgreements: Record<number, boolean> = {};
+                terms.forEach(term => {
+                  initialAgreements[term.id] = false;
+                });
+                return initialAgreements;
+              }
+              return prev;
             });
-            if (isMounted) setAgreements(initialAgreements);
           }
         }
       } catch (error) {
@@ -60,7 +65,7 @@ export const useTermsAgreement = (onNext: () => void) => {
     return () => {
       isMounted = false;
     };
-  }, [isSocial, onNext, setAgreements, showToast, agreements]); // 이제 agreements를 의존성 배열에 넣어도 초기 호출 방어가 됨
+  }, [isSocial, onNext, setAgreements, showToast]);
 
   const allAgreed = termsData.length > 0 && termsData.every((term) => agreements[term.id]);
   const isButtonEnabled = termsData.length > 0 && termsData.filter((term) => term.required).every(
