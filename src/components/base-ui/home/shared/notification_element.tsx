@@ -29,9 +29,9 @@ export default function NotificationElement({
         }`;
 
   return (
-    <div className="flex w-[364px] px-[16px] py-[20px] justify-between items-center border-b border-b-[color:var(--Subbrown_4,#EAE5E2)] bg-[color:var(--White,#FFF)]">
+    <div className="flex w-full max-w-full px-[16px] py-[20px] justify-between items-center gap-[12px] border-b border-b-[color:var(--Subbrown_4,#EAE5E2)] bg-[color:var(--White,#FFF)]">
       {/* left */}
-      <div className="flex items-center gap-[12px] min-w-0">
+      <div className="flex flex-1 items-center gap-[12px] min-w-0">
         {isLatest ? (
           <span className="w-[12px] h-[12px] rounded-full bg-red-500 shrink-0" />
         ) : (
