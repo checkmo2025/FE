@@ -42,7 +42,7 @@ export default function CommentInput({
         onChange={(e) => setContent(clampTextToLimit(e.target.value, maxLength, overLimitMessage))}
         onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
         placeholder={placeholder}
-        className="flex-1 w-[240px] h-[36px] t:w-[850px] t:h-[56px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White Body_1_2 text-Gray-7 placeholder:text-Gray-3 outline-none"
+        className="flex-1 w-[240px] h-[36px] t:w-[850px] t:h-[56px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White body_1_2 text-Gray-7 placeholder:text-Gray-3 outline-none"
       />
       <button
         type="button"

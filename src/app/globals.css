@@ -80,6 +80,14 @@ body {
   color: var(--foreground);
 }
 
+@media (max-width: 767px) {
+  input[class],
+  textarea[class],
+  select[class] {
+    font-size: 16px;
+  }
+}
+
 /* Headline */
 @utility headline_1 {
   @apply text-[48px] font-bold leading-[135%] tracking-[-0.02px];

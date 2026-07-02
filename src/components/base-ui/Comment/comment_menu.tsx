@@ -57,7 +57,7 @@ export default function CommentMenu({
                   onReply();
                   onClose();
                 }}
-                className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+                className="flex w-full h-[44px] items-center justify-center gap-2 body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
               >
                 <Image src="/reply2.svg" alt="답글" width={24} height={24} />
                 답글달기
@@ -78,7 +78,7 @@ export default function CommentMenu({
                     onDelete();
                     onClose();
                   }}
-                  className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+                  className="flex w-full h-[44px] items-center justify-center gap-2 body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
                 >
                   <Image
                     src="/delete.svg"
@@ -101,7 +101,7 @@ export default function CommentMenu({
                     onEdit();
                     onClose();
                   }}
-                  className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+                  className="flex w-full h-[44px] items-center justify-center gap-2 body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
                 >
                   <Image src="/edit2.svg" alt="수정" width={24} height={24} />
                   수정하기
@@ -116,7 +116,7 @@ export default function CommentMenu({
                   onReport();
                   onClose();
                 }}
-                className="flex w-full h-[44px] items-center justify-center gap-2 Body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
+                className="flex w-full h-[44px] items-center justify-center gap-2 body_1_2 text-Gray-4 hover:bg-Gray-1 cursor-pointer"
               >
                 <Image src="/report.svg" alt="신고" width={24} height={24} />
                 신고하기
