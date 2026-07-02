@@ -115,6 +115,9 @@ body {
 @utility subhead_3_2 {
   @apply text-[18px] font-medium leading-[135%] tracking-[-0.02px];
 }
+@utility subhead_4 {
+  @apply text-[16px] font-semibold leading-[135%] tracking-[-0.016px];
+}
 @utility subhead_4_1 {
   @apply text-[18px] font-medium leading-[135%] tracking-[-0.018px];
 }
