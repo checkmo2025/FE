@@ -66,7 +66,6 @@ export default function BookstoryDetail({
   onSubscribeClick,
   bookTitle,
   bookAuthor,
-  bookDetail,
   createdAt,
   viewCount,
   likeCount = 1,
@@ -83,7 +82,8 @@ export default function BookstoryDetail({
   const href = authorHref ?? (isMyStory ? "/profile/mypage" : `/profile/${encodeURIComponent(authorId)}`);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const tabletMenuRef = useRef<HTMLDivElement>(null);
   const heartIcon = likedByMe ? "/red_heart.svg" : "/gray_heart.svg";
   const { isLoggedIn, openLoginModal } = useAuthStore();
   const { mutate: reportMember } = useReportMemberMutation();
@@ -91,7 +91,11 @@ export default function BookstoryDetail({
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      const isInsideMobileMenu = mobileMenuRef.current?.contains(target) ?? false;
+      const isInsideTabletMenu = tabletMenuRef.current?.contains(target) ?? false;
+
+      if (!isInsideMobileMenu && !isInsideTabletMenu) {
         setMenuOpen(false);
       }
     };
@@ -113,7 +117,7 @@ export default function BookstoryDetail({
     try {
       await navigator.clipboard.writeText(window.location.href);
       toast.success("클립보드에 복사되었습니다.");
-    } catch (err) {
+    } catch {
       toast.error("복사에 실패했습니다.");
     }
     setMenuOpen(false);
@@ -216,7 +220,7 @@ export default function BookstoryDetail({
         </div>
 
         {/* 햄버거 */}
-        <div className="relative shrink-0 ml-2" ref={menuRef}>
+        <div className="relative shrink-0 ml-2" ref={mobileMenuRef}>
           <button
             type="button"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -348,7 +352,7 @@ export default function BookstoryDetail({
           )}
 
           {/* 햄버거 */}
-          <div className="relative" ref={menuRef}>
+          <div className="relative" ref={tabletMenuRef}>
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}

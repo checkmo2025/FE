@@ -80,6 +80,14 @@ body {
   color: var(--foreground);
 }
 
+@media (max-width: 767px) {
+  input[class],
+  textarea[class],
+  select[class] {
+    font-size: 16px;
+  }
+}
+
 /* Headline */
 @utility headline_1 {
   @apply text-[48px] font-bold leading-[135%] tracking-[-0.02px];
@@ -106,6 +114,9 @@ body {
 }
 @utility subhead_3_2 {
   @apply text-[18px] font-medium leading-[135%] tracking-[-0.02px];
+}
+@utility subhead_4 {
+  @apply text-[16px] font-semibold leading-[135%] tracking-[-0.016px];
 }
 @utility subhead_4_1 {
   @apply text-[18px] font-medium leading-[135%] tracking-[-0.018px];

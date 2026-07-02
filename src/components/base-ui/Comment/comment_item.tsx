@@ -110,7 +110,7 @@ export default function CommentItem({
 
       {!isEditing ? (
         <div className="flex items-start justify-between gap-2">
-          <p className={`Body_1_2 flex-1 whitespace-pre-wrap ${isBlocked ? "text-Gray-3 italic" : "text-Gray-5"}`}>
+          <p className={`body_1_2 flex-1 whitespace-pre-wrap ${isBlocked ? "text-Gray-3 italic" : "text-Gray-5"}`}>
             {content}
           </p>
           {hasMenuAction && (

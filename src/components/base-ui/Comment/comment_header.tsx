@@ -40,7 +40,7 @@ export default function CommentHeader({
           </span>
         )}
       </div>
-      <span className="Body_1_2 text-Gray-3">{formatDate(createdAt)}</span>
+      <span className="body_1_2 text-Gray-3">{formatDate(createdAt)}</span>
     </div>
   );
 }
