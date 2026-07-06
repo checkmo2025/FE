@@ -35,6 +35,13 @@ function cx(...classes: (string | false | null | undefined)[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+const PRIMARY_FILLED_BUTTON_CLASS =
+  "bg-primary-1 text-White transition-colors hover:bg-primary-3 disabled:bg-Gray-2 disabled:hover:bg-Gray-2 disabled:cursor-not-allowed";
+const SELECTABLE_BUTTON_ACTIVE_CLASS =
+  "bg-primary-1 border-primary-1 text-White transition-colors hover:bg-primary-3 hover:border-primary-3";
+const SELECTABLE_BUTTON_IDLE_CLASS =
+  "bg-Subbrown-4 border-Subbrown-3 text-primary-3 transition-colors hover:bg-Subbrown-3";
+
 const normalizeLinks = (links: SnsLink[]) =>
   links
     .map((link) => ({ label: link.label.trim(), url: link.url.trim() }))
@@ -440,12 +447,12 @@ export default function EditClubPage() {
                     w-[100px] h-[48px] t:w-[128px] t:h-[56px]
                     px-1 py-3 rounded-[8px]
                     body_1_2
-                    hover:opacity-90 active:opacity-80
+                    active:opacity-80
                     disabled:opacity-50 disabled:cursor-not-allowed
                   `,
                   DuplicationCheckisConfirmed
-                    ? "bg-primary-1 text-White border border-primary-1 disabled:opacity-100 disabled:cursor-default"
-                    : "border border-Subbrown-3 bg-Subbrown-4 text-primary-3"
+                    ? `${SELECTABLE_BUTTON_ACTIVE_CLASS} disabled:hover:bg-primary-1 disabled:hover:border-primary-1 disabled:opacity-100 disabled:cursor-default`
+                    : SELECTABLE_BUTTON_IDLE_CLASS
                 )}
               >
                 {nameCheck === "checking" ? "확인중" : "중복확인"}
@@ -539,10 +546,10 @@ export default function EditClubPage() {
                   }}
                   className={cx(
                     "flex justify-center items-center gap-[10px] w-[200px] h-[36px] px-4 py-3 rounded-[8px] border body_1_3",
-                    "hover:opacity-90 active:opacity-80",
+                    "active:opacity-80",
                     profileMode === "default"
-                      ? "bg-primary-1 border-primary-1 text-White"
-                      : "bg-Subbrown-4 border-Subbrown-3 text-primary-3"
+                      ? SELECTABLE_BUTTON_ACTIVE_CLASS
+                      : SELECTABLE_BUTTON_IDLE_CLASS
                   )}
                 >
                   기본 프로필 사용하기
@@ -556,10 +563,10 @@ export default function EditClubPage() {
                   }}
                   className={cx(
                     "flex justify-center items-center gap-[10px] w-[200px] h-[36px] px-4 py-3 rounded-[8px] border body_1_3",
-                    "hover:opacity-90 active:opacity-80",
+                    "active:opacity-80",
                     profileMode === "upload"
-                      ? "bg-primary-1 border-primary-1 text-White"
-                      : "bg-Subbrown-4 border-Subbrown-3 text-primary-3"
+                      ? SELECTABLE_BUTTON_ACTIVE_CLASS
+                      : SELECTABLE_BUTTON_IDLE_CLASS
                   )}
                 >
                   사진 업로드하기
@@ -761,8 +768,7 @@ export default function EditClubPage() {
               onClick={() => confirmNavigation(() => router.back())}
               className={cx(
                 "hidden t:flex justify-center items-center gap-[10px] w-[148px] h-[48px] px-4 py-3 rounded-[8px]",
-                "bg-primary-1 hover:bg-primary-3 text-White",
-                "disabled:bg-Gray-2 disabled:hover:bg-Gray-2 disabled:cursor-not-allowed"
+                PRIMARY_FILLED_BUTTON_CLASS
               )}
             >
               취소
@@ -775,8 +781,7 @@ export default function EditClubPage() {
               className={cx(
                 "flex justify-center items-center gap-[10px] h-[48px] px-4 py-3 rounded-[8px]",
                 "w-full t:w-[148px]",
-                "bg-primary-1 hover:bg-primary-3 text-White",
-                "disabled:bg-Gray-2 disabled:hover:bg-Gray-2 disabled:cursor-not-allowed"
+                PRIMARY_FILLED_BUTTON_CLASS
               )}
             >
               {updateClub.isPending ? "저장 중..." : "저장"}

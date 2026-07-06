@@ -53,7 +53,7 @@ export default function PasswordChangePageClient() {
   };
 
   const buttonStyle =
-    "flex h-[48px] items-center justify-center gap-[10px] rounded-[8px] bg-primary-1 px-[16px] py-[12px] w-[120px] md:w-[200px] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed";
+    "flex h-[48px] items-center justify-center gap-[10px] rounded-[8px] bg-primary-1 px-[16px] py-[12px] w-[120px] md:w-[200px] transition-colors hover:bg-primary-3 disabled:hover:bg-primary-1 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed";
   const buttonTextStyle = "body_1_1 text-White";
   const inputContainerClass =
     "flex h-[52px] w-full items-center gap-[10px] rounded-[8px] border border-Subbrown-4 bg-White px-[16px] py-[12px]";

@@ -42,7 +42,7 @@ export default function CommentEditForm({
         <button
           type="button"
           onClick={handleSave}
-          className="px-4 py-2 rounded-lg bg-primary-3 text-White subhead_4_1 cursor-pointer"
+          className="px-4 py-2 rounded-lg bg-primary-3 text-White subhead_4_1 cursor-pointer transition-all hover:brightness-90"
         >
           저장
         </button>

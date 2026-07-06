@@ -208,7 +208,7 @@ export default function GroupDetailClient() {
                   bgColorVar="--Primary_1"
                   borderColorVar="--Primary_1"
                   textColorVar="--White"
-                  className="w-[300px] h-[44px] body_1 hover:brightness-90 hover:-translate-y-[1px] cursor-pointer"
+                  className="w-[300px] h-[44px] body_1 hover:-translate-y-[1px] cursor-pointer"
                 />
                 <ButtonWithoutImg
                   text="Contact US"
@@ -219,7 +219,7 @@ export default function GroupDetailClient() {
                   bgColorVar="--Subbrown_4"
                   borderColorVar="--Subbrown_2"
                   textColorVar="--Primary_3"
-                  className="w-[300px] h-[44px] body_1 hover:brightness-95 hover:-translate-y-[1px] cursor-pointer"
+                  className="w-[300px] h-[44px] body_1 hover:-translate-y-[1px] cursor-pointer"
                 />
               </div>
             </div>
@@ -263,7 +263,7 @@ export default function GroupDetailClient() {
                 bgColorVar="--Primary_1"
                 borderColorVar="--Primary_1"
                 textColorVar="--White"
-                className="w-full d:w-[300px] h-[44px] body_1 hover:brightness-90 hover:-translate-y-[1px] cursor-pointer"
+                className="w-full d:w-[300px] h-[44px] body_1 hover:-translate-y-[1px] cursor-pointer"
               />
               <ButtonWithoutImg
                 text="Contact US"
@@ -274,7 +274,7 @@ export default function GroupDetailClient() {
                 bgColorVar="--Subbrown_4"
                 borderColorVar="--Subbrown_2"
                 textColorVar="--Primary_3"
-                className="w-full d:w-[300px] h-[44px] body_1 hover:brightness-95 hover:-translate-y-[1px] cursor-pointer"
+                className="w-full d:w-[300px] h-[44px] body_1 hover:-translate-y-[1px] cursor-pointer"
               />
             </div>
           </div>

@@ -72,14 +72,14 @@ export default function UnsavedChangesConfirmModal({
           <button
             type="button"
             onClick={onLeave}
-            className="h-[44px] rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 body_1_2 hover:brightness-95 cursor-pointer"
+            className="h-[44px] rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 body_1_2 transition-colors hover:bg-Subbrown-3 cursor-pointer"
           >
             {leaveText}
           </button>
           <button
             type="button"
             onClick={onStay}
-            className="h-[44px] rounded-[8px] bg-primary-2 text-White body_1_2 hover:brightness-95 cursor-pointer"
+            className="h-[44px] rounded-[8px] bg-primary-2 text-White body_1_2 transition-colors hover:bg-primary-1 cursor-pointer"
           >
             {stayText}
           </button>

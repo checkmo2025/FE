@@ -122,7 +122,7 @@ export default function HomeBookclub({ groups }: Props) {
               <button
                 type="button"
                 onClick={handleCreateGroup}
-                className="w-full h-[32px] t:h-[48px] py-3 rounded-[6px] bg-[#6B5448] text-white text-[13px] flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-90 hover:-translate-y-[1px]"
+                className="w-full h-[32px] t:h-[48px] py-3 rounded-[6px] bg-primary-3 text-white text-[13px] flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-90 hover:-translate-y-[1px]"
               >
                 <Image
                   src="/icon_plus.svg"

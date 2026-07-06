@@ -29,13 +29,13 @@ function ActionButton({
 
   const variants = {
     primary:
-      "bg-primary-1 text-White font-semibold md:font-medium w-[220px] h-[32px] md:w-[486px] md:h-[48px] lg:w-[532px]",
+      "bg-primary-1 text-White font-semibold md:font-medium hover:bg-primary-3 w-[220px] h-[32px] md:w-[486px] md:h-[48px] lg:w-[532px]",
 
     following:
-      "bg-[var(--Subbrown_4)] text-primary-3 font-semibold md:font-medium w-[220px] h-[32px] md:w-[486px] md:h-[48px] lg:w-[532px]",
+      "bg-[var(--Subbrown_4)] text-primary-3 font-semibold md:font-medium hover:bg-Subbrown-3 w-[220px] h-[32px] md:w-[486px] md:h-[48px] lg:w-[532px]",
 
     secondary:
-      "bg-White border border-Subbrown-3 text-Gray-4 font-medium hover:bg-gray-50 w-[100px] h-[32px] md:w-[178px] md:h-[48px]",
+      "bg-White border border-Subbrown-3 text-Gray-4 font-medium hover:bg-Subbrown-3 w-[100px] h-[32px] md:w-[178px] md:h-[48px]",
   };
 
   const textStyles = "body_1_2 md:subhead_4_1";

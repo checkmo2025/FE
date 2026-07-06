@@ -170,8 +170,8 @@ export default function BookstoryDetail({
             onClick={onSubscribeClick}
             className={`flex px-4 py-1.5 justify-center items-center rounded-lg text-White text-[12px] font-medium shrink-0 transition-colors ${
               isFollowing
-                ? "bg-Subbrown-4 text-primary-3"
-                : "bg-primary-2 text-White"
+                ? "bg-Subbrown-4 text-primary-3 hover:bg-Subbrown-3"
+                : "bg-primary-2 text-White hover:bg-primary-1"
             }`}
           >
             {subscribeText}
@@ -353,8 +353,8 @@ export default function BookstoryDetail({
               onClick={onSubscribeClick}
               className={`flex px-[17px] py-[8px] justify-center items-center rounded-lg body_2_1 shrink-0 whitespace-nowrap cursor-pointer transition-colors ${
                 isFollowing
-                  ? "bg-Subbrown-4 text-primary-3"
-                  : "bg-primary-2 text-White"
+                  ? "bg-Subbrown-4 text-primary-3 hover:bg-Subbrown-3"
+                  : "bg-primary-2 text-White hover:bg-primary-1"
               }`}
             >
               {subscribeText}
