@@ -6,9 +6,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { SETTINGS_MENU } from "@/constants/setting/setting";
 import { EXTERNAL_LINKS } from "@/constants/links";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function SettingsPageClient() {
   const router = useRouter();
+  const { user } = useAuthStore();
+
+  const filteredMenu = SETTINGS_MENU.map((group) => ({
+    ...group,
+    items: group.items.filter((item) => {
+      if (item.href === "/setting/email" && user?.social) return false;
+      return true;
+    }),
+  }));
+
 
   // 데스크탑(xl, 1280px 이상)에서는 설정 진입 시 '프로필 편집'으로 리다이렉트
   useEffect(() => {
@@ -28,7 +39,7 @@ export default function SettingsPageClient() {
     <div className="flex w-full flex-col items-center pt-[10px] xl:hidden">
       {/* 메뉴 리스트 컨테이너 (width: 339px) */}
       <div className="flex w-[339px] flex-col items-start gap-[8px]">
-        {SETTINGS_MENU.map((group) => (
+        {filteredMenu.map((group) => (
           <div
             key={group.category}
             className="flex flex-col items-start gap-[8px] self-stretch"

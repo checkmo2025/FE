@@ -5,10 +5,20 @@ import { usePathname, useRouter } from "next/navigation";
 import { SETTINGS_MENU } from "@/constants/setting/setting";
 import { EXTERNAL_LINKS } from "@/constants/links";
 import SettingsMenuItem from "./Items/SettingsMenuItem";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function SettingsSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const { user } = useAuthStore();
+
+  const filteredMenu = SETTINGS_MENU.map((group) => ({
+    ...group,
+    items: group.items.filter((item) => {
+      if (item.href === "/setting/email" && user?.social) return false;
+      return true;
+    }),
+  }));
 
   return (
     <aside className="hidden md:flex md:w-[180px] xl:w-[236px] shrink-0 flex-col items-start bg-transparent transition-all duration-300">
@@ -19,7 +29,7 @@ export default function SettingsSidebar() {
 
       {/* 메뉴 그룹 */}
       <nav className="flex flex-col items-start gap-[8px] self-stretch">
-        {SETTINGS_MENU.map((group) => (
+        {filteredMenu.map((group) => (
           <div
             key={group.category}
             className="flex flex-col items-start self-stretch"
