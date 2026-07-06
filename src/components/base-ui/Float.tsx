@@ -40,7 +40,7 @@ export default function FloatingFab({
 
         "cursor-pointer",
         "active:-translate-y-[6px] active:brightness-95",
-        "hover:brightness-90",
+        "transition-colors hover:bg-primary-1",
         className,
       ].join(" ")}
     >

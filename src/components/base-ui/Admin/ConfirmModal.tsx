@@ -60,7 +60,7 @@ export default function ConfirmModal({ isOpen, message, onConfirm, onCancel }: C
                                 onConfirm();
                                 onCancel();
                             }}
-                            className="flex-1 h-[48px] rounded-lg bg-primary-3 text-White body_1_2 hover:bg-primary-3/90 transition-colors"
+                            className="flex-1 h-[48px] rounded-lg bg-primary-3 text-White body_1_2 hover:brightness-90 transition-all"
                         >
                             확인
                         </button>

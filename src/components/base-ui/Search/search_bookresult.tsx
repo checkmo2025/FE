@@ -115,7 +115,7 @@ export default function SearchBookResult({
                 flex w-12 h-12 t:w-15 t:h-15 px-[10px] py-[4.167px]
                 flex-col justify-center items-center gap-[8.333px] shrink-0
                 rounded-full bg-primary-2
-                cursor-pointer active:-translate-y-[6px] active:brightness-95 hover:brightness-90
+                cursor-pointer transition-colors hover:bg-primary-1 active:-translate-y-[6px] active:brightness-95
               "
         >
           <Image src="/pencil_icon.svg" alt="" width={20} height={20} />

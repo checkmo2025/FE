@@ -96,7 +96,7 @@ export default function BookshelfDeleteConfirmModal({
             type="button"
             onClick={onConfirm}
             disabled={isPending}
-            className="h-[44px] rounded-[8px] bg-primary-2 text-White body_1_2 hover:brightness-95 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+            className="h-[44px] rounded-[8px] bg-primary-2 text-White body_1_2 transition-colors hover:bg-primary-1 disabled:hover:bg-primary-2 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
           >
             {isPending ? "삭제중..." : confirmText}
           </button>
@@ -105,7 +105,7 @@ export default function BookshelfDeleteConfirmModal({
             type="button"
             onClick={onClose}
             disabled={isPending}
-            className="h-[44px] rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 body_1_2 hover:brightness-95 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+            className="h-[44px] rounded-[8px] border border-Subbrown-4 bg-White text-Gray-7 body_1_2 transition-colors hover:bg-Subbrown-3 disabled:hover:bg-White disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
           >
             {cancelText}
           </button>

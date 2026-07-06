@@ -446,7 +446,7 @@ export default function EditBookshelfPage() {
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors"
+                className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors hover:bg-Subbrown-3"
               >
                 취소
               </button>
@@ -454,9 +454,9 @@ export default function EditBookshelfPage() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={!canSubmit || patchMutation.isPending}
-                className={`flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg body_1_2 transition-opacity ${!canSubmit || patchMutation.isPending
+                className={`flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg body_1_2 transition-colors ${!canSubmit || patchMutation.isPending
                     ? 'bg-Subbrown-4 text-Gray-4 cursor-not-allowed opacity-70'
-                    : 'bg-primary-2 text-White hover:opacity-90'
+                    : 'bg-primary-2 text-White hover:bg-primary-1'
                   }`}
               >
                 수정

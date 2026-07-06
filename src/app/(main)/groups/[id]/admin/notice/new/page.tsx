@@ -697,14 +697,14 @@ export default function NewNoticePage() {
                 <button
                   type="button"
                   onClick={() => toast("임시저장은 미구현입니다.")}
-                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors"
+                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors hover:bg-Subbrown-3"
                 >
                   임시저장
                 </button>
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:opacity-90 transition-opacity"
+                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:bg-primary-1 transition-colors"
                 >
                   등록
                 </button>

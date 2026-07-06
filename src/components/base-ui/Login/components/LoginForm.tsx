@@ -102,7 +102,7 @@ export default function LoginForm({
       {/* 로그인 버튼 */}
       <button
         type="button"
-        className="flex items-center justify-center w-full h-[32px] t:h-[48px] rounded-lg bg-primary-1 text-White font-semibold text-sm border-none cursor-pointer transition-all active:brightness-90 disabled:bg-Gray-3 disabled:cursor-not-allowed shrink-0"
+        className="flex items-center justify-center w-full h-[32px] t:h-[48px] rounded-lg bg-primary-1 text-White font-semibold text-sm border-none cursor-pointer transition-all hover:bg-primary-3 active:brightness-90 disabled:bg-Gray-3 disabled:hover:bg-Gray-3 disabled:cursor-not-allowed shrink-0"
         onClick={onLogin}
         disabled={isLoading}
       >
@@ -111,6 +111,5 @@ export default function LoginForm({
     </div>
   );
 }
-
 
 
