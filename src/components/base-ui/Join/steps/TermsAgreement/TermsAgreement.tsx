@@ -73,7 +73,7 @@ const TermsAgreement: React.FC<TermsAgreementProps> = ({ onNext }) => {
                   className="flex-1 text-[#353535] font-sans text-[12px] font-normal leading-[145%] tracking-[-0.012px] t:text-[19.861px] t:leading-[15.605px] cursor-pointer hover:underline pr-[4px]"
                   onClick={() => setSelectedTermId(term.id)}
                 >
-                  {term.title}
+                  {term.title} ({term.required ? "필수" : "선택"})
                 </span>
                 <div
                   className="relative w-[15px] h-[15px] shrink-0 t:w-[24px] t:h-[24px] cursor-pointer"
