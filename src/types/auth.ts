@@ -7,6 +7,7 @@ export interface User {
   profileImageUrl?: string;
   categories?: string[];
   profileCompleted?: boolean;
+  social?: boolean;
 }
 
 export interface LoginForm {
