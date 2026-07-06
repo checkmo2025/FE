@@ -35,6 +35,7 @@ export interface ProfileResponse {
     description: string;
     profileImageUrl: string;
     categories: string[];
+    social: boolean;
 }
 
 export interface OtherProfileResponse {
