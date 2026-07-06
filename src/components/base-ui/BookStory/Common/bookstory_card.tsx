@@ -103,9 +103,9 @@ export default function BookStoryCard({
               e.stopPropagation();
               onSubscribeClick?.();
             }}
-            className={`h-8 rounded-lg px-[17px] body_2_1 whitespace-nowrap transition-all hover:brightness-90 active:scale-95 ${isFollowing
-              ? "bg-Subbrown-4 text-primary-3"
-              : "bg-primary-2 text-White"
+            className={`h-8 rounded-lg px-[17px] body_2_1 whitespace-nowrap transition-all active:scale-95 ${isFollowing
+              ? "bg-Subbrown-4 text-primary-3 hover:bg-Subbrown-3"
+              : "bg-primary-2 text-White hover:bg-primary-1"
               }`}
           >
             {subscribeText}
@@ -169,7 +169,7 @@ export default function BookStoryCard({
               e.stopPropagation();
               onContinueClick?.(e);
             }}
-            className="w-full h-10 rounded-lg bg-primary-2 text-White body_1_2 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2"
+            className="w-full h-10 rounded-lg bg-primary-2 text-White body_1_2 hover:bg-primary-1 active:scale-95 transition-all flex items-center justify-center gap-2"
           >
             <div className="relative w-4 h-4">
               <Image src="/pencil_icon.svg" alt="edit" fill className="object-contain brightness-0 invert" />

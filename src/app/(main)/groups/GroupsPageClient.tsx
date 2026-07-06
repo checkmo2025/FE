@@ -184,7 +184,7 @@ export default function GroupsPageClient() {
             bgColorVar="--Primary_1"
             borderColorVar="--Primary_1"
             textColorVar="--White"
-            className="flex-1 body_1 hover:brightness-95 hover:-translate-y-[1px] cursor-pointer"
+            className="flex-1 body_1 hover:-translate-y-[1px] cursor-pointer"
             onClick={() => router.push("/groups/create")}
           />
         </div>
@@ -195,7 +195,7 @@ export default function GroupsPageClient() {
             bgColorVar="--Primary_1"
             borderColorVar="--Primary_1"
             textColorVar="--White"
-            className="flex-1 subhead_4_1 hover:brightness-95 hover:-translate-y-[1px] cursor-pointer"
+            className="flex-1 subhead_4_1 hover:-translate-y-[1px] cursor-pointer"
             onClick={() => router.push("/groups/create")}
           />
         </div>

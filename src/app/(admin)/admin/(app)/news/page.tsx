@@ -118,7 +118,7 @@ export default function NewsPage() {
           rightAddon={
             <Link
               href="/admin/news/new"
-              className="flex-shrink-0 flex w-[187px] h-[48px] px-[16px] py-[12px] items-center justify-center gap-[10px] rounded-[8px] bg-primary-1 text-White body_1_1 hover:opacity-90"
+              className="flex-shrink-0 flex w-[187px] h-[48px] px-[16px] py-[12px] items-center justify-center gap-[10px] rounded-[8px] bg-primary-1 text-White body_1_1 hover:bg-primary-3 transition-colors"
             >
               소식 등록
             </Link>

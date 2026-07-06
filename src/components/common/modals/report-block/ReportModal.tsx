@@ -141,7 +141,7 @@ export default function ReportModal({ isOpen, onClose, onSubmit, defaultReason =
                                 }
                             }}
                             className={`flex h-12 t:h-[56px] p-4 t:p-[20px] justify-center items-center gap-[10px] self-stretch rounded-[8px] transition-colors ${isSubmitEnabled
-                                ? "bg-primary-1 text-White hover:bg-primary-1/90 cursor-pointer"
+                                ? "bg-primary-1 text-White hover:bg-primary-3 cursor-pointer"
                                 : "bg-Gray-1 text-Gray-3 cursor-not-allowed"
                                 }`}
                         >

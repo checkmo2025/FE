@@ -148,7 +148,8 @@ export default function AdminNewsDetailPage() {
               body_2
               pl-[16px]
               gap-[8px]
-              hover:opacity-90
+              hover:bg-primary-3
+              transition-colors
             "
           >
             <Image

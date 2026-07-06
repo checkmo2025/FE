@@ -61,8 +61,8 @@ export default function AdminLoginPage() {
             rounded-[8px]
             bg-primary-1 text-white
             subhead_2
-            hover:opacity-80
-            transition-opacity
+            hover:bg-primary-3
+            transition-colors
             cursor-pointer
           "
         >

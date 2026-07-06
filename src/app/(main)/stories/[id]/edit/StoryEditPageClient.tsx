@@ -195,7 +195,7 @@ export default function StoryEditPageClient() {
                   type="button"
                   onClick={() => handleSubmit("DRAFT")}
                   disabled={isPending}
-                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors hover:bg-primary-1 disabled:opacity-50"
+                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors hover:bg-Subbrown-3 disabled:hover:bg-background disabled:opacity-50"
                 >
                   {isPending ? "임시저장 중..." : "임시저장"}
                 </button>
@@ -203,7 +203,7 @@ export default function StoryEditPageClient() {
                   type="button"
                   onClick={() => handleSubmit("PUBLISHED")}
                   disabled={isPending}
-                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:opacity-90 transition-opacity disabled:opacity-50"
+                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:bg-primary-1 transition-colors disabled:hover:bg-primary-2 disabled:opacity-50"
                 >
                   {isPending ? "발행 중..." : "발행"}
                 </button>
@@ -221,7 +221,7 @@ export default function StoryEditPageClient() {
                   type="button"
                   onClick={() => handleSubmit()}
                   disabled={isPending}
-                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:opacity-90 transition-opacity disabled:opacity-50"
+                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:bg-primary-1 transition-colors disabled:hover:bg-primary-2 disabled:opacity-50"
                 >
                   {isPending ? "저장 중..." : "저장"}
                 </button>
