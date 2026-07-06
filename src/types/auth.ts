@@ -22,7 +22,7 @@ export interface ApiResponse<T = unknown> {
   result?: T;
 }
 
-export interface LoginResponse extends ApiResponse<string> { }
+export type LoginResponse = ApiResponse<string>;
 
 export interface EmailVerificationConfirm {
   email: string;
@@ -34,7 +34,7 @@ export interface AdditionalInfo {
   name: string;
   phoneNumber: string;
   description: string;
-  profileImageUrl: string;
+  imgUrl: string;
   categories: string[];
 }
 
