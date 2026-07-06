@@ -2,7 +2,7 @@
 
 import SettingsInputGroup from "@/components/base-ui/Settings/SettingsInputGroup";
 import SettingsDetailLayout from "@/components/base-ui/Settings/SettingsDetailLayout";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useVerifyEmailMutation } from "@/hooks/mutations/useAuthMutations";
 import { useUpdateEmailMutation } from "@/hooks/mutations/useMemberMutations";
 import { toast } from "react-hot-toast";
@@ -15,13 +15,16 @@ export default function EmailChangePageClient() {
   const [verificationCode, setVerificationCode] = useState("");
   const router = useRouter();
   const { user } = useAuthStore();
+  const toastShownRef = useRef(false);
 
   useEffect(() => {
-    if (user?.social) {
+    if (user?.social && !toastShownRef.current) {
+      toastShownRef.current = true;
       toast.error("소셜 로그인 회원은 이메일을 변경할 수 없습니다.");
       router.replace("/setting");
     }
   }, [user, router]);
+
 
   const { mutate: verifyEmail, isPending: isVerifying } = useVerifyEmailMutation();
   const { mutate: updateEmail, isPending: isUpdating } = useUpdateEmailMutation();
