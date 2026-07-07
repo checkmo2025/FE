@@ -34,7 +34,7 @@ function mapRole(role: AdminClubActiveMember["role"]) {
   switch (role) {
     case "OWNER":
       return "개설자";
-    case "ADMIN":
+    case "STAFF":
       return "운영진";
     case "MEMBER":
       return "회원";
@@ -54,8 +54,6 @@ export default function MembersListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const pageSize = 20;
-
   useEffect(() => {
     if (!clubId || Number.isNaN(clubId)) return;
 
@@ -68,7 +66,7 @@ export default function MembersListPage() {
 
         const [clubDetail, membersResult] = await Promise.all([
           fetchAdminClubDetail(clubId),
-          fetchAdminClubActiveMembers(clubId, page - 1, pageSize),
+          fetchAdminClubActiveMembers(clubId, page),
         ]);
 
         if (!mounted) return;

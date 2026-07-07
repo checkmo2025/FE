@@ -3,7 +3,7 @@ import { ADMIN_CLUBS } from "./endpoints/clubs";
 export type AdminClubListItem = {
   clubId: number;
   clubName: string;
-  ownerEmail: string;
+  ownerEmail: string | null;
   createdAt: string;
   memberCount: number;
 };
@@ -58,7 +58,7 @@ type AdminClubDetailResponse = {
   result: AdminClubDetail;
 };
 
-export type AdminClubMemberRole = "OWNER" | "ADMIN" | "MEMBER";
+export type AdminClubMemberRole = "OWNER" | "STAFF" | "MEMBER";
 
 export type AdminClubActiveMember = {
   nickname: string;
@@ -87,10 +87,17 @@ type AdminClubActiveMembersResponse = {
 
 export async function fetchAdminClubs(
   page = 1,
-  size = 20,
   keyword = "",
 ) {
-  const res = await fetch(ADMIN_CLUBS.list(page, size, keyword), {
+  const params = new URLSearchParams({
+    page: String(page),
+  });
+  const trimmedKeyword = keyword.trim();
+  if (trimmedKeyword) {
+    params.append("keyword", trimmedKeyword);
+  }
+
+  const res = await fetch(`${ADMIN_CLUBS.list}?${params.toString()}`, {
     method: "GET",
     credentials: "include",
     cache: "no-store",
@@ -149,7 +156,7 @@ type UpdateAdminClubResponse = {
   isSuccess: boolean;
   code: string;
   message: string;
-  result: AdminClubDetail;
+  result: string;
 };
 
 export async function updateAdminClub(
@@ -182,14 +189,20 @@ export async function updateAdminClub(
 
 export async function fetchAdminClubActiveMembers(
   clubId: number,
-  page = 0,
-  size = 20,
+  page = 1,
 ) {
-  const res = await fetch(ADMIN_CLUBS.activeMembers(clubId, page, size), {
-    method: "GET",
-    credentials: "include",
-    cache: "no-store",
+  const params = new URLSearchParams({
+    page: String(page),
   });
+
+  const res = await fetch(
+    `${ADMIN_CLUBS.activeMembers(clubId)}?${params.toString()}`,
+    {
+      method: "GET",
+      credentials: "include",
+      cache: "no-store",
+    },
+  );
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
