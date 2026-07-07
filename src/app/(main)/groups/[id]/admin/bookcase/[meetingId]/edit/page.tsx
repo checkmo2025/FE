@@ -217,7 +217,7 @@ export default function EditBookshelfPage() {
       });
 
       toast.success('책장 수정 완료!');
-      runWithoutGuard(() => router.push(`/groups/${clubId}/bookcase`));
+      runWithoutGuard(() => router.push(`/groups/${clubId}/bookcase/${meetingId}`));
     } catch (e: unknown) {
       console.error(e);
       toast.error(getBookshelfErrorMessage(e, '책장 수정에 실패했습니다.'));
