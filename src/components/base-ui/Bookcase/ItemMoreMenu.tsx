@@ -60,7 +60,7 @@ export default function ItemMoreMenu({
       {open && (
         <div
           className="
-            absolute right-0 top-full mt-2
+            absolute right-0 bottom-full mb-2
             w-34
             rounded-lg
             border border-Subbrown-4
