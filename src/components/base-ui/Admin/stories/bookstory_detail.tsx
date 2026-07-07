@@ -240,13 +240,13 @@ export default function BookstoryDetail({
         </div>
 
         {/* 좋아요/공유 */}
-        <div className="flex flex-col gap-6">
+        <div className="flex w-[132px] shrink-0 flex-col items-start gap-5 pt-1">
           <div
             onClick={(e) => {
               e.stopPropagation();
               onLikeClick?.(e);
             }}
-            className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1 rounded-full transition-colors"
+            className="flex h-8 w-full items-center gap-2 rounded-full p-1 text-left transition-colors hover:bg-gray-100 cursor-pointer"
           >
             <Image src={heartIcon} alt="heart" width={20} height={20} />
             <span
@@ -258,7 +258,7 @@ export default function BookstoryDetail({
             </span>
           </div>
           <div
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex h-8 w-full items-center gap-2 rounded-full p-1 text-left transition-colors hover:bg-gray-100 cursor-pointer"
             onClick={handleShare}
           >
             <Image src="/share.svg" alt="share" width={20} height={20} />
