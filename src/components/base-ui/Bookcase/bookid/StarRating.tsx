@@ -34,7 +34,7 @@ export function StarRating({
     return (
       <div key={i} className={`relative shrink-0 ${starClassName}`}>
         {/* 바탕: 빈 별 */}
-        <StarSvg className={`absolute inset-0 ${starClassName} text-Subbrown-3`} />
+        <StarSvg className={`absolute inset-0 ${starClassName} text-Gray-2`} />
 
         {/* 반 별 */}
         {half && (
@@ -91,7 +91,7 @@ export function StarSelector({
             aria-label={`${i + 1}점 선택`}
           >
             {/* 빈 별 */}
-            <StarSvg className={`absolute inset-0 ${starClassName} text-Subbrown-3`} />
+            <StarSvg className={`absolute inset-0 ${starClassName} text-Gray-2`} />
 
             {/* 반 별 */}
             {half && (
