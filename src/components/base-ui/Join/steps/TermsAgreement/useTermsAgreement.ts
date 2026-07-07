@@ -1,7 +1,13 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { memberService } from "@/services/memberService";
 import { Term } from "@/types/auth";
 import { useSignup } from "@/contexts/SignupContext";
+
+const normalizeTermsRequirement = (terms: Term[]) =>
+  terms.map((term) => ({
+    ...term,
+    required: term.termsType !== "MARKETING",
+  }));
 
 export const useTermsAgreement = (onNext: () => void) => {
   const { agreements, setAgreements, isSocial, showToast } = useSignup();
@@ -15,7 +21,8 @@ export const useTermsAgreement = (onNext: () => void) => {
       setIsFetching(true);
       try {
         const { terms } = await memberService.getTerms();
-        if (isMounted) setTermsData(terms);
+        const normalizedTerms = normalizeTermsRequirement(terms);
+        if (isMounted) setTermsData(normalizedTerms);
 
         if (isSocial) {
           try {
@@ -44,7 +51,7 @@ export const useTermsAgreement = (onNext: () => void) => {
             setAgreements((prev) => {
               if (Object.keys(prev).length === 0) {
                 const initialAgreements: Record<number, boolean> = {};
-                terms.forEach(term => {
+                normalizedTerms.forEach(term => {
                   initialAgreements[term.id] = false;
                 });
                 return initialAgreements;
@@ -53,7 +60,7 @@ export const useTermsAgreement = (onNext: () => void) => {
             });
           }
         }
-      } catch (error) {
+      } catch {
         if (isMounted) showToast("약관을 불러오는데 실패했습니다.");
       } finally {
         if (isMounted) setIsFetching(false);

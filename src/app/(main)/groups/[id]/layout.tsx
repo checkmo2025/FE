@@ -16,7 +16,7 @@ export default function GroupDetailLayout({ children }: { children: React.ReactN
   const groupId = params.id as string;
   const groupIdNum = Number(groupId);
 
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
 
   const skipLayout = useMemo(() => {
     return pathname?.includes("/admin/");

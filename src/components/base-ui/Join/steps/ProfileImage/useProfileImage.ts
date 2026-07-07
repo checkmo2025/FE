@@ -78,7 +78,7 @@ export const useProfileImage = () => {
         name,
         phoneNumber,
         description,
-        profileImageUrl: finalImageUrl,
+        imgUrl: finalImageUrl,
         categories,
       });
 

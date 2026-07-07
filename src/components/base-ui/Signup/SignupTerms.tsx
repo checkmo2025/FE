@@ -7,11 +7,11 @@ import styles from "./SignupTerms.module.css";
 const TERMS_DATA = [
   {
     id: "privacy",
-    label: "서비스 이용을 위한 필수 개인정보 수집·이용 동의",
+    label: "서비스 이용을 위한 개인정보 수집·이용 동의",
     required: true,
   },
   { id: "terms", label: "책모 이용약관 동의", required: true },
-  { id: "thirdParty", label: "개인정보 제3자 제공 동의", required: false },
+  { id: "thirdParty", label: "개인정보 제3자 제공 동의", required: true },
   {
     id: "marketing",
     label: "마케팅 및 이벤트 정보 수신 동의",
