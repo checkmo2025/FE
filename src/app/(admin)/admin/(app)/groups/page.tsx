@@ -18,14 +18,12 @@ export default function GroupsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const pageSize = 20;
-
   const loadGroups = async (targetPage: number, targetKeyword: string) => {
     try {
       setLoading(true);
       setError("");
 
-      const data = await fetchAdminClubs(targetPage, pageSize, targetKeyword);
+      const data = await fetchAdminClubs(targetPage, targetKeyword);
 
       setGroups(data.clubs ?? []);
       setTotalPages(Math.max(1, data.totalPages ?? 1));
@@ -162,7 +160,7 @@ export default function GroupsPage() {
                       {g.clubName}
                     </td>
                     <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
-                      {g.ownerEmail}
+                      {g.ownerEmail ?? "-"}
                     </td>
                     <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
                       {g.createdAt.slice(0, 10).replace(/-/g, ".")}
