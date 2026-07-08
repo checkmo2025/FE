@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import SearchBookResult from "@/components/base-ui/Search/search_bookresult";
 import { useInfiniteBookSearchQuery } from "@/hooks/queries/useBookQueries";
+import { useToggleBookLikeMutation } from "@/hooks/mutations/useBookMutations";
 import { useInView } from "react-intersection-observer";
 
 function SearchContent() {
@@ -12,7 +13,7 @@ function SearchContent() {
   const router = useRouter();
   const query = searchParams.get("q") || "";
   const [searchValue, setSearchValue] = useState(query);
-  const [likedResults, setLikedResults] = useState<Record<string, boolean>>({});
+  const { mutate: toggleLike } = useToggleBookLikeMutation();
 
   useEffect(() => {
     setSearchValue(query);
@@ -52,7 +53,7 @@ function SearchContent() {
 
   const totalResults = useMemo(() => {
     return searchResults.length;
-  }, [searchResults]);
+  }, [searchResults.length]);
 
   return (
     <>
@@ -110,10 +111,8 @@ function SearchContent() {
                 title={result.title}
                 author={result.author}
                 detail={result.description}
-                liked={likedResults[result.isbn] || false}
-                onLikeChange={(liked) =>
-                  setLikedResults((prev) => ({ ...prev, [result.isbn]: liked }))
-                }
+                liked={result.likedByMe ?? false}
+                onLikeChange={() => toggleLike(result.isbn)}
                 onPencilClick={() => {
                   router.push(`/books/${result.isbn}`);
                 }}
