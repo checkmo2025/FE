@@ -13,7 +13,7 @@ export default function MobileBackButton({
     <button
       type="button"
       onClick={onClick}
-      className={`t:hidden w-full flex items-center gap-2 px-[10px] py-[12px] border-b border-Gray-2 text-Gray-7 body_1_2 ${className}`}
+      className={`t:hidden w-full cursor-pointer flex items-center gap-2 px-[10px] py-[12px] border-b border-Gray-2 text-Gray-7 body_1_2 transition-colors hover:bg-Gray-1 ${className}`}
     >
       <svg
         width="9"

@@ -354,7 +354,7 @@ export default function NewNoticePage() {
                 <button
                   type="button"
                   onClick={handleRemoveBook}
-                  className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center"
+                  className="absolute right-2 top-2 flex h-6 w-6 cursor-pointer items-center justify-center"
                   aria-label="선택한 책 제거"
                 >
                   <Image
@@ -465,6 +465,7 @@ export default function NewNoticePage() {
                                 flex items-center justify-center
                                 gap-2
                                 body_1_2 text-Gray-6
+                                cursor-pointer
                                 hover:text-Gray-7
                               "
                             >
@@ -477,7 +478,7 @@ export default function NewNoticePage() {
                         <div className="flex flex-col gap-4">
                           <button
                             type="button"
-                            className="flex items-center gap-3 text-left"
+                            className="flex cursor-pointer items-center gap-3 text-left"
                             onClick={() => setIsMultiple((prev) => !prev)}
                           >
                             <div className="relative w-6 h-6 rounded-full border border-Subbrown-3 bg-White">
@@ -492,7 +493,7 @@ export default function NewNoticePage() {
 
                           <button
                             type="button"
-                            className="flex items-center gap-3 text-left"
+                            className="flex cursor-pointer items-center gap-3 text-left"
                             onClick={() => setIsAnonymous((prev) => !prev)}
                           >
                             <div className="relative w-6 h-6 rounded-full border border-Subbrown-3 bg-White">
@@ -515,7 +516,7 @@ export default function NewNoticePage() {
                                   dateInputRef.current?.focus();
                                 });
                               }}
-                              className="flex items-center gap-3 text-left"
+                              className="flex cursor-pointer items-center gap-3 text-left"
                             >
                               <div className="relative w-6 h-6">
                                 <Image
@@ -545,7 +546,7 @@ export default function NewNoticePage() {
                                       timeInputRef.current?.focus();
                                     });
                                   }}
-                                  className="h-[44px] rounded-[8px] border border-Subbrown-4 bg-White px-4 body_1_2 text-Gray-7 outline-none"
+                                  className="h-[44px] cursor-pointer rounded-[8px] border border-Subbrown-4 bg-White px-4 body_1_2 text-Gray-7 outline-none"
                                 />
                                 <input
                                   ref={timeInputRef}
@@ -557,7 +558,7 @@ export default function NewNoticePage() {
                                       setIsDeadlineEditing(false),
                                     );
                                   }}
-                                  className="h-[44px] rounded-[8px] border border-Subbrown-4 bg-White px-4 body_1_2 text-Gray-7 outline-none"
+                                  className="h-[44px] cursor-pointer rounded-[8px] border border-Subbrown-4 bg-White px-4 body_1_2 text-Gray-7 outline-none"
                                 />
                               </div>
                             )}
@@ -590,7 +591,7 @@ export default function NewNoticePage() {
                               <button
                                 type="button"
                                 onClick={() => handleRemoveImage(index)}
-                                className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/60"
+                                className="absolute right-2 top-2 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-black/60"
                                 aria-label="이미지 삭제"
                               >
                                 <span className="text-[12px] text-White leading-none">
@@ -610,7 +611,7 @@ export default function NewNoticePage() {
                     <button
                       type="button"
                       onClick={() => setIsPinned((prev) => !prev)}
-                      className={`flex items-center gap-2 body_1_2 transition-all ${
+                      className={`flex cursor-pointer items-center gap-2 body_1_2 transition-all ${
                         isPinned ? "text-Gray-7" : "text-Gray-4"
                       }`}
                     >
@@ -629,7 +630,7 @@ export default function NewNoticePage() {
                     <button
                       type="button"
                       onClick={() => setIsVoteEnabled((prev) => !prev)}
-                      className={`flex items-center gap-2 body_1_2 transition-all ${
+                      className={`flex cursor-pointer items-center gap-2 body_1_2 transition-all ${
                         isVoteEnabled ? "text-Gray-7" : "text-Gray-4"
                       }`}
                     >
@@ -648,7 +649,7 @@ export default function NewNoticePage() {
                     <button
                       type="button"
                       onClick={() => setIsBookshelfModalOpen(true)}
-                      className={`flex items-center gap-2 body_1_2 transition-all ${
+                      className={`flex cursor-pointer items-center gap-2 body_1_2 transition-all ${
                         isBookshelfActive ? "text-Gray-7" : "text-Gray-4"
                       }`}
                     >
@@ -667,7 +668,7 @@ export default function NewNoticePage() {
                     <button
                       type="button"
                       onClick={handleImageFile}
-                      className={`flex items-center gap-2 body_1_2 transition-all ${
+                      className={`flex cursor-pointer items-center gap-2 body_1_2 transition-all ${
                         hasImages ? "text-Gray-7" : "text-Gray-4"
                       }`}
                     >
@@ -701,14 +702,15 @@ export default function NewNoticePage() {
                 <button
                   type="button"
                   onClick={() => toast("임시저장은 미구현입니다.")}
-                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors hover:bg-Subbrown-3"
+                  className="flex px-4 py-3 w-[132px] h-[44px] cursor-pointer justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors hover:bg-Subbrown-3"
                 >
                   임시저장
                 </button>
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:bg-primary-1 transition-colors"
+                  disabled={isPending}
+                  className="flex px-4 py-3 w-[132px] h-[44px] cursor-pointer justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 transition-colors hover:bg-primary-1 disabled:cursor-not-allowed disabled:bg-Gray-2 disabled:hover:bg-Gray-2"
                 >
                   등록
                 </button>
