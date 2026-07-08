@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode, useCallback, useRef, useMemo } from "react";
+import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 
 interface SignupState {
     // Terms
@@ -71,7 +72,7 @@ const initialState: SignupState = {
     name: "",
     phone: "",
     isNicknameChecked: false,
-    profileImage: "/default_profile_1.svg",
+    profileImage: DEFAULT_PROFILE_IMAGE,
     isProfileImageSet: false,
     selectedInterests: [],
     isSocial: false,

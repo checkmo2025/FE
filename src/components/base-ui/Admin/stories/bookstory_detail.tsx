@@ -168,7 +168,7 @@ export default function BookstoryDetail({
           <button
             type="button"
             onClick={onSubscribeClick}
-            className={`flex px-4 py-1.5 justify-center items-center rounded-lg text-White text-[12px] font-medium shrink-0 transition-colors ${
+            className={`flex px-4 py-1.5 justify-center items-center rounded-lg text-White text-[12px] font-medium shrink-0 cursor-pointer transition-colors ${
               isFollowing
                 ? "bg-Subbrown-4 text-primary-3 hover:bg-Subbrown-3"
                 : "bg-primary-2 text-White hover:bg-primary-1"

@@ -103,7 +103,7 @@ export default function BookStoryCard({
               e.stopPropagation();
               onSubscribeClick?.();
             }}
-            className={`h-8 rounded-lg px-[17px] body_2_1 whitespace-nowrap transition-all active:scale-95 ${isFollowing
+            className={`h-8 rounded-lg px-[17px] body_2_1 whitespace-nowrap cursor-pointer transition-all active:scale-95 ${isFollowing
               ? "bg-Subbrown-4 text-primary-3 hover:bg-Subbrown-3"
               : "bg-primary-2 text-White hover:bg-primary-1"
               }`}

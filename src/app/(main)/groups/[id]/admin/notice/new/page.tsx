@@ -15,6 +15,7 @@ import { useCreateClubNoticeMutation } from "@/hooks/mutations/useClubNotificati
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import { INPUT_LIMITS } from "@/constants/inputLimits";
 import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
+import MobileBackButton from "@/components/common/MobileBackButton";
 
 type Book = {
   id: number; // meetingId로 사용
@@ -63,11 +64,10 @@ export default function NewNoticePage() {
     enabled: Number.isFinite(clubId) && isBookshelfModalOpen,
   });
 
-  const shelves =
-  shelvesQuery.data?.pages.flatMap((p: any) => p.bookShelfInfoList) ?? [];
-
   const modalBooks: Book[] = useMemo(() => {
-    return shelves.map((s: any) => ({
+    const shelves = shelvesQuery.data?.pages.flatMap((page) => page.bookShelfInfoList) ?? [];
+
+    return shelves.map((s) => ({
       id: s.meetingInfo.meetingId,
       title: s.bookInfo.title,
       author: s.bookInfo.author,
@@ -79,7 +79,7 @@ export default function NewNoticePage() {
       description: "",
       imageUrl: s.bookInfo.imgUrl ?? null, 
     }));
-  }, [shelves]);
+  }, [shelvesQuery.data]);
 
   const { mutateAsync: createNotice, isPending } = useCreateClubNoticeMutation();
 
@@ -103,7 +103,7 @@ export default function NewNoticePage() {
       selectedBook ||
       imageFiles.length > 0
   );
-  const { runWithoutGuard } = useUnsavedChangesGuard({
+  const { confirmNavigation, runWithoutGuard } = useUnsavedChangesGuard({
     isDirty,
     variant: "create",
     title: "작성 중인 공지사항이 있어요",
@@ -131,6 +131,10 @@ export default function NewNoticePage() {
   };
 
   const handleRemoveBook = () => setSelectedBook(null);
+
+  const handleBack = () => {
+    confirmNavigation(() => router.back());
+  };
 
   const handleVoteItemChange = (index: number, value: string) => {
     setVoteItems((prev) =>
@@ -318,10 +322,10 @@ export default function NewNoticePage() {
       toast.dismiss(tid);
       toast.success("공지사항 등록 성공");
       runWithoutGuard(() => router.push(`/groups/${groupId}/notice`));
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.dismiss(tid);
 
-      const msg = e?.message ?? "";
+      const msg = e instanceof Error ? e.message : "";
       if (msg.includes("isPinned") || msg.includes("pinned") || msg.includes("고정")) {
         toast.error("고정 공지는 최대 5개까지 가능합니다.");
         return;
@@ -336,7 +340,7 @@ export default function NewNoticePage() {
 
   return (
     <div className="w-full">
-      <div className="t:hidden border-b border-Gray-2" />
+      <MobileBackButton onClick={handleBack} />
 
       <div className="py-4 t:pt-6 px-3 t:px-10">
         <div className="flex justify-center">

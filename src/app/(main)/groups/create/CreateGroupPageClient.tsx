@@ -28,6 +28,7 @@ import { INPUT_LIMITS } from "@/constants/inputLimits";
 import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
 
 type NameCheckState = "idle" | "checking" | "available" | "duplicate";
+type ImageUploadStatus = "idle" | "uploading" | "success" | "error";
 type SnsLink = { label: string; url: string };
 
 function cx(...classes: (string | false | null | undefined)[]) {
@@ -35,11 +36,11 @@ function cx(...classes: (string | false | null | undefined)[]) {
 }
 
 const PRIMARY_FILLED_BUTTON_CLASS =
-  "bg-primary-1 text-White transition-colors hover:bg-primary-3 disabled:bg-Gray-2 disabled:hover:bg-Gray-2 disabled:cursor-not-allowed";
+  "bg-primary-1 text-White cursor-pointer transition-colors hover:bg-primary-3 disabled:bg-Gray-2 disabled:hover:bg-Gray-2 disabled:cursor-not-allowed";
 const SELECTABLE_BUTTON_ACTIVE_CLASS =
-  "bg-primary-1 border-primary-1 text-White transition-colors hover:bg-primary-3 hover:border-primary-3";
+  "bg-primary-1 border-primary-1 text-White cursor-pointer transition-colors hover:bg-primary-3 hover:border-primary-3";
 const SELECTABLE_BUTTON_IDLE_CLASS =
-  "bg-Subbrown-4 border-Subbrown-3 text-primary-3 transition-colors hover:bg-Subbrown-3";
+  "bg-Subbrown-4 border-Subbrown-3 text-primary-3 cursor-pointer transition-colors hover:bg-Subbrown-3";
 
 const autoResize = (el: HTMLTextAreaElement) => {
   el.style.height = "0px";
@@ -66,6 +67,7 @@ export default function CreateGroupPageClient() {
   const [isDefaultProfileSelected, setIsDefaultProfileSelected] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+  const [imageUploadStatus, setImageUploadStatus] = useState<ImageUploadStatus>("idle");
 
   // ✅ 서버에 그대로 보내는 값: open(boolean)
   const [open, setOpen] = useState<boolean | null>(null);
@@ -84,6 +86,7 @@ export default function CreateGroupPageClient() {
   const nameQuery = useClubNameCheckQuery(clubName); // enabled:false라 버튼에서 refetch로만 호출됨
   const uploadImage = useUploadClubImageMutation();
   const createClub = useCreateClubMutation();
+  const isImageUploading = imageUploadStatus === "uploading" || uploadImage.isPending;
 
   const canNext = useMemo(() => {
     if (step === 1)
@@ -94,7 +97,7 @@ export default function CreateGroupPageClient() {
       if (open === null) return false;
 
       // 업로드 모드면 업로드 완료(=profileImageUrl 확보)까지 기다리게
-      if (profileMode === "upload") return Boolean(profileImageUrl) && !uploadImage.isPending;
+      if (profileMode === "upload") return Boolean(profileImageUrl) && !isImageUploading;
 
       // 기본 프로필 모드는 그냥 통과
       return true;
@@ -114,7 +117,7 @@ export default function CreateGroupPageClient() {
     open,
     profileMode,
     profileImageUrl,
-    uploadImage.isPending,
+    isImageUploading,
     selectedCategories,
     selectedParticipants,
     activityArea,
@@ -158,6 +161,9 @@ export default function CreateGroupPageClient() {
 
   // 이미지 선택: 미리보기 + 업로드 + imageUrl 저장
   const pickImage = async (file: File) => {
+    setImageUploadStatus("uploading");
+    setProfileImageUrl(null);
+
     // 로컬 미리보기
     const reader = new FileReader();
     reader.onloadend = () => setSelectedImageUrl(reader.result as string);
@@ -166,9 +172,11 @@ export default function CreateGroupPageClient() {
     try {
       const imageUrl = await uploadImage.mutateAsync(file);
       setProfileImageUrl(imageUrl);
+      setImageUploadStatus("success");
       toast.success("프로필 이미지 업로드 완료");
     } catch {
       setProfileImageUrl(null);
+      setImageUploadStatus("error");
       toast.error("이미지 업로드 실패");
 
       // ✅ 같은 파일 다시 선택 가능하게 input 초기화
@@ -459,7 +467,14 @@ export default function CreateGroupPageClient() {
               <div className="mt-4 flex items-start gap-6">
                 <div className="relative w-[96px] h-[80px] t:w-[194px] t:h-[162px] rounded-[10px] overflow-hidden bg-Subbrown-4 flex items-center justify-center">
                   {selectedImageUrl ? (
-                    <img src={selectedImageUrl} alt="preview" className="w-full h-full object-cover" />
+                    <Image
+                      src={selectedImageUrl}
+                      alt="preview"
+                      fill
+                      sizes="(min-width: 768px) 194px, 96px"
+                      className="object-cover"
+                      unoptimized
+                    />
                   ) : (
                     <>
                       <Image
@@ -490,11 +505,13 @@ export default function CreateGroupPageClient() {
                       setProfileImageUrl(null);
                       setProfileMode("default");
                       setIsDefaultProfileSelected(true);
+                      setImageUploadStatus("idle");
                       if (fileRef.current) fileRef.current.value = "";
                     }}
+                    disabled={isImageUploading}
                     className={cx(
                       "flex justify-center items-center gap-[10px] w-[200px] h-[36px] px-4 py-3 rounded-[8px] border body_1_3",
-                      "active:opacity-80",
+                      "active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60",
                       profileMode === "default" && isDefaultProfileSelected
                         ? SELECTABLE_BUTTON_ACTIVE_CLASS
                         : SELECTABLE_BUTTON_IDLE_CLASS
@@ -506,13 +523,13 @@ export default function CreateGroupPageClient() {
                   <button
                     type="button"
                     onClick={() => {
-                      setProfileMode("upload");
-                      setIsDefaultProfileSelected(false);
+                      setImageUploadStatus("idle");
                       fileRef.current?.click();
                     }}
+                    disabled={isImageUploading}
                     className={cx(
                       "flex justify-center items-center gap-[10px] w-[200px] h-[36px] px-4 py-3 rounded-[8px] border body_1_3",
-                      "active:opacity-80",
+                      "active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60",
                       profileMode === "upload"
                         ? SELECTABLE_BUTTON_ACTIVE_CLASS
                         : SELECTABLE_BUTTON_IDLE_CLASS
@@ -536,13 +553,14 @@ export default function CreateGroupPageClient() {
                     }}
                   />
 
-                  {profileMode === "upload" && (
-                    <p className="body_1_4 text-Gray-3">
-                      {uploadImage.isPending
-                        ? "업로드 중..."
-                        : profileImageUrl
-                        ? ""
-                        : "업로드 실패 시 다시 시도"}
+                  {profileMode === "upload" && imageUploadStatus !== "idle" && imageUploadStatus !== "success" && (
+                    <p
+                      className={cx(
+                        "body_1_4",
+                        imageUploadStatus === "error" ? "text-[#FF8045]" : "text-Gray-3"
+                      )}
+                    >
+                      {imageUploadStatus === "uploading" ? "업로드 중..." : "업로드 실패 시 다시 시도"}
                     </p>
                   )}
                 </div>
@@ -752,6 +770,7 @@ export default function CreateGroupPageClient() {
                           rounded-[8px]
                           bg-Gray-1
                           flex items-center justify-center
+                          cursor-pointer
                           hover:bg-Gray-2
                           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-Gray-1
                         "
@@ -771,6 +790,7 @@ export default function CreateGroupPageClient() {
                     w-full h-[56px] rounded-[8px]
                     bg-Gray-1
                     flex items-center justify-center
+                    cursor-pointer
                     hover:bg-Gray-2
                     disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-Gray-1
                   "

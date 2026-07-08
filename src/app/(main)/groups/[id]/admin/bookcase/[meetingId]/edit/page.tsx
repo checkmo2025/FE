@@ -18,6 +18,7 @@ import { usePatchBookshelfMutation } from '@/hooks/mutations/useClubsBookshelfMu
 import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
 import { INPUT_LIMITS } from '@/constants/inputLimits';
 import { clampTextToLimit, isTextOverLimit } from '@/utils/inputLimit';
+import MobileBackButton from '@/components/common/MobileBackButton';
 
 const TAGS = [
   { label: '여행', colorClass: 'bg-Secondary-2' },
@@ -249,18 +250,7 @@ export default function EditBookshelfPage() {
 
   return (
     <div className="w-full">
-      {/* 뒤로가기 - 모바일에서만 */}
-      <div className="t:hidden px-2.5 py-3">
-        <button
-          type="button"
-          onClick={handleBack}
-          className="flex items-center gap-2 text-Gray-7 body_1_2"
-        >
-          <Image src="/back.svg" alt="뒤로가기" width={12} height={12} />
-          <span>뒤로가기</span>
-        </button>
-      </div>
-      <div className="t:hidden border-b border-Gray-2" />
+      <MobileBackButton onClick={handleBack} />
 
       <div className="py-4 t:py-6 px-2.5 t:px-10">
         <div className="flex justify-center">
