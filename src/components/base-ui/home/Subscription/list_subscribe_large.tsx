@@ -24,7 +24,7 @@ function ListSubscribeElementLarge({
   isFollowing = false,
 }: ListSubscribeElementLargeProps) {
   return (
-    <div className="flex w-[296px] h-[66px] px-[14px] py-[8px] gap-[8px] rounded-[8px] border border-Subbrown-4 bg-white">
+    <div className="flex w-full h-[66px] px-[14px] py-[8px] gap-[8px] rounded-[8px] border border-Subbrown-4 bg-white">
       <div className="w-[32px] h-[32px] rounded-full overflow-hidden shrink-0 relative self-center">
         <Image
           src={isValidUrl(profileSrc) ? profileSrc : DEFAULT_PROFILE_IMAGE}
@@ -83,7 +83,7 @@ export default function ListSubscribeLarge({
 
   return (
     <section
-      className={`w-[336px] ${height} rounded-lg border-2 border-Subbrown-4 bg-stone-50 p-5`}
+      className={`w-full max-w-[336px] h-[380px] rounded-lg border border-Subbrown-4 bg-stone-50 px-5 pt-5 pb-6`}
     >
       <h3 className="subhead_2 text-Gray-7">사용자 추천</h3>
 
