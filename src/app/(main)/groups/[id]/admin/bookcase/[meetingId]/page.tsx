@@ -67,7 +67,7 @@ export default function AdminMeetingTeamManagePage() {
         clubMemberId: cm.clubMemberId,
         memberInfo: {
           nickname: cm.memberInfo?.nickname ?? "",
-          profileImageUrl: cm.memberInfo?.profileImageUrl ?? "",
+          profileImageUrl: cm.memberInfo?.profileImageUrl ?? null,
         },
         teamNumber: cm.teamKey?.teamNumber ?? null,
       })) ?? [];

@@ -8,6 +8,7 @@ import BookshelfDeleteConfirmModal from "@/components/base-ui/Bookcase/bookid/Bo
 import ItemMoreMenu from "../Bookcase/ItemMoreMenu";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { getProfileImageSrc } from "@/utils/profileImage";
 
 export type DebateItem = {
   id: number | string;
@@ -27,8 +28,6 @@ type Props = {
 
   onClickAuthor?: (name: string) => void;
 };
-
-const DEFAULT_PROFILE = "/profile4.svg";
 
 export default function DebateList({
   items,
@@ -127,7 +126,7 @@ export default function DebateList({
 
       <div className="w-full flex flex-col gap-[6px]">
         {items.map((item) => {
-          const profileSrc = item.profileImageUrl || DEFAULT_PROFILE;
+          const profileSrc = getProfileImageSrc(item.profileImageUrl);
           const canManage = !!isStaff || !!item.isAuthor;
           const isEditing = editingId != null && String(editingId) === String(item.id);
 

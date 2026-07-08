@@ -7,6 +7,7 @@ import type { ChatTeam } from "@/components/base-ui/Bookcase/ChatTeamSelectModal
 import type { MeetingChatMessageItem } from "@/types/groups/meetingChats";
 import { INPUT_LIMITS } from "@/constants/inputLimits";
 import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
+import { getProfileImageSrc } from "@/utils/profileImage";
 
 type Props = {
   isOpen: boolean;
@@ -24,15 +25,6 @@ type Props = {
   isSocketConnected: boolean;
   canSendMessage: boolean;
 };
-
-const DEFAULT_PROFILE = "/profile4.svg";
-
-function normalizeSrc(src?: string | null) {
-  if (!src || src.trim() === "") return DEFAULT_PROFILE;
-  if (src.startsWith("http")) return src;
-  if (src.startsWith("/")) return src;
-  return `/${src}`;
-}
 
 function formatTime(iso: string) {
   const d = new Date(iso);
@@ -300,7 +292,7 @@ export default function MeetingChatModal({
           ) : (
             <div className="flex flex-col gap-3">
               {messages.map((message) => {
-                const profileSrc = normalizeSrc(message.sender.profileImageUrl);
+                const profileSrc = getProfileImageSrc(message.sender.profileImageUrl);
 
                 return (
                   <div key={message.messageId} className="flex items-start gap-3">
