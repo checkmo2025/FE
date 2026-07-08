@@ -1,8 +1,9 @@
 "use client";
 
-import Image from "next/image";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { buildCheckmoAppUrl, CHECKMO_APP_LINKS } from "@/constants/links";
+
+const APP_OPEN_CTA_DISMISSED_KEY = "checkmo.appOpenCta.dismissed";
 
 type AppOpenCtaProps = {
   appPath: string;
@@ -21,55 +22,107 @@ function isIOSDevice() {
 
 export default function AppOpenCta({ appPath, className = "" }: AppOpenCtaProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const openAttemptCleanupRef = useRef<(() => void) | null>(null);
   const appUrl = useMemo(() => buildCheckmoAppUrl(appPath), [appPath]);
+
+  const cleanupOpenAttempt = useCallback(() => {
+    openAttemptCleanupRef.current?.();
+    openAttemptCleanupRef.current = null;
+  }, []);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      setIsVisible(isIOSDevice());
+      let isDismissed = false;
+
+      try {
+        isDismissed = window.localStorage.getItem(APP_OPEN_CTA_DISMISSED_KEY) === "true";
+      } catch {
+        isDismissed = false;
+      }
+
+      setIsVisible(isIOSDevice() && !isDismissed);
     });
 
     return () => window.cancelAnimationFrame(frame);
   }, []);
 
+  useEffect(() => cleanupOpenAttempt, [cleanupOpenAttempt]);
+
   const handleOpenApp = useCallback(() => {
+    cleanupOpenAttempt();
+
     let didLeavePage = false;
+    let timeoutId: ReturnType<typeof window.setTimeout> | null = null;
 
     const markPageLeave = () => {
       didLeavePage = true;
     };
 
+    const cleanup = () => {
+      document.removeEventListener("visibilitychange", markPageLeave);
+      window.removeEventListener("pagehide", markPageLeave);
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId);
+      }
+      openAttemptCleanupRef.current = null;
+    };
+
+    openAttemptCleanupRef.current = cleanup;
+
     document.addEventListener("visibilitychange", markPageLeave, { once: true });
     window.addEventListener("pagehide", markPageLeave, { once: true });
     window.location.href = appUrl;
 
-    window.setTimeout(() => {
-      document.removeEventListener("visibilitychange", markPageLeave);
-      window.removeEventListener("pagehide", markPageLeave);
+    timeoutId = window.setTimeout(() => {
+      cleanup();
 
       if (!didLeavePage && document.visibilityState === "visible") {
         window.location.href = CHECKMO_APP_LINKS.IOS_APP_STORE_URL;
       }
     }, 1600);
-  }, [appUrl]);
+  }, [appUrl, cleanupOpenAttempt]);
+
+  const handleDismiss = useCallback(() => {
+    cleanupOpenAttempt();
+
+    try {
+      window.localStorage.setItem(APP_OPEN_CTA_DISMISSED_KEY, "true");
+    } catch {
+      // localStorage 접근이 막혀도 현재 화면에서는 즉시 숨긴다.
+    }
+
+    setIsVisible(false);
+  }, [cleanupOpenAttempt]);
 
   if (!isVisible) return null;
 
   return (
     <section className={`t:hidden ${className}`} aria-label="책모 앱에서 보기">
-      <div className="flex items-center justify-between gap-3 rounded-[8px] border border-Subbrown-4 bg-White px-4 py-3 shadow-sm">
-        <div className="min-w-0">
+      <div className="group flex items-center justify-between gap-3 rounded-[8px] border border-Subbrown-4 bg-White px-4 py-3 shadow-sm transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-Subbrown-3 hover:shadow-md">
+        <div className="min-w-0 flex-1">
           <p className="body_2_1 text-primary-2">책모 앱</p>
           <p className="body_1_1 text-Gray-7">앱에서 바로 보기</p>
         </div>
-        <button
-          type="button"
-          onClick={handleOpenApp}
-          className="shrink-0 inline-flex h-10 items-center gap-1.5 rounded-[8px] bg-primary-1 px-4 text-White body_1_1 active:scale-[0.98]"
-          aria-label="책모 앱 열기"
-        >
-          앱 열기
-          <Image src="/ArrowRight.svg" alt="" width={14} height={14} className="brightness-0 invert" />
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={handleOpenApp}
+            className="inline-flex h-10 min-w-[88px] items-center justify-center rounded-[8px] bg-primary-1 px-4 text-White body_1_1 transition-colors duration-200 hover:bg-primary-3 active:scale-[0.98]"
+            aria-label="책모 앱 열기"
+          >
+            앱 열기
+          </button>
+          <button
+            type="button"
+            onClick={handleDismiss}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-Gray-4 transition-colors duration-200 hover:bg-Subbrown-4 hover:text-Gray-7 active:scale-[0.96]"
+            aria-label="책모 앱 열기 안내 닫기"
+          >
+            <span aria-hidden="true" className="text-[20px] leading-none">
+              ×
+            </span>
+          </button>
+        </div>
       </div>
     </section>
   );
