@@ -85,7 +85,17 @@ export default function BookshelfModal({
               className="t:hidden flex cursor-pointer items-center gap-2 body_1_2 text-Gray-7"
               aria-label="뒤로가기"
             >
-              <Image src="/chevron_left.svg" alt="" width={20} height={20} />
+              <svg
+                width="9"
+                height="11"
+                viewBox="0 0 9 11"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+                className="shrink-0"
+              >
+                <path d="M0 5.19629L9 10.3924V0.00014L0 5.19629Z" fill="#BBAA9B" />
+              </svg>
               뒤로가기
             </button>
 

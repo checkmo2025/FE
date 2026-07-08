@@ -45,7 +45,7 @@ export default function AccountStatusPageClient() {
       {/* 2. 탈퇴/비활성화 섹션 */}
       <div className="flex flex-col items-start gap-[24px] self-stretch w-full">
         {/* 두 번째 타이틀 수동 렌더링 */}
-        <div className="-mx-[20px] md:mx-0 w-[calc(100%+40px)] md:w-full">
+        <div className="-mx-[20px] w-[calc(100%+40px)]">
           <SettingsTitle title="탈퇴/비활성화" />
         </div>
 
