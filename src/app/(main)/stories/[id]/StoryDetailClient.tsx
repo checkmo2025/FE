@@ -4,6 +4,7 @@ import BookstoryDetail from "@/components/base-ui/BookStory/Detatil/bookstory_de
 import StoryNavigation from "@/components/base-ui/BookStory/Detatil/story_navigation";
 import CommentSection from "@/components/base-ui/Comment/comment_section_bookcase";
 import BookshelfDeleteConfirmModal from "@/components/base-ui/Bookcase/bookid/BookshelfDeleteConfirmModal";
+import AppOpenCta from "@/components/common/AppOpenCta";
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -125,6 +126,7 @@ export default function StoryDetailClient() {
         </div>
         <div className="d:subhead_4_1 text-Gray-7">상세보기</div>
       </div>
+      <AppOpenCta appPath={`/stories/${story.bookStoryId}`} />
       <div>
         <StoryNavigation currentId={story.bookStoryId} prevId={prevId} nextId={nextId}>
           <BookstoryDetail

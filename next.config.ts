@@ -4,6 +4,9 @@ import { withSentryConfig } from "@sentry/nextjs";
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
+  turbopack: {
+    root: process.cwd(),
+  },
   images: {
     remotePatterns: [
       {
@@ -27,6 +30,18 @@ const nextConfig: NextConfig = {
       { source: "/marketing-consent", destination: "/support/v1/marketing-consent", permanent: true },
     ];
   },
+  async headers() {
+    return [
+      {
+        source: "/.well-known/apple-app-site-association",
+        headers: [{ key: "Content-Type", value: "application/json" }],
+      },
+      {
+        source: "/apple-app-site-association",
+        headers: [{ key: "Content-Type", value: "application/json" }],
+      },
+    ];
+  },
 };
 
 
@@ -40,4 +55,3 @@ export default withSentryConfig(nextConfig, {
     disable: false,
   },
 });
-
