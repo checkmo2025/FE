@@ -17,6 +17,7 @@ import type { MeetingTopicItem } from "@/types/groups/meetingTopics";
 import MeetingTeamMemberPopover from "@/components/base-ui/Bookcase/MeetingTeamMemberPopover";
 import toast from "react-hot-toast";
 import { useMeetingRealtime } from "@/hooks/realtime/useMeetingRealtime";
+import { getProfileImageSrc } from "@/utils/profileImage";
 
 type TeamViewModel = {
   teamId: number;
@@ -26,7 +27,6 @@ type TeamViewModel = {
 };
 
 const CHECKED_BG = "#F7FEF3";
-const DEFAULT_PROFILE = "/profile4.svg";
 
 const makePresentationPendingKey = (teamId: number, topicId: number) =>
   `${teamId}:${topicId}`;
@@ -35,13 +35,6 @@ function teamNumberToLabel(teamNumber: number) {
   const code = 64 + teamNumber;
   if (code >= 65 && code <= 90) return `${String.fromCharCode(code)}조`;
   return `${teamNumber}조`;
-}
-
-function normalizeSrc(src?: string | null) {
-  if (!src || src.trim() === "") return DEFAULT_PROFILE;
-  if (src.startsWith("http")) return src;
-  if (src.startsWith("/")) return src;
-  return `/${src}`;
 }
 
 function sortSelectedFirstStable(list: MeetingTopicItem[]) {
@@ -526,7 +519,7 @@ export default function MeetingPageClient() {
                   </div>
                 ) : (
                   visibleTopics.map((topic) => {
-                    const profileSrc = normalizeSrc(topic.author.profileImageUrl);
+                    const profileSrc = getProfileImageSrc(topic.author.profileImageUrl);
                     const isPending =
                       selectedTeamId !== null &&
                       pendingPresentationKeys.has(

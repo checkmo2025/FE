@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { isValidUrl } from "@/utils/url";
-import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import { getProfileImageSrc } from "@/utils/profileImage";
 
 type Props = {
   name: string;
@@ -27,7 +26,7 @@ export default function TeamMemberItem({
       <div className="flex items-center gap-[12px]">
         <div className="relative flex h-[40px] w-[40px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-Gray-2">
           <Image
-            src={isValidUrl(profileImageUrl) ? profileImageUrl : DEFAULT_PROFILE_IMAGE}
+            src={getProfileImageSrc(profileImageUrl)}
             alt={name}
             fill
             className="object-cover"

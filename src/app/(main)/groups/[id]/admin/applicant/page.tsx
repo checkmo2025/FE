@@ -9,6 +9,7 @@ import { useInfiniteClubMembersQuery } from '@/hooks/queries/useClubMemberQuerie
 import { useUpdateClubMemberStatusMutation } from '@/hooks/mutations/useClubMemberMutations';
 import type { ClubMemberItem } from '@/types/groups/clubMembers';
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import MobileBackButton from '@/components/common/MobileBackButton';
 
 type ActionType = 'delete' | 'approve';
 
@@ -235,17 +236,7 @@ export default function AdminApplicantPage() {
 
   return (
     <div className="w-full">
-      <div className="t:hidden px-2.5 py-3">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-Gray-7 body_1_2"
-        >
-          <Image src="/back.svg" alt="뒤로가기" width={12} height={12} />
-          <span>뒤로가기</span>
-        </button>
-      </div>
-      <div className="t:hidden border-b border-Gray-2" />
+      <MobileBackButton onClick={() => router.back()} />
 
       <div className="px-4.5 t:px-10 d:px-4">
         <div className="mx-auto w-full max-w-260 py-6">

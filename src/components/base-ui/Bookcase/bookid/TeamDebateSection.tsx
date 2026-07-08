@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import React from "react";
+import { getProfileImageSrc } from "@/utils/profileImage";
 
 export type TeamDebateItem = {
   id: number | string;
@@ -19,15 +20,6 @@ type Props = {
 
   onToggleCheck: (id: string) => void;
   onSortCheckedFirst: () => void;
-};
-
-const DEFAULT_PROFILE = "/profile4.svg";
-
-const normalizeSrc = (src?: string | null) => {
-  if (!src) return DEFAULT_PROFILE;
-  if (src.startsWith("http")) return src;
-  if (src.startsWith("/")) return src;
-  return `/${src}`; // "profile1.svg" -> "/profile1.svg"
 };
 
 export default function TeamDebateSection({
@@ -84,7 +76,7 @@ export default function TeamDebateSection({
                 {/* 프로필 + 이름 */}
                 <div className="flex items-center gap-3 min-w-0">
                   <Image
-                    src={normalizeSrc(item.profileImageUrl)}
+                    src={getProfileImageSrc(item.profileImageUrl)}
                     alt=""
                     width={28}
                     height={28}

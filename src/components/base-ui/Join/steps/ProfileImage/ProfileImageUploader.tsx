@@ -14,6 +14,11 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
   onReset,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageSrc =
+    !profileImage || profileImage.startsWith("/default_profile")
+      ? DEFAULT_PROFILE_IMAGE
+      : profileImage;
+  const isDefaultImage = imageSrc === DEFAULT_PROFILE_IMAGE;
 
   const handleEditClick = () => {
     fileInputRef.current?.click();
@@ -22,13 +27,19 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
   return (
     <div className="flex flex-col items-center gap-[24px] w-full">
       <div className="relative w-[148px] h-[141px]">
-        <div className="w-[138px] h-[138px] rounded-full overflow-hidden bg-Subbrown-4">
+        <div
+          className={`w-[138px] h-[138px] rounded-full overflow-hidden border flex items-center justify-center ${
+            isDefaultImage
+              ? "border-transparent bg-White"
+              : "border-transparent bg-Subbrown-4"
+          }`}
+        >
           <Image
-            src={profileImage || DEFAULT_PROFILE_IMAGE}
+            src={imageSrc}
             alt="Profile"
             width={138}
             height={138}
-            className="object-cover"
+            className="h-full w-full object-cover"
           />
         </div>
         <input

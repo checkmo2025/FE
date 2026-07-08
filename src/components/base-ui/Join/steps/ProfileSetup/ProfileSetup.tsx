@@ -3,7 +3,6 @@ import JoinLayout from "../../JoinLayout";
 import JoinButton from "../../JoinButton";
 import JoinInput from "../../JoinInput";
 import { useProfileSetup } from "./useProfileSetup";
-import { useSignup } from "@/contexts/SignupContext";
 
 interface ProfileSetupProps {
   onNext?: () => void;
@@ -12,6 +11,7 @@ interface ProfileSetupProps {
 const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
   const {
     nickname,
+    nicknameInputError,
     isNicknameChecked,
     isNicknameValid,
     intro,
@@ -24,7 +24,6 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
     handleCheckDuplicate,
     validate,
   } = useProfileSetup();
-  const { showToast } = useSignup();
   const nicknameRef = React.useRef<HTMLDivElement>(null);
 
   const nameRef = React.useRef<HTMLDivElement>(null);
@@ -62,36 +61,43 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
               <span className="text-primary-1 font-sans text-[14px] font-semibold leading-[145%] tracking-[-0.014px] t:text-[20px] t:leading-[135%] t:tracking-[-0.02px]">
                 닉네임
               </span>
-              <div className="flex flex-row items-center justify-between w-full gap-[8px]">
-                <div className="w-[158px] t:flex-1">
-                  {/* Mobile Input */}
-                  <div className="block w-full t:hidden">
-                    <JoinInput
-                      value={nickname}
-                      onChange={handleNicknameChange}
-                      placeholder="(최대 20자)"
-                      className="h-[36px] py-0 border-Subbrown-4 placeholder-Gray-3 text-[14px] font-normal w-full bg-white"
-                    />
+              <div className="flex flex-col w-full gap-[4px]">
+                <div className="flex flex-row items-center justify-between w-full gap-[8px]">
+                  <div className="w-[158px] t:flex-1">
+                    {/* Mobile Input */}
+                    <div className="block w-full t:hidden">
+                      <JoinInput
+                        value={nickname}
+                        onChange={handleNicknameChange}
+                        placeholder="(최대 20자)"
+                        className="h-[36px] py-0 border-Subbrown-4 placeholder-Gray-3 text-[14px] font-normal w-full bg-white"
+                      />
+                    </div>
+                    {/* Desktop Input */}
+                    <div className="hidden w-full t:block">
+                      <JoinInput
+                        value={nickname}
+                        onChange={handleNicknameChange}
+                        placeholder="닉네임을 입력해주세요(최대 20글자)"
+                        className="h-[44px] border-Subbrown-4 placeholder-Gray-3 text-[14px] font-normal w-full bg-white"
+                      />
+                    </div>
                   </div>
-                  {/* Desktop Input */}
-                  <div className="hidden w-full t:block">
-                    <JoinInput
-                      value={nickname}
-                      onChange={handleNicknameChange}
-                      placeholder="닉네임을 입력해주세요(최대 20글자)"
-                      className="h-[44px] border-Subbrown-4 placeholder-Gray-3 text-[14px] font-normal w-full bg-white"
-                    />
-                  </div>
+                  <JoinButton
+                    onClick={handleCheckDuplicate}
+                    disabled={!isNicknameValid || isNicknameChecked}
+                    variant={isNicknameValid ? "primary" : "secondary"}
+                    className={`w-[106px] h-[36px] t:h-[44px] px-0 py-0 text-[14px] shrink-0 ${isNicknameChecked ? "font-medium" : "font-normal"
+                      }`}
+                  >
+                    {isNicknameChecked ? "확인됨" : "중복확인"}
+                  </JoinButton>
                 </div>
-                <JoinButton
-                  onClick={handleCheckDuplicate}
-                  disabled={!isNicknameValid || isNicknameChecked}
-                  variant={isNicknameValid ? "primary" : "secondary"}
-                  className={`w-[106px] h-[36px] t:h-[44px] px-0 py-0 text-[14px] shrink-0 ${isNicknameChecked ? "font-medium" : "font-normal"
-                    }`}
-                >
-                  {isNicknameChecked ? "확인됨" : "중복확인"}
-                </JoinButton>
+                {nicknameInputError && (
+                  <p className="w-full text-[12px] text-Red text-left">
+                    {nicknameInputError}
+                  </p>
+                )}
               </div>
             </div>
             {/* 한줄소개 */}

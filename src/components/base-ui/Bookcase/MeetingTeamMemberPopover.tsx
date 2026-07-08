@@ -5,20 +5,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 import type { MeetingTeamMemberItem } from "@/types/groups/meetingDetail";
+import { getProfileImageSrc } from "@/utils/profileImage";
 
 type Props = {
   memberCount: number;
   members: MeetingTeamMemberItem[];
 };
-
-const DEFAULT_PROFILE = "/profile4.svg";
-
-function normalizeSrc(src?: string | null) {
-  if (!src || src.trim() === "") return DEFAULT_PROFILE;
-  if (src.startsWith("http")) return src;
-  if (src.startsWith("/")) return src;
-  return `/${src}`;
-}
 
 export default function MeetingTeamMemberPopover({
   memberCount,
@@ -37,7 +29,7 @@ export default function MeetingTeamMemberPopover({
       members.map((member) => ({
         clubMemberId: member.clubMemberId,
         nickname: member.memberInfo.nickname,
-        profileImageUrl: normalizeSrc(member.memberInfo.profileImageUrl),
+        profileImageUrl: getProfileImageSrc(member.memberInfo.profileImageUrl),
       })),
     [members]
   );

@@ -6,9 +6,7 @@ import { useRouter } from "next/navigation";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { TeamMember } from "@/types/groups/bookcasedetail";
-import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
-
-const DEFAULT_PROFILE = DEFAULT_PROFILE_IMAGE;
+import { getProfileImageSrc } from "@/utils/profileImage";
 
 type Props = {
   unassigned: TeamMember[];
@@ -59,7 +57,7 @@ function DraggableUnassignedCard({
     >
       <div className="relative w-[24px] h-[24px] shrink-0 overflow-hidden rounded-full bg-Subbrown-4">
         <Image
-          src={member.memberInfo.profileImageUrl ?? DEFAULT_PROFILE}
+          src={getProfileImageSrc(member.memberInfo.profileImageUrl)}
           alt="profile"
           fill
           className="object-cover"

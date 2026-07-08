@@ -14,6 +14,7 @@ export const ERROR_MESSAGES: Record<string, string> = {
     EXPIRED_TOKEN: "만료된 토큰입니다.",
 
     // Block Errors
+    MEMBER_400: "해당 회원을 찾을 수 없습니다.",
     BLOCK_404: "차단한 사용자입니다.",
     BLOCK_405: "조회가 불가능한 프로필입니다.",
 };
