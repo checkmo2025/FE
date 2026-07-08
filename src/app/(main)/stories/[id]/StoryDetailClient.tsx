@@ -109,7 +109,7 @@ export default function StoryDetailClient() {
         </div>
         <div className="d:subhead_4_1 text-Gray-7">상세보기</div>
       </div>
-      <AppOpenCta appPath={`/stories/${story.bookStoryId}`} className="mt-4" />
+      <AppOpenCta appPath={`/stories/${story.bookStoryId}`} />
       <div>
         <StoryNavigation currentId={story.bookStoryId} prevId={prevId} nextId={nextId}>
           <BookstoryDetail
