@@ -30,7 +30,7 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
         <div
           className={`w-[138px] h-[138px] rounded-full overflow-hidden border flex items-center justify-center ${
             isDefaultImage
-              ? "border-Subbrown-3 bg-[#F7F5F3]"
+              ? "border-transparent bg-White"
               : "border-transparent bg-Subbrown-4"
           }`}
         >
@@ -39,9 +39,7 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
             alt="Profile"
             width={138}
             height={138}
-            className={`h-full w-full ${
-              isDefaultImage ? "object-contain p-[18px]" : "object-cover"
-            }`}
+            className="h-full w-full object-cover"
           />
         </div>
         <input

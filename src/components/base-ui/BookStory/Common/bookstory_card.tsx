@@ -19,6 +19,7 @@ type Props = {
   likedByMe?: boolean;
   onSubscribeClick?: () => void;
   onLikeClick?: (e: React.MouseEvent) => void;
+  onCommentClick?: (e: React.MouseEvent) => void;
   subscribeText?: string;
   isFollowing?: boolean;
   hideSubscribeButton?: boolean;
@@ -31,7 +32,6 @@ type Props = {
 };
 
 export default function BookStoryCard({
-  id,
   authorName,
   profileImgSrc = DEFAULT_PROFILE_IMAGE,
   createdAt,
@@ -44,6 +44,7 @@ export default function BookStoryCard({
   likedByMe = false,
   onSubscribeClick,
   onLikeClick,
+  onCommentClick,
   subscribeText = "구독",
   isFollowing = false,
   hideSubscribeButton = false,
@@ -194,7 +195,13 @@ export default function BookStoryCard({
                   {likeCount}
                 </span>
               </div>
-              <div className="flex flex-1 items-center justify-center gap-[6px] h-[32px]">
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCommentClick?.(e);
+                }}
+                className="flex flex-1 items-center justify-center gap-[6px] h-[32px] cursor-pointer hover:bg-gray-100 transition-colors"
+              >
                 <Image src="/comment.svg" alt="댓글" width={20} height={20} />
                 <span className="text-[12px] font-medium text-Gray-4">
                   {commentCount}
@@ -220,7 +227,13 @@ export default function BookStoryCard({
             </div>
             <div className="h-10 w-[1.8px] mt-2 rounded-full bg-Gray-2" />
             <div className="flex items-center justify-center">
-              <div className="flex items-center justify-center gap-2 pt-1 px-4 h-10">
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCommentClick?.(e);
+                }}
+                className="flex items-center justify-center gap-2 pt-1 cursor-pointer hover:bg-gray-100 transition-colors rounded-full px-4 h-10"
+              >
                 <Image src="/comment.svg" alt="댓글" width={24} height={24} />
                 <span className="body_1_2 text-Gray-4">댓글 {commentCount}</span>
               </div>

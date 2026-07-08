@@ -38,6 +38,7 @@ export default function CommentInput({
     <div className="flex items-center gap-3 w-full">
       <input
         type="text"
+        data-comment-input="true"
         value={content}
         onChange={(e) => setContent(clampTextToLimit(e.target.value, maxLength, overLimitMessage))}
         onKeyDown={(e) => e.key === "Enter" && handleSubmit()}

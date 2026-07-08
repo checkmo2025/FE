@@ -102,6 +102,10 @@ const BookStoryInfiniteList: React.FC<BookStoryInfiniteListProps> = ({
         e.stopPropagation();
         onToggleLike(story.bookStoryId);
       }}
+      onCommentClick={(e) => {
+        e.stopPropagation();
+        router.push(`/stories/${story.bookStoryId}#comments`);
+      }}
       status={story.status}
       canContinue={story.canContinue}
       onContinueClick={(e) => {
