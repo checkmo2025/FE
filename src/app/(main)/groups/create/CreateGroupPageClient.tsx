@@ -63,6 +63,7 @@ export default function CreateGroupPageClient() {
 
   // Step 2
   const [profileMode, setProfileMode] = useState<"default" | "upload">("default");
+  const [isDefaultProfileSelected, setIsDefaultProfileSelected] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
 
@@ -488,12 +489,13 @@ export default function CreateGroupPageClient() {
                       setSelectedImageUrl(null);
                       setProfileImageUrl(null);
                       setProfileMode("default");
+                      setIsDefaultProfileSelected(true);
                       if (fileRef.current) fileRef.current.value = "";
                     }}
                     className={cx(
                       "flex justify-center items-center gap-[10px] w-[200px] h-[36px] px-4 py-3 rounded-[8px] border body_1_3",
                       "active:opacity-80",
-                      profileMode === "default"
+                      profileMode === "default" && isDefaultProfileSelected
                         ? SELECTABLE_BUTTON_ACTIVE_CLASS
                         : SELECTABLE_BUTTON_IDLE_CLASS
                     )}
@@ -505,6 +507,7 @@ export default function CreateGroupPageClient() {
                     type="button"
                     onClick={() => {
                       setProfileMode("upload");
+                      setIsDefaultProfileSelected(false);
                       fileRef.current?.click();
                     }}
                     className={cx(
@@ -527,6 +530,7 @@ export default function CreateGroupPageClient() {
                       const f = e.target.files?.[0];
                       if (f) {
                         setProfileMode("upload");
+                        setIsDefaultProfileSelected(false);
                         pickImage(f);
                       }
                     }}
