@@ -1,5 +1,6 @@
 import { useSignup } from "@/contexts/SignupContext";
 import { authService } from "@/services/authService";
+import { useState } from "react";
 import { z } from "zod";
 
 const profileSchema = z.object({
@@ -13,6 +14,7 @@ const profileSchema = z.object({
 });
 
 export const useProfileSetup = () => {
+  const [nicknameInputError, setNicknameInputError] = useState("");
   const {
     nickname,
     setNickname,
@@ -30,9 +32,13 @@ export const useProfileSetup = () => {
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // 닉네임 : 영어 소문자 및 특수문자, 숫자만 사용 가능, 최대 20글자
-    const filteredValue = value.replace(/[^a-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, "").slice(0, 20);
+    const allowedValue = value.replace(/[^a-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, "");
+    const filteredValue = allowedValue.slice(0, 20);
+    setNicknameInputError(value !== allowedValue ? "한글과 띄어쓰기는 사용할 수 없습니다." : "");
     setNickname(filteredValue);
-    setIsNicknameChecked(false);
+    if (filteredValue !== nickname) {
+      setIsNicknameChecked(false);
+    }
   };
 
   const handleIntroChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,8 +76,8 @@ export const useProfileSetup = () => {
         showToast("이미 사용 중인 닉네임입니다.");
         setIsNicknameChecked(false);
       }
-    } catch (error: any) {
-      showToast(error.message || "닉네임 확인 중 오류가 발생했습니다.");
+    } catch (error: unknown) {
+      showToast(error instanceof Error ? error.message : "닉네임 확인 중 오류가 발생했습니다.");
     }
   };
 
@@ -97,6 +103,7 @@ export const useProfileSetup = () => {
 
   return {
     nickname,
+    nicknameInputError,
     isNicknameChecked,
     isNicknameValid,
     intro,
@@ -110,4 +117,3 @@ export const useProfileSetup = () => {
     validate,
   };
 };
-
