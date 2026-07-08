@@ -46,7 +46,7 @@ export default function NewsPageClient() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-[1400px] px-4 overflow-x-hidden no-scrollbar pb-20">
+    <div className="mx-auto w-full max-w-[1400px] px-4 overflow-x-hidden no-scrollbar pb-8 d:pb-20">
       <div className="flex justify-center items-center mt-7 mb-3 t:mb-6">
         <NewsListBanner />
       </div>
@@ -68,8 +68,7 @@ export default function NewsPageClient() {
           </div>
         ) : (
           <div
-            className="flex flex-col gap-4 overflow-y-auto no-scrollbar pr-2"
-            style={{ maxHeight: "calc(100vh - 400px)", minHeight: "400px" }}
+            className="flex flex-col gap-4 overflow-y-auto no-scrollbar pr-2 max-h-[calc(100vh-200px)] d:max-h-[calc(100vh-400px)] min-h-[400px]"
           >
             {newsList.map((news) => (
               <NewsList
@@ -91,7 +90,7 @@ export default function NewsPageClient() {
         )}
       </section>
 
-      <div className="w-full my-8 border-b-4 border-Gray-1"></div>
+      <div className="hidden d:block w-full my-8 border-b-4 border-Gray-1"></div>
 
       {!isLoadingRecommended && recommendedBooks.length > 0 && (
         <TodayRecommendedBooks books={recommendedBooks} className="hidden d:flex" />
