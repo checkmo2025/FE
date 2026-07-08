@@ -24,6 +24,7 @@ import { useUploadClubImageMutation } from "@/hooks/mutations/useCreateClubMutat
 // ✅ 너가 방금 만들라고 한 edit용 hooks
 import { useClubAdminDetailQuery } from "@/hooks/queries/useClubAdminEditQueries";
 import { useUpdateClubAdminMutation } from "@/hooks/mutations/useClubAdminEditMutations";
+import { useClubNameCheckMutation } from "@/hooks/queries/useCreateClubQueries";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import { INPUT_LIMITS } from "@/constants/inputLimits";
 import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
@@ -66,6 +67,7 @@ export default function EditClubPage() {
   // ===== create랑 동일한 state 구조 유지 =====
   // Step 1
   const [clubName, setClubName] = useState("");
+  const checkNameMutation = useClubNameCheckMutation(); // ✅ edit에서도 중복확인 쿼리 사용
   const [clubDescription, setClubDescription] = useState("");
   const [nameCheck, setNameCheck] = useState<NameCheckState>("idle");
 
@@ -164,14 +166,18 @@ export default function EditClubPage() {
       return;
     }
 
-    // 여기서 실제 중복체크 훅이 있다면 create 페이지처럼 refetch하면 됨.
-    // 지금은 “UI 동일”이 목표라, 최소 동작만(나중에 hook 연결) 형태로 둠.
+    // 실제 중복체크 mutation 호출
     setNameCheck("checking");
     try {
-      // TODO: useClubNameCheckQuery(name).refetch() 연결
-      // 임시: 무조건 available 처리
-      setNameCheck("available");
-      toast.success("사용 가능한 모임 이름입니다.");
+      const isDuplicate = await checkNameMutation.mutateAsync(name);
+
+      if (isDuplicate) {
+        setNameCheck("duplicate");
+        toast.error("이미 존재하는 모임 이름입니다.");
+      } else {
+        setNameCheck("available");
+        toast.success("사용 가능한 모임 이름입니다.");
+      }
     } catch {
       setNameCheck("idle");
       toast.error("이름 중복 확인 실패");
