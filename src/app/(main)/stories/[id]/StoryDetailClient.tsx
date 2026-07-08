@@ -4,6 +4,7 @@ import BookstoryDetail from "@/components/base-ui/BookStory/Detatil/bookstory_de
 import StoryNavigation from "@/components/base-ui/BookStory/Detatil/story_navigation";
 import CommentSection from "@/components/base-ui/Comment/comment_section_bookcase";
 import BookshelfDeleteConfirmModal from "@/components/base-ui/Bookcase/bookid/BookshelfDeleteConfirmModal";
+import AppOpenCta from "@/components/common/AppOpenCta";
 
 import { useState } from "react";
 import Image from "next/image";
@@ -29,6 +30,14 @@ export default function StoryDetailClient() {
   const id = params?.id as string;
   const storyId = Number(id);
 
+  const { data: story, isLoading, isError, error } = useStoryDetailQuery(storyId);
+  const { mutate: toggleLike } = useToggleStoryLikeMutation();
+  const { mutate: deleteStory, isPending: isDeletePending } = useDeleteBookStoryMutation();
+  const { mutate: toggleFollow } = useToggleFollowMutation();
+  const { isLoggedIn, openLoginModal } = useAuthStore();
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   if (!id || isNaN(storyId)) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
@@ -37,14 +46,6 @@ export default function StoryDetailClient() {
       </div>
     );
   }
-
-  const { data: story, isLoading, isError, error } = useStoryDetailQuery(storyId);
-  const { mutate: toggleLike } = useToggleStoryLikeMutation();
-  const { mutate: deleteStory, isPending: isDeletePending } = useDeleteBookStoryMutation();
-  const { mutate: toggleFollow } = useToggleFollowMutation();
-  const { isLoggedIn, openLoginModal } = useAuthStore();
-
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const handleToggleLike = () => {
     if (!isLoggedIn) {
@@ -108,6 +109,7 @@ export default function StoryDetailClient() {
         </div>
         <div className="d:subhead_4_1 text-Gray-7">상세보기</div>
       </div>
+      <AppOpenCta appPath={`/stories/${story.bookStoryId}`} />
       <div>
         <StoryNavigation currentId={story.bookStoryId} prevId={prevId} nextId={nextId}>
           <BookstoryDetail

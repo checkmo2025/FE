@@ -1,0 +1,19 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "737FQ6NT2H.kr.co.checkmo.app",
+        "paths": [
+          "/stories/*",
+          "/book-stories/*",
+          "/groups/*",
+          "/clubs/*",
+          "/news/*",
+          "/members/*",
+          "/profile/*"
+        ]
+      }
+    ]
+  }
+}
