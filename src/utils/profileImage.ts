@@ -15,8 +15,8 @@ export function getProfileImageSrc(src?: string | null): string {
     return `https:${trimmed}`;
   }
 
-  if (isValidUrl(trimmed)) {
-    return trimmed;
+  if (isValidUrl(src)) {
+    return src.trim();
   }
 
   if (LOCAL_IMAGE_FILE_PATTERN.test(trimmed)) {

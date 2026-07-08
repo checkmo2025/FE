@@ -76,7 +76,7 @@ export default function MeetingTabSection({ clubId, meetingId, onManageTeamsClic
       group?.members.map((m) => ({
         id: String(m.clubMemberId),
         name: m.memberInfo.nickname,
-        profileImageUrl: m.memberInfo.profileImageUrl,
+        profileImageUrl: m.memberInfo.profileImageUrl ?? undefined,
       })) ?? [];
 
     return {
