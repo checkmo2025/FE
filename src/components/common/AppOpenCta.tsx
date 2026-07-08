@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import appIcon from "@/app/apple-icon.png";
 import { buildCheckmoAppUrl, CHECKMO_APP_LINKS } from "@/constants/links";
 
-const APP_OPEN_CTA_DISMISSED_KEY = "checkmo.appOpenCta.dismissed";
+const APP_OPEN_CTA_SESSION_DISMISSED_KEY = "checkmo.appOpenCta.sessionDismissed";
 const DISMISS_ANIMATION_MS = 180;
 
 type AppOpenCtaProps = {
@@ -21,6 +21,14 @@ function isIOSDevice() {
   const isIPadOS = platform === "MacIntel" && window.navigator.maxTouchPoints > 1;
 
   return (/iPad|iPhone|iPod/.test(userAgent) || isIPadOS) && !/Android/i.test(userAgent);
+}
+
+function shouldForceShowCta() {
+  return new URLSearchParams(window.location.search).get("showCta") === "1";
+}
+
+function isAppOpenCtaDismissedInSession() {
+  return window.sessionStorage.getItem(APP_OPEN_CTA_SESSION_DISMISSED_KEY) === "true";
 }
 
 export default function AppOpenCta({ appPath, className = "" }: AppOpenCtaProps) {
@@ -45,9 +53,11 @@ export default function AppOpenCta({ appPath, className = "" }: AppOpenCtaProps)
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
       let isDismissed = false;
+      let forceShow = false;
 
       try {
-        isDismissed = window.localStorage.getItem(APP_OPEN_CTA_DISMISSED_KEY) === "true";
+        forceShow = shouldForceShowCta();
+        isDismissed = forceShow ? false : isAppOpenCtaDismissedInSession();
       } catch {
         isDismissed = false;
       }
@@ -102,9 +112,9 @@ export default function AppOpenCta({ appPath, className = "" }: AppOpenCtaProps)
     cleanupDismissTimeout();
 
     try {
-      window.localStorage.setItem(APP_OPEN_CTA_DISMISSED_KEY, "true");
+      window.sessionStorage.setItem(APP_OPEN_CTA_SESSION_DISMISSED_KEY, "true");
     } catch {
-      // localStorage 접근이 막혀도 현재 화면에서는 즉시 숨긴다.
+      // sessionStorage 접근이 막혀도 현재 화면에서는 즉시 숨긴다.
     }
 
     setIsClosing(true);
