@@ -142,7 +142,13 @@ export default function GroupsPageClient() {
     return () => io.disconnect();
   }, [isSearchMode, isGuestDefaultView, hasNextPage, searchFetching, fetchNextPage]);
 
-  const onClickVisit = (clubId: number) => router.push(`/groups/${clubId}`);
+  const onClickVisit = (clubId: number) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    router.push(`/groups/${clubId}`);
+  };
   const onClickApply = (clubId: number) => {
     if (!isLoggedIn) {
       openLoginModal();
