@@ -90,6 +90,7 @@ export default function GroupsPageClient() {
   const [region, setRegion] = useState(false);
   const [appliedParams, setAppliedParams] = useState<Omit<ClubSearchParams, "cursorId"> | null>(null);
   const isSearchMode = appliedParams !== null;
+  const isGuestDefaultView = !isLoggedIn && !isSearchMode;
   const [applyClubId, setApplyClubId] = useState<number | null>(null);
 
   const { data: myClubsData, isLoading: myClubsLoading } = useMyClubsQuery(isLoggedIn);
@@ -103,7 +104,7 @@ export default function GroupsPageClient() {
     refetch: refetchSearch,
   } = useInfiniteClubSearchQuery(
     appliedParams ?? { keyword: undefined, inputFilter: null, outputFilter: "ALL" },
-    isSearchMode
+    isSearchMode || isGuestDefaultView
   );
 
   const { mutateAsync: joinAsync, isPending: joinPending } = useClubJoinMutation();
@@ -121,12 +122,12 @@ export default function GroupsPageClient() {
     return (searchData?.pages ?? []).flatMap((p) => p.clubList.map(mapSearchItem));
   }, [searchData]);
 
-  const clubsToRender = isSearchMode ? searchedClubs : recommendationClubs;
+  const clubsToRender = (isSearchMode || isGuestDefaultView) ? searchedClubs : recommendationClubs;
   const selectedClub = clubsToRender.find((c) => c.clubId === applyClubId) ?? null;
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!isSearchMode) return;
+    if (!isSearchMode && !isGuestDefaultView) return;
     const el = sentinelRef.current;
     if (!el) return;
     const io = new IntersectionObserver(
@@ -139,7 +140,7 @@ export default function GroupsPageClient() {
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [isSearchMode, hasNextPage, searchFetching, fetchNextPage]);
+  }, [isSearchMode, isGuestDefaultView, hasNextPage, searchFetching, fetchNextPage]);
 
   const onClickVisit = (clubId: number) => router.push(`/groups/${clubId}`);
   const onClickApply = (clubId: number) => {
@@ -245,10 +246,10 @@ export default function GroupsPageClient() {
               />
             ))}
           </div>
-          {!isSearchMode && recLoading && (
+          {!(isSearchMode || isGuestDefaultView) && recLoading && (
             <p className="mt-3 body_2_2 text-Gray-4">불러오는 중…</p>
           )}
-          {isSearchMode && <div ref={sentinelRef} className="h-10" />}
+          {(isSearchMode || isGuestDefaultView) && <div ref={sentinelRef} className="h-10" />}
         </div>
       </main>
 
