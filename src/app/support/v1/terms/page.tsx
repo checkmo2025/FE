@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <PublicDocumentLayout title="책모 이용약관" effectiveDate="2026년 6월 5일">
+    <PublicDocumentLayout title="책모 이용약관" effectiveDate="2026년 7월 9일">
       {TERMS_DATA.map((term) => (
         <DocumentSection key={term.title} title={term.title}>
           <div className="flex flex-col gap-2">
@@ -33,4 +33,3 @@ export default function TermsPage() {
     </PublicDocumentLayout>
   );
 }
-
