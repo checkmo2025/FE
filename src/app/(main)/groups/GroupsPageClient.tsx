@@ -82,13 +82,7 @@ export default function GroupsPageClient() {
   const router = useRouter();
   const { isLoggedIn, isInitialized, openLoginModal } = useAuthStore();
 
-  useEffect(() => {
-    if (isInitialized && !isLoggedIn) {
-      toast.error("모임은 로그인이 필요한 서비스입니다.", { id: "groups-auth-error" });
-      router.replace("/");
-      setTimeout(() => { openLoginModal(); }, 100);
-    }
-  }, [isLoggedIn, isInitialized, router, openLoginModal]);
+
 
   const [q, setQ] = useState("");
   const [category, setCategory] = useState<Category>("전체");
@@ -148,7 +142,13 @@ export default function GroupsPageClient() {
   }, [isSearchMode, hasNextPage, searchFetching, fetchNextPage]);
 
   const onClickVisit = (clubId: number) => router.push(`/groups/${clubId}`);
-  const onClickApply = (clubId: number) => setApplyClubId((prev) => (prev === clubId ? null : clubId));
+  const onClickApply = (clubId: number) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    setApplyClubId((prev) => (prev === clubId ? null : clubId));
+  };
   const onCloseApply = () => setApplyClubId(null);
 
   const onSubmitApply = async (clubId: number, reason: string) => {
@@ -185,7 +185,13 @@ export default function GroupsPageClient() {
             borderColorVar="--Primary_1"
             textColorVar="--White"
             className="flex-1 body_1 hover:-translate-y-[1px] cursor-pointer"
-            onClick={() => router.push("/groups/create")}
+            onClick={() => {
+              if (!isLoggedIn) {
+                openLoginModal();
+                return;
+              }
+              router.push("/groups/create");
+            }}
           />
         </div>
         <div className="hidden w-full t:flex mt-5 mb-4">
@@ -196,7 +202,13 @@ export default function GroupsPageClient() {
             borderColorVar="--Primary_1"
             textColorVar="--White"
             className="flex-1 subhead_4_1 hover:-translate-y-[1px] cursor-pointer"
-            onClick={() => router.push("/groups/create")}
+            onClick={() => {
+              if (!isLoggedIn) {
+                openLoginModal();
+                return;
+              }
+              router.push("/groups/create");
+            }}
           />
         </div>
         <Mybookclub groups={myGroups} isLoading={myClubsLoading} />
