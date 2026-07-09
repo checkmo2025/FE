@@ -12,7 +12,7 @@ import ActionSelectionModal from "@/components/common/modals/report-block/Action
 import BlockConfirmModal from "@/components/common/modals/report-block/BlockConfirmModal";
 import { useReportBlockFlow } from "@/hooks/useReportBlockFlow";
 import { ReportReason } from "@/types/report";
-import { getErrorMessage } from "@/lib/api/errors";
+import { getProfileAccessErrorMessage } from "@/utils/profileAccess";
 
 // [보조 컴포넌트] 액션 버튼 (구독하기 / 신고하기)
 function ActionButton({
@@ -98,12 +98,7 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
   }
 
   if (isError || !profile) {
-    // TODO: PM 요청 시 차단 상태별 메시지 수정 필요 (BLOCK_404: 내가 차단, BLOCK_405: 상대가 차단)
-    const apiError = error as { code?: string } | null;
-    const message =
-      (apiError?.code === "BLOCK_404" || apiError?.code === "BLOCK_405")
-        ? getErrorMessage(apiError.code)
-        : "프로필 정보를 불러올 수 없습니다.";
+    const message = getProfileAccessErrorMessage(error) ?? "프로필 정보를 불러올 수 없습니다.";
     return (
       <div className="flex justify-center items-center py-10 text-Gray-5 body_1 min-h-[200px]">
         {message}

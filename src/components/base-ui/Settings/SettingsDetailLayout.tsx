@@ -21,7 +21,7 @@ export default function SettingsDetailLayout({
   const containerXlStyle =
     mode === "narrow"
       ? "xl:w-[1152px] xl:pl-[68px] xl:pr-[400px]" // 우측 여백이 많은 폼 형태
-      : "xl:w-[1152px] xl:px-[76px]"; // 좌우 균형이 맞는 와이드 형태
+      : "xl:w-[1152px] xl:pl-[68px] xl:pr-[76px]"; // 좌측 기준선은 narrow와 통일
 
   const contentXlStyle =
     mode === "narrow"

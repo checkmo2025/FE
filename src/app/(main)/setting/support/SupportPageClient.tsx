@@ -5,8 +5,8 @@ import { EXTERNAL_LINKS } from "@/constants/links";
 import SettingsDetailLayout from "@/components/base-ui/Settings/SettingsDetailLayout";
 
 export default function SupportPageClient() {
-    const handleOpenForm = () => {
-        window.open(EXTERNAL_LINKS.INQUIRY_FORM_URL, "_blank", "noopener,noreferrer");
+    const handleOpenSupport = () => {
+        window.open(EXTERNAL_LINKS.SUPPORT_URL, "_blank", "noopener,noreferrer");
     };
 
     return (
@@ -39,10 +39,10 @@ export default function SupportPageClient() {
                 {/* 액션 버튼 영역 */}
                 <div className="flex flex-col w-[320px] md:w-[400px] gap-4">
                     <button
-                        onClick={handleOpenForm}
+                        onClick={handleOpenSupport}
                         className="w-full h-[56px] bg-primary-3 text-white rounded-[12px] subhead_4_1 hover:brightness-90 transition-all shadow-md active:scale-[0.98] cursor-pointer"
                     >
-                        문의하기 폼 열기
+                        고객센터 열기
                     </button>
 
                     <div className="flex flex-col gap-2">
@@ -50,7 +50,7 @@ export default function SupportPageClient() {
                             새 창이 열리지 않았나요?
                         </p>
                         <button
-                            onClick={handleOpenForm}
+                            onClick={handleOpenSupport}
                             className="text-primary-3 body_2_1 underline underline-offset-4 hover:text-primary-2 cursor-pointer"
                         >
                             직접 링크로 이동하기

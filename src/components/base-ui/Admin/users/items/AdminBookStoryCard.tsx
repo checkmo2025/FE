@@ -100,7 +100,7 @@ export default function BookStoryCard({
               e.stopPropagation();
               onSubscribeClick?.();
             }}
-            className="h-8 whitespace-nowrap rounded-lg bg-primary-2 px-[17px] body_2_1 text-White"
+            className="h-8 whitespace-nowrap rounded-lg bg-primary-2 px-[17px] body_2_1 text-White cursor-pointer transition-colors hover:bg-primary-1"
           >
             {subscribeText}
           </button>

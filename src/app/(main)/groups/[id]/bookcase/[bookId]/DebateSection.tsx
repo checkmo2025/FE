@@ -8,6 +8,7 @@ import LongtermChatInput from "@/components/base-ui/LongtermInput";
 import DebateList, { DebateItem } from "@/components/base-ui/Group/DebateList";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import { INPUT_LIMITS } from "@/constants/inputLimits";
+import { getProfileImageSrc } from "@/utils/profileImage";
 
 type Props = {
   myName: string;
@@ -35,7 +36,7 @@ type Props = {
 export default function DebateSection({
   myName,
   myProfileImageUrl,
-  defaultProfileUrl = "/profile4.svg",
+  defaultProfileUrl,
 
   isStaff,
 
@@ -54,7 +55,7 @@ export default function DebateSection({
 
   onClickAuthor,
 }: Props) {
-  const profileSrc = myProfileImageUrl || defaultProfileUrl;
+  const profileSrc = getProfileImageSrc(myProfileImageUrl ?? defaultProfileUrl);
   const [draftText, setDraftText] = useState("");
   const { ref: loadMoreRef, inView } = useInView({
     rootMargin: "300px 0px",

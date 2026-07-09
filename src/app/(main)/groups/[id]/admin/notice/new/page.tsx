@@ -15,6 +15,7 @@ import { useCreateClubNoticeMutation } from "@/hooks/mutations/useClubNotificati
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import { INPUT_LIMITS } from "@/constants/inputLimits";
 import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
+import MobileBackButton from "@/components/common/MobileBackButton";
 
 type Book = {
   id: number; // meetingId로 사용
@@ -63,11 +64,10 @@ export default function NewNoticePage() {
     enabled: Number.isFinite(clubId) && isBookshelfModalOpen,
   });
 
-  const shelves =
-  shelvesQuery.data?.pages.flatMap((p: any) => p.bookShelfInfoList) ?? [];
-
   const modalBooks: Book[] = useMemo(() => {
-    return shelves.map((s: any) => ({
+    const shelves = shelvesQuery.data?.pages.flatMap((page) => page.bookShelfInfoList) ?? [];
+
+    return shelves.map((s) => ({
       id: s.meetingInfo.meetingId,
       title: s.bookInfo.title,
       author: s.bookInfo.author,
@@ -79,7 +79,7 @@ export default function NewNoticePage() {
       description: "",
       imageUrl: s.bookInfo.imgUrl ?? null, 
     }));
-  }, [shelves]);
+  }, [shelvesQuery.data]);
 
   const { mutateAsync: createNotice, isPending } = useCreateClubNoticeMutation();
 
@@ -103,7 +103,7 @@ export default function NewNoticePage() {
       selectedBook ||
       imageFiles.length > 0
   );
-  const { runWithoutGuard } = useUnsavedChangesGuard({
+  const { confirmNavigation, runWithoutGuard } = useUnsavedChangesGuard({
     isDirty,
     variant: "create",
     title: "작성 중인 공지사항이 있어요",
@@ -131,6 +131,10 @@ export default function NewNoticePage() {
   };
 
   const handleRemoveBook = () => setSelectedBook(null);
+
+  const handleBack = () => {
+    confirmNavigation(() => router.back());
+  };
 
   const handleVoteItemChange = (index: number, value: string) => {
     setVoteItems((prev) =>
@@ -318,10 +322,10 @@ export default function NewNoticePage() {
       toast.dismiss(tid);
       toast.success("공지사항 등록 성공");
       runWithoutGuard(() => router.push(`/groups/${groupId}/notice`));
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.dismiss(tid);
 
-      const msg = e?.message ?? "";
+      const msg = e instanceof Error ? e.message : "";
       if (msg.includes("isPinned") || msg.includes("pinned") || msg.includes("고정")) {
         toast.error("고정 공지는 최대 5개까지 가능합니다.");
         return;
@@ -336,7 +340,7 @@ export default function NewNoticePage() {
 
   return (
     <div className="w-full">
-      <div className="t:hidden border-b border-Gray-2" />
+      <MobileBackButton onClick={handleBack} />
 
       <div className="py-4 t:pt-6 px-3 t:px-10">
         <div className="flex justify-center">
@@ -350,7 +354,7 @@ export default function NewNoticePage() {
                 <button
                   type="button"
                   onClick={handleRemoveBook}
-                  className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center"
+                  className="absolute right-2 top-2 flex h-6 w-6 cursor-pointer items-center justify-center"
                   aria-label="선택한 책 제거"
                 >
                   <Image
@@ -461,6 +465,7 @@ export default function NewNoticePage() {
                                 flex items-center justify-center
                                 gap-2
                                 body_1_2 text-Gray-6
+                                cursor-pointer
                                 hover:text-Gray-7
                               "
                             >
@@ -473,7 +478,7 @@ export default function NewNoticePage() {
                         <div className="flex flex-col gap-4">
                           <button
                             type="button"
-                            className="flex items-center gap-3 text-left"
+                            className="flex cursor-pointer items-center gap-3 text-left"
                             onClick={() => setIsMultiple((prev) => !prev)}
                           >
                             <div className="relative w-6 h-6 rounded-full border border-Subbrown-3 bg-White">
@@ -488,7 +493,7 @@ export default function NewNoticePage() {
 
                           <button
                             type="button"
-                            className="flex items-center gap-3 text-left"
+                            className="flex cursor-pointer items-center gap-3 text-left"
                             onClick={() => setIsAnonymous((prev) => !prev)}
                           >
                             <div className="relative w-6 h-6 rounded-full border border-Subbrown-3 bg-White">
@@ -511,7 +516,7 @@ export default function NewNoticePage() {
                                   dateInputRef.current?.focus();
                                 });
                               }}
-                              className="flex items-center gap-3 text-left"
+                              className="flex cursor-pointer items-center gap-3 text-left"
                             >
                               <div className="relative w-6 h-6">
                                 <Image
@@ -541,7 +546,7 @@ export default function NewNoticePage() {
                                       timeInputRef.current?.focus();
                                     });
                                   }}
-                                  className="h-[44px] rounded-[8px] border border-Subbrown-4 bg-White px-4 body_1_2 text-Gray-7 outline-none"
+                                  className="h-[44px] cursor-pointer rounded-[8px] border border-Subbrown-4 bg-White px-4 body_1_2 text-Gray-7 outline-none"
                                 />
                                 <input
                                   ref={timeInputRef}
@@ -553,7 +558,7 @@ export default function NewNoticePage() {
                                       setIsDeadlineEditing(false),
                                     );
                                   }}
-                                  className="h-[44px] rounded-[8px] border border-Subbrown-4 bg-White px-4 body_1_2 text-Gray-7 outline-none"
+                                  className="h-[44px] cursor-pointer rounded-[8px] border border-Subbrown-4 bg-White px-4 body_1_2 text-Gray-7 outline-none"
                                 />
                               </div>
                             )}
@@ -586,7 +591,7 @@ export default function NewNoticePage() {
                               <button
                                 type="button"
                                 onClick={() => handleRemoveImage(index)}
-                                className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/60"
+                                className="absolute right-2 top-2 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-black/60"
                                 aria-label="이미지 삭제"
                               >
                                 <span className="text-[12px] text-White leading-none">
@@ -606,7 +611,7 @@ export default function NewNoticePage() {
                     <button
                       type="button"
                       onClick={() => setIsPinned((prev) => !prev)}
-                      className={`flex items-center gap-2 body_1_2 transition-all ${
+                      className={`flex cursor-pointer items-center gap-2 body_1_2 transition-all ${
                         isPinned ? "text-Gray-7" : "text-Gray-4"
                       }`}
                     >
@@ -625,7 +630,7 @@ export default function NewNoticePage() {
                     <button
                       type="button"
                       onClick={() => setIsVoteEnabled((prev) => !prev)}
-                      className={`flex items-center gap-2 body_1_2 transition-all ${
+                      className={`flex cursor-pointer items-center gap-2 body_1_2 transition-all ${
                         isVoteEnabled ? "text-Gray-7" : "text-Gray-4"
                       }`}
                     >
@@ -644,7 +649,7 @@ export default function NewNoticePage() {
                     <button
                       type="button"
                       onClick={() => setIsBookshelfModalOpen(true)}
-                      className={`flex items-center gap-2 body_1_2 transition-all ${
+                      className={`flex cursor-pointer items-center gap-2 body_1_2 transition-all ${
                         isBookshelfActive ? "text-Gray-7" : "text-Gray-4"
                       }`}
                     >
@@ -663,7 +668,7 @@ export default function NewNoticePage() {
                     <button
                       type="button"
                       onClick={handleImageFile}
-                      className={`flex items-center gap-2 body_1_2 transition-all ${
+                      className={`flex cursor-pointer items-center gap-2 body_1_2 transition-all ${
                         hasImages ? "text-Gray-7" : "text-Gray-4"
                       }`}
                     >
@@ -697,14 +702,15 @@ export default function NewNoticePage() {
                 <button
                   type="button"
                   onClick={() => toast("임시저장은 미구현입니다.")}
-                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors hover:bg-Subbrown-3"
+                  className="flex px-4 py-3 w-[132px] h-[44px] cursor-pointer justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors hover:bg-Subbrown-3"
                 >
                   임시저장
                 </button>
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:bg-primary-1 transition-colors"
+                  disabled={isPending}
+                  className="flex px-4 py-3 w-[132px] h-[44px] cursor-pointer justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 transition-colors hover:bg-primary-1 disabled:cursor-not-allowed disabled:bg-Gray-2 disabled:hover:bg-Gray-2"
                 >
                   등록
                 </button>

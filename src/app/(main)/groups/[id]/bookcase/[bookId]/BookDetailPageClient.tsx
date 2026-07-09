@@ -56,7 +56,7 @@ export default function BookDetailPageClient() {
   const { user } = useAuthStore();
 
   const myName = user?.nickname ?? "My_Name";
-  const myProfileImageUrl = user?.profileImageUrl ?? "/profile4.svg";
+  const myProfileImageUrl = user?.profileImageUrl;
 
   const [isDebateWriting, setIsDebateWriting] = useState(false);
   const [isReviewWriting, setIsReviewWriting] = useState(false);
@@ -306,7 +306,6 @@ export default function BookDetailPageClient() {
               <DebateSection
                 myName={myName}
                 myProfileImageUrl={myProfileImageUrl}
-                defaultProfileUrl="/profile4.svg"
                 isStaff={isStaff}
                 isWriting={isDebateWriting}
                 onToggleWriting={() => setIsDebateWriting((v) => !v)}
@@ -354,7 +353,6 @@ export default function BookDetailPageClient() {
               <ReviewSection
                 myName={myName}
                 myProfileImageUrl={myProfileImageUrl}
-                defaultProfileUrl="/profile4.svg"
                 isStaff={isStaff}
                 isWriting={isReviewWriting}
                 onToggleWriting={() => setIsReviewWriting((v) => !v)}

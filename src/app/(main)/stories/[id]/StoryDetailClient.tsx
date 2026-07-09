@@ -6,7 +6,7 @@ import CommentSection from "@/components/base-ui/Comment/comment_section_bookcas
 import BookshelfDeleteConfirmModal from "@/components/base-ui/Bookcase/bookid/BookshelfDeleteConfirmModal";
 import AppOpenCta from "@/components/common/AppOpenCta";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { isValidUrl } from "@/utils/url";
 import { useParams, useRouter } from "next/navigation";
@@ -29,8 +29,11 @@ export default function StoryDetailClient() {
   const params = useParams();
   const id = params?.id as string;
   const storyId = Number(id);
+  const isInvalidStoryId = !id || Number.isNaN(storyId);
 
-  const { data: story, isLoading, isError, error } = useStoryDetailQuery(storyId);
+  const { data: story, isLoading, isError, error } = useStoryDetailQuery(
+    isInvalidStoryId ? 0 : storyId
+  );
   const { mutate: toggleLike } = useToggleStoryLikeMutation();
   const { mutate: deleteStory, isPending: isDeletePending } = useDeleteBookStoryMutation();
   const { mutate: toggleFollow } = useToggleFollowMutation();
@@ -38,14 +41,19 @@ export default function StoryDetailClient() {
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  if (!id || isNaN(storyId)) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px]">
-        <h2 className="text-2xl font-bold text-Gray-7 mb-4">잘못된 접근</h2>
-        <p className="text-Gray-5">올바른 경로로 접근해주세요.</p>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!story?.bookStoryId || window.location.hash !== "#comments") return;
+
+    const timeoutId = window.setTimeout(() => {
+      const commentsSection = document.getElementById("comments");
+      commentsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+      commentsSection
+        ?.querySelector<HTMLInputElement>("[data-comment-input='true']")
+        ?.focus({ preventScroll: true });
+    }, 100);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [story?.bookStoryId]);
 
   const handleToggleLike = () => {
     if (!isLoggedIn) {
@@ -65,6 +73,15 @@ export default function StoryDetailClient() {
       isFollowing: story!.authorInfo.following
     });
   };
+
+  if (isInvalidStoryId) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <h2 className="text-2xl font-bold text-Gray-7 mb-4">잘못된 접근</h2>
+        <p className="text-Gray-5">올바른 경로로 접근해주세요.</p>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -141,7 +158,11 @@ export default function StoryDetailClient() {
             {story.description}
           </p>
         </div>
-        <div className="border-t-2 border-Gray-1 w-full max-w-[1040px] mx-auto px-5 t:px-6 mt-10 pt-6 pb-10">
+        <div
+          id="comments"
+          tabIndex={-1}
+          className="scroll-mt-6 t:scroll-mt-10 border-t-2 border-Gray-1 w-full max-w-[1040px] mx-auto px-5 t:px-6 mt-10 pt-6 pb-10"
+        >
           <CommentSection
             storyId={story.bookStoryId}
             initialComments={story.comments}

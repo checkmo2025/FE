@@ -56,7 +56,7 @@ function ListSubscribeElementLarge({
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); onSubscribeClick?.(); }}
-          className={`flex px-[17px] py-[8px] justify-center items-center gap-[10px] rounded-[8px] text-[12px] font-semibold leading-[100%] tracking-[-0.012px] whitespace-nowrap shrink-0 transition-colors ${isFollowing
+          className={`flex px-[17px] py-[8px] justify-center items-center gap-[10px] rounded-[8px] text-[12px] font-semibold leading-[100%] tracking-[-0.012px] whitespace-nowrap shrink-0 transition-colors cursor-pointer ${isFollowing
             ? "bg-Subbrown-4 text-primary-3 hover:bg-Subbrown-3"
             : "bg-primary-2 text-white hover:bg-primary-1"
             }`}

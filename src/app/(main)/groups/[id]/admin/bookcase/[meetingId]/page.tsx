@@ -12,10 +12,10 @@ import {
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import Image from "next/image";
 
 import MemberPool from "@/components/base-ui/Bookcase/Admin/bookdetailgrouping/MemberPool";
 import TeamBoard from "@/components/base-ui/Bookcase/Admin/bookdetailgrouping/TeamBoard";
+import MobileBackButton from "@/components/common/MobileBackButton";
 
 
 import { useMeetingMembersQuery} from "@/hooks/queries/useMeetingQueries"; 
@@ -67,12 +67,13 @@ export default function AdminMeetingTeamManagePage() {
         clubMemberId: cm.clubMemberId,
         memberInfo: {
           nickname: cm.memberInfo?.nickname ?? "",
-          profileImageUrl: cm.memberInfo?.profileImageUrl ?? "",
+          profileImageUrl: cm.memberInfo?.profileImageUrl ?? null,
         },
         teamNumber: cm.teamKey?.teamNumber ?? null,
       })) ?? [];
 
     setMembers(mappedMembers);
+    setIsInitialized(true);
   }, [data]);
 
   const unassigned = useMemo(
@@ -190,24 +191,7 @@ export default function AdminMeetingTeamManagePage() {
       autoScroll
     >
       <div className="w-full">
-        {/* 모바일 전용 뒤로가기 바 */}
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="
-            t:hidden
-            w-full
-            flex items-center gap-2
-            px-[10px] py-[12px]
-            border-b border-Gray-2
-            text-Gray-7 body_1_2
-          "
-        >
-          <div className="relative w-[12px] h-[12px] shrink-0">
-            <Image src="/Polygon7.svg" alt="뒤로가기" fill className="object-contain" priority />
-          </div>
-          <span>뒤로가기</span>
-        </button>
+        <MobileBackButton onClick={() => router.back()} />
 
         <div className="w-full t:px-10">
           <div

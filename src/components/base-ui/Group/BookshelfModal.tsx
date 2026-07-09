@@ -61,7 +61,7 @@ export default function BookshelfModal({
   return (
     <div className="fixed inset-0 z-50">
       <div
-        className="absolute inset-0 bg-black/40 t:block hidden"
+        className="absolute inset-0 hidden cursor-pointer bg-black/40 t:block"
         onClick={onClose}
       />
 
@@ -82,10 +82,20 @@ export default function BookshelfModal({
             <button
               type="button"
               onClick={onClose}
-              className="t:hidden flex items-center gap-2 body_1_2 text-Gray-7"
+              className="t:hidden flex cursor-pointer items-center gap-2 body_1_2 text-Gray-7"
               aria-label="뒤로가기"
             >
-              <Image src="/chevron_left.svg" alt="" width={20} height={20} />
+              <svg
+                width="9"
+                height="11"
+                viewBox="0 0 9 11"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+                className="shrink-0"
+              >
+                <path d="M0 5.19629L9 10.3924V0.00014L0 5.19629Z" fill="#BBAA9B" />
+              </svg>
               뒤로가기
             </button>
 
@@ -95,7 +105,7 @@ export default function BookshelfModal({
               type="button"
               onClick={onClose}
               aria-label="닫기"
-              className="hidden t:block"
+              className="hidden cursor-pointer t:block"
             >
               <Image src="/light_close.svg" alt="닫기" width={24} height={24} />
             </button>

@@ -45,9 +45,9 @@ export default function SettingsSidebar() {
 
             {/* 세부 메뉴 리스트 */}
             <div className="flex flex-col items-start gap-[2px] self-stretch">
-              {group.items.map((item: any) => {
-                const isExternal = !!item.isExternal;
-                const href = isExternal ? EXTERNAL_LINKS.INQUIRY_FORM_URL : item.href;
+              {group.items.map((item) => {
+                const isExternal = "isExternal" in item && item.isExternal;
+                const href = isExternal ? EXTERNAL_LINKS.SUPPORT_URL : item.href;
 
                 return (
                   <SettingsMenuItem

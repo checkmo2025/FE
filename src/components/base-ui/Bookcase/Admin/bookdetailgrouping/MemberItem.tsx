@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import type { TeamMember } from "@/types/groups/bookcasedetail";
-
-const DEFAULT_PROFILE = "/profile4.svg";
+import { getProfileImageSrc } from "@/utils/profileImage";
 
 type Props = {
   member: TeamMember;
@@ -11,7 +10,7 @@ type Props = {
 };
 
 export default function MemberItem({ member, draggable = true }: Props) {
-  const src = member.memberInfo.profileImageUrl ?? DEFAULT_PROFILE;
+  const src = getProfileImageSrc(member.memberInfo.profileImageUrl);
 
   return (
     <div
