@@ -21,7 +21,10 @@ export const metadata: Metadata = {
 
 export default function ThirdPartyConsentPage() {
   return (
-    <PublicDocumentLayout title="개인정보 제3자 제공 동의">
+    <PublicDocumentLayout
+      title="개인정보 제3자 제공 동의"
+      effectiveDate="2026년 7월 9일"
+    >
       {THIRD_PARTY_DATA.map((term) => (
         <DocumentSection key={term.title} title={term.title}>
           {Array.isArray(term.content) ? (

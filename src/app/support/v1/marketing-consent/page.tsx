@@ -21,7 +21,10 @@ export const metadata: Metadata = {
 
 export default function MarketingConsentPage() {
   return (
-    <PublicDocumentLayout title="마케팅 및 이벤트 정보 수신 동의">
+    <PublicDocumentLayout
+      title="마케팅 및 이벤트 정보 수신 동의"
+      effectiveDate="2026년 7월 9일"
+    >
       {MARKETING_DATA.map((term) => (
         <DocumentSection key={term.title} title={term.title}>
           {Array.isArray(term.content) ? (

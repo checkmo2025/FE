@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <PublicDocumentLayout title="개인정보처리방침" effectiveDate="2026년 6월 5일">
+    <PublicDocumentLayout title="개인정보처리방침" effectiveDate="2026년 7월 9일">
       {PRIVACY_DATA.map((term) => (
         <DocumentSection key={term.title} title={term.title}>
           {Array.isArray(term.content) ? (
