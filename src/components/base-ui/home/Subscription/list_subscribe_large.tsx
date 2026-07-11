@@ -83,7 +83,7 @@ export default function ListSubscribeLarge({
 
   return (
     <section
-      className={`w-full max-w-[336px] h-[380px] rounded-lg border border-Subbrown-4 bg-stone-50 px-5 pt-5 pb-6`}
+      className={`w-full max-w-[336px] ${height} rounded-lg border border-Subbrown-4 bg-stone-50 px-5 pt-5 pb-6`}
     >
       <h3 className="subhead_2 text-Gray-7">사용자 추천</h3>
 
