@@ -4,6 +4,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { clubMemberService } from "@/services/clubMemberService";
 import { clubMemberQueryKeys } from "@/hooks/queries/useClubMemberQueries";
+import { clubhomeKeys } from "@/hooks/queries/useClubhomeQueries";
 import type { UpdateClubMemberStatusRequest } from "@/types/groups/clubMembers";
 
 type Variables = {
@@ -21,14 +22,24 @@ export function useUpdateClubMemberStatusMutation() {
 
     onSuccess: async (_data, variables) => {
       // 가입 신청 관리(PENDING)와 전체 회원 관리(ALL) 페이지 쿼리를 모두 무효화합니다.
-      await Promise.all([
+      const invalidations = [
         qc.invalidateQueries({
           queryKey: clubMemberQueryKeys.members(variables.clubId, "PENDING"),
         }),
         qc.invalidateQueries({
           queryKey: clubMemberQueryKeys.members(variables.clubId, "ALL"),
         }),
-      ]);
+      ];
+
+      if (variables.body.command === "TRANSFER_OWNER") {
+        invalidations.push(
+          qc.invalidateQueries({
+            queryKey: clubhomeKeys.me(variables.clubId),
+          })
+        );
+      }
+
+      await Promise.all(invalidations);
     },
   });
 }
