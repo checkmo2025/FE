@@ -7,7 +7,6 @@ import Toast from "@/components/base-ui/Admin/Toast";
 import {
   fetchAdminNewsDetail,
   updateAdminNewsWithImages,
-  deleteAdminNews,
 } from "@/lib/api/admin/news";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
@@ -245,6 +244,8 @@ export default function AdminNewsEditPage() {
     today.setHours(0, 0, 0, 0);
     end.setHours(0, 0, 0, 0);
 
+    const isPublishPeriodExpired = end < today;
+
     const existingImageUrls = extraImages
       .filter(
         (image): image is { type: "existing"; url: string } =>
@@ -262,21 +263,6 @@ export default function AdminNewsEditPage() {
     try {
       setSubmitting(true);
 
-      if (end < today) {
-        const res = await deleteAdminNews(newsId);
-
-        if (!res.isSuccess) {
-          throw new Error(res.message || "소식 삭제 실패");
-        }
-
-        alert("게시 종료일이 지나 소식이 삭제되었습니다.");
-        runWithoutGuard(() => {
-          router.push("/admin/news");
-          router.refresh();
-        });
-        return;
-      }
-
       const res = await updateAdminNewsWithImages(newsId, {
         title: title.trim(),
         requesterEmail: requesterEmail.trim(),
@@ -293,6 +279,10 @@ export default function AdminNewsEditPage() {
       });
 
       if (!res.isSuccess) throw new Error(res.message || "소식 수정 실패");
+
+      if (isPublishPeriodExpired) {
+        alert("게시 기간이 지나 더 이상 노출되지 않습니다.");
+      }
 
       setToastMessage("소식 수정 성공");
 
