@@ -45,8 +45,8 @@ export interface CreateClubNoticeVote {
   item6?: string;
   anonymity: boolean;
   duplication: boolean;
-  startTime: string; // ISO
-  deadline: string; // ISO
+  startTime: string; // LocalDateTime (YYYY-MM-DDTHH:mm:ss)
+  deadline: string; // LocalDateTime (YYYY-MM-DDTHH:mm:ss)
 }
 
 /** POST /clubs/{clubId}/notices body */

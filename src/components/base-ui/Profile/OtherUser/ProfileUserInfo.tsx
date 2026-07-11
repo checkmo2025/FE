@@ -1,15 +1,14 @@
 "use client";
 
-import Image from "next/image";
 import { useOtherProfileQuery } from "@/hooks/queries/useMemberQueries";
 
 import { useToggleFollowMutation, useReportMemberMutation, useBlockMemberMutation } from "@/hooks/mutations/useMemberMutations";
 import ReportModal from "@/components/common/modals/report-block/ReportModal";
 import { useAuthStore } from "@/store/useAuthStore";
 import Link from "next/link";
-import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 import ActionSelectionModal from "@/components/common/modals/report-block/ActionSelectionModal";
 import BlockConfirmModal from "@/components/common/modals/report-block/BlockConfirmModal";
+import ExpandableProfileImage from "@/components/common/ExpandableProfileImage";
 import { useReportBlockFlow } from "@/hooks/useReportBlockFlow";
 import { ReportReason } from "@/types/report";
 import { getProfileAccessErrorMessage } from "@/utils/profileAccess";
@@ -126,18 +125,13 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
           md:items-center md:gap-[38px]"
         >
           {/* 프로필 이미지 */}
-          <div
+          <ExpandableProfileImage
+            imageUrl={profile.profileImageUrl}
+            alt={`${profile.nickname}님의 프로필`}
             className="relative shrink-0 overflow-hidden rounded-full border border-Subbrown-3 bg-background
             h-[80px] w-[80px]
             md:h-[138px] md:w-[138px]"
-          >
-            <Image
-              src={profile.profileImageUrl || DEFAULT_PROFILE_IMAGE}
-              alt={`${profile.nickname}님의 프로필`}
-              fill
-              className="object-cover"
-            />
-          </div>
+          />
 
           {/* 텍스트 정보 영역 */}
           <div

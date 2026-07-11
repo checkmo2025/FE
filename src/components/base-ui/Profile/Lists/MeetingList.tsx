@@ -4,10 +4,23 @@ import React from "react";
 import MeetingCard from "@/components/base-ui/Profile/items/MeetingCard";
 import EmptyState from "@/components/common/EmptyState";
 import { useMemberClubsQuery } from "@/hooks/queries/useClubQueries";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function MeetingList({ nickname }: { nickname: string }) {
+  const router = useRouter();
+  const { isLoggedIn, openLoginModal } = useAuthStore();
   const { data, isLoading, isError } = useMemberClubsQuery(nickname);
   const clubs = data?.clubList || [];
+
+  const handleVisitClub = (clubId: number) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+
+    router.push(`/groups/${clubId}`);
+  };
 
   if (isLoading) {
     return (
@@ -41,6 +54,7 @@ export default function MeetingList({ nickname }: { nickname: string }) {
           key={club.clubId}
           title={club.clubName}
           showMoreIcon={false}
+          onClick={() => handleVisitClub(club.clubId)}
         />
       ))}
     </div>
