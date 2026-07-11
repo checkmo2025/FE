@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, useMotionValue, useMotionValueEvent, animate } from "framer-motion";
@@ -66,7 +66,7 @@ export default function SwipeCarousel({
   const nextIndex = slideCount > 0 ? wrap(0, slideCount, renderIndex + 1) : 0;
 
   // x 좌표를 실시간 추적하여 절반 이상 넘어갔을 때 인디케이터를 선제적으로 교체
-  useMotionValueEvent(x, "change", (latestX) => {
+  const handleXChange = useCallback((latestX: number) => {
     if (!containerRef.current || slideCount <= 1) return;
     const containerWidth = containerRef.current.offsetWidth;
     
@@ -78,10 +78,14 @@ export default function SwipeCarousel({
     }
 
     const newIndicatorIndex = wrap(0, slideCount, renderIndexRef.current + offsetIndex);
-    if (newIndicatorIndex !== indicatorIndex) {
-      setIndicatorIndex(newIndicatorIndex);
-    }
-  });
+    
+    setIndicatorIndex((prev) => {
+      if (prev !== newIndicatorIndex) return newIndicatorIndex;
+      return prev;
+    });
+  }, [slideCount]);
+
+  useMotionValueEvent(x, "change", handleXChange);
 
   const navigateToSlide = (direction: number) => {
     if (slideCount <= 1) return;
