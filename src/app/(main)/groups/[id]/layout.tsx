@@ -7,6 +7,7 @@ import Image from "next/image";
 
 import { useClubhomeQueries } from "@/hooks/queries/useClubhomeQueries";
 import { useClubAccessGuard } from "@/hooks/useClubAccessGuard";
+import { useAuthStore } from "@/store/useAuthStore";
 
 type TabType = "home" | "notice" | "bookcase";
 
@@ -17,6 +18,7 @@ export default function GroupDetailLayout({ children }: { children: React.ReactN
   const groupIdNum = Number(groupId);
 
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  const { isLoggedIn, openLoginModal } = useAuthStore();
 
   const skipLayout = useMemo(() => {
     return pathname?.includes("/admin/");
@@ -144,6 +146,12 @@ export default function GroupDetailLayout({ children }: { children: React.ReactN
                     <Link
                       key={tab.id}
                       href={tab.href}
+                      onClick={(e) => {
+                        if ((tab.id === "notice" || tab.id === "bookcase") && !isLoggedIn) {
+                          e.preventDefault();
+                          openLoginModal();
+                        }
+                      }}
                       className={`
                         flex flex-1 items-center justify-center gap-1 rounded-lg px-2 py-2
                         t:gap-3 t:px-4 t:py-3

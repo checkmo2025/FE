@@ -25,7 +25,8 @@ export default function GroupDetailClient() {
   const params = useParams();
   const groupId = Number(params.id);
   const queryClient = useQueryClient();
-  const currentNickname = useAuthStore((state) => state.user?.nickname);
+  const { isLoggedIn, openLoginModal, user } = useAuthStore();
+  const currentNickname = user?.nickname;
   const toggleFollowMutation = useToggleFollowMutation();
 
   const { meQuery, homeQuery, latestNoticeQuery, nextMeetingQuery } = useClubhomeQueries(groupId);
@@ -117,6 +118,10 @@ export default function GroupDetailClient() {
   const joinUrl = joinMeetingId ? `/groups/${groupId}/bookcase/${joinMeetingId}` : null;
 
   const onClickJoin = () => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
     if (!canAccessMemberOnlyPage) {
       toast.error("회원만 접근이 가능합니다.");
       return;
@@ -129,6 +134,10 @@ export default function GroupDetailClient() {
   };
 
   const handleToggleFollow = (id: string | number, isFollowing: boolean) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
     toggleFollowMutation.mutate(
       {
         nickname: String(id),
@@ -149,6 +158,7 @@ export default function GroupDetailClient() {
           role="button"
           tabIndex={0}
           onClick={() => {
+            if (!isLoggedIn) { openLoginModal(); return; }
             if (!canAccessMemberOnlyPage) { toast.error("회원만 접근이 가능합니다."); return; }
             if (!hasNotice) { toast.error("아직 등록된 공지사항이 없습니다."); return; }
             router.push(noticeUrl!);
@@ -156,6 +166,7 @@ export default function GroupDetailClient() {
           onKeyDown={(e) => {
             if (e.key !== "Enter" && e.key !== " ") return;
             e.preventDefault();
+            if (!isLoggedIn) { openLoginModal(); return; }
             if (!canAccessMemberOnlyPage) { toast.error("회원만 접근이 가능합니다."); return; }
             if (!hasNotice) { toast.error("아직 등록된 공지사항이 없습니다."); return; }
             router.push(noticeUrl!);

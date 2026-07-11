@@ -53,8 +53,14 @@ function SearchContent() {
   }, [searchData]);
 
   const totalResults = useMemo(() => {
+    // API 명세의 totalResults를 우선적으로 사용 (첫 번째 페이지 응답 기준)
+    const apiTotal = searchData?.pages[0]?.totalResults;
+    if (typeof apiTotal === "number") {
+      return apiTotal;
+    }
+    // API에 반영되지 않은 경우를 대비한 안전 장치(Fallback)
     return searchResults.length;
-  }, [searchResults]);
+  }, [searchData, searchResults.length]);
 
   return (
     <>
@@ -112,7 +118,7 @@ function SearchContent() {
                 title={result.title}
                 author={result.author}
                 detail={result.description}
-                liked={result.likedByMe || false}
+                liked={result.likedByMe ?? false}
                 onLikeChange={authAction(() => toggleBookLike(result.isbn))}
                 onPencilClick={() => {
                   router.push(`/books/${result.isbn}`);
