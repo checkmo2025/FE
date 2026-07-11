@@ -141,6 +141,7 @@ export default function SwipeCarousel({
   const renderCard = (item: CarouselItem, position: string) => {
     return (
       <div
+        key={position}
         className="absolute top-0 bottom-0 w-full flex-shrink-0"
         style={{ left: position }}
       >
