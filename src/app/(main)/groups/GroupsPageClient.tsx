@@ -82,13 +82,7 @@ export default function GroupsPageClient() {
   const router = useRouter();
   const { isLoggedIn, isInitialized, openLoginModal } = useAuthStore();
 
-  useEffect(() => {
-    if (isInitialized && !isLoggedIn) {
-      toast.error("모임은 로그인이 필요한 서비스입니다.", { id: "groups-auth-error" });
-      router.replace("/");
-      setTimeout(() => { openLoginModal(); }, 100);
-    }
-  }, [isLoggedIn, isInitialized, router, openLoginModal]);
+
 
   const [q, setQ] = useState("");
   const [category, setCategory] = useState<Category>("전체");
@@ -96,6 +90,7 @@ export default function GroupsPageClient() {
   const [region, setRegion] = useState(false);
   const [appliedParams, setAppliedParams] = useState<Omit<ClubSearchParams, "cursorId"> | null>(null);
   const isSearchMode = appliedParams !== null;
+  const isGuestDefaultView = !isLoggedIn && !isSearchMode;
   const [applyClubId, setApplyClubId] = useState<number | null>(null);
 
   const { data: myClubsData, isLoading: myClubsLoading } = useMyClubsQuery(isLoggedIn);
@@ -109,7 +104,7 @@ export default function GroupsPageClient() {
     refetch: refetchSearch,
   } = useInfiniteClubSearchQuery(
     appliedParams ?? { keyword: undefined, inputFilter: null, outputFilter: "ALL" },
-    isSearchMode
+    isSearchMode || isGuestDefaultView
   );
 
   const { mutateAsync: joinAsync, isPending: joinPending } = useClubJoinMutation();
@@ -127,12 +122,12 @@ export default function GroupsPageClient() {
     return (searchData?.pages ?? []).flatMap((p) => p.clubList.map(mapSearchItem));
   }, [searchData]);
 
-  const clubsToRender = isSearchMode ? searchedClubs : recommendationClubs;
+  const clubsToRender = (isSearchMode || isGuestDefaultView) ? searchedClubs : recommendationClubs;
   const selectedClub = clubsToRender.find((c) => c.clubId === applyClubId) ?? null;
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!isSearchMode) return;
+    if (!isSearchMode && !isGuestDefaultView) return;
     const el = sentinelRef.current;
     if (!el) return;
     const io = new IntersectionObserver(
@@ -145,10 +140,22 @@ export default function GroupsPageClient() {
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [isSearchMode, hasNextPage, searchFetching, fetchNextPage]);
+  }, [isSearchMode, isGuestDefaultView, hasNextPage, searchFetching, fetchNextPage]);
 
-  const onClickVisit = (clubId: number) => router.push(`/groups/${clubId}`);
-  const onClickApply = (clubId: number) => setApplyClubId((prev) => (prev === clubId ? null : clubId));
+  const onClickVisit = (clubId: number) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    router.push(`/groups/${clubId}`);
+  };
+  const onClickApply = (clubId: number) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    setApplyClubId((prev) => (prev === clubId ? null : clubId));
+  };
   const onCloseApply = () => setApplyClubId(null);
 
   const onSubmitApply = async (clubId: number, reason: string) => {
@@ -185,7 +192,13 @@ export default function GroupsPageClient() {
             borderColorVar="--Primary_1"
             textColorVar="--White"
             className="flex-1 body_1 hover:-translate-y-[1px] cursor-pointer"
-            onClick={() => router.push("/groups/create")}
+            onClick={() => {
+              if (!isLoggedIn) {
+                openLoginModal();
+                return;
+              }
+              router.push("/groups/create");
+            }}
           />
         </div>
         <div className="hidden w-full t:flex mt-5 mb-4">
@@ -196,7 +209,13 @@ export default function GroupsPageClient() {
             borderColorVar="--Primary_1"
             textColorVar="--White"
             className="flex-1 subhead_4_1 hover:-translate-y-[1px] cursor-pointer"
-            onClick={() => router.push("/groups/create")}
+            onClick={() => {
+              if (!isLoggedIn) {
+                openLoginModal();
+                return;
+              }
+              router.push("/groups/create");
+            }}
           />
         </div>
         <Mybookclub groups={myGroups} isLoading={myClubsLoading} />
@@ -233,10 +252,10 @@ export default function GroupsPageClient() {
               />
             ))}
           </div>
-          {!isSearchMode && recLoading && (
+          {!(isSearchMode || isGuestDefaultView) && recLoading && (
             <p className="mt-3 body_2_2 text-Gray-4">불러오는 중…</p>
           )}
-          {isSearchMode && <div ref={sentinelRef} className="h-10" />}
+          {(isSearchMode || isGuestDefaultView) && <div ref={sentinelRef} className="h-10" />}
         </div>
       </main>
 

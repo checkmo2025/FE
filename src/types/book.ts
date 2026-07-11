@@ -13,7 +13,7 @@ export interface BookSearchResponse {
     detailInfoList: Book[];
     hasNext: boolean;
     currentPage: number;
-    nextCursor?: number;
+    totalResults: number;
 }
 
 export interface MyLikedBooksResponse {

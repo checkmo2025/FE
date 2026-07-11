@@ -54,7 +54,7 @@ export default function LoginForm({
             value={form.password}
             onChange={onChange}
             placeholder="비밀번호"
-            className={`flex w-full h-[32px] t:h-[44px] pl-4 pr-10 py-3 items-center rounded-lg border bg-white outline-none text-sm leading-[145%] text-Gray-7 transition-colors placeholder:text-Gray-3 disabled:cursor-not-allowed disabled:opacity-60 ${
+            className={`flex w-full h-[32px] t:h-[44px] pl-4 pr-14 py-3 items-center rounded-lg border bg-white outline-none text-sm leading-[145%] text-Gray-7 transition-colors placeholder:text-Gray-3 disabled:cursor-not-allowed disabled:opacity-60 ${
               errors?.password ? "border-Red" : "border-Subbrown-4 focus:border-primary-1"
             }`}
             onKeyDown={onKeyDown}
@@ -62,7 +62,7 @@ export default function LoginForm({
           />
           <button
             type="button"
-            className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-[#BBB] hover:text-[#8D8D8D] cursor-pointer"
+            className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center text-[#BBB] hover:text-[#8D8D8D] cursor-pointer"
             onClick={() => setShowPassword((prev) => !prev)}
             tabIndex={-1}
           >

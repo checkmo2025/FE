@@ -39,7 +39,7 @@ export default function Header() {
   const router = useRouter();
   const defaultTitle = getPageTitle(pathname);
   const { customTitle } = useHeaderTitle();
-  const { user, isLoggedIn, openLoginModal } = useAuthStore();
+  const { user, isLoggedIn } = useAuthStore();
   const pageTitle = customTitle || defaultTitle;
   const { isSearchOpen, toggleSearch, closeSearch } = useSearchStore();
   const { confirmNavigation } = useUnsavedChangesNavigation();
@@ -72,11 +72,7 @@ export default function Header() {
   }, [isNotificationOpen]);
 
 
-  const handleNavClick = (href: string, label: string) => {
-    if (label === "모임" && !isLoggedIn) {
-      openLoginModal();
-      return;
-    }
+  const handleNavClick = (href: string) => {
     confirmNavigation(() => router.push(href));
   };
   return (
@@ -111,7 +107,7 @@ export default function Header() {
                     href={item.href}
                     label={item.label}
                     active={active}
-                    onClick={() => handleNavClick(item.href, item.label)}
+                    onClick={() => handleNavClick(item.href)}
                   />
                 );
               })}
