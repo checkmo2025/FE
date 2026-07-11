@@ -1,3 +1,4 @@
+import GlobalAppOpenCta from "@/components/common/GlobalAppOpenCta";
 import Header from "@/components/layout/Header";
 import type { ReactNode } from "react";
 
@@ -6,6 +7,7 @@ export default function MainLayout({ children }: { children: ReactNode }) {
     <>
       <Header />
       <div>{children}</div>
+      <GlobalAppOpenCta />
     </>
   );
 }
