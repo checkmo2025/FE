@@ -64,7 +64,16 @@ function toVoteDateTimeISO(dateValue: string, timeValue: string) {
   const [hours, minutes] = timeValue.split(":").map(Number);
   const date = new Date(year, month - 1, day, hours, minutes, 0, 0);
 
-  return Number.isNaN(date.getTime()) ? null : `${dateValue}T${timeValue}:00`;
+  if (Number.isNaN(date.getTime())) return null;
+
+  const isValid =
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day &&
+    date.getHours() === hours &&
+    date.getMinutes() === minutes;
+
+  return isValid ? `${dateValue}T${timeValue}:00` : null;
 }
 
 export default function NewNoticePage() {
