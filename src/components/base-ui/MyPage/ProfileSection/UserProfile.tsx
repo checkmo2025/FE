@@ -2,13 +2,12 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { isValidUrl } from "@/utils/url";
 import JoinButton from "@/components/base-ui/Join/JoinButton";
 import { DUMMY_USER_PROFILE } from "@/constants/mocks/mypage";
 import { useProfileQuery, useFollowCountQuery } from "@/hooks/queries/useMemberQueries";
 import FloatingFab from "@/components/base-ui/Float";
 import { EXTERNAL_LINKS } from "@/constants/links";
-import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import ExpandableProfileImage from "@/components/common/ExpandableProfileImage";
 
 const UserProfile = () => {
   const router = useRouter();
@@ -49,14 +48,11 @@ const UserProfile = () => {
         {/* Profile Info Area */}
         <div className="relative flex items-center self-stretch justify-between">
           {/* Profile Image */}
-          <div className="flex justify-center items-center w-[138px] h-[138px] rounded-full bg-gray-200 overflow-hidden relative shrink-0">
-            <Image
-              src={isValidUrl(user.profileImage) ? user.profileImage : DEFAULT_PROFILE_IMAGE}
-              alt="Profile"
-              fill
-              className="object-cover"
-            />
-          </div>
+          <ExpandableProfileImage
+            imageUrl={user.profileImage}
+            alt={`${user.name}님의 프로필`}
+            className="flex h-[138px] w-[138px] shrink-0 items-center justify-center rounded-full bg-gray-200"
+          />
 
           {/* Text Info Wrapper */}
           <div className="flex flex-col items-center w-full md:w-[558px] gap-[12px] rounded-[8px] pl-[20px] md:pl-0">
