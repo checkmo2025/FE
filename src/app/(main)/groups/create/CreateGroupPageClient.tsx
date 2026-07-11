@@ -18,7 +18,7 @@ import {
 } from "@/types/groups/groups";
 
 import { mapBookCategoriesToCodes } from "@/types/groups/clubCreate";
-import { useClubNameCheckQuery } from "@/hooks/queries/useCreateClubQueries";
+import { useClubNameCheckMutation } from "@/hooks/queries/useCreateClubQueries";
 import {
   useCreateClubMutation,
   useUploadClubImageMutation,
@@ -83,7 +83,7 @@ export default function CreateGroupPageClient() {
   const [links, setLinks] = useState<SnsLink[]>([{ label: "", url: "" }]);
 
   // API hooks
-  const nameQuery = useClubNameCheckQuery(clubName); // enabled:false라 버튼에서 refetch로만 호출됨
+  const checkNameMutation = useClubNameCheckMutation();
   const uploadImage = useUploadClubImageMutation();
   const createClub = useCreateClubMutation();
   const isImageUploading = imageUploadStatus === "uploading" || uploadImage.isPending;
@@ -143,8 +143,7 @@ export default function CreateGroupPageClient() {
     setNameCheck("checking");
 
     try {
-      const r = await nameQuery.refetch();
-      const isDuplicate = r.data; // boolean
+      const isDuplicate = await checkNameMutation.mutateAsync(name);
 
       if (isDuplicate) {
         setNameCheck("duplicate");
