@@ -2,6 +2,7 @@
 
 import React from "react";
 import MeetingCard from "@/components/base-ui/Profile/items/MeetingCard";
+import EmptyState from "@/components/common/EmptyState";
 import { useMemberClubsQuery } from "@/hooks/queries/useClubQueries";
 
 export default function MeetingList({ nickname }: { nickname: string }) {
@@ -25,13 +26,7 @@ export default function MeetingList({ nickname }: { nickname: string }) {
   }
 
   if (clubs.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 w-full">
-        <p className="text-Gray-4 text-sm font-medium whitespace-pre-wrap text-center">
-          작성된 소속 모임이 없습니다.
-        </p>
-      </div>
-    );
+    return <EmptyState message="작성된 소속 모임이 없습니다." />;
   }
 
   return (

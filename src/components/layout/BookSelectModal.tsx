@@ -89,7 +89,7 @@ export default function BookSelectModal({
 
       {/* 모달/전체화면 */}
       <div
-        className="bg-background w-full h-full t:rounded-lg t:shadow-lg t:max-w-[1121px] t:max-h-[748px] t:h-auto overflow-hidden flex flex-col d:px-10 py-0 t:py-6 d:py-6"
+        className="bg-background w-full h-full t:rounded-lg t:shadow-lg t:max-w-[1121px] t:h-[748px] t:max-h-[calc(100vh-2rem)] overflow-hidden flex flex-col d:px-10 py-0 t:py-6 d:py-6"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 검색창 */}
@@ -135,7 +135,7 @@ export default function BookSelectModal({
         {/* 검색 결과 */}
         <div className="py-2 t:px-6 t:py-4 overflow-y-auto flex-1">
           {isLoading ? (
-            <div className="flex justify-center py-10">
+            <div className="flex h-full items-center justify-center">
               <p className="text-Gray-4 body_1">검색 중...</p>
             </div>
           ) : (

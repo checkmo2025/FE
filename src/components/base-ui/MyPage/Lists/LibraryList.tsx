@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo } from "react";
 import LibraryCard from "@/components/base-ui/Profile/items/LibraryCard";
+import EmptyState from "@/components/common/EmptyState";
 import { useLikedBooksInfiniteQuery } from "@/hooks/queries/useBookQueries";
 import { useInView } from "react-intersection-observer";
 
@@ -26,7 +27,7 @@ const LibraryList = () => {
   }
 
   if (books.length === 0) {
-    return <div className="py-10 text-center text-gray-500">내 서재가 비어있습니다.</div>;
+    return <EmptyState message="내 서재가 비어있습니다." />;
   }
 
   return (

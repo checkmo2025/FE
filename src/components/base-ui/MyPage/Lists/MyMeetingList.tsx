@@ -2,6 +2,7 @@
 
 import React from "react";
 import MyMeetingCard from "../items/MyMeetingCard";
+import EmptyState from "@/components/common/EmptyState";
 import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 
 const MyMeetingList = () => {
@@ -25,13 +26,7 @@ const MyMeetingList = () => {
   }
 
   if (clubs.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 w-full">
-        <p className="text-Gray-4 text-sm font-medium whitespace-pre-wrap text-center">
-          가입한 독서 모임이 없습니다.
-        </p>
-      </div>
-    );
+    return <EmptyState message="가입한 독서 모임이 없습니다." />;
   }
 
   return (

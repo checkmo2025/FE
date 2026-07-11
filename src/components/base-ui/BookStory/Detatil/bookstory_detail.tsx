@@ -173,7 +173,7 @@ export default function BookstoryDetail({
 
   return (
     <div
-      className={`flex flex-col t:flex-row w-full px-[20px] items-start gap-4 t:gap-[28px] bg-Background ${className}`}
+      className={`flex min-w-0 flex-col t:flex-row w-full px-[20px] items-start gap-4 t:gap-[28px] bg-Background ${className}`}
     >
       {/* 모바일: 시간/조회수 */}
       <div className="flex t:hidden items-center gap-2 w-full">
@@ -276,7 +276,7 @@ export default function BookstoryDetail({
       {/* 태블릿부터: 오른쪽 정보 영역 */}
       <div className="relative hidden t:flex flex-1 min-w-0 h-[344px] justify-between">
         {/* 닉네임 + 제목/저자 + 좋아요/공유 */}
-        <div className="flex flex-col justify-between h-full">
+        <div className="flex min-w-0 flex-col justify-between h-full">
           <div>
             {/* 닉네임 */}
             <Link href={href} className="flex items-center gap-[12px] min-w-0">

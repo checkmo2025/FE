@@ -31,7 +31,7 @@ export default function StoryNavigation({
   };
 
   return (
-    <div className="relative flex items-center mt-6 w-full t:justify-between">
+    <div className="relative flex min-w-0 items-center mt-6 w-full t:justify-between">
       {/* 이전 버튼 - 태블릿/데스크탑 */}
       <button
         type="button"
@@ -84,7 +84,7 @@ export default function StoryNavigation({
       </div>
 
       {/* 태블릿/데스크탑: 컨텐츠 */}
-      <div className="hidden t:block flex-1">{children}</div>
+      <div className="hidden t:block min-w-0 flex-1">{children}</div>
 
       {/* 다음 버튼 - 태블릿/데스크탑 */}
       <button

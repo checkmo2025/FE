@@ -178,7 +178,7 @@ export default function CommentList({
                       height={40}
                       className="shrink-0 w-6 h-6 t:w-10 t:h-10 self-start mt-2"
                     />
-                    <div className="flex items-center gap-3 flex-1">
+                    <div className="flex min-w-0 flex-1 items-center gap-3">
                       <input
                         type="text"
                         value={replyContent}

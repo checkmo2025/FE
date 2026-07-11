@@ -1,5 +1,12 @@
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import {
+    type InfiniteData,
+    type QueryClient,
+    useInfiniteQuery,
+    useQuery,
+    useQueryClient,
+} from "@tanstack/react-query";
 import { bookService } from "@/services/bookService";
+import type { BookSearchResponse } from "@/types/book";
 
 export const bookKeys = {
     all: ["books"] as const,
@@ -39,10 +46,52 @@ export const useRecommendedBooksQuery = () => {
     });
 };
 
+const getCachedBookLikeState = (queryClient: QueryClient, isbn: string) => {
+    const likedStates: boolean[] = [];
+    const recommendedBook = queryClient
+        .getQueryData<BookSearchResponse>(bookKeys.recommend())
+        ?.detailInfoList.find((book) => book.isbn === isbn);
+
+    if (recommendedBook?.likedByMe !== undefined) {
+        likedStates.push(recommendedBook.likedByMe);
+    }
+
+    const searchQueries = queryClient.getQueriesData<InfiniteData<BookSearchResponse>>({
+        queryKey: [...bookKeys.all, "infiniteSearch"],
+    });
+
+    searchQueries.forEach(([, searchData]) => {
+        searchData?.pages.forEach((page) => {
+            const book = page.detailInfoList.find((item) => item.isbn === isbn);
+            if (book?.likedByMe !== undefined) {
+                likedStates.push(book.likedByMe);
+            }
+        });
+    });
+
+    if (likedStates.includes(true)) return true;
+    if (likedStates.length > 0) return false;
+    return undefined;
+};
+
 export const useBookDetailQuery = (isbn: string) => {
+    const queryClient = useQueryClient();
+
     return useQuery({
         queryKey: bookKeys.detail(isbn),
-        queryFn: () => bookService.getBookDetail(isbn),
+        queryFn: async () => {
+            const book = await bookService.getBookDetail(isbn);
+            const cachedLikeState = getCachedBookLikeState(queryClient, isbn);
+
+            if (book.likedByMe || cachedLikeState === undefined) {
+                return book;
+            }
+
+            return {
+                ...book,
+                likedByMe: cachedLikeState,
+            };
+        },
         enabled: !!isbn,
     });
 };
@@ -54,7 +103,7 @@ export const useLikedBooksInfiniteQuery = (nickname?: string) => {
         initialPageParam: undefined as number | undefined,
         getNextPageParam: (lastPage) => {
             if (!lastPage || !lastPage.hasNext) return undefined;
-            return (lastPage as any).nextCursor;
+            return lastPage.nextCursor;
         },
     });
 };
