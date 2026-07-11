@@ -27,6 +27,46 @@ type Book = {
   imageUrl?: string | null;
 };
 
+const VOTE_START_DELAY_MS = 10 * 60 * 1000;
+
+function formatDateInputValue(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function formatTimeInputValue(date: Date) {
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
+function createDefaultVotePeriod() {
+  const start = new Date(
+    Math.ceil((Date.now() + VOTE_START_DELAY_MS) / 60_000) * 60_000,
+  );
+  const deadline = new Date(start);
+  deadline.setDate(deadline.getDate() + 7);
+
+  return {
+    startDate: formatDateInputValue(start),
+    startTime: formatTimeInputValue(start),
+    deadlineDate: formatDateInputValue(deadline),
+    deadlineTime: formatTimeInputValue(deadline),
+  };
+}
+
+function toVoteDateTimeISO(dateValue: string, timeValue: string) {
+  if (!dateValue || !timeValue) return null;
+
+  const [year, month, day] = dateValue.split("-").map(Number);
+  const [hours, minutes] = timeValue.split(":").map(Number);
+  const date = new Date(year, month - 1, day, hours, minutes, 0, 0);
+
+  return Number.isNaN(date.getTime()) ? null : `${dateValue}T${timeValue}:00`;
+}
+
 export default function NewNoticePage() {
   const params = useParams();
   const router = useRouter();
@@ -46,11 +86,11 @@ export default function NewNoticePage() {
   const [isMultiple, setIsMultiple] = useState(false);
   const [isAnonymous, setIsAnonymous] = useState(false);
 
+  const [startDate, setStartDate] = useState("");
+  const [startTime, setStartTime] = useState("");
   const [deadlineDate, setDeadlineDate] = useState("");
   const [deadlineTime, setDeadlineTime] = useState("");
-  const [isDeadlineEditing, setIsDeadlineEditing] = useState(false);
-  const dateInputRef = useRef<HTMLInputElement | null>(null);
-  const timeInputRef = useRef<HTMLInputElement | null>(null);
+  const hasInitializedVotePeriodRef = useRef(false);
 
   const [isBookshelfModalOpen, setIsBookshelfModalOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
@@ -98,8 +138,6 @@ export default function NewNoticePage() {
       voteItems.some((item) => item.trim()) ||
       isMultiple ||
       isAnonymous ||
-      deadlineDate ||
-      deadlineTime ||
       selectedBook ||
       imageFiles.length > 0
   );
@@ -134,6 +172,19 @@ export default function NewNoticePage() {
 
   const handleBack = () => {
     confirmNavigation(() => router.back());
+  };
+
+  const handleVoteToggle = () => {
+    if (!isVoteEnabled && !hasInitializedVotePeriodRef.current) {
+      const defaultPeriod = createDefaultVotePeriod();
+      setStartDate(defaultPeriod.startDate);
+      setStartTime(defaultPeriod.startTime);
+      setDeadlineDate(defaultPeriod.deadlineDate);
+      setDeadlineTime(defaultPeriod.deadlineTime);
+      hasInitializedVotePeriodRef.current = true;
+    }
+
+    setIsVoteEnabled((prev) => !prev);
   };
 
   const handleVoteItemChange = (index: number, value: string) => {
@@ -198,14 +249,14 @@ export default function NewNoticePage() {
     setImageFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const voteDeadlineISO = useMemo(() => {
-    if (!deadlineDate || !deadlineTime) return null;
-    const [y, m, d] = deadlineDate.split("-").map(Number);
-    const [hh, mm] = deadlineTime.split(":").map(Number);
-    if (!y || !m || !d || hh === undefined || mm === undefined) return null;
-    const dt = new Date(y, m - 1, d, hh, mm, 0, 0);
-    return dt.toISOString();
-  }, [deadlineDate, deadlineTime]);
+  const voteStartTimeISO = useMemo(
+    () => toVoteDateTimeISO(startDate, startTime),
+    [startDate, startTime],
+  );
+  const voteDeadlineISO = useMemo(
+    () => toVoteDateTimeISO(deadlineDate, deadlineTime),
+    [deadlineDate, deadlineTime],
+  );
 
   const mapVoteItemsToRequest = (items: string[]) => {
     const trimmed = items
@@ -251,20 +302,25 @@ export default function NewNoticePage() {
       return;
     }
 
-    const now = new Date();
-    const nowISO = now.toISOString();
-
-    //  deadline 미설정이면 막기
-    if (isVoteEnabled && !voteDeadlineISO) {
-      toast.error("마감시간을 설정하지 않았습니다.");
+    if (isVoteEnabled && !voteStartTimeISO) {
+      toast.error("투표 시작시간을 설정하지 않았습니다.");
       return;
     }
 
-    // deadline이 startTime(=now)보다 앞서면 막기
-    if (isVoteEnabled && voteDeadlineISO) {
+    if (isVoteEnabled && !voteDeadlineISO) {
+      toast.error("투표 종료시간을 설정하지 않았습니다.");
+      return;
+    }
+
+    if (isVoteEnabled && voteStartTimeISO && voteDeadlineISO) {
+      const start = new Date(voteStartTimeISO);
       const deadline = new Date(voteDeadlineISO);
-      if (deadline.getTime() <= now.getTime()) {
-        toast.error("마감시간이 현재시간보다 앞설 수 없습니다.");
+      if (deadline.getTime() <= Date.now()) {
+        toast.error("투표 종료시간은 현재시간보다 이후여야 합니다.");
+        return;
+      }
+      if (deadline.getTime() <= start.getTime()) {
+        toast.error("투표 종료시간은 시작시간보다 이후여야 합니다.");
         return;
       }
     }
@@ -302,8 +358,8 @@ export default function NewNoticePage() {
             ...mapVoteItemsToRequest(voteItems),
             anonymity: isAnonymous,
             duplication: isMultiple,
-            startTime: nowISO,
-            deadline: voteDeadlineISO!, // 위에서 체크함
+            startTime: voteStartTimeISO!,
+            deadline: voteDeadlineISO!,
           }
         : undefined;
 
@@ -506,62 +562,66 @@ export default function NewNoticePage() {
                             </span>
                           </button>
 
-                          <div className="flex flex-col gap-2">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setIsDeadlineEditing(true);
-                                requestAnimationFrame(() => {
-                                  dateInputRef.current?.showPicker?.();
-                                  dateInputRef.current?.focus();
-                                });
-                              }}
-                              className="flex cursor-pointer items-center gap-3 text-left"
-                            >
-                              <div className="relative w-6 h-6">
-                                <Image
-                                  src="/Calendar.svg"
-                                  alt="날짜"
-                                  fill
-                                  className="object-contain"
+                          <div className="grid gap-3 t:grid-cols-2">
+                            <div className="flex flex-col gap-2 rounded-[8px] border border-Subbrown-4 bg-White p-3">
+                              <div className="flex items-center gap-2">
+                                <div className="relative h-5 w-5">
+                                  <Image
+                                    src="/Calendar.svg"
+                                    alt=""
+                                    fill
+                                    className="object-contain"
+                                  />
+                                </div>
+                                <span className="body_1_2 text-Gray-6">시작</span>
+                              </div>
+                              <div className="grid grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] gap-2">
+                                <input
+                                  type="date"
+                                  value={startDate}
+                                  onChange={(e) => setStartDate(e.target.value)}
+                                  aria-label="투표 시작 날짜"
+                                  className="h-[44px] w-full min-w-0 cursor-pointer rounded-[8px] border border-Subbrown-4 bg-White px-3 body_1_2 text-Gray-7 outline-none"
+                                />
+                                <input
+                                  type="time"
+                                  value={startTime}
+                                  onChange={(e) => setStartTime(e.target.value)}
+                                  aria-label="투표 시작 시간"
+                                  className="h-[44px] w-full min-w-0 cursor-pointer rounded-[8px] border border-Subbrown-4 bg-White px-3 body_1_2 text-Gray-7 outline-none"
                                 />
                               </div>
-                              <span className="body_1_2 text-Gray-4">
-                                {deadlineDate && deadlineTime
-                                  ? `${deadlineDate} ${deadlineTime}`
-                                  : "마감 날짜/시간"}
-                              </span>
-                            </button>
+                            </div>
 
-                            {isDeadlineEditing && (
-                              <div className="flex gap-3 items-center">
+                            <div className="flex flex-col gap-2 rounded-[8px] border border-Subbrown-4 bg-White p-3">
+                              <div className="flex items-center gap-2">
+                                <div className="relative h-5 w-5">
+                                  <Image
+                                    src="/Calendar.svg"
+                                    alt=""
+                                    fill
+                                    className="object-contain"
+                                  />
+                                </div>
+                                <span className="body_1_2 text-Gray-6">종료</span>
+                              </div>
+                              <div className="grid grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] gap-2">
                                 <input
-                                  ref={dateInputRef}
                                   type="date"
                                   value={deadlineDate}
-                                  onChange={(e) => {
-                                    setDeadlineDate(e.target.value);
-                                    requestAnimationFrame(() => {
-                                      timeInputRef.current?.showPicker?.();
-                                      timeInputRef.current?.focus();
-                                    });
-                                  }}
-                                  className="h-[44px] cursor-pointer rounded-[8px] border border-Subbrown-4 bg-White px-4 body_1_2 text-Gray-7 outline-none"
+                                  onChange={(e) => setDeadlineDate(e.target.value)}
+                                  aria-label="투표 종료 날짜"
+                                  className="h-[44px] w-full min-w-0 cursor-pointer rounded-[8px] border border-Subbrown-4 bg-White px-3 body_1_2 text-Gray-7 outline-none"
                                 />
                                 <input
-                                  ref={timeInputRef}
                                   type="time"
                                   value={deadlineTime}
-                                  onChange={(e) => {
-                                    setDeadlineTime(e.target.value);
-                                    requestAnimationFrame(() =>
-                                      setIsDeadlineEditing(false),
-                                    );
-                                  }}
-                                  className="h-[44px] cursor-pointer rounded-[8px] border border-Subbrown-4 bg-White px-4 body_1_2 text-Gray-7 outline-none"
+                                  onChange={(e) => setDeadlineTime(e.target.value)}
+                                  aria-label="투표 종료 시간"
+                                  className="h-[44px] w-full min-w-0 cursor-pointer rounded-[8px] border border-Subbrown-4 bg-White px-3 body_1_2 text-Gray-7 outline-none"
                                 />
                               </div>
-                            )}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -617,19 +677,19 @@ export default function NewNoticePage() {
                     >
                       <Image
                         src={isPinned ? "/CheckOn.svg" : "/CheckOff.svg"}
-                        alt="중요 여부"
+                        alt="고정 여부"
                         width={20}
                         height={20}
                         className={isPinned ? glow : ""}
                       />
-                      중요여부
+                      고정 여부
                     </button>
                   </div>
 
                   <div className="flex items-center justify-end gap-4">
                     <button
                       type="button"
-                      onClick={() => setIsVoteEnabled((prev) => !prev)}
+                      onClick={handleVoteToggle}
                       className={`flex cursor-pointer items-center gap-2 body_1_2 transition-all ${
                         isVoteEnabled ? "text-Gray-7" : "text-Gray-4"
                       }`}

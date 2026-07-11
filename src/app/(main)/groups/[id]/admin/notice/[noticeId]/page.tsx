@@ -703,12 +703,12 @@ export default function EditNoticePage() {
                     >
                       <Image
                         src={isPinned ? "/CheckOn.svg" : "/CheckOff.svg"}
-                        alt="중요 여부"
+                        alt="고정 여부"
                         width={20}
                         height={20}
                         className={isPinned ? glow : ""}
                       />
-                      중요여부
+                      고정 여부
                     </button>
                   </div>
 
