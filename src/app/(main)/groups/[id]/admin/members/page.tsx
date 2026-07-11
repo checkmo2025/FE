@@ -7,6 +7,7 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 
 import { useInfiniteClubMembersQuery } from "@/hooks/queries/useClubMemberQueries";
+import { useClubMeQuery } from "@/hooks/queries/useClubhomeQueries";
 import { useUpdateClubMemberStatusMutation } from "@/hooks/mutations/useClubMemberMutations";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 import type {
@@ -66,10 +67,35 @@ function getRoleLabelFromStatus(status: ClubMemberStatus) {
 }
 
 type RoleType = "admin" | "member" | "creator" | null;
+type ManagementActorStatus = "OWNER" | "STAFF";
+
+const ROLE_ACTIONS = [
+  { type: "admin" as RoleType, label: "운영진 역할", icon: "/admin.svg" },
+  { type: "member" as RoleType, label: "회원 역할", icon: "/member.svg" },
+  { type: "creator" as RoleType, label: "개설자 역할", icon: "/leader.svg" },
+  { type: null, label: "회원 탈퇴", icon: "/Logout.svg" },
+];
+
+function isRoleActionAllowed(
+  actorStatus: ManagementActorStatus | null,
+  targetStatus: ClubMemberStatus,
+  role: RoleType
+) {
+  if (!actorStatus || !(targetStatus === "MEMBER" || targetStatus === "STAFF")) {
+    return false;
+  }
+
+  if (role === "admin") return targetStatus === "MEMBER";
+  if (role === "member") return targetStatus === "STAFF";
+  if (role === "creator") return actorStatus === "OWNER";
+
+  return true;
+}
 
 type RoleEditDropdownProps = {
   isOpen: boolean;
   member: ClubMemberItem;
+  actorStatus: ManagementActorStatus | null;
   onSelectRole: (role: RoleType) => void;
   onSelectPendingAction: (action: "APPROVE" | "REJECT") => void;
   buttonRef: RefObject<HTMLButtonElement | null>;
@@ -78,6 +104,7 @@ type RoleEditDropdownProps = {
 function RoleEditDropdown({
   isOpen,
   member,
+  actorStatus,
   onSelectRole,
   onSelectPendingAction,
   buttonRef,
@@ -175,17 +202,14 @@ function RoleEditDropdown({
     );
   }
 
-  // MEMBER/STAFF 메뉴
-  const roles = [
-    { type: "admin" as RoleType, label: "운영진 역할", icon: "/admin.svg" },
-    { type: "member" as RoleType, label: "회원 역할", icon: "/member.svg" },
-    { type: "creator" as RoleType, label: "개설자 역할", icon: "/leader.svg" },
-    { type: null, label: "회원 탈퇴", icon: "/Logout.svg" },
-  ];
+  // MEMBER/STAFF 메뉴: 실행자와 대상 역할 기준으로 가능한 액션만 노출
+  const roles = ROLE_ACTIONS.filter((role) =>
+    isRoleActionAllowed(actorStatus, status, role.type)
+  );
 
   return (
     <div
-      className="fixed w-34 h-44 rounded-lg border border-Subbrown-4 bg-White shadow-md z-50 overflow-hidden"
+      className="fixed w-34 rounded-lg border border-Subbrown-4 bg-White shadow-md z-50 overflow-hidden"
       style={{ top: position.top, left: position.left }}
     >
       {roles.map((role, index) => (
@@ -217,6 +241,11 @@ export default function AdminMembersPage() {
   const clubId = Number(groupId);
 
   const enabled = Number.isFinite(clubId) && clubId > 0;
+  const { data: myClubStatus } = useClubMeQuery(clubId);
+  const actorStatus: ManagementActorStatus | null =
+    myClubStatus?.myStatus === "OWNER" || myClubStatus?.myStatus === "STAFF"
+      ? myClubStatus.myStatus
+      : null;
 
   const {
     data,
@@ -269,8 +298,8 @@ export default function AdminMembersPage() {
       toast.success("처리 완료");
       setOpenMenuId(null);
       await refetch(); // ALL 페이지 동기화
-    } catch (e: any) {
-      toast.error(e?.message ?? "요청 실패");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "요청 실패");
       setOpenMenuId(null);
     }
   };
@@ -278,7 +307,7 @@ export default function AdminMembersPage() {
   const handleSelectRole = (member: ClubMemberItem, role: RoleType) => {
     const status = member.clubMemberStatus;
 
-    if (!(status === "MEMBER" || status === "STAFF")) {
+    if (!isRoleActionAllowed(actorStatus, status, role)) {
       setOpenMenuId(null);
       return;
     }
@@ -445,7 +474,7 @@ export default function AdminMembersPage() {
                           buttonRefs.current[member.clubMemberId] = el;
                         }}
                         onClick={() => handleRoleEdit(member.clubMemberId)}
-                        disabled={isPending}
+                        disabled={isPending || actorStatus === null}
                         className="body_1_2 text-Gray-7 underline underline-offset-2 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                       >
                         <span className="t:hidden d:hidden">역할수정</span>
@@ -455,6 +484,7 @@ export default function AdminMembersPage() {
                       <RoleEditDropdown
                         isOpen={openMenuId === member.clubMemberId}
                         member={member}
+                        actorStatus={actorStatus}
                         onSelectRole={(role) => handleSelectRole(member, role)}
                         onSelectPendingAction={(action) => handleSelectPendingAction(member, action)}
                         buttonRef={{ current: buttonRefs.current[member.clubMemberId] }}
