@@ -6,7 +6,7 @@ import { useSignup } from "@/contexts/SignupContext";
 const normalizeTermsRequirement = (terms: Term[]) =>
   terms.map((term) => ({
     ...term,
-    required: term.termsType !== "MARKETING",
+    required: term.termsType !== "MARKETING" && term.termsType !== "THIRD_PARTY_PROVISION",
   }));
 
 export const useTermsAgreement = (onNext: () => void) => {
