@@ -183,6 +183,11 @@ export default function StoryEditPageClient() {
               placeholder={`책 이야기 내용을 입력해 주세요. (최대 ${INPUT_LIMITS.BOOK_STORY_CONTENT}자)`}
               className="w-full min-h-[300px] px-4 py-3 rounded-lg border border-Gray-2 bg-background body_1_3 text-Gray-7 resize-none focus:outline-none focus:border-primary-2 transition-colors"
             />
+            <div className="mt-2 flex justify-end">
+              <span className="text-[12px] leading-[16px] text-Gray-3">
+                {description.length}/{INPUT_LIMITS.BOOK_STORY_CONTENT}
+              </span>
+            </div>
           </div>
         </div>
 

@@ -1,8 +1,9 @@
 "use client";
 
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 
 export type GroupSummary = { id: string; name: string };
 
@@ -13,6 +14,8 @@ type Props = {
   footer?: ReactNode;
   /** true면 모든 화면에서 모임 목록을 1열로 표시(태블릿 2열 분기 제거). 예: 홈 */
   singleColumn?: boolean;
+  /** 펼친 목록을 기존 레이아웃 높이에 영향을 주지 않는 오버레이로 표시 */
+  overlayWhenOpen?: boolean;
 };
 
 function getLimitByViewport() {
@@ -22,11 +25,24 @@ function getLimitByViewport() {
   return 3;
 }
 
-export default function Mybookclub({ groups, isLoading = false, footer, singleColumn = false }: Props) {
+export default function Mybookclub({
+  groups,
+  isLoading = false,
+  footer,
+  singleColumn = false,
+  overlayWhenOpen = false,
+}: Props) {
   const count = groups.length;
 
   const [open, setOpen] = useState(false);
   const [limit, setLimit] = useState(3);
+  const [collapsedHeight, setCollapsedHeight] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const asideRef = useRef<HTMLElement>(null);
+
+  useOnClickOutside(containerRef, () => {
+    if (open) setOpen(false);
+  });
 
   useEffect(() => {
     const apply = () => setLimit(getLimitByViewport());
@@ -54,13 +70,31 @@ export default function Mybookclub({ groups, isLoading = false, footer, singleCo
     return open ? groups : groups.slice(0, limit);
   }, [groups, open, limit, showToggle, isLoading]);
 
+  const isOverlayOpen = overlayWhenOpen && open && showToggle;
+
+  const handleToggle = () => {
+    if (!open && overlayWhenOpen) {
+      setCollapsedHeight(asideRef.current?.offsetHeight ?? null);
+    }
+    setOpen((value) => !value);
+  };
+
   return (
-    <aside
-      className={[
-        "flex flex-col w-full d:w-[332px] p-5 rounded-[8px] bg-Subbrown-4",
-        open && showToggle ? "max-h-[814px]" : "",
-      ].join(" ")}
+    <div
+      ref={containerRef}
+      className="relative w-full d:w-[332px]"
+      style={isOverlayOpen && collapsedHeight ? { height: collapsedHeight } : undefined}
     >
+      <aside
+        ref={asideRef}
+        className={[
+          "flex flex-col w-full d:w-[332px] p-5 rounded-[8px] bg-Subbrown-4 transition-all duration-300",
+          open && showToggle ? "max-h-[calc(100vh-2rem)] t:max-h-[814px]" : "",
+          isOverlayOpen
+            ? "absolute left-0 top-0 z-50 border border-Subbrown-3 shadow-2xl"
+            : "",
+        ].join(" ")}
+      >
       {/* ✅ 로딩 중이거나 0개면 로고 */}
       {isLoading || count === 0 ? (
         <div className="flex items-center justify-center py-4 t:py-10 d:py-20">
@@ -93,7 +127,7 @@ export default function Mybookclub({ groups, isLoading = false, footer, singleCo
             <div className="mt-3">
               <button
                 type="button"
-                onClick={() => setOpen((v) => !v)}
+                onClick={handleToggle}
                 className="w-full rounded-[6px] bg-transparent text-[13px] flex items-center justify-center gap-[6px] text-Gray-3"
               >
                 {open ? (
@@ -115,6 +149,7 @@ export default function Mybookclub({ groups, isLoading = false, footer, singleCo
 
       {/* 전체보기 토글이 있으면 버튼 생략, 토글이 없을 때(목록이 한도 이내/0개)만 노출 */}
       {footer && !showToggle && <div className="mt-3 shrink-0">{footer}</div>}
-    </aside>
+      </aside>
+    </div>
   );
 }
