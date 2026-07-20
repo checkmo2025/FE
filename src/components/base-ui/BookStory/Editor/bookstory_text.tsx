@@ -88,7 +88,7 @@ export default function BookstoryText({
       </div>
 
       {/* Detail box */}
-      <div className="flex p-[10px] items-start gap-[10px]">
+      <div className="flex flex-1 flex-col p-[10px] gap-[10px]">
         <textarea
           ref={textareaRef}
           value={detail}
@@ -111,6 +111,12 @@ export default function BookstoryText({
             whitespace-pre-wrap
           "
         />
+
+        <div className="mt-auto flex justify-end">
+          <span className="text-[12px] leading-[16px] text-Gray-3">
+            {detail.length}/{INPUT_LIMITS.BOOK_STORY_CONTENT}
+          </span>
+        </div>
       </div>
     </div>
   );
