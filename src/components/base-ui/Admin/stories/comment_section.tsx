@@ -38,43 +38,28 @@ export default function CommentSection({
   const mapApiToUiComments = (apiComments: CommentInfo[]): Comment[] => {
     const mapNode = (
       c: CommentInfo
-    ): (Comment & { parentCommentId?: number | null }) | null => {
-      if (!c.authorInfo) return null;
-
+    ): Comment & { parentCommentId?: number | null } => {
       const mappedReplies = c.replies
-        ? c.replies
-            .map((r) => mapNode(r))
-            .filter(
-              (
-                reply
-              ): reply is Comment & { parentCommentId?: number | null } =>
-                reply !== null
-            )
+        ? c.replies.map((r) => mapNode(r))
         : [];
 
       return {
         id: c.commentId,
-        authorName: c.authorInfo.nickname,
-        profileImgSrc: isValidUrl(c.authorInfo.profileImageUrl)
-          ? c.authorInfo.profileImageUrl
+        authorName: c.deleted ? "(알 수 없음)" : c.authorInfo?.nickname ?? "(알 수 없음)",
+        profileImgSrc: !c.deleted && isValidUrl(c.authorInfo?.profileImageUrl)
+          ? c.authorInfo?.profileImageUrl
           : DEFAULT_PROFILE_IMAGE,
-        content: c.content,
+        content: c.deleted ? "삭제된 댓글입니다." : c.content,
         createdAt: c.createdAt,
-        isAuthor: c.authorInfo.nickname === storyAuthorNickname,
-        isMine: c.writtenByMe,
+        isAuthor: !c.deleted && c.authorInfo?.nickname === storyAuthorNickname,
+        isMine: !c.deleted && c.writtenByMe,
+        isDeleted: c.deleted,
         replies: mappedReplies,
         parentCommentId: c.parentCommentId,
       };
     };
 
-    const mapped = apiComments
-      .map(mapNode)
-      .filter(
-        (
-          comment
-        ): comment is Comment & { parentCommentId?: number | null } =>
-          comment !== null
-      );
+    const mapped = apiComments.map(mapNode);
 
     const rootComments: Comment[] = [];
     const commentMap = new Map<

@@ -240,8 +240,25 @@ export default function AdminApplicantPage() {
 
       <div className="px-4.5 t:px-10 d:px-4">
         <div className="mx-auto w-full max-w-260 py-6">
-          <div className="mb-2">
+          <div className="mb-2 flex items-center justify-between">
             <h1 className="subhead_1 t:subhead_3 text-Gray-7">모임 가입 신청 관리</h1>
+
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="hidden t:block body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
+              >
+                뒤로가기
+              </button>
+              <button
+                type="button"
+                onClick={() => membersQuery.refetch()}
+                className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
+              >
+                새로고침
+              </button>
+            </div>
           </div>
           <div className="mb-6">
             <p className="body_1_3 text-Gray-4 whitespace-pre-line">
