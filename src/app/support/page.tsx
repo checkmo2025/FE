@@ -96,6 +96,25 @@ export default function SupportPage() {
         </a>
       </section>
 
+      <section className="rounded-[8px] border border-Subbrown-3 bg-White p-5 t:p-6">
+        <p className="text-[14px] font-medium leading-[145%] text-Gray-4">
+          책모 서비스 소개
+        </p>
+        <p className="mt-2 text-[20px] font-semibold leading-[145%] text-primary-3 t:text-[22px]">
+          책모 홍보 페이지 바로가기
+        </p>
+        <p className="mt-4 text-[15px] leading-[170%] text-Gray-5">
+          독서모임의 운영진·회원이신가요? 책모에서 독서모임을 편리하게
+          관리해보세요.
+        </p>
+        <a
+          href="/service-introduction"
+          className="mt-4 inline-block rounded-[8px] border border-Subbrown-3 bg-White px-4 py-3 font-semibold text-primary-3 transition-colors hover:border-primary-2"
+        >
+          책모 홍보 페이지 바로가기
+        </a>
+      </section>
+
       <DocumentSection title="관련 문서">
         <div className="flex flex-col gap-3 t:flex-row t:flex-wrap">
           {POLICY_LINKS.map(({ href, label }) => (
@@ -112,4 +131,3 @@ export default function SupportPage() {
     </PublicDocumentLayout>
   );
 }
-

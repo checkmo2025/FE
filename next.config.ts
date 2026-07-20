@@ -30,6 +30,15 @@ const nextConfig: NextConfig = {
       { source: "/marketing-consent", destination: "/support/v1/marketing-consent", permanent: true },
     ];
   },
+  // 독립형 서비스 소개 HTML을 주소 변경 없이 노출합니다.
+  async rewrites() {
+    return [
+      {
+        source: "/service-introduction",
+        destination: "/service-introduction/index.html",
+      },
+    ];
+  },
   async headers() {
     return [
       {
