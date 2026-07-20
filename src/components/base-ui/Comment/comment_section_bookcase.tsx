@@ -57,14 +57,15 @@ export default function CommentSection({
     // 1. 재귀적으로 맵핑 (백엔드에서 이미 nested 된 replies 배열을 줄 경우를 대비)
     const mapNode = (c: CommentInfo): Comment & { parentCommentId?: number | null } => ({
       id: c.commentId,
-      authorName: c.authorInfo?.nickname ?? "(알 수 없음)",
-      profileImgSrc: isValidUrl(c.authorInfo?.profileImageUrl)
+      authorName: c.deleted ? "(알 수 없음)" : c.authorInfo?.nickname ?? "(알 수 없음)",
+      profileImgSrc: !c.deleted && isValidUrl(c.authorInfo?.profileImageUrl)
         ? c.authorInfo?.profileImageUrl as string
         : DEFAULT_PROFILE_IMAGE,
-      content: c.content,
+      content: c.deleted ? "삭제된 댓글입니다." : c.content,
       createdAt: c.createdAt,
-      isAuthor: c.authorInfo?.nickname === storyAuthorNickname,
-      isMine: c.writtenByMe,
+      isAuthor: !c.deleted && c.authorInfo?.nickname === storyAuthorNickname,
+      isMine: !c.deleted && c.writtenByMe,
+      isDeleted: c.deleted,
       // 서버에서 content와 nickname 모두 BLOCKED_USER_MASK로 마스킹하여 내려오거나, 로컬에서 차단한 경우 즉시 마스킹
       isBlocked: !c.deleted && (
         c.authorInfo?.nickname === BLOCKED_USER_MASK ||

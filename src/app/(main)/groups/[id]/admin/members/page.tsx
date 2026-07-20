@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import toast from "react-hot-toast";
 
@@ -237,6 +237,7 @@ function RoleEditDropdown({
 
 export default function AdminMembersPage() {
   const params = useParams();
+  const router = useRouter();
   const groupId = params.id as string;
   const clubId = Number(groupId);
 
@@ -373,13 +374,22 @@ export default function AdminMembersPage() {
         <div className="mb-2 flex items-center justify-between">
           <h1 className="subhead_1 t:subhead_3 text-Gray-7">모임 회원 관리</h1>
 
-          <button
-            type="button"
-            onClick={() => refetch()}
-            className="body_1_2 text-Gray-7 underline underline-offset-2"
-          >
-            새로고침
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
+            >
+              뒤로가기
+            </button>
+            <button
+              type="button"
+              onClick={() => refetch()}
+              className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
+            >
+              새로고침
+            </button>
+          </div>
         </div>
 
         <div className="mb-6">

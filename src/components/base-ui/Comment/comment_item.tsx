@@ -17,6 +17,7 @@ type CommentItemProps = {
   isAuthor?: boolean; // 작성자 뱃지용
   isMine?: boolean;
   isBlocked?: boolean; // 차단된 사용자의 댓글
+  isDeleted?: boolean;
   isReply?: boolean;
   canEdit?: boolean;
   canDelete?: boolean;
@@ -37,6 +38,7 @@ export default function CommentItem({
   isAuthor = false,
   isMine = false,
   isBlocked = false,
+  isDeleted = false,
   isReply = false,
   canEdit = false,
   canDelete = false,
@@ -90,11 +92,11 @@ export default function CommentItem({
     );
   };
 
-  const derivedCanEdit = canEdit || isMine;
-  const derivedCanDelete = canDelete || isMine;
-  const derivedCanReport = canReport || !isMine;
+  const derivedCanEdit = !isDeleted && (canEdit || isMine);
+  const derivedCanDelete = !isDeleted && (canDelete || isMine);
+  const derivedCanReport = !isDeleted && (canReport || !isMine);
 
-  const hasReplyAction = !isReply && !!onReply;
+  const hasReplyAction = !isDeleted && !isReply && !!onReply;
   const hasMenuAction =
     hasReplyAction || derivedCanDelete || derivedCanEdit || derivedCanReport;
 
