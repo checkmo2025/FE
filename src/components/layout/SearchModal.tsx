@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, type RefObject } from "react";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,9 +18,10 @@ import { useUnsavedChangesNavigation } from "@/hooks/useUnsavedChangesGuard";
 type SearchModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  contentRef: RefObject<HTMLDivElement | null>;
 };
 
-export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
+export default function SearchModal({ isOpen, onClose, contentRef }: SearchModalProps) {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState("");
   const debouncedSearchValue = useDebounce(searchValue, 300);
@@ -116,6 +117,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
       {/* 모달 */}
       <div
+        ref={contentRef}
         className="fixed left-0 right-0 z-50 bg-primary-1 border-b border-white/20 animate-slide-down"
         style={{ top: `${topOffset}px` }}
       >
