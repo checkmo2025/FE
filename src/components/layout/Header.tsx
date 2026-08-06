@@ -46,6 +46,8 @@ export default function Header() {
 
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
+  const searchButtonRef = useRef<HTMLButtonElement>(null);
+  const searchModalRef = useRef<HTMLDivElement>(null);
   
   const isScrollVisible = useScrollDirection();
   const shouldShowHeader = isScrollVisible || isSearchOpen || isNotificationOpen;
@@ -70,6 +72,30 @@ export default function Header() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isNotificationOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: PointerEvent) => {
+      const target = event.target;
+
+      if (
+        !(target instanceof Node) ||
+        searchButtonRef.current?.contains(target) ||
+        searchModalRef.current?.contains(target)
+      ) {
+        return;
+      }
+
+      closeSearch();
+    };
+
+    if (isSearchOpen) {
+      document.addEventListener("pointerdown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("pointerdown", handleClickOutside);
+    };
+  }, [isSearchOpen, closeSearch]);
 
 
   const handleNavClick = (href: string) => {
@@ -122,6 +148,7 @@ export default function Header() {
           {/*아이콘*/}
           <div className="flex items-center gap-2.5 t:gap-4 d:mr-1">
             <motion.button
+              ref={searchButtonRef}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={toggleSearch}
@@ -188,6 +215,7 @@ export default function Header() {
       <SearchModal
         isOpen={isSearchOpen}
         onClose={closeSearch}
+        contentRef={searchModalRef}
       />
     </header>
   );
