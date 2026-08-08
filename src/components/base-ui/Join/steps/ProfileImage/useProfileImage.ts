@@ -5,6 +5,7 @@ import { authService } from "@/services/authService";
 import { CATEGORY_MAP } from "@/constants/categories";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 import { useAuthStore } from "@/store/useAuthStore";
+import { normalizeNickname } from "@/utils/nickname";
 
 export const useProfileImage = () => {
   const {
@@ -72,9 +73,10 @@ export const useProfileImage = () => {
 
       // 2. Submit all info to additional-info endpoint
       const categories = selectedInterests.map((c: string) => CATEGORY_MAP[c] || c);
+      const normalizedNickname = normalizeNickname(nickname);
 
       await authService.additionalInfo({
-        nickname,
+        nickname: normalizedNickname,
         name,
         phoneNumber,
         description,
@@ -85,7 +87,7 @@ export const useProfileImage = () => {
       const fallbackEmail = currentUser?.email || email;
       const fallbackUser = {
         email: fallbackEmail,
-        nickname,
+        nickname: normalizedNickname,
         name,
         phoneNumber,
         description,

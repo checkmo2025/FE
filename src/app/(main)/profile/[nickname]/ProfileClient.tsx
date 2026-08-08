@@ -12,6 +12,7 @@ import OtherUserProfileTabs from "@/components/base-ui/Profile/OtherUser/OtherUs
 import type { OtherProfileTabId } from "@/components/base-ui/Profile/OtherUser/OtherUserProfileTabs";
 import { useOtherProfileQuery } from "@/hooks/queries/useMemberQueries";
 import { getProfileAccessErrorMessage } from "@/utils/profileAccess";
+import { isSameNicknameIdentity } from "@/utils/nickname";
 
 const TAB_UNAVAILABLE_TARGET: Record<OtherProfileTabId, string> = {
   stories: "책 이야기를",
@@ -44,8 +45,7 @@ function ProfileTabLoadingMessage() {
   );
 }
 
-export default function ProfileClient({ encodedNickname }: { encodedNickname: string }) {
-  const nickname = encodedNickname ? decodeURIComponent(encodedNickname) : "";
+export default function ProfileClient({ nickname }: { nickname: string }) {
   const [activeTab, setActiveTab] = useState<OtherProfileTabId>("stories");
   const router = useRouter();
   const { user, isLoggedIn } = useAuthStore();
@@ -56,7 +56,7 @@ export default function ProfileClient({ encodedNickname }: { encodedNickname: st
     (profileQuery.isError ? "프로필 정보를 불러올 수 없습니다." : null);
 
   useEffect(() => {
-    if (isLoggedIn && user?.nickname && user.nickname === nickname) {
+    if (isLoggedIn && user?.nickname && isSameNicknameIdentity(user.nickname, nickname)) {
       router.replace("/profile/mypage");
     }
   }, [isLoggedIn, user?.nickname, nickname, router]);

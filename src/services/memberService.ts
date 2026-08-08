@@ -3,6 +3,7 @@ import { MEMBER_ENDPOINTS } from "@/lib/api/endpoints/member";
 import { RecommendResponse, UpdateProfileRequest, UpdatePasswordRequest, ProfileResponse, OtherProfileResponse, FollowListResponse, FollowCountResponse, FindEmailRequest, FindEmailResponse, LoginStatusResponse, UpdateEmailRequest, BlockListResponse } from "@/types/member";
 import { ReportRequest, MyReportList } from "@/types/report";
 import { ApiResponse, TermsResponse, MemberTermsStatus, UpdateAgreementsRequest } from "@/types/auth";
+import { normalizeNickname } from "@/utils/nickname";
 export const memberService = {
     getRecommendedMembers: async (): Promise<RecommendResponse> => {
         const response = await apiClient.get<ApiResponse<RecommendResponse>>(
@@ -13,7 +14,10 @@ export const memberService = {
     updateProfile: async (data: UpdateProfileRequest): Promise<void> => {
         const response = await apiClient.patch<ApiResponse<unknown>>(
             MEMBER_ENDPOINTS.UPDATE_PROFILE,
-            data
+            {
+                ...data,
+                nickname: data.nickname ? normalizeNickname(data.nickname) : data.nickname,
+            }
         );
         if (!response.isSuccess) {
             throw new Error(response.message || "Failed to update profile");

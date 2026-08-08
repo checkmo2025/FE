@@ -12,6 +12,7 @@ import ExpandableProfileImage from "@/components/common/ExpandableProfileImage";
 import { useReportBlockFlow } from "@/hooks/useReportBlockFlow";
 import { ReportReason } from "@/types/report";
 import { getProfileAccessErrorMessage } from "@/utils/profileAccess";
+import { getProfileFollowsPath } from "@/utils/nickname";
 
 // [보조 컴포넌트] 액션 버튼 (구독하기 / 신고하기)
 function ActionButton({
@@ -149,12 +150,12 @@ export default function ProfileUserInfo({ nickname }: { nickname: string }) {
                 <StatItem
                   label="구독중"
                   count={profile.followingCount}
-                  href={`/profile/${profile.nickname}/follows?tab=following`}
+                  href={getProfileFollowsPath(profile.nickname, "following")}
                 />
                 <StatItem
                   label="구독자"
                   count={profile.followerCount}
-                  href={`/profile/${profile.nickname}/follows?tab=follower`}
+                  href={getProfileFollowsPath(profile.nickname, "follower")}
                 />
               </div>
             </div>

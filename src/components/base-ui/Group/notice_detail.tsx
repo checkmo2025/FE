@@ -17,6 +17,7 @@ import {
 } from '@/hooks/mutations/useClubNotificationMutations';
 import BookshelfDeleteConfirmModal from '../Bookcase/bookid/BookshelfDeleteConfirmModal';
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
+import { getProfilePath } from '@/utils/nickname';
 
 type NoticeDetailProps = {
   clubId: number;
@@ -73,7 +74,7 @@ function VoteMemberPopover({
 
   const handleClickMember = (nickname: string) => {
     setIsOpen(false);
-    router.push(`/profile/${encodeURIComponent(nickname)}`);
+    router.push(getProfilePath(nickname));
   };
 
   return (
@@ -294,8 +295,8 @@ export default function NoticeDetail({
       toast.success(
         isRevoteMode ? '투표가 수정되었습니다.' : '투표가 완료되었습니다.'
       );
-    } catch (e: any) {
-      const msg = e?.message ?? '';
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : '';
       toast.error(msg || '투표에 실패했습니다.');
     }
   };
@@ -325,8 +326,8 @@ export default function NoticeDetail({
       await deleteNotice({ clubId, noticeId });
       toast.success('공지사항이 삭제되었습니다.');
       router.push(`/groups/${clubId}/notice`);
-    } catch (e: any) {
-      const msg = e?.message ?? '';
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : '';
       toast.error(msg || '공지사항 삭제에 실패했습니다.');
     } finally {
       setIsDeleteModalOpen(false);

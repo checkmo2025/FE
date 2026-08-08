@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams, useParams } from "next/navigation";
 import toast from "react-hot-toast";
+import { getProfilePath } from "@/utils/nickname";
 
 import BookDetailCard from "@/components/base-ui/Bookcase/BookDetailCard";
 import BookDetailNav, { Tab as TabKey } from "@/components/base-ui/Bookcase/BookDetailNav";
@@ -189,7 +190,7 @@ export default function BookDetailPageClient() {
   }, [reviewsQuery.data]);
 
   const handleClickAuthor = (nickname: string) => {
-    confirmNavigation(() => router.push(`/profile/${nickname}`));
+    confirmNavigation(() => router.push(getProfilePath(nickname)));
   };
 
   const handleOpenTopicReport = (id: number | string) => {

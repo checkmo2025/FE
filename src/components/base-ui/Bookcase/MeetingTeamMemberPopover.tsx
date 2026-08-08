@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 import type { MeetingTeamMemberItem } from "@/types/groups/meetingDetail";
 import { getProfileImageSrc } from "@/utils/profileImage";
+import { getProfilePath } from "@/utils/nickname";
 
 type Props = {
   memberCount: number;
@@ -40,7 +41,7 @@ export default function MeetingTeamMemberPopover({
 
   const handleClickMember = (nickname: string) => {
     setIsOpen(false);
-    router.push(`/profile/${encodeURIComponent(nickname)}`);
+    router.push(getProfilePath(nickname));
   };
 
   return (

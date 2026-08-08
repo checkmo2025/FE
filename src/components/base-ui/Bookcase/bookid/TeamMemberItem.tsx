@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getProfileImageSrc } from "@/utils/profileImage";
+import { getProfilePath } from "@/utils/nickname";
 
 type Props = {
   name: string;
@@ -15,7 +16,7 @@ export default function TeamMemberItem({
 }: Props) {
   return (
     <Link
-      href={`/profile/${encodeURIComponent(name)}`}
+      href={getProfilePath(name)}
       className="
         flex w-full items-center justify-between rounded-[8px] border border-Subbrown-4 bg-background px-[20px] py-[12px]
         transition-all duration-150 ease-out

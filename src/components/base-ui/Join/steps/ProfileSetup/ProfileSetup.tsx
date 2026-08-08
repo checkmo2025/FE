@@ -78,7 +78,7 @@ const ProfileSetup: React.FC<ProfileSetupProps> = ({ onNext }) => {
                       <JoinInput
                         value={nickname}
                         onChange={handleNicknameChange}
-                        placeholder="닉네임을 입력해주세요(최대 20글자)"
+                        placeholder="한글/영문/숫자/특수문자(최대 20자)"
                         className="h-[44px] border-Subbrown-4 placeholder-Gray-3 text-[14px] font-normal w-full bg-white"
                       />
                     </div>

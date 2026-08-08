@@ -15,6 +15,7 @@ import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations"
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 
 import CategorySlider from "@/components/base-ui/BookStory/Common/CategorySlider";
+import { getProfilePath } from "@/utils/nickname";
 
 export default function StoriesPageClient() {
   const router = useRouter();
@@ -170,7 +171,7 @@ export default function StoriesPageClient() {
         fetchNextPage={fetchNextPage}
         onToggleLike={handleToggleLike}
         onToggleFollow={handleToggleFollow}
-        onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
+        onProfileClick={(nickname) => router.push(getProfilePath(nickname))}
         cardLayoutType="large-fixed"
         containerClassName="mt-6"
         gridClassName="flex flex-wrap gap-5 justify-center d:grid d:grid-cols-4 d:justify-items-center"
@@ -179,7 +180,7 @@ export default function StoriesPageClient() {
             <ListSubscribeLarge
               height="h-[380px]"
               users={recommendedMembers}
-              onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
+              onProfileClick={(nickname) => router.push(getProfilePath(nickname))}
               onSubscribeClick={(nickname, isFollowing) => handleToggleFollow(nickname, isFollowing)}
             />
           )
