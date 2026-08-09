@@ -52,14 +52,24 @@ function sortSelectedFirstStable(list: MeetingTopicItem[]) {
   return next;
 }
 
-export default function MeetingPageClient() {
+type MeetingPageClientProps = {
+  clubId?: number;
+  meetingId?: number;
+  embedded?: boolean;
+};
+
+export default function MeetingPageClient({
+  clubId: clubIdProp,
+  meetingId: meetingIdProp,
+  embedded = false,
+}: MeetingPageClientProps = {}) {
   const params = useParams();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const clubId = Number(params.id);
-  const meetingId = Number(params.bookId);
+  const clubId = clubIdProp ?? Number(params.id);
+  const meetingId = meetingIdProp ?? Number(params.bookId);
 
   const { user } = useAuthStore();
 
@@ -194,9 +204,10 @@ export default function MeetingPageClient() {
 
     setSelectedTeamId((prev) => {
       if (prev && teams.some((team) => team.teamId === prev)) return prev;
+      if (myTeamId && teams.some((team) => team.teamId === myTeamId)) return myTeamId;
       return teams[0].teamId;
     });
-  }, [teams, searchParams]);
+  }, [myTeamId, teams, searchParams]);
 
   const selectedTeam = useMemo(
     () => teams.find((team) => team.teamId === selectedTeamId) ?? null,
@@ -295,7 +306,12 @@ export default function MeetingPageClient() {
   };
 
   const handleOpenChatSelectModal = () => {
-    if (chatSelectableTeams.length === 0) return;
+    if (chatSelectableTeams.length === 0) {
+      toast.error(
+        isStaff ? "이용 가능한 조가 없습니다." : "조 배정이 되어야 채팅이 가능합니다."
+      );
+      return;
+    }
     setIsTeamSelectModalOpen(true);
   };
 
@@ -419,8 +435,8 @@ export default function MeetingPageClient() {
 
   if (isMeetingLoading) {
     return (
-      <div className="w-full flex justify-center">
-        <div className="w-full max-w-[1040px] px-5 t:px-6 py-6">
+      <div className={embedded ? "w-full" : "w-full flex justify-center"}>
+        <div className={embedded ? "w-full" : "w-full max-w-[1040px] px-5 t:px-6 py-6"}>
           <div className="rounded-[8px] bg-[#F2EFEE] p-5 text-Gray-4 body_1_2">
             팀 정보를 불러오는 중...
           </div>
@@ -431,8 +447,8 @@ export default function MeetingPageClient() {
 
   if (isMeetingError || !meetingData) {
     return (
-      <div className="w-full flex justify-center">
-        <div className="w-full max-w-[1040px] px-5 t:px-6 py-6">
+      <div className={embedded ? "w-full" : "w-full flex justify-center"}>
+        <div className={embedded ? "w-full" : "w-full max-w-[1040px] px-5 t:px-6 py-6"}>
           <div className="rounded-[8px] bg-[#F2EFEE] p-5 text-Red-500 body_1_2">
             팀 정보를 불러오지 못했습니다.
           </div>
@@ -442,8 +458,14 @@ export default function MeetingPageClient() {
   }
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="w-full max-w-[1040px] px-5 t:px-6 py-6 flex flex-col gap-[16px]">
+    <div className={embedded ? "w-full" : "w-full flex justify-center"}>
+      <div
+        className={
+          embedded
+            ? "w-full flex flex-col gap-[16px]"
+            : "w-full max-w-[1040px] px-5 t:px-6 py-6 flex flex-col gap-[16px]"
+        }
+      >
         <div className="w-full border-b border-Subbrown-4">
           <div
             className="
