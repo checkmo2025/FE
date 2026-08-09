@@ -306,7 +306,12 @@ export default function MeetingPageClient({
   };
 
   const handleOpenChatSelectModal = () => {
-    if (chatSelectableTeams.length === 0) return;
+    if (chatSelectableTeams.length === 0) {
+      toast.error(
+        isStaff ? "이용 가능한 조가 없습니다." : "조 배정이 되어야 채팅이 가능합니다."
+      );
+      return;
+    }
     setIsTeamSelectModalOpen(true);
   };
 
