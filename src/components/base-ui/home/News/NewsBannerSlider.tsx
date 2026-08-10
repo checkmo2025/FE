@@ -10,7 +10,11 @@ export default function NewsBannerSlider() {
   const newsList = data?.pages.flatMap((page) => page.basicInfoList) || [];
   
   const carouselItems = useMemo(() => {
-    return newsList.slice(0, 5).map((news) => {
+    return newsList
+      .filter((news) => news.carousel === "PROMOTION")
+      .sort((a, b) => new Date(b.publishEndAt).getTime() - new Date(a.publishEndAt).getTime())
+      .slice(0, 5)
+      .map((news) => {
       const isValidSrc = news.thumbnailUrl && news.thumbnailUrl !== "string" && 
         (news.thumbnailUrl.startsWith("/") || news.thumbnailUrl.startsWith("http"));
         
