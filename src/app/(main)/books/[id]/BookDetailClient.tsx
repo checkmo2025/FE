@@ -11,6 +11,7 @@ import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations"
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 import { useAuthAction } from "@/hooks/useAuthAction";
 import { showCustomToast } from "@/utils/toastUtils";
+import { getProfilePath } from "@/utils/nickname";
 
 export default function BookDetailClient() {
     const params = useParams();
@@ -110,7 +111,7 @@ export default function BookDetailClient() {
                         cardLayoutType="large-fixed"
                         onToggleLike={handleToggleStoryLike}
                         onToggleFollow={handleToggleFollow}
-                        onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
+                        onProfileClick={(nickname) => router.push(getProfilePath(nickname))}
                     />
                 </div>
             </div>

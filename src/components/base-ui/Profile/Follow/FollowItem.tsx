@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { isValidUrl } from "@/utils/url";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import { getProfilePath } from "@/utils/nickname";
 
 export type FollowUser = {
     id: string | number;
@@ -37,7 +38,7 @@ export default function FollowItem({ user, onToggleFollow, onDelete, badge, subL
 
     return (
         <div className="flex w-full max-w-[1040px] p-[20px] justify-between items-center gap-[12px] rounded-[8px] border border-Subbrown-4 bg-White transition-colors hover:bg-Subbrown-5">
-            <Link href={`/profile/${user.nickname}`} className="group flex items-center gap-[12px] cursor-pointer min-w-0">
+            <Link href={getProfilePath(user.nickname)} className="group flex items-center gap-[12px] cursor-pointer min-w-0">
                 <div className="flex w-[40px] h-[40px] justify-center items-center shrink-0 rounded-full overflow-hidden relative">
                     <Image
                         src={isValidUrl(user.profileImageUrl) ? user.profileImageUrl : DEFAULT_PROFILE_IMAGE}

@@ -10,17 +10,20 @@ import { FollowUser } from "@/components/base-ui/Profile/Follow/FollowItem";
 import { useOtherProfileQuery, useFollowerListQuery, useFollowingListQuery } from "@/hooks/queries/useMemberQueries";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import { decodeNicknamePathSegment } from "@/utils/nickname";
 
 function OtherUserFollowsContent() {
     const router = useRouter();
     const params = useParams();
-    const nickname = params?.nickname as string;
-    const decodedNickname = decodeURIComponent(nickname || "");
+    const nicknameSegment = (params?.nickname as string) || "";
+    const nickname = nicknameSegment
+        ? decodeNicknamePathSegment(nicknameSegment)
+        : "";
     const searchParams = useSearchParams();
     const initialTab = (searchParams?.get("tab") as "follower" | "following") || "follower";
     const [activeTab, setActiveTab] = useState<"follower" | "following">(initialTab);
 
-    const { data: profileData, isLoading: isProfileLoading } = useOtherProfileQuery(decodedNickname);
+    const { data: profileData, isLoading: isProfileLoading } = useOtherProfileQuery(nickname);
 
     const {
         data: followerData,
@@ -28,7 +31,7 @@ function OtherUserFollowsContent() {
         hasNextPage: hasNextFollower,
         isFetchingNextPage: isFetchingNextFollower,
         isLoading: isFollowerLoading
-    } = useFollowerListQuery(decodedNickname, activeTab === "follower");
+    } = useFollowerListQuery(nickname, activeTab === "follower");
 
     const {
         data: followingData,
@@ -36,7 +39,7 @@ function OtherUserFollowsContent() {
         hasNextPage: hasNextFollowing,
         isFetchingNextPage: isFetchingNextFollowing,
         isLoading: isFollowingLoading
-    } = useFollowingListQuery(decodedNickname, activeTab === "following");
+    } = useFollowingListQuery(nickname, activeTab === "following");
 
     const { mutate: toggleFollow } = useToggleFollowMutation();
 
@@ -84,7 +87,7 @@ function OtherUserFollowsContent() {
 
     return (
         <div className="flex flex-col items-center gap-[10px] t:gap-[24px] w-full min-h-screen bg-[#F9F7F6] pb-[120px] t:pb-[100px]">
-            <ProfileBreadcrumb nickname={decodedNickname} />
+            <ProfileBreadcrumb nickname={nickname} />
 
             <div className="flex flex-col items-center w-full max-w-[1440px] px-4 md:px-0 mt-[12px] md:mt-[56px] gap-[24px]">
                 {/* Profile Image & Nickname Area */}

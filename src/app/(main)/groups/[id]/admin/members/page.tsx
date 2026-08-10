@@ -10,6 +10,7 @@ import { useInfiniteClubMembersQuery } from "@/hooks/queries/useClubMemberQuerie
 import { useClubMeQuery } from "@/hooks/queries/useClubhomeQueries";
 import { useUpdateClubMemberStatusMutation } from "@/hooks/mutations/useClubMemberMutations";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import { getProfilePath } from "@/utils/nickname";
 import type {
   ClubMemberItem,
   ClubMemberStatus,
@@ -434,7 +435,7 @@ export default function AdminMembersPage() {
             <div className="divide-y divide-Subbrown-4 border-b border-Subbrown-4 overflow-visible">
               {currentMembers.map((member) => {
                 const nickname = member.detailInfo.nickname;
-                const profileUrl = `/profile/${encodeURIComponent(nickname)}`;
+                const profileUrl = getProfilePath(nickname);
                 const joinDate = formatDate(member.joinedAt ?? member.appliedAt);
 
                 return (

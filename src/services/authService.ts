@@ -12,10 +12,14 @@ import {
   User
 } from "@/types/auth";
 import { LoginStatusResponse } from "@/types/member";
+import { normalizeNickname } from "@/utils/nickname";
 
 export const authService = {
   login: async (data: LoginForm): Promise<LoginResponse> => {
-    return await apiClient.post<LoginResponse>(AUTH_ENDPOINTS.LOGIN, data);
+    return await apiClient.post<LoginResponse>(AUTH_ENDPOINTS.LOGIN, {
+      ...data,
+      identifier: data.identifier.normalize("NFC"),
+    });
   },
 
   signup: async (data: SignupForm): Promise<ApiResponse<User>> => {
@@ -36,12 +40,15 @@ export const authService = {
 
   checkNickname: async (nickname: string): Promise<ApiResponse<boolean>> => {
     return await apiClient.post<ApiResponse<boolean>>(MEMBER_ENDPOINTS.CHECK_NICKNAME, null, {
-      params: { nickname }
+      params: { nickname: normalizeNickname(nickname) }
     });
   },
 
   additionalInfo: async (data: AdditionalInfo): Promise<ApiResponse<unknown>> => {
-    return await apiClient.post<ApiResponse<unknown>>(MEMBER_ENDPOINTS.ADDITIONAL_INFO, data);
+    return await apiClient.post<ApiResponse<unknown>>(MEMBER_ENDPOINTS.ADDITIONAL_INFO, {
+      ...data,
+      nickname: normalizeNickname(data.nickname),
+    });
   },
 
   getProfile: async (): Promise<ApiResponse<User>> => {

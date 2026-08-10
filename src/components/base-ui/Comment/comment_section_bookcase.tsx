@@ -23,6 +23,7 @@ import { hasErrorCode } from "@/lib/api/errors";
 import { useUnsavedChangesNavigation } from "@/hooks/useUnsavedChangesGuard";
 import { INPUT_LIMITS } from "@/constants/inputLimits";
 import { isTextOverLimit } from "@/utils/inputLimit";
+import { getProfilePath } from "@/utils/nickname";
 
 // 어떤 글의 댓글인지 구분
 type CommentSectionProps = {
@@ -288,7 +289,7 @@ export default function CommentSection({
         onEditComment={handleEditComment}
         onDeleteComment={handleDeleteComment}
         onReportComment={handleReportComment}
-        onProfileClick={(nickname) => confirmNavigation(() => router.push(`/profile/${nickname}`))}
+        onProfileClick={(nickname) => confirmNavigation(() => router.push(getProfilePath(nickname)))}
       />
       <ConfirmModal
         isOpen={isConfirmOpen}

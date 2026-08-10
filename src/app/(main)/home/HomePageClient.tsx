@@ -11,6 +11,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useRecommendedMembersQuery } from "@/hooks/queries/useMemberQueries";
 import { useMyClubsQuery } from "@/hooks/queries/useClubQueries";
 import { useHomeInteractions } from "@/hooks/useHomeInteractions";
+import { getProfilePath } from "@/utils/nickname";
 
 export default function HomePageClient() {
   const router = useRouter();
@@ -44,7 +45,7 @@ export default function HomePageClient() {
                   users={recommendedUsers}
                   isError={isErrorMembers}
                   isLoading={isLoadingMembers}
-                  onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
+                  onProfileClick={(nickname) => router.push(getProfilePath(nickname))}
                   onSubscribeClick={handleToggleFollow}
                 />
               </div>

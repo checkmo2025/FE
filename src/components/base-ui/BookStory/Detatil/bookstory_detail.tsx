@@ -9,6 +9,7 @@ import { ReportReason } from "@/types/report";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "react-hot-toast";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import { getProfilePath } from "@/utils/nickname";
 
 type BookstoryDetailProps = {
   imageUrl?: string;
@@ -79,7 +80,7 @@ export default function BookstoryDetail({
   onEditClick,
   onDeleteClick,
 }: BookstoryDetailProps) {
-  const href = authorHref ?? (isMyStory ? "/profile/mypage" : `/profile/${encodeURIComponent(authorId)}`);
+  const href = authorHref ?? (isMyStory ? "/profile/mypage" : getProfilePath(String(authorId)));
   const [menuOpen, setMenuOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);

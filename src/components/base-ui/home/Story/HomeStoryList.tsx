@@ -9,6 +9,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { RecommendedMember } from "@/types/member";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { getProfilePath } from "@/utils/nickname";
 
 interface HomeStoryListProps {
   recommendedUsers: RecommendedMember[];
@@ -60,7 +61,7 @@ const HomeStoryList: React.FC<HomeStoryListProps> = ({
       users={recommendedUsers}
       isError={isErrorMembers}
       isLoading={isLoadingMembers}
-      onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
+      onProfileClick={(nickname) => router.push(getProfilePath(nickname))}
       onSubscribeClick={onToggleFollow}
     />
   ) : undefined;
@@ -78,7 +79,7 @@ const HomeStoryList: React.FC<HomeStoryListProps> = ({
       fetchNextPage={fetchNextPage}
       onToggleLike={handleToggleLike}
       onToggleFollow={onToggleFollow}
-      onProfileClick={(nickname) => router.push(`/profile/${nickname}`)}
+      onProfileClick={(nickname) => router.push(getProfilePath(nickname))}
       cardLayoutType={cardLayoutType}
       containerClassName="flex flex-col items-center w-full max-w-full gap-[20px]"
       gridClassName={gridClassName}
@@ -91,4 +92,3 @@ const HomeStoryList: React.FC<HomeStoryListProps> = ({
 };
 
 export default HomeStoryList;
-

@@ -1,10 +1,16 @@
 import { useSignup } from "@/contexts/SignupContext";
 import { authService } from "@/services/authService";
+import { validateNickname } from "@/utils/nickname";
 import { useState } from "react";
 import { z } from "zod";
 
 const profileSchema = z.object({
-  nickname: z.string().min(1, "닉네임을 입력해주세요!"),
+  nickname: z.string().superRefine((value, ctx) => {
+    const validation = validateNickname(value);
+    if (!validation.isValid) {
+      ctx.addIssue({ code: "custom", message: validation.message });
+    }
+  }),
   isNicknameChecked: z.boolean().refine((val) => val === true, {
     message: "닉네임 중복확인을 해주세요!",
   }),
@@ -31,12 +37,11 @@ export const useProfileSetup = () => {
 
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // 닉네임 : 영어 소문자 및 특수문자, 숫자만 사용 가능, 최대 20글자
-    const allowedValue = value.replace(/[^a-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, "");
-    const filteredValue = allowedValue.slice(0, 20);
-    setNicknameInputError(value !== allowedValue ? "한글과 띄어쓰기는 사용할 수 없습니다." : "");
-    setNickname(filteredValue);
-    if (filteredValue !== nickname) {
+    const validation = validateNickname(value);
+
+    setNickname(value);
+    setNicknameInputError(value.length > 0 && !validation.isValid ? validation.message : "");
+    if (value !== nickname) {
       setIsNicknameChecked(false);
     }
   };
@@ -64,10 +69,20 @@ export const useProfileSetup = () => {
   };
 
   const handleCheckDuplicate = async () => {
-    if (!nickname) return;
+    const validation = validateNickname(nickname);
+    if (!validation.isValid) {
+      setNicknameInputError(validation.message);
+      showToast(validation.message);
+      return;
+    }
+
+    const normalizedNickname = validation.normalized;
+    if (normalizedNickname !== nickname) {
+      setNickname(normalizedNickname);
+    }
 
     try {
-      const response = await authService.checkNickname(nickname);
+      const response = await authService.checkNickname(normalizedNickname);
       // Backend Spec: result: false (not duplicated/available), result: true (duplicated/taken)
       if (response.isSuccess && response.result === false) {
         setIsNicknameChecked(true);
@@ -99,7 +114,7 @@ export const useProfileSetup = () => {
     return { isValid: true };
   };
 
-  const isNicknameValid = nickname.length > 0;
+  const isNicknameValid = validateNickname(nickname).isValid;
 
   return {
     nickname,

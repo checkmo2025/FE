@@ -10,13 +10,20 @@ import { useUpdateProfileMutation } from "@/hooks/mutations/useMemberMutations";
 import { authService } from "@/services/authService";
 import { INPUT_LIMITS } from "@/constants/inputLimits";
 import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
+import {
+  isSameNicknameIdentity,
+  validateNickname,
+} from "@/utils/nickname";
 
 export default function ProfileEditPageClient() {
   const { user } = useAuthStore();
   const [nickname, setNickname] = useState(user?.nickname || "");
   // 현재 닉네임은 기본적으로 통과 상태(변경 시에만 중복확인 필요)
   const [isNicknameChecked, setIsNicknameChecked] = useState(true);
-  const [nicknameStatus, setNicknameStatus] = useState<"idle" | "available" | "duplicate">("idle");
+  const [nicknameStatus, setNicknameStatus] = useState<
+    "idle" | "available" | "duplicate" | "current"
+  >("idle");
+  const [nicknameInputError, setNicknameInputError] = useState("");
   const [intro, setIntro] = useState(user?.description || "");
   const [name, setName] = useState(user?.name || "");
   const [phone, setPhone] = useState(user?.phoneNumber || "");
@@ -42,9 +49,11 @@ export default function ProfileEditPageClient() {
 
   useEffect(() => {
     if (user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setNickname(user.nickname || "");
       setIsNicknameChecked(true);
       setNicknameStatus("idle");
+      setNicknameInputError("");
       setIntro(user.description || "");
       setName(user.name || "");
       setPhone(formatPhoneNumber(user.phoneNumber || ""));
@@ -53,31 +62,41 @@ export default function ProfileEditPageClient() {
     }
   }, [user]);
 
-  // 닉네임 입력: 영어 소문자/숫자/특수문자, 최대 20자 (회원가입 규칙과 동일)
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const filtered = e.target.value
-      .replace(/[^a-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, "")
-      .slice(0, 20);
-    setNickname(filtered);
-    // 현재 닉네임과 같으면 통과, 다르면 중복확인 필요
-    setIsNicknameChecked(filtered === (user?.nickname || ""));
-    setNicknameStatus("idle");
+    const value = e.target.value;
+    const validation = validateNickname(value);
+    const isCurrentIdentity =
+      validation.isValid &&
+      isSameNicknameIdentity(validation.normalized, user?.nickname || "");
+
+    setNickname(value);
+    setNicknameInputError(value.length > 0 && !validation.isValid ? validation.message : "");
+    setIsNicknameChecked(isCurrentIdentity);
+    setNicknameStatus(isCurrentIdentity ? "current" : "idle");
   };
 
   const handleCheckNickname = async () => {
-    if (!nickname) {
-      toast.error("닉네임을 입력해주세요.");
+    const validation = validateNickname(nickname);
+    if (!validation.isValid) {
+      setNicknameInputError(validation.message);
+      toast.error(validation.message);
       return;
     }
-    // 본인 현재 닉네임이면 중복으로 처리하지 않음
-    if (nickname === (user?.nickname || "")) {
+
+    const normalizedNickname = validation.normalized;
+    if (normalizedNickname !== nickname) {
+      setNickname(normalizedNickname);
+    }
+
+    // 본인의 현재 닉네임과 대소문자만 다른 경우에도 중복확인을 통과한다.
+    if (isSameNicknameIdentity(normalizedNickname, user?.nickname || "")) {
       setIsNicknameChecked(true);
-      setNicknameStatus("idle");
+      setNicknameStatus("current");
       toast.success("현재 사용 중인 닉네임입니다.");
       return;
     }
     try {
-      const response = await authService.checkNickname(nickname);
+      const response = await authService.checkNickname(normalizedNickname);
       // result: false = 사용 가능, true = 중복
       if (response.isSuccess && response.result === false) {
         setIsNicknameChecked(true);
@@ -128,11 +147,15 @@ export default function ProfileEditPageClient() {
   };
 
   const handleSave = () => {
-    if (!nickname.trim()) {
-      toast.error("닉네임을 입력해주세요.");
+    const validation = validateNickname(nickname);
+    if (!validation.isValid) {
+      setNicknameInputError(validation.message);
+      toast.error(validation.message);
       return;
     }
-    const nicknameChanged = nickname !== (user?.nickname || "");
+
+    const normalizedNickname = validation.normalized;
+    const nicknameChanged = normalizedNickname !== (user?.nickname || "");
     if (nicknameChanged && !isNicknameChecked) {
       toast.error("닉네임 중복확인을 해주세요!");
       return;
@@ -147,7 +170,7 @@ export default function ProfileEditPageClient() {
       return;
     }
     updateProfile({
-      nickname,
+      nickname: normalizedNickname,
       description: intro,
       categories: selectedCategories,
       phoneNumber: phone,
@@ -173,6 +196,7 @@ export default function ProfileEditPageClient() {
     "flex items-center justify-center gap-[10px] rounded-[8px] border border-Subbrown-3 bg-Subbrown-4 h-[36px] w-[67px] md:h-[52px] md:w-[98px] xl:w-[132px]";
   const checkBtnTextClass =
     "text-primary-3 text-[12px] font-semibold leading-[145%] tracking-[-0.012px] md:body_1_3";
+  const isNicknameValid = validateNickname(nickname).isValid;
 
   return (
     <SettingsDetailLayout
@@ -198,23 +222,29 @@ export default function ProfileEditPageClient() {
                   className={inputClass}
                   value={nickname}
                   onChange={handleNicknameChange}
-                  placeholder="영어 소문자/숫자/특수문자, 최대 20자"
+                  placeholder="한글/영문/숫자/특수문자, 최대 20자"
                 />
               </div>
               <button
                 type="button"
                 onClick={handleCheckNickname}
-                disabled={!nickname || isNicknameChecked}
+                disabled={!isNicknameValid || isNicknameChecked}
                 className={`${checkBtnClass} shrink-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 <span className={checkBtnTextClass}>{isNicknameChecked ? "확인됨" : "중복확인"}</span>
               </button>
             </div>
-            {nickname !== (user?.nickname || "") && (
+            {nicknameInputError ? (
+              <span className="text-[12px] ml-1 text-red-500">
+                {nicknameInputError}
+              </span>
+            ) : nickname !== (user?.nickname || "") ? (
               <span
                 className={`text-[12px] ml-1 ${
                   nicknameStatus === "available"
                     ? "text-green-600"
+                    : nicknameStatus === "current"
+                      ? "text-green-600"
                     : nicknameStatus === "duplicate"
                       ? "text-red-500"
                       : "text-Gray-4"
@@ -222,11 +252,13 @@ export default function ProfileEditPageClient() {
               >
                 {nicknameStatus === "available"
                   ? "사용 가능한 닉네임입니다."
+                  : nicknameStatus === "current"
+                    ? "현재 닉네임과 같은 아이디입니다. 표시만 변경됩니다."
                   : nicknameStatus === "duplicate"
                     ? "이미 사용 중인 닉네임입니다."
                     : "닉네임 중복확인을 해주세요."}
               </span>
-            )}
+            ) : null}
           </div>
         </div>
 

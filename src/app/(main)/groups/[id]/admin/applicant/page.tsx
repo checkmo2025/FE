@@ -10,6 +10,7 @@ import { useUpdateClubMemberStatusMutation } from '@/hooks/mutations/useClubMemb
 import type { ClubMemberItem } from '@/types/groups/clubMembers';
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 import MobileBackButton from '@/components/common/MobileBackButton';
+import { getProfilePath } from '@/utils/nickname';
 
 type ActionType = 'delete' | 'approve';
 
@@ -231,7 +232,7 @@ export default function AdminApplicantPage() {
   };
 
   const goProfile = (nickname: string) => {
-    router.push(`/profile/${nickname}`);
+    router.push(getProfilePath(nickname));
   };
 
   return (

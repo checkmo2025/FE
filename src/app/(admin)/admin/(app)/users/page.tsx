@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import AdminSearchHeader from "@/components/layout/AdminSearchHeader";
 import Link from "next/link";
+import { encodeNicknamePathSegment } from "@/utils/nickname";
 import {
   fetchAdminMembers,
   type AdminMemberListItem,
@@ -137,7 +138,7 @@ export default function UsersPage() {
                     </td>
                     <td className="pl-[12px] py-0">
                       <Link
-                        href={`/admin/users/${u.nickname}`}
+                        href={`/admin/users/${encodeNicknamePathSegment(u.nickname)}`}
                         className="body_1_2 text-Gray-7 underline underline-offset-2 hover:opacity-70"
                       >
                         상세보기

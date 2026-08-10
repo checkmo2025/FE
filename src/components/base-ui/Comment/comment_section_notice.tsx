@@ -22,6 +22,7 @@ import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 import { useUnsavedChangesNavigation } from "@/hooks/useUnsavedChangesGuard";
 import { INPUT_LIMITS } from "@/constants/inputLimits";
 import { isTextOverLimit } from "@/utils/inputLimit";
+import { getProfilePath } from "@/utils/nickname";
 
 type CommentSectionNoticeProps = {
   noticeId: number;
@@ -113,8 +114,8 @@ export default function CommentSectionNotice({
       });
 
       toast.success("댓글이 등록되었습니다.");
-    } catch (e: any) {
-      const msg = e?.message ?? "";
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "";
       toast.error(msg || "댓글 등록에 실패했습니다.");
     }
   };
@@ -150,8 +151,8 @@ export default function CommentSectionNotice({
       });
 
       toast.success("댓글이 수정되었습니다.");
-    } catch (e: any) {
-      const msg = e?.message ?? "";
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "";
       toast.error(msg || "댓글 수정에 실패했습니다.");
     }
   };
@@ -177,8 +178,8 @@ export default function CommentSectionNotice({
       });
 
       toast.success("댓글이 삭제되었습니다.");
-    } catch (e: any) {
-      const msg = e?.message ?? "";
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "";
       toast.error(msg || "댓글 삭제에 실패했습니다.");
     }
   };
@@ -242,7 +243,7 @@ export default function CommentSectionNotice({
         onEditComment={handleEditComment}
         onDeleteComment={handleDeleteComment}
         onReportComment={handleReportComment}
-        onProfileClick={(nickname) => confirmNavigation(() => router.push(`/profile/${nickname}`))}
+        onProfileClick={(nickname) => confirmNavigation(() => router.push(getProfilePath(nickname)))}
         onLoadMore={handleLoadMore}
         hasNextPage={!!commentsQuery.hasNextPage}
         isFetchingNextPage={!!commentsQuery.isFetchingNextPage}

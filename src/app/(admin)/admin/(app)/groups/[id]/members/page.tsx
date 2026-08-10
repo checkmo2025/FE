@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { encodeNicknamePathSegment } from "@/utils/nickname";
 import { useParams } from "next/navigation";
 import {
   fetchAdminClubActiveMembers,
@@ -202,7 +203,7 @@ export default function MembersListPage() {
                     <td className="pl-[12px] text-Gray-7">{u.role}</td>
                     <td className="pl-[12px]">
                       <Link
-                        href={`/admin/users/${u.nickname}`}
+                        href={`/admin/users/${encodeNicknamePathSegment(u.nickname)}`}
                         className="text-Gray-7 underline underline-offset-2 hover:opacity-70"
                       >
                         상세보기
