@@ -26,7 +26,10 @@ type AdminBookStoryListResponse = {
   result: AdminBookStoryListResult;
 };
 
-export async function fetchAdminBookStories(page = 1, keyword = "") {
+const ADMIN_LIST_PAGE_SIZE = 20;
+const BOOK_STORY_API_PAGE_SIZE = 12;
+
+async function fetchAdminBookStoryPage(page: number, keyword: string) {
   const res = await fetch(ADMIN_STORIES.list(page, keyword), {
     method: "GET",
     credentials: "include",
@@ -44,6 +47,45 @@ export async function fetchAdminBookStories(page = 1, keyword = "") {
   }
 
   return data.result;
+}
+
+export async function fetchAdminBookStories(page = 1, keyword = "") {
+  const safePage = Math.max(1, page);
+  const firstItemIndex = (safePage - 1) * ADMIN_LIST_PAGE_SIZE;
+  const firstApiPage =
+    Math.floor(firstItemIndex / BOOK_STORY_API_PAGE_SIZE) + 1;
+  const lastApiPage =
+    Math.floor(
+      (firstItemIndex + ADMIN_LIST_PAGE_SIZE - 1) /
+        BOOK_STORY_API_PAGE_SIZE
+    ) + 1;
+  const apiPages = Array.from(
+    { length: lastApiPage - firstApiPage + 1 },
+    (_, index) => firstApiPage + index
+  );
+  const results = await Promise.all(
+    apiPages.map((apiPage) => fetchAdminBookStoryPage(apiPage, keyword))
+  );
+  const firstResult = results[0];
+  const totalElements = firstResult.totalElements ?? 0;
+  const sliceStart =
+    firstItemIndex - (firstApiPage - 1) * BOOK_STORY_API_PAGE_SIZE;
+  const basicInfoList = results
+    .flatMap((result) => result.basicInfoList ?? [])
+    .slice(sliceStart, sliceStart + ADMIN_LIST_PAGE_SIZE);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(totalElements / ADMIN_LIST_PAGE_SIZE)
+  );
+
+  return {
+    ...firstResult,
+    basicInfoList,
+    page: safePage,
+    pageSize: ADMIN_LIST_PAGE_SIZE,
+    totalPages,
+    hasNext: safePage < totalPages,
+  };
 }
 
 export type AdminBookStoryDetail = {

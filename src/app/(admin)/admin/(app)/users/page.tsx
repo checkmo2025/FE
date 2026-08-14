@@ -75,29 +75,32 @@ export default function UsersPage() {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-[1040px] pt-6 pb-10">
+      <div className="w-full max-w-[1040px] px-4 pt-6 pb-10 t:px-6 d:px-0">
         <AdminSearchHeader
           title="회원 관리"
           keyword={keyword}
           onKeywordChange={handleKeywordChange}
           onSearch={handleSearch}
-          placeholder="검색 하기 (아이디 또는 이메일)"
-          inputWidthClassName="w-[1040px]"
+          placeholder="검색 (아이디 또는 이메일)"
+          inputWidthClassName="w-full"
         />
 
         <div className="w-full">
-          <table className="w-[1040px] table-fixed">
+          <div className="-mx-4 overflow-x-auto px-4 t:-mx-6 t:px-6 d:mx-0 d:px-0">
+          <table className="w-full min-w-[1040px] table-fixed">
             <colgroup>
-              <col className="w-[180px]" />
-              <col className="w-[180px]" />
-              <col className="w-[282px]" />
-              <col className="w-[282px]" />
-              <col className="w-[116px]" />
+              <col className="w-[130px]" />
+              <col className="w-[150px]" />
+              <col className="w-[140px]" />
+              <col className="w-[250px]" />
+              <col className="w-[250px]" />
+              <col className="w-[120px]" />
             </colgroup>
 
             <thead>
               <tr className="border-b border-Subbrown-3">
                 <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">ID</th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">닉네임</th>
                 <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">이름</th>
                 <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">이메일</th>
                 <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">전화번호</th>
@@ -108,13 +111,13 @@ export default function UsersPage() {
             <tbody>
               {loading ? (
                 <tr className="h-[48px] border-b border-Subbrown-4 body_1_2">
-                  <td colSpan={5} className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                  <td colSpan={6} className="pl-[12px] py-0 body_1_2 text-Gray-7">
                     불러오는 중...
                   </td>
                 </tr>
               ) : error ? (
                 <tr className="h-[48px] border-b border-Subbrown-4 body_1_2">
-                  <td colSpan={5} className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                  <td colSpan={6} className="pl-[12px] py-0 body_1_2 text-Gray-7">
                     {isSearching ? "검색 실패" : "멤버 리스트 불러오기 실패"}
                   </td>
                 </tr>
@@ -126,6 +129,9 @@ export default function UsersPage() {
                   >
                     <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate" title={u.memberId}>
                       {u.memberId}
+                    </td>
+                    <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate" title={u.nickname}>
+                      {u.nickname}
                     </td>
                     <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate" title={u.name || u.nickname}>
                       {u.name || u.nickname}
@@ -148,13 +154,14 @@ export default function UsersPage() {
                 ))
               ) : (
                 <tr className="h-[48px] border-b border-Subbrown-4 body_1_2">
-                  <td colSpan={5} className="pl-[12px] py-0 body_1_2 text-Gray-7">
+                  <td colSpan={6} className="pl-[12px] py-0 body_1_2 text-Gray-7">
                     {isSearching ? "검색 결과가 없음" : "멤버 리스트가 없습니다."}
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
+          </div>
 
           <div className="mt-6 flex items-center justify-center gap-4 body_2_2">
             <button

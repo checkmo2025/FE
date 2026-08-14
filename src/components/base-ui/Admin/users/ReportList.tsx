@@ -7,6 +7,7 @@ import {
   fetchAdminMemberReports,
   type AdminMemberReportItem,
 } from "@/lib/api/admin/member";
+import { formatDate } from "@/utils/date";
 
 type Props = {
   /** 관리자 상세 페이지의 대상 유저 닉네임 */
@@ -32,11 +33,7 @@ const formatReportedAt = (reportedAt: string) => {
     return "-";
   }
 
-  return new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(date);
+  return formatDate(reportedAt);
 };
 
 export default function ReportList({ memberNickname }: Props) {

@@ -8,6 +8,7 @@ import { isValidUrl } from "@/utils/url";
 type AdminUserProfileProps = {
   user: {
     userId: string;
+    nickname: string;
     name: string;
     intro: string;
     profileImage?: string | null;
@@ -21,7 +22,7 @@ const AdminUserProfile = ({ user }: AdminUserProfileProps) => {
   const phone = user.phone ?? "010-0000-0000";
 
   return (
-    <div className="w-[479px] h-[212px]">
+    <div className="w-[479px] min-h-[232px]">
       <div className="grid grid-rows-[auto_1fr] h-full">
         <div className="flex items-start gap-[24px]">
           <div className="w-[112px] h-[112px] rounded-full overflow-hidden relative shrink-0 bg-Subbrown-4">
@@ -37,6 +38,9 @@ const AdminUserProfile = ({ user }: AdminUserProfileProps) => {
             <dt className="body_1_3 text-Gray-4">아이디</dt>
             <dd className="body_1_2 text-Gray-7">{user.userId}</dd>
 
+            <dt className="body_1_3 text-Gray-4">닉네임</dt>
+            <dd className="body_1_2 text-Gray-7">{user.nickname}</dd>
+
             <dt className="body_1_3 text-Gray-4">이름</dt>
             <dd className="body_1_2 text-Gray-7">{user.name}</dd>
 
@@ -48,7 +52,7 @@ const AdminUserProfile = ({ user }: AdminUserProfileProps) => {
           </dl>
         </div>
 
-        <p className="body_1_3 text-Gray-4 leading-[145%] mt-[12px] line-clamp-3">
+        <p className="body_1_3 font-semibold text-Gray-7 leading-[145%] mt-[12px] line-clamp-3">
           {user.intro}
         </p>
       </div>

@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AdminSearchHeader from "@/components/layout/AdminSearchHeader";
 import { fetchAdminBookStories } from "@/lib/api/admin/stories";
+import { formatDate } from "@/utils/date";
+import { encodeNicknamePathSegment } from "@/utils/nickname";
 
 type BookStoryRow = {
   id: number;
@@ -40,9 +43,7 @@ export default function BookStoriesPage() {
           title: item.bookStoryTitle,
           authorNickname: item.authorNickname,
           bookTitle: item.bookTitle,
-          postedAt: new Date(item.createdAt)
-            .toLocaleDateString("ko-KR")
-            .replace(/\s/g, ""),
+          postedAt: formatDate(item.createdAt),
           status: "등록",
         }));
 
@@ -89,18 +90,19 @@ export default function BookStoriesPage() {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-[1040px] pt-6 pb-10">
+      <div className="w-full max-w-[1040px] px-4 pt-6 pb-10 t:px-6 d:px-0">
         <AdminSearchHeader
           title="책 이야기 관리"
           keyword={keyword}
           onKeywordChange={handleKeywordChange}
           onSearch={handleSearch}
-          placeholder="검색 하기 (책이야기 제목)"
-          inputWidthClassName="w-[1040px]"
+          placeholder="검색 (책이야기 제목)"
+          inputWidthClassName="w-full"
         />
 
         <div className="w-full">
-          <table className="w-[1040px] table-fixed">
+          <div className="-mx-4 overflow-x-auto px-4 t:-mx-6 t:px-6 d:mx-0 d:px-0">
+          <table className="w-full min-w-[1040px] table-fixed">
             <colgroup>
               <col className="w-[112px]" />
               <col className="w-[250px]" />
@@ -169,7 +171,13 @@ export default function BookStoriesPage() {
                       {s.title}
                     </td>
                     <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
-                      {s.authorNickname}
+                      <Link
+                        href={`/admin/users/${encodeNicknamePathSegment(s.authorNickname)}`}
+                        className="underline underline-offset-2 hover:opacity-70"
+                        title={`${s.authorNickname} 회원 상세보기`}
+                      >
+                        {s.authorNickname}
+                      </Link>
                     </td>
                     <td className="pl-[12px] py-0 body_1_2 text-Gray-7 truncate">
                       {s.bookTitle}
@@ -193,6 +201,7 @@ export default function BookStoriesPage() {
               )}
             </tbody>
           </table>
+          </div>
 
           <div className="mt-6 flex items-center justify-center gap-4 body_2_2">
             <button

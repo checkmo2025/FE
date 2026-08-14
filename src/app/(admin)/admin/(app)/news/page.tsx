@@ -4,13 +4,16 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import AdminSearchHeader from "@/components/layout/AdminSearchHeader";
 import { fetchAdminNews } from "@/lib/api/admin/news";
+import { formatDate } from "@/utils/date";
 
 type NewsRow = {
   newsId: number;
   title: string;
   authorEmail: string;
+  carousel: "프로모션" | "일반";
   createdAt: string;
-  postedAt: string;
+  publishStartAt: string;
+  publishEndAt: string;
 };
 
 export default function NewsPage() {
@@ -47,8 +50,10 @@ export default function NewsPage() {
           newsId: item.newsId,
           title: item.title,
           authorEmail: item.requesterEmail,
-          createdAt: item.createdAt,
-          postedAt: `${item.publishStartAt} - ${item.publishEndAt}`,
+          carousel: item.carousel === "PROMOTION" ? "프로모션" : "일반",
+          createdAt: formatDate(item.createdAt),
+          publishStartAt: formatDate(item.publishStartAt),
+          publishEndAt: formatDate(item.publishEndAt),
         }));
 
         if (!alive) return;
@@ -107,18 +112,18 @@ export default function NewsPage() {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-[1040px] pt-6 pb-10">
+      <div className="w-full max-w-[1040px] px-4 pt-6 pb-10 t:px-6 d:px-0">
         <AdminSearchHeader
           title="소식 관리"
           keyword={keyword}
           onKeywordChange={handleKeywordChange}
           onSearch={handleSearch}
-          placeholder="검색 하기 (소식 제목)"
+          placeholder="검색 (소식 제목)"
           inputWidthClassName="flex-1"
           rightAddon={
             <Link
               href="/admin/news/new"
-              className="flex-shrink-0 flex w-[187px] h-[48px] px-[16px] py-[12px] items-center justify-center gap-[10px] rounded-[8px] bg-primary-1 text-White body_1_1 hover:bg-primary-3 transition-colors"
+              className="flex h-12 w-full flex-shrink-0 items-center justify-center gap-2.5 rounded-[8px] bg-primary-1 px-4 py-3 text-White body_1_1 transition-colors hover:bg-primary-3 t:w-[187px]"
             >
               소식 등록
             </Link>
@@ -126,14 +131,16 @@ export default function NewsPage() {
         />
 
         <div className="w-full">
-          <table className="w-[1040px] table-fixed">
+          <div className="-mx-4 overflow-x-auto px-4 t:-mx-6 t:px-6 d:mx-0 d:px-0">
+          <table className="w-full min-w-[1040px] table-fixed">
             <colgroup>
-              <col className="w-[112px]" />
+              <col className="w-[100px]" />
+              <col className="w-[190px]" />
+              <col className="w-[180px]" />
+              <col className="w-[100px]" />
+              <col className="w-[150px]" />
               <col className="w-[200px]" />
-              <col className="w-[180px]" />
-              <col className="w-[180px]" />
-              <col className="w-[251px]" />
-              <col className="w-[112px]" />
+              <col className="w-[120px]" />
             </colgroup>
 
             <thead>
@@ -146,6 +153,9 @@ export default function NewsPage() {
                 </th>
                 <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
                   등록자 이메일
+                </th>
+                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                  캐러셀
                 </th>
                 <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
                   등록 일자
@@ -163,7 +173,7 @@ export default function NewsPage() {
               {error ? (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     className="py-10 text-center body_1_2 text-red-500"
                   >
                     {searchKeyword ? "검색 실패" : "소식 리스트 불러오기 실패"}
@@ -172,7 +182,7 @@ export default function NewsPage() {
               ) : filtered.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     className="py-10 text-center body_1_2 text-Gray-4"
                   >
                     {searchKeyword ? "검색 결과가 없음" : "소식 리스트가 없습니다."}
@@ -191,8 +201,17 @@ export default function NewsPage() {
                     <td className="pl-[12px] py-0 text-Gray-7 truncate">
                       {n.authorEmail}
                     </td>
+                    <td className="pl-[12px] py-0 text-Gray-7">
+                      {n.carousel}
+                    </td>
                     <td className="pl-[12px] py-0 text-Gray-7">{n.createdAt}</td>
-                    <td className="pl-[12px] py-0 text-Gray-7">{n.postedAt}</td>
+                    <td className="pl-[12px] py-0 text-Gray-7">
+                      <span className="inline-grid grid-cols-[82px_16px_82px] items-center tabular-nums">
+                        <span className="text-right">{n.publishStartAt}</span>
+                        <span className="text-center">~</span>
+                        <span className="text-left">{n.publishEndAt}</span>
+                      </span>
+                    </td>
                     <td className="pl-[12px] py-0">
                       <Link
                         href={`/admin/news/${n.newsId}`}
@@ -206,6 +225,7 @@ export default function NewsPage() {
               )}
             </tbody>
           </table>
+          </div>
 
           {loading && (
             <div className="py-6 text-center body_1_2 text-Gray-4">

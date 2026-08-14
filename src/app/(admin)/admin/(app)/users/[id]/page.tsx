@@ -67,6 +67,7 @@ export default function Page({ params }: PageProps) {
 
   const user = {
     userId: member.memberId,
+    nickname: member.nickname,
     name: member.name,
     email: member.email,
     phone: member.phoneNumber,

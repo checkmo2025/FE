@@ -26,7 +26,7 @@ export default function AdminNewsEditPage() {
   const [content, setContent] = useState("");
   const [originalLink, setOriginalLink] = useState("");
   const [dateRange, setDateRange] = useState("");
-  const [carousel, setCarousel] = useState<CarouselType>("PROMOTION");
+  const [carousel, setCarousel] = useState<CarouselType>("GENERAL");
 
   const [existingThumbnailUrl, setExistingThumbnailUrl] = useState<string | null>(null);
   const [repFile, setRepFile] = useState<File | null>(null);
@@ -57,7 +57,7 @@ export default function AdminNewsEditPage() {
         setContent(news.content);
         setOriginalLink(news.originalLink);
         setDateRange(
-          `${news.publishStartAt.replaceAll("-", "/")}~${news.publishEndAt.replaceAll("-", "/")}`
+          `${news.publishStartAt.replaceAll("-", ".")} ~ ${news.publishEndAt.replaceAll("-", ".")}`
         );
         setCarousel(news.carousel);
 
@@ -76,7 +76,7 @@ export default function AdminNewsEditPage() {
           title: news.title,
           content: news.content,
           originalLink: news.originalLink,
-          dateRange: `${news.publishStartAt.replaceAll("-", "/")}~${news.publishEndAt.replaceAll("-", "/")}`,
+          dateRange: `${news.publishStartAt.replaceAll("-", ".")} ~ ${news.publishEndAt.replaceAll("-", ".")}`,
           carousel: news.carousel,
           thumbnailUrl: news.thumbnailUrl || null,
           extraImages: (news.imageUrls ?? []).map((url: string) => ({
@@ -213,7 +213,7 @@ export default function AdminNewsEditPage() {
     const parts = raw.split("~").map((s) => s.trim());
     if (parts.length !== 2) return null;
 
-    const toISO = (s: string) => s.replaceAll("/", "-");
+    const toISO = (s: string) => s.replace(/[./]/g, "-");
     const publishStartAt = toISO(parts[0]);
     const publishEndAt = toISO(parts[1]);
 
