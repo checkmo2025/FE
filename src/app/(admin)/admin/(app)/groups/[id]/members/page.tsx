@@ -9,6 +9,7 @@ import {
   fetchAdminClubDetail,
   type AdminClubActiveMember,
 } from "@/lib/api/admin/clubs";
+import { formatDate } from "@/utils/date";
 
 type UserRow = {
   nickname: string;
@@ -18,18 +19,6 @@ type UserRow = {
   joinedAt: string;
   role: string;
 };
-
-function formatDate(dateString: string) {
-  const date = new Date(dateString);
-
-  if (Number.isNaN(date.getTime())) return dateString;
-
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
 
 function mapRole(role: AdminClubActiveMember["role"]) {
   switch (role) {
@@ -127,21 +116,22 @@ export default function MembersListPage() {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-[1040px] pt-6 pb-10">
+      <div className="w-full max-w-[1040px] px-4 pt-6 pb-10 t:px-6 d:px-0">
         <h1 className="mb-6 text-[22px] font-semibold leading-[135%] tracking-[-0.022px] text-Gray-7">
           {groupName || "모임"}
         </h1>
 
         <div className="w-full">
-          <table className="w-[1040px] table-fixed">
+          <div className="-mx-4 overflow-x-auto px-4 t:-mx-6 t:px-6 d:mx-0 d:px-0">
+          <table className="w-full min-w-[1040px] table-fixed">
             <colgroup>
-              <col className="w-[112px]" />
-              <col className="w-[160px]" />
-              <col className="w-[213px]" />
+              <col className="w-[130px]" />
+              <col className="w-[140px]" />
+              <col className="w-[250px]" />
               <col className="w-[180px]" />
-              <col className="w-[185px]" />
-              <col className="w-[72px]" />
-              <col className="w-[112px]" />
+              <col className="w-[140px]" />
+              <col className="w-[100px]" />
+              <col className="w-[100px]" />
             </colgroup>
 
             <thead>
@@ -159,12 +149,12 @@ export default function MembersListPage() {
                   전화번호
                 </th>
                 <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
-                  가입 일자
+                  모임 가입 일자
                 </th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                <th className="py-3 text-center body_1_2 text-Gray-4">
                   역할
                 </th>
-                <th className="py-3 pl-[12px] text-left body_1_2 text-Gray-4">
+                <th className="py-3 text-center body_1_2 text-Gray-4">
                   상세보기
                 </th>
               </tr>
@@ -200,8 +190,8 @@ export default function MembersListPage() {
                     <td className="pl-[12px] text-Gray-7">{u.email}</td>
                     <td className="pl-[12px] text-Gray-7">{u.phone}</td>
                     <td className="pl-[12px] text-Gray-7">{u.joinedAt}</td>
-                    <td className="pl-[12px] text-Gray-7">{u.role}</td>
-                    <td className="pl-[12px]">
+                    <td className="text-center text-Gray-7">{u.role}</td>
+                    <td className="text-center">
                       <Link
                         href={`/admin/users/${encodeNicknamePathSegment(u.nickname)}`}
                         className="text-Gray-7 underline underline-offset-2 hover:opacity-70"
@@ -214,6 +204,7 @@ export default function MembersListPage() {
               )}
             </tbody>
           </table>
+          </div>
 
           <div className="mt-6 flex items-center justify-center gap-4 body_2_2">
             <button

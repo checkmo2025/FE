@@ -23,24 +23,24 @@ export default function AdminSearchHeader({
   keyword,
   onKeywordChange,
   onSearch,
-  placeholder = "검색 하기",
+  placeholder = "검색",
   rightAddon,
-  inputWidthClassName = "w-[1040px]",
+  inputWidthClassName = "w-full",
 }: Props) {
   return (
     <>
-      <h1 className="mb-[20px] subhead_2 text-Gray-7">
+      <h1 className="mb-4 subhead_2 text-Gray-7 t:mb-5">
         {title}
       </h1>
 
-      <div className="mb-6 w-full flex items-center gap-3">
-        <div className={`relative ${inputWidthClassName}`}>
+      <div className="mb-6 flex w-full flex-col gap-3 t:flex-row t:items-center">
+        <div className={`relative min-w-0 ${inputWidthClassName}`}>
           <input
             value={keyword}
             onChange={(e) => onKeywordChange(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && onSearch()}
             placeholder={placeholder}
-            className="w-full h-[56px] rounded-[8px] border border-Subbrown-4 bg-White pl-4 pr-14 body_1_2 text-Gray-7 placeholder:text-Gray-4 focus:outline-none focus:ring-2 focus:ring-Subbrown-3"
+            className="h-12 w-full rounded-[8px] border border-Subbrown-4 bg-White pl-4 pr-14 body_1_2 text-Gray-7 placeholder:text-Gray-4 focus:outline-none focus:ring-2 focus:ring-Subbrown-3 t:h-[56px]"
           />
           <button
             type="button"

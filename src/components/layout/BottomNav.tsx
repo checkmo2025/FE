@@ -41,7 +41,7 @@ const NAV_ITEMS = [
 export default function BottomNav() {
   const pathname = usePathname();
 
-  if (pathname === "/landing") return null;
+  if (pathname === "/landing" || pathname.startsWith("/admin")) return null;
 
   return (
     <>

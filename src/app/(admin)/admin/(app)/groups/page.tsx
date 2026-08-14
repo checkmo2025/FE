@@ -7,6 +7,7 @@ import {
   fetchAdminClubs,
   type AdminClubListItem,
 } from "@/lib/api/admin/clubs";
+import { formatDate } from "@/utils/date";
 
 export default function GroupsPage() {
   const [keyword, setKeyword] = useState("");
@@ -75,18 +76,19 @@ export default function GroupsPage() {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-[1040px] pt-6 pb-10">
+      <div className="w-full max-w-[1040px] px-4 pt-6 pb-10 t:px-6 d:px-0">
         <AdminSearchHeader
           title="모임 관리"
           keyword={keyword}
           onKeywordChange={handleKeywordChange}
           onSearch={handleSearch}
-          placeholder="검색 하기 (모임 명)"
-          inputWidthClassName="w-[1040px]"
+          placeholder="검색 (모임 명)"
+          inputWidthClassName="w-full"
         />
 
         <div className="w-full">
-          <table className="w-[1040px] table-fixed">
+          <div className="-mx-4 overflow-x-auto px-4 t:-mx-6 t:px-6 d:mx-0 d:px-0">
+          <table className="w-full min-w-[1040px] table-fixed">
             <colgroup>
               <col className="w-[112px]" />
               <col className="w-[240px]" />
@@ -163,7 +165,7 @@ export default function GroupsPage() {
                       {g.ownerEmail ?? "-"}
                     </td>
                     <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
-                      {g.createdAt.slice(0, 10).replace(/-/g, ".")}
+                      {formatDate(g.createdAt)}
                     </td>
                     <td className="pl-[12px] py-0 body_1_2 text-Gray-7">
                       {g.memberCount}
@@ -181,6 +183,7 @@ export default function GroupsPage() {
               )}
             </tbody>
           </table>
+          </div>
 
           <div className="mt-6 flex items-center justify-center gap-4 body_2_2">
             <button

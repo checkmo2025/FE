@@ -34,8 +34,11 @@ export type AdminNewsListResult = {
 
 export type AdminNewsListResponse = ApiResponse<AdminNewsListResult>;
 
+const ADMIN_LIST_PAGE_SIZE = 20;
+const NEWS_API_PAGE_SIZE = 12;
+
 /** GET: 관리자 소식 목록 조회 (page는 0-based로 넣기) */
-export async function fetchAdminNews(
+async function fetchAdminNewsPage(
   page: number,
   keyword: string = ""
 ): Promise<AdminNewsListResponse> {
@@ -57,6 +60,44 @@ export async function fetchAdminNews(
   }
 
   return res.json();
+}
+
+export async function fetchAdminNews(
+  page: number,
+  keyword: string = ""
+): Promise<AdminNewsListResponse> {
+  const safePage = Math.max(0, page);
+  const firstItemIndex = safePage * ADMIN_LIST_PAGE_SIZE;
+  const firstApiPage = Math.floor(firstItemIndex / NEWS_API_PAGE_SIZE);
+  const lastApiPage = Math.floor(
+    (firstItemIndex + ADMIN_LIST_PAGE_SIZE - 1) / NEWS_API_PAGE_SIZE
+  );
+  const apiPages = Array.from(
+    { length: lastApiPage - firstApiPage + 1 },
+    (_, index) => firstApiPage + index
+  );
+  const responses = await Promise.all(
+    apiPages.map((apiPage) => fetchAdminNewsPage(apiPage, keyword))
+  );
+  const firstResponse = responses[0];
+  const totalElements = firstResponse.result.totalElements ?? 0;
+  const sliceStart = firstItemIndex - firstApiPage * NEWS_API_PAGE_SIZE;
+  const basicInfoList = responses
+    .flatMap((response) => response.result.basicInfoList ?? [])
+    .slice(sliceStart, sliceStart + ADMIN_LIST_PAGE_SIZE);
+
+  return {
+    ...firstResponse,
+    result: {
+      ...firstResponse.result,
+      basicInfoList,
+      page: safePage,
+      totalPages: Math.max(
+        1,
+        Math.ceil(totalElements / ADMIN_LIST_PAGE_SIZE)
+      ),
+    },
+  };
 }
 
 /** 등록/수정 공통 요청 바디 타입 */

@@ -6,6 +6,7 @@ import {
   fetchAdminMemberNews,
   type AdminMemberNewsItem,
 } from "@/lib/api/admin/member";
+import { formatDate } from "@/utils/date";
 
 type Props = {
   /** 관리자 상세 페이지의 대상 유저 닉네임 */
@@ -79,7 +80,7 @@ export default function NewsList({ memberNickname }: Props) {
             imageUrl={safeImageUrl}
             title={post.title}
             content={post.description}
-            date={post.publishStartAt}
+            date={formatDate(post.publishStartAt)}
           />
         );
       })}

@@ -17,7 +17,7 @@ export default function AdminNewsNewPage() {
   const [content, setContent] = useState("");
   const [originalLink, setOriginalLink] = useState("");
   const [dateRange, setDateRange] = useState("");
-  const [carousel, setCarousel] = useState<CarouselType>("PROMOTION");
+  const [carousel, setCarousel] = useState<CarouselType>("GENERAL");
 
   const [repFile, setRepFile] = useState<File | null>(null);
   const [extraFiles, setExtraFiles] = useState<File[]>([]);
@@ -35,7 +35,7 @@ export default function AdminNewsNewPage() {
       dateRange.trim() ||
       repFile ||
       extraFiles.length > 0 ||
-      carousel !== "PROMOTION"
+      carousel !== "GENERAL"
   );
   const { runWithoutGuard } = useUnsavedChangesGuard({
     isDirty,
@@ -107,7 +107,7 @@ export default function AdminNewsNewPage() {
     const parts = raw.split("~").map((s) => s.trim());
     if (parts.length !== 2) return null;
 
-    const toISO = (s: string) => s.replaceAll("/", "-");
+    const toISO = (s: string) => s.replace(/[./]/g, "-");
     const publishStartAt = toISO(parts[0]);
     const publishEndAt = toISO(parts[1]);
 

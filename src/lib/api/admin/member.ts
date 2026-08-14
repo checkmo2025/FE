@@ -60,9 +60,12 @@ export type AdminMemberListResult = {
 
 export type AdminMemberListResponse = ApiResponse<AdminMemberListResult>;
 
-export async function fetchAdminMembers(
-  page = 1,
-  keyword = ""
+const ADMIN_LIST_PAGE_SIZE = 20;
+const MEMBER_API_PAGE_SIZE = 12;
+
+async function fetchAdminMemberPage(
+  page: number,
+  keyword: string
 ): Promise<AdminMemberListResponse> {
   const trimmedKeyword = keyword.trim();
 
@@ -91,6 +94,48 @@ export async function fetchAdminMembers(
   }
 
   return res.json();
+}
+
+export async function fetchAdminMembers(
+  page = 1,
+  keyword = ""
+): Promise<AdminMemberListResponse> {
+  const safePage = Math.max(1, page);
+  const firstItemIndex = (safePage - 1) * ADMIN_LIST_PAGE_SIZE;
+  const firstApiPage = Math.floor(firstItemIndex / MEMBER_API_PAGE_SIZE) + 1;
+  const lastApiPage =
+    Math.floor(
+      (firstItemIndex + ADMIN_LIST_PAGE_SIZE - 1) / MEMBER_API_PAGE_SIZE
+    ) + 1;
+  const apiPages = Array.from(
+    { length: lastApiPage - firstApiPage + 1 },
+    (_, index) => firstApiPage + index
+  );
+  const responses = await Promise.all(
+    apiPages.map((apiPage) => fetchAdminMemberPage(apiPage, keyword))
+  );
+  const firstResponse = responses[0];
+  const totalElements = firstResponse.result.totalElements ?? 0;
+  const sliceStart = firstItemIndex - (firstApiPage - 1) * MEMBER_API_PAGE_SIZE;
+  const memberList = responses
+    .flatMap((response) => response.result.memberList ?? [])
+    .slice(sliceStart, sliceStart + ADMIN_LIST_PAGE_SIZE);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(totalElements / ADMIN_LIST_PAGE_SIZE)
+  );
+
+  return {
+    ...firstResponse,
+    result: {
+      ...firstResponse.result,
+      memberList,
+      page: safePage,
+      pageSize: ADMIN_LIST_PAGE_SIZE,
+      totalPages,
+      hasNext: safePage < totalPages,
+    },
+  };
 }
 
 export type AdminMemberDetailResult = {

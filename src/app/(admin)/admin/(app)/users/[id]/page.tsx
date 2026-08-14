@@ -14,6 +14,7 @@ import {
   fetchAdminMemberDetail,
   type AdminMemberDetailResult,
 } from "@/lib/api/admin/member";
+import { decodeNicknamePathSegment } from "@/utils/nickname";
 
 type PageProps = {
   params: Promise<{
@@ -23,6 +24,7 @@ type PageProps = {
 
 export default function Page({ params }: PageProps) {
   const { id } = React.use(params);
+  const memberNickname = decodeNicknamePathSegment(id);
 
   const [activeTab, setActiveTab] = useState<AdminUserTabId>("meetings");
   const [member, setMember] = useState<AdminMemberDetailResult | null>(null);
@@ -32,7 +34,7 @@ export default function Page({ params }: PageProps) {
     const loadMemberDetail = async () => {
       try {
         setLoading(true);
-        const res = await fetchAdminMemberDetail(id);
+        const res = await fetchAdminMemberDetail(memberNickname);
         setMember(res.result);
       } catch (error) {
         console.error("회원 상세 조회 실패:", error);
@@ -43,7 +45,7 @@ export default function Page({ params }: PageProps) {
     };
 
     loadMemberDetail();
-  }, [id]);
+  }, [memberNickname]);
 
   if (loading) {
     return (
@@ -67,6 +69,7 @@ export default function Page({ params }: PageProps) {
 
   const user = {
     userId: member.memberId,
+    nickname: member.nickname,
     name: member.name,
     email: member.email,
     phone: member.phoneNumber,

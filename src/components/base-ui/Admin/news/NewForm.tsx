@@ -3,6 +3,7 @@
 import React, { useId, useState } from "react";
 import { FieldLabel, UploadBox, UploadBoxMulti } from "./formParts";
 import EmailSelectModal from "@/components/base-ui/Admin/news/EmailSelectModal";
+import DateRangePicker from "@/components/base-ui/Admin/news/DateRangePicker";
 
 type CarouselType = "PROMOTION" | "GENERAL";
 
@@ -145,24 +146,24 @@ export default function NewForm({
               <input
                 type="radio"
                 name="carousel"
-                value="PROMOTION"
-                checked={carousel === "PROMOTION"}
-                onChange={() => setCarousel("PROMOTION")}
-                className="h-5 w-5 accent-[var(--Primary_1)]"
-              />
-              <span>프로모션</span>
-            </label>
-
-            <label className="flex items-center gap-[8px] cursor-pointer text-[18px] font-medium leading-[135%] tracking-[-0.018px] text-[var(--Gray_6)]">
-              <input
-                type="radio"
-                name="carousel"
                 value="GENERAL"
                 checked={carousel === "GENERAL"}
                 onChange={() => setCarousel("GENERAL")}
                 className="h-5 w-5 accent-[var(--Primary_1)]"
               />
               <span>일반</span>
+            </label>
+
+            <label className="flex items-center gap-[8px] cursor-pointer text-[18px] font-medium leading-[135%] tracking-[-0.018px] text-[var(--Gray_6)]">
+              <input
+                type="radio"
+                name="carousel"
+                value="PROMOTION"
+                checked={carousel === "PROMOTION"}
+                onChange={() => setCarousel("PROMOTION")}
+                className="h-5 w-5 accent-[var(--Primary_1)]"
+              />
+              <span>프로모션</span>
             </label>
           </div>
         </div>
@@ -186,17 +187,9 @@ export default function NewForm({
 
         <div className="space-y-3">
           <FieldLabel label="게시 요청 날짜" required />
-          <input
+          <DateRangePicker
             value={dateRange}
-            onChange={(e) => setDateRange(e.target.value)}
-            className="
-              h-[56px] w-full rounded-[6px]
-              border border-[var(--Subbrown_4)] bg-[var(--White)] px-4
-              body_1_3 text-[var(--Gray_7)]
-              placeholder:body_1_3 placeholder:text-[var(--Gray_3)]
-              focus:outline-none focus:ring-2 focus:ring-[var(--Primary_1)]/20
-            "
-            placeholder="형식 : YYYY/MM/DD~YYYY/MM/DD"
+            onChange={setDateRange}
           />
         </div>
 

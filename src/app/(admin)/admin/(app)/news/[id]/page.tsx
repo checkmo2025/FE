@@ -8,6 +8,7 @@ import {
   fetchAdminNewsDetail,
   type AdminNewsDetailResult,
 } from "@/lib/api/admin/news";
+import { formatDate } from "@/utils/date";
 
 function getSafeImageSrc(
   src?: string | null,
@@ -70,7 +71,7 @@ export default function AdminNewsDetailPage() {
         }
 
         setNews(response.result);
-      } catch (error) {
+      } catch {
         if (!alive) return;
         setIsError(true);
       } finally {
@@ -121,12 +122,12 @@ export default function AdminNewsDetailPage() {
 
       <div className="mx-auto w-full max-w-[1400px] px-9 t:px-[200px] mt-6 t:mt-10">
         <p className="body_2_2 text-Gray-4 mb-2">
-          게시기간 {news.publishStartAt} - {news.publishEndAt}
+          게시기간 {formatDate(news.publishStartAt)} ~ {formatDate(news.publishEndAt)}
         </p>
 
         <div className="flex items-center justify-between mb-4">
           <h1 className="subhead_1 t:headline_3 text-Gray-7">{news.title}</h1>
-          <p className="body_1_2 text-Gray-3">{news.createdAt}</p>
+          <p className="body_1_2 text-Gray-3">{formatDate(news.createdAt)}</p>
         </div>
 
         <div className="w-full max-w-[1040px] mt-22">
