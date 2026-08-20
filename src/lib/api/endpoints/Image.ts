@@ -1,6 +1,12 @@
 import { API_BASE_URL } from "./base";
 
-export type ImageUploadType = "PROFILE" | "CLUB" | "NOTICE";
+export type ImageUploadType =
+  | "PROFILE"
+  | "CLUB"
+  | "NOTICE"
+  | "BOOK_STORY"
+  | "BOOK_STORY_COMMENT"
+  | "NOTICE_COMMENT";
 
 export const IMAGE = {
   uploadUrl: (type: ImageUploadType) =>

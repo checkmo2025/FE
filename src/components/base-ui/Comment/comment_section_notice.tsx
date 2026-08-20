@@ -38,8 +38,13 @@ export default function CommentSectionNotice({
   const clubId = Number(params.id);
   const { confirmNavigation } = useUnsavedChangesNavigation();
 
-  const { user } = useAuthStore();
+  const { user, isLoggedIn, openLoginModal } = useAuthStore();
   const myName = user?.nickname ?? "";
+  const ensureLoggedIn = () => {
+    if (isLoggedIn) return true;
+    openLoginModal();
+    return false;
+  };
 
   const commentsQuery = useClubNoticeCommentsInfiniteQuery(clubId, noticeId, {
     enabled: Number.isFinite(clubId) && Number.isFinite(noticeId),
@@ -72,6 +77,7 @@ export default function CommentSectionNotice({
           ? comment.authorInfo.profileImageUrl
           : DEFAULT_PROFILE_IMAGE,
         content: comment.content,
+        imageUrls: comment.imageUrls ?? [],
         createdAt: comment.createdAt,
 
         isAuthor: isMine,
@@ -84,12 +90,12 @@ export default function CommentSectionNotice({
     });
   }, [commentsQuery.data, myName, isAdminView]);
 
-  const handleAddComment = async (content: string) => {
+  const handleAddComment = async (content: string, imageUrls: string[]) => {
     const trimmed = content.trim();
 
     if (!trimmed) {
       toast.error("댓글 내용을 입력해주세요.");
-      return;
+      return false;
     }
     if (
       isTextOverLimit(
@@ -98,34 +104,36 @@ export default function CommentSectionNotice({
         `댓글은 ${INPUT_LIMITS.NOTICE_COMMENT}자 이하여야 합니다.`
       )
     ) {
-      return;
+      return false;
     }
 
     if (!Number.isFinite(clubId) || !Number.isFinite(noticeId)) {
       toast.error("잘못된 접근입니다.");
-      return;
+      return false;
     }
 
     try {
       await createComment({
         clubId,
         noticeId,
-        body: { content: trimmed },
+        body: { content: trimmed, imageUrls },
       });
 
       toast.success("댓글이 등록되었습니다.");
+      return true;
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "";
       toast.error(msg || "댓글 등록에 실패했습니다.");
+      return false;
     }
   };
 
-  const handleEditComment = async (id: number, content: string) => {
+  const handleEditComment = async (id: number, content: string, imageUrls: string[]) => {
     const trimmed = content.trim();
 
     if (!trimmed) {
       toast.error("댓글 내용을 입력해주세요.");
-      return;
+      return false;
     }
     if (
       isTextOverLimit(
@@ -134,12 +142,12 @@ export default function CommentSectionNotice({
         `댓글은 ${INPUT_LIMITS.NOTICE_COMMENT}자 이하여야 합니다.`
       )
     ) {
-      return;
+      return false;
     }
 
     if (!Number.isFinite(clubId) || !Number.isFinite(noticeId)) {
       toast.error("잘못된 접근입니다.");
-      return;
+      return false;
     }
 
     try {
@@ -147,13 +155,15 @@ export default function CommentSectionNotice({
         clubId,
         noticeId,
         commentId: id,
-        body: { content: trimmed },
+        body: { content: trimmed, imageUrls },
       });
 
       toast.success("댓글이 수정되었습니다.");
+      return true;
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "";
       toast.error(msg || "댓글 수정에 실패했습니다.");
+      return false;
     }
   };
 
@@ -247,6 +257,7 @@ export default function CommentSectionNotice({
         onLoadMore={handleLoadMore}
         hasNextPage={!!commentsQuery.hasNextPage}
         isFetchingNextPage={!!commentsQuery.isFetchingNextPage}
+        beforeSubmit={ensureLoggedIn}
       />
 
       <ConfirmModal

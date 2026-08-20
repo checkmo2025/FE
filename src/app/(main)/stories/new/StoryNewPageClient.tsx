@@ -13,6 +13,9 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import { INPUT_LIMITS } from "@/constants/inputLimits";
 import { isTextOverLimit } from "@/utils/inputLimit";
+import ImageAttachmentPicker from "@/components/common/ImageAttachmentPicker";
+import { useImageAttachments } from "@/hooks/useImageAttachments";
+import { getErrorMessage, hasErrorCode } from "@/lib/api/errors";
 
 function StoryNewContent() {
   const router = useRouter();
@@ -33,7 +36,9 @@ function StoryNewContent() {
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
   const [isBookSelectModalOpen, setIsBookSelectModalOpen] = useState(false);
-  const isDirty = Boolean(title.trim() || detail.trim());
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const attachments = useImageAttachments([], INPUT_LIMITS.BOOK_STORY_IMAGE_COUNT);
+  const isDirty = Boolean(title.trim() || detail.trim() || attachments.isDirty);
   const { runWithoutGuard } = useUnsavedChangesGuard({
     isDirty,
     variant: "create",
@@ -42,7 +47,8 @@ function StoryNewContent() {
   const { data: selectedBook } = useBookDetailQuery(isbn || "");
   const createStoryMutation = useCreateBookStoryMutation();
 
-  const handleSubmit = (status: "PUBLISHED" | "DRAFT" = "PUBLISHED") => {
+  const handleSubmit = async (status: "PUBLISHED" | "DRAFT" = "PUBLISHED") => {
+    if (isSubmitting) return;
     if (!selectedBook) {
       toast.error("책을 선택해 주세요.");
       return;
@@ -70,26 +76,35 @@ function StoryNewContent() {
       return;
     }
 
-    createStoryMutation.mutate({
-      isbn: selectedBook.isbn,
-      title,
-      description: detail,
-      status,
-    }, {
-      onSuccess: () => {
-        if (status === "DRAFT") {
-          toast.success("임시저장되었습니다.");
-          runWithoutGuard(() => router.push("/profile/mypage")); // 임시저장 시 마이페이지로 이동
-        } else {
-          toast.success("스토리가 등록되었습니다!");
-          runWithoutGuard(() => router.push("/stories"));
-        }
-      },
-      onError: (error) => {
-        console.error("스토리 등록 실패:", error);
-        toast.error(status === "DRAFT" ? "임시저장에 실패했습니다." : "스토리 등록에 실패했습니다. 다시 시도해 주세요.");
+    setIsSubmitting(true);
+    try {
+      const imageUrls = await attachments.resolveUrls("BOOK_STORY");
+      await createStoryMutation.mutateAsync({
+        isbn: selectedBook.isbn,
+        title,
+        description: detail,
+        imageUrls,
+        status,
+      });
+      if (status === "DRAFT") {
+        toast.success("임시저장되었습니다.");
+        runWithoutGuard(() => router.push("/profile/mypage"));
+      } else {
+        toast.success("스토리가 등록되었습니다!");
+        runWithoutGuard(() => router.push("/stories"));
       }
-    });
+    } catch (error) {
+      console.error("스토리 등록 실패:", error);
+      toast.error(
+        hasErrorCode(error) && (error.code === "S3_400" || error.code.startsWith("BOOK_STORY_IMAGE_"))
+          ? getErrorMessage(error.code)
+          : status === "DRAFT"
+            ? "임시저장에 실패했습니다."
+            : "스토리 등록에 실패했습니다. 다시 시도해 주세요."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleBookSelect = (selectedIsbn: string) => {
@@ -168,24 +183,32 @@ function StoryNewContent() {
           />
         </div>
 
+        <div className="mx-auto mt-4 w-full max-w-[1040px]">
+          <ImageAttachmentPicker
+            controller={attachments}
+            disabled={isSubmitting || createStoryMutation.isPending}
+            label="책 이야기 이미지"
+          />
+        </div>
+
         {/* 하단 버튼 */}
         <div className="flex justify-center">
           <div className="flex w-full max-w-[1040px] justify-center t:justify-end gap-4 mt-6">
             <button
               type="button"
               onClick={() => handleSubmit("DRAFT")}
-              disabled={createStoryMutation.isPending}
+              disabled={isSubmitting || createStoryMutation.isPending}
               className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors hover:bg-Subbrown-3 disabled:hover:bg-background disabled:opacity-50"
             >
-              {createStoryMutation.isPending ? "임시저장 중..." : "임시저장"}
+              {isSubmitting || createStoryMutation.isPending ? "임시저장 중..." : "임시저장"}
             </button>
             <button
               type="button"
               onClick={() => handleSubmit("PUBLISHED")}
-              disabled={createStoryMutation.isPending}
+              disabled={isSubmitting || createStoryMutation.isPending}
               className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:bg-primary-1 transition-colors disabled:hover:bg-primary-2 disabled:opacity-50"
             >
-              {createStoryMutation.isPending ? "등록 중..." : "등록"}
+              {isSubmitting || createStoryMutation.isPending ? "등록 중..." : "등록"}
             </button>
           </div>
         </div>

@@ -10,6 +10,7 @@ export type Comment = {
   authorName: string;
   profileImgSrc?: string;
   content: string;
+  imageUrls: string[];
   createdAt: string;
 
   isAuthor?: boolean;
@@ -22,14 +23,15 @@ export type Comment = {
 
 type CommentListNoticeProps = {
   comments: Comment[];
-  onAddComment: (content: string) => void | Promise<void>;
-  onEditComment?: (id: number, content: string) => void | Promise<void>;
+  onAddComment: (content: string, imageUrls: string[]) => void | boolean | Promise<void | boolean>;
+  onEditComment?: (id: number, content: string, imageUrls: string[]) => void | boolean | Promise<void | boolean>;
   onDeleteComment?: (id: number) => void | Promise<void>;
   onReportComment?: (id: number) => void;
   onProfileClick?: (nickname: string) => void;
   onLoadMore?: () => void;
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;
+  beforeSubmit?: () => boolean;
 };
 
 export default function CommentListNotice({
@@ -42,6 +44,7 @@ export default function CommentListNotice({
   onLoadMore,
   hasNextPage = false,
   isFetchingNextPage = false,
+  beforeSubmit,
 }: CommentListNoticeProps) {
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -69,7 +72,11 @@ export default function CommentListNotice({
   return (
     <div className="w-full">
       <h3 className="subhead_4_1 t:subhead_1 text-Gray-7 mb-4">댓글</h3>
-      <CommentInput onSubmit={onAddComment} />
+      <CommentInput
+        onSubmit={onAddComment}
+        imageUploadType="NOTICE_COMMENT"
+        beforeSubmit={beforeSubmit}
+      />
 
       {/* 댓글 목록 */}
       <div className="mt-6 divide-y divide-Subbrown-4">
@@ -80,6 +87,7 @@ export default function CommentListNotice({
             authorName={comment.authorName}
             profileImgSrc={comment.profileImgSrc}
             content={comment.content}
+            imageUrls={comment.imageUrls}
             createdAt={comment.createdAt}
             isAuthor={comment.isAuthor}
             isMine={comment.isMine}
@@ -90,6 +98,7 @@ export default function CommentListNotice({
             onDelete={onDeleteComment}
             onReport={onReportComment}
             onProfileClick={onProfileClick}
+            imageUploadType="NOTICE_COMMENT"
           />
         ))}
       </div>

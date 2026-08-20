@@ -3,10 +3,7 @@
 import { useState } from "react";
 import CommentInput from "./comment_input";
 import CommentItem from "./comment_item";
-import Image from "next/image";
-import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
-import { INPUT_LIMITS } from "@/constants/inputLimits";
-import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
+import type { ImageUploadType } from "@/lib/api/endpoints/Image";
 
 // 댓글 목록 (댓글 입력창 + 댓글 + 대댓글) 컴포넌트
 export type Comment = {
@@ -14,6 +11,7 @@ export type Comment = {
   authorName: string;
   profileImgSrc?: string;
   content: string;
+  imageUrls: string[];
   createdAt: string;
   isAuthor?: boolean; // 글 작성자인지 (뱃지용)
   isMine?: boolean; // 내가 쓴 댓글인지
@@ -25,12 +23,14 @@ export type Comment = {
 
 type CommentListProps = {
   comments: Comment[];
-  onAddComment: (content: string) => void;
-  onAddReply?: (parentId: number, content: string) => void;
-  onEditComment?: (id: number, content: string) => void;
+  onAddComment: (content: string, imageUrls: string[]) => void | boolean | Promise<void | boolean>;
+  onAddReply?: (parentId: number, content: string, imageUrls: string[]) => void | boolean | Promise<void | boolean>;
+  onEditComment?: (id: number, content: string, imageUrls: string[]) => void | boolean | Promise<void | boolean>;
   onDeleteComment?: (id: number) => void;
   onReportComment?: (id: number) => void;
   onProfileClick?: (nickname: string) => void;
+  imageUploadType?: ImageUploadType;
+  beforeSubmit?: () => boolean;
 };
 
 export default function CommentList({
@@ -41,93 +41,15 @@ export default function CommentList({
   onDeleteComment,
   onReportComment,
   onProfileClick,
+  imageUploadType,
+  beforeSubmit,
 }: CommentListProps) {
   // 각 댓글의 답글 입력창 표시 여부
   const [replyInputOpen, setReplyInputOpen] = useState<Record<number, boolean>>({});
-  // 각 댓글의 답글 입력 내용을 관리
-  const [replyContents, setReplyContents] = useState<Record<number, string>>({});
-  const hasReplyDraft = Object.values(replyContents).some((content) => content.trim());
-  const { confirmNavigation } = useUnsavedChangesGuard({
-    isDirty: hasReplyDraft,
-    variant: "create",
-    title: "작성 중인 답글이 있어요",
-    description: "이 화면을 나가면 입력한 답글이 저장되지 않습니다.",
-  });
-
   const handleReplyClick = (commentId: number) => {
-    if (replyInputOpen[commentId] && replyContents[commentId]?.trim()) {
-      confirmNavigation(
-        () => {
-          setReplyInputOpen((prev) => ({
-            ...prev,
-            [commentId]: false,
-          }));
-          setReplyContents((prev) => {
-            const next = { ...prev };
-            delete next[commentId];
-            return next;
-          });
-        },
-        {
-          title: "작성 중인 답글이 있어요",
-          description: "답글 작성을 취소하면 입력한 내용이 사라집니다.",
-          leaveText: "취소하기",
-          stayText: "계속 작성",
-        }
-      );
-      return;
-    }
-
     setReplyInputOpen((prev) => ({
       ...prev,
-      [commentId]: !prev[commentId],
-    }));
-    if (!replyInputOpen[commentId]) {
-      setReplyContents((prev) => ({
-        ...prev,
-        [commentId]: "",
-      }));
-    }
-  };
-
-  const handleReplySubmit = (commentId: number) => {
-    const replyContent = replyContents[commentId]?.trim();
-    if (!replyContent) return;
-    if (
-      isTextOverLimit(
-        replyContent,
-        INPUT_LIMITS.BOOK_STORY_COMMENT,
-        `댓글은 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자 이하여야 합니다.`
-      )
-    ) {
-      return;
-    }
-
-    // 답글 추가
-    if (onAddReply) {
-      onAddReply(commentId, replyContent);
-    }
-
-    // 답글 입력창 닫기 및 내용 초기화
-    setReplyInputOpen((prev) => ({
-      ...prev,
-      [commentId]: false,
-    }));
-    setReplyContents((prev) => {
-      const newContents = { ...prev };
-      delete newContents[commentId];
-      return newContents;
-    });
-  };
-
-  const handleReplyContentChange = (commentId: number, content: string) => {
-    setReplyContents((prev) => ({
-      ...prev,
-      [commentId]: clampTextToLimit(
-        content,
-        INPUT_LIMITS.BOOK_STORY_COMMENT,
-        `댓글은 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자 이하여야 합니다.`
-      ),
+      [commentId]: true,
     }));
   };
 
@@ -137,14 +59,16 @@ export default function CommentList({
       <h3 className="subhead_4_1 t:subhead_1 text-Gray-7 mb-4">댓글</h3>
 
       {/* 댓글 입력 */}
-      <CommentInput onSubmit={onAddComment} />
+      <CommentInput
+        onSubmit={onAddComment}
+        imageUploadType={imageUploadType}
+        beforeSubmit={beforeSubmit}
+      />
 
       {/* 댓글 목록 */}
       <div className="mt-6 divide-y divide-Subbrown-4">
         {comments.map((comment) => {
           const isReplyInputVisible = replyInputOpen[comment.id];
-          const replyContent = replyContents[comment.id] || "";
-
           return (
             <div key={comment.id}>
               <CommentItem
@@ -152,6 +76,7 @@ export default function CommentList({
                 authorName={comment.authorName}
                 profileImgSrc={comment.profileImgSrc}
                 content={comment.content}
+                imageUrls={comment.imageUrls}
                 createdAt={comment.createdAt}
                 isAuthor={comment.isAuthor}
                 isMine={comment.isMine}
@@ -162,6 +87,7 @@ export default function CommentList({
                 onDelete={onDeleteComment}
                 onReport={comment.isBlocked || comment.isDeleted ? undefined : onReportComment}
                 onProfileClick={comment.isBlocked || comment.isDeleted ? undefined : onProfileClick}
+                imageUploadType={imageUploadType}
               />
 
               {/* 답글 입력창  */}
@@ -172,38 +98,23 @@ export default function CommentList({
                       @{comment.authorName} 님에게 답글
                     </span>
                   </div>
-                  <div className="flex items-center gap-4 t:gap-8">
-                    <Image
-                      src="/reply.svg"
-                      alt="대댓글"
-                      width={40}
-                      height={40}
-                      className="shrink-0 w-6 h-6 t:w-10 t:h-10 self-start mt-2"
-                    />
-                    <div className="flex min-w-0 flex-1 items-center gap-3">
-                      <input
-                        type="text"
-                        value={replyContent}
-                        onChange={(e) =>
-                          handleReplyContentChange(comment.id, e.target.value)
+                  <div className="pl-[40px] t:pl-[72px]">
+                    <CommentInput
+                      imageUploadType={imageUploadType}
+                      beforeSubmit={beforeSubmit}
+                      placeholder="답글 내용을 입력해주세요"
+                      onSubmit={async (content, imageUrls) => {
+                        const result = await onAddReply?.(
+                          comment.parentCommentId || comment.id,
+                          content,
+                          imageUrls
+                        );
+                        if (result !== false) {
+                          setReplyInputOpen((prev) => ({ ...prev, [comment.id]: false }));
                         }
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            handleReplySubmit(comment.parentCommentId || comment.id);
-                          }
-                        }}
-                        placeholder={`답글 내용을 입력해주세요 (최대 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자)`}
-                        className="flex-1 min-w-0 h-[36px] t:h-[56px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White body_1_2 text-Gray-7 placeholder:text-Gray-3 outline-none"
-                        autoFocus
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleReplySubmit(comment.parentCommentId || comment.id)}
-                        className="px-4 t:px-6 py-2 t:py-3 h-[36px] t:h-[56px] border border-Subbrown-3 text-primary-3 rounded-lg bg-Subbrown-4 subhead_4_1 cursor-pointer shrink-0"
-                      >
-                        입력
-                      </button>
-                    </div>
+                        return result;
+                      }}
+                    />
                   </div>
                 </div>
               )}
@@ -216,6 +127,7 @@ export default function CommentList({
                     authorName={reply.authorName}
                     profileImgSrc={reply.profileImgSrc}
                     content={reply.content}
+                    imageUrls={reply.imageUrls}
                     createdAt={reply.createdAt}
                     isAuthor={reply.isAuthor}
                     isMine={reply.isMine}
@@ -226,6 +138,7 @@ export default function CommentList({
                     onDelete={onDeleteComment}
                     onReport={reply.isBlocked || reply.isDeleted ? undefined : onReportComment}
                     onProfileClick={reply.isBlocked || reply.isDeleted ? undefined : onProfileClick}
+                    imageUploadType={imageUploadType}
                   />
                 </div>
               ))}

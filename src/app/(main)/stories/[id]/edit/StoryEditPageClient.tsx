@@ -12,6 +12,9 @@ import BookstoryChoosebook from "@/components/base-ui/BookStory/Editor/bookstory
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import { INPUT_LIMITS } from "@/constants/inputLimits";
 import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
+import ImageAttachmentPicker from "@/components/common/ImageAttachmentPicker";
+import { useImageAttachments } from "@/hooks/useImageAttachments";
+import { getErrorMessage, hasErrorCode } from "@/lib/api/errors";
 
 export default function StoryEditPageClient() {
   const router = useRouter();
@@ -20,15 +23,18 @@ export default function StoryEditPageClient() {
   const bookStoryId = Number(id);
 
   const { data: story, isLoading, isError } = useStoryDetailQuery(bookStoryId);
-  const { mutate: updateStory, isPending } = useUpdateBookStoryMutation();
+  const { mutateAsync: updateStory, isPending } = useUpdateBookStoryMutation();
   const { isLoggedIn, isInitialized } = useAuthStore();
 
   const [description, setDescription] = useState("");
   const [isDescriptionInitialized, setIsDescriptionInitialized] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const attachments = useImageAttachments([], INPUT_LIMITS.BOOK_STORY_IMAGE_COUNT);
+  const { reset: resetAttachments } = attachments;
   const isDirty = Boolean(
     story &&
       isDescriptionInitialized &&
-      description !== story.description
+      (description !== story.description || attachments.isDirty)
   );
   const { confirmNavigation, runWithoutGuard } = useUnsavedChangesGuard({
     isDirty,
@@ -39,9 +45,10 @@ export default function StoryEditPageClient() {
   useEffect(() => {
     if (story && !isDescriptionInitialized) {
       setDescription(story.description);
+      resetAttachments(story.imageUrls ?? []);
       setIsDescriptionInitialized(true);
     }
-  }, [story, isDescriptionInitialized]);
+  }, [story, isDescriptionInitialized, resetAttachments]);
 
   // 로그인 여부 방어
   useEffect(() => {
@@ -63,7 +70,8 @@ export default function StoryEditPageClient() {
     confirmNavigation(() => router.back());
   };
 
-  const handleSubmit = (targetStatus?: "PUBLISHED" | "DRAFT") => {
+  const handleSubmit = async (targetStatus?: "PUBLISHED" | "DRAFT") => {
+    if (isUploading || isPending) return;
     // PUBLISHED일 경우 description 밸리데이션 처리
     if (targetStatus === "PUBLISHED" && !description.trim()) {
       toast.error("내용을 입력해 주세요.");
@@ -79,29 +87,32 @@ export default function StoryEditPageClient() {
       return;
     }
 
-    const payload = {
-      description,
-      ...(story ? { isbn: story.bookInfo.bookId, title: story.bookStoryTitle } : {}),
-      ...(targetStatus ? { status: targetStatus } : {})
-    };
-
-    updateStory(
-      { bookStoryId, data: payload },
-      {
-        onSuccess: () => {
-          if (targetStatus === "DRAFT") {
-            toast.success("임시저장되었습니다.");
-            runWithoutGuard(() => router.push("/profile/mypage"));
-          } else {
-            toast.success(targetStatus === "PUBLISHED" && story?.status === "DRAFT" ? "발행이 완료되었습니다." : "수정이 완료되었습니다.");
-            runWithoutGuard(() => router.push(`/stories/${bookStoryId}`));
-          }
-        },
-        onError: () => {
-          toast.error("저장에 실패했습니다. 다시 시도해 주세요.");
-        },
+    setIsUploading(true);
+    try {
+      const imageUrls = await attachments.resolveUrls("BOOK_STORY");
+      const payload = {
+        description,
+        imageUrls,
+        ...(story ? { isbn: story.bookInfo.bookId, title: story.bookStoryTitle } : {}),
+        ...(targetStatus ? { status: targetStatus } : {})
+      };
+      await updateStory({ bookStoryId, data: payload });
+      if (targetStatus === "DRAFT") {
+        toast.success("임시저장되었습니다.");
+        runWithoutGuard(() => router.push("/profile/mypage"));
+      } else {
+        toast.success(targetStatus === "PUBLISHED" && story?.status === "DRAFT" ? "발행이 완료되었습니다." : "수정이 완료되었습니다.");
+        runWithoutGuard(() => router.push(`/stories/${bookStoryId}`));
       }
-    );
+    } catch (error) {
+      toast.error(
+        hasErrorCode(error) && (error.code === "S3_400" || error.code.startsWith("BOOK_STORY_IMAGE_"))
+          ? getErrorMessage(error.code)
+          : "저장에 실패했습니다. 다시 시도해 주세요."
+      );
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   if (isLoading) {
@@ -191,6 +202,14 @@ export default function StoryEditPageClient() {
           </div>
         </div>
 
+        <div className="mx-auto mt-4 w-full max-w-[1040px]">
+          <ImageAttachmentPicker
+            controller={attachments}
+            disabled={isPending || isUploading}
+            label="책 이야기 이미지"
+          />
+        </div>
+
         {/* 하단 버튼 */}
         <div className="flex justify-center">
           <div className="flex w-full max-w-[1040px] justify-center t:justify-end gap-4 mt-6">
@@ -199,18 +218,18 @@ export default function StoryEditPageClient() {
                 <button
                   type="button"
                   onClick={() => handleSubmit("DRAFT")}
-                  disabled={isPending}
+                  disabled={isPending || isUploading}
                   className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg border border-primary-1 text-primary-3 body_1_2 bg-background transition-colors hover:bg-Subbrown-3 disabled:hover:bg-background disabled:opacity-50"
                 >
-                  {isPending ? "임시저장 중..." : "임시저장"}
+                  {isPending || isUploading ? "임시저장 중..." : "임시저장"}
                 </button>
                 <button
                   type="button"
                   onClick={() => handleSubmit("PUBLISHED")}
-                  disabled={isPending}
+                  disabled={isPending || isUploading}
                   className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:bg-primary-1 transition-colors disabled:hover:bg-primary-2 disabled:opacity-50"
                 >
-                  {isPending ? "발행 중..." : "발행"}
+                  {isPending || isUploading ? "발행 중..." : "발행"}
                 </button>
               </>
             ) : (
@@ -225,10 +244,10 @@ export default function StoryEditPageClient() {
                 <button
                   type="button"
                   onClick={() => handleSubmit()}
-                  disabled={isPending}
+                  disabled={isPending || isUploading}
                   className="flex px-4 py-3 w-[132px] h-[44px] justify-center items-center rounded-lg bg-primary-2 text-White body_1_2 hover:bg-primary-1 transition-colors disabled:hover:bg-primary-2 disabled:opacity-50"
                 >
-                  {isPending ? "저장 중..." : "저장"}
+                  {isPending || isUploading ? "저장 중..." : "저장"}
                 </button>
               </>
             )}

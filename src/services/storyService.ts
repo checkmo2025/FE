@@ -1,6 +1,13 @@
 import { apiClient, extractResult } from "@/lib/api/client";
 import { STORY_ENDPOINTS } from "@/lib/api/endpoints/bookstory";
-import { BookStoryListResponse, BookStoryDetail, CreateBookStoryRequest, UpdateBookStoryRequest } from "@/types/story";
+import {
+    BookStoryListResponse,
+    BookStoryDetail,
+    CreateBookStoryRequest,
+    CreateCommentRequest,
+    UpdateBookStoryRequest,
+    UpdateCommentRequest,
+} from "@/types/story";
 import { ApiResponse } from "@/types/auth";
 
 import { SitemapListResponse } from "@/types/sitemap";
@@ -84,7 +91,7 @@ export const storyService = {
     },
     createComment: async (
         bookStoryId: number,
-        data: { content: string },
+        data: CreateCommentRequest,
         parentCommentId?: number
     ): Promise<number> => {
         // 백엔드가 Request Param과 Body 중 어느 곳을 기대할지 모호한 경우를 대비하여 둘 다 전달
@@ -101,7 +108,7 @@ export const storyService = {
     updateComment: async (
         bookStoryId: number,
         commentId: number,
-        data: { content: string }
+        data: UpdateCommentRequest
     ): Promise<number> => {
         const response = await apiClient.patch<ApiResponse<number>>(
             `${STORY_ENDPOINTS.LIST}/${bookStoryId}/comments/${commentId}`,
