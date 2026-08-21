@@ -13,6 +13,7 @@ type ImageAttachmentPickerProps = {
   disabled?: boolean;
   compact?: boolean;
   label?: string;
+  previewOnly?: boolean;
 };
 
 export default function ImageAttachmentPicker({
@@ -20,6 +21,7 @@ export default function ImageAttachmentPicker({
   disabled = false,
   compact = false,
   label = "이미지 첨부",
+  previewOnly = false,
 }: ImageAttachmentPickerProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const { items, maxCount, addFiles, remove, move } = controller;
@@ -38,27 +40,31 @@ export default function ImageAttachmentPicker({
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between gap-3">
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          disabled={disabled || items.length >= maxCount}
-          className="flex items-center gap-2 rounded-lg border border-Subbrown-4 bg-White px-3 py-2 body_1_2 text-primary-3 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <Image src="/image.svg" alt="" width={18} height={18} />
-          {label}
-        </button>
-        <span className="body_2_2 text-Gray-3">{items.length}/{maxCount}</span>
-      </div>
+      {!previewOnly && (
+        <>
+          <div className="flex items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              disabled={disabled || items.length >= maxCount}
+              className="flex items-center gap-2 rounded-lg border border-Subbrown-4 bg-White px-3 py-2 body_1_2 text-primary-3 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Image src="/image.svg" alt="" width={18} height={18} />
+              {label}
+            </button>
+            <span className="body_2_2 text-Gray-3">{items.length}/{maxCount}</span>
+          </div>
 
-      <input
-        ref={inputRef}
-        type="file"
-        accept={IMAGE_FILE_ACCEPT}
-        multiple
-        className="hidden"
-        onChange={(event) => handleFiles(event.target.files)}
-      />
+          <input
+            ref={inputRef}
+            type="file"
+            accept={IMAGE_FILE_ACCEPT}
+            multiple
+            className="hidden"
+            onChange={(event) => handleFiles(event.target.files)}
+          />
+        </>
+      )}
 
       {items.length > 0 && (
         <div className={`mt-3 flex overflow-x-auto ${compact ? "gap-2" : "gap-3"}`}>

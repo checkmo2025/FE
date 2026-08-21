@@ -206,7 +206,7 @@ export default function StoryEditPageClient() {
           <ImageAttachmentPicker
             controller={attachments}
             disabled={isPending || isUploading}
-            label="책 이야기 이미지"
+            label="이미지 첨부"
           />
         </div>
 

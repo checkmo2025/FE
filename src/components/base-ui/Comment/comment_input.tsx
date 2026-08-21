@@ -1,12 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import Image from "next/image";
+import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 import { INPUT_LIMITS } from "@/constants/inputLimits";
 import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
 import type { ImageUploadType } from "@/lib/api/endpoints/Image";
-import { useImageAttachments } from "@/hooks/useImageAttachments";
+import {
+  IMAGE_FILE_ACCEPT,
+  useImageAttachments,
+} from "@/hooks/useImageAttachments";
 import ImageAttachmentPicker from "@/components/common/ImageAttachmentPicker";
 
 //댓글 입력창 컴포넌트
@@ -33,6 +37,7 @@ export default function CommentInput({
 }: CommentInputProps) {
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const attachments = useImageAttachments([], imageLimit);
   useUnsavedChangesGuard({
     isDirty: Boolean(content.trim() || attachments.isDirty),
@@ -63,21 +68,56 @@ export default function CommentInput({
     }
   };
 
+  const handleImageFiles = (files: FileList | null) => {
+    if (!files) return;
+    const result = attachments.addFiles(Array.from(files));
+    if (result.rejectedCount > 0) {
+      toast.error("JPG, PNG, WebP, GIF 이미지만 첨부할 수 있습니다.");
+    }
+    if (result.overflowCount > 0) {
+      toast.error(`이미지는 최대 ${imageLimit}개까지 첨부할 수 있습니다.`);
+    }
+    if (imageInputRef.current) imageInputRef.current.value = "";
+  };
+
   return (
     <div className="flex w-full flex-col gap-3">
       <div className="flex items-center gap-3 w-full">
-        <input
-          type="text"
-          data-comment-input="true"
-          value={content}
-          disabled={isSubmitting}
-          onChange={(e) => setContent(clampTextToLimit(e.target.value, maxLength, overLimitMessage))}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") void handleSubmit();
-          }}
-          placeholder={placeholder}
-          className="flex-1 w-[240px] h-[36px] t:w-[850px] t:h-[56px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White body_1_2 text-Gray-7 placeholder:text-Gray-3 outline-none"
-        />
+        <div className="relative flex-1 w-[240px] t:w-[850px]">
+          <input
+            type="text"
+            data-comment-input="true"
+            value={content}
+            disabled={isSubmitting}
+            onChange={(e) => setContent(clampTextToLimit(e.target.value, maxLength, overLimitMessage))}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") void handleSubmit();
+            }}
+            placeholder={placeholder}
+            className="w-full h-[36px] t:h-[56px] pl-4 pr-12 py-3 rounded-lg border border-Subbrown-4 bg-White body_1_2 text-Gray-7 placeholder:text-Gray-3 outline-none"
+          />
+          {imageUploadType && (
+            <>
+              <button
+                type="button"
+                onClick={() => imageInputRef.current?.click()}
+                disabled={isSubmitting || attachments.items.length >= imageLimit}
+                aria-label="이미지 첨부"
+                className="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center text-primary-3 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Image src="/image.svg" alt="" width={18} height={18} />
+              </button>
+              <input
+                ref={imageInputRef}
+                type="file"
+                accept={IMAGE_FILE_ACCEPT}
+                multiple
+                className="hidden"
+                onChange={(event) => handleImageFiles(event.target.files)}
+              />
+            </>
+          )}
+        </div>
         <button
           type="button"
           onClick={() => void handleSubmit()}
@@ -92,6 +132,7 @@ export default function CommentInput({
           controller={attachments}
           disabled={isSubmitting}
           compact={compactImages}
+          previewOnly
         />
       )}
     </div>
