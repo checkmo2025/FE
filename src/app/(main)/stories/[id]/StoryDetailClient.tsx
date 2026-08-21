@@ -22,6 +22,7 @@ import {
 } from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
+import ImageGallery from "@/components/common/ImageGallery";
 
 export default function StoryDetailClient() {
   const router = useRouter();
@@ -155,6 +156,9 @@ export default function StoryDetailClient() {
           <p className="body_1_3 t:subhead_4 text-Gray-5 mt-4 whitespace-pre-wrap">
             {story.description}
           </p>
+          <div className="mt-6">
+            <ImageGallery imageUrls={story.imageUrls} />
+          </div>
         </div>
         <div
           id="comments"

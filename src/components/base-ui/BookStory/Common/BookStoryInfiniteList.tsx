@@ -91,6 +91,7 @@ const BookStoryInfiniteList: React.FC<BookStoryInfiniteListProps> = ({
       commentCount={story.commentCount}
       likedByMe={story.likedByMe}
       coverImgSrc={story.bookInfo.imgUrl}
+      imageUrls={story.imageUrls}
       subscribeText={story.authorInfo.following ? "구독중" : "구독"}
       isFollowing={story.authorInfo.following}
       onSubscribeClick={() => onToggleFollow?.(story.authorInfo.nickname, story.authorInfo.following)}

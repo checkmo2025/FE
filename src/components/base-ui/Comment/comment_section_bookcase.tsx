@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 import { BLOCKED_USER_MASK } from "@/constants/masking";
 import { useBlockStore } from "@/store/useBlockStore";
-import { hasErrorCode } from "@/lib/api/errors";
+import { getErrorMessage, hasErrorCode } from "@/lib/api/errors";
 import { useUnsavedChangesNavigation } from "@/hooks/useUnsavedChangesGuard";
 import { INPUT_LIMITS } from "@/constants/inputLimits";
 import { isTextOverLimit } from "@/utils/inputLimit";
@@ -46,6 +46,11 @@ export default function CommentSection({
   const router = useRouter();
   const { confirmNavigation } = useUnsavedChangesNavigation();
   const { isBlocked: checkLocalBlocked, initializeBlocks } = useBlockStore();
+  const ensureLoggedIn = () => {
+    if (isLoggedIn) return true;
+    openLoginModal();
+    return false;
+  };
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -63,6 +68,7 @@ export default function CommentSection({
         ? c.authorInfo?.profileImageUrl as string
         : DEFAULT_PROFILE_IMAGE,
       content: c.deleted ? "삭제된 댓글입니다." : c.content,
+      imageUrls: c.deleted ? [] : (c.imageUrls ?? []),
       createdAt: c.createdAt,
       isAuthor: !c.deleted && c.authorInfo?.nickname === storyAuthorNickname,
       isMine: !c.deleted && c.writtenByMe,
@@ -125,6 +131,10 @@ export default function CommentSection({
       toast.error("차단 관계가 있는 회원에게는 댓글을 작성할 수 없습니다.");
       return;
     }
+    if (hasErrorCode(err) && err.code.startsWith("COMMENT_IMAGE_")) {
+      toast.error(getErrorMessage(err.code));
+      return;
+    }
     toast.error(defaultMessage);
   };
 
@@ -142,10 +152,10 @@ export default function CommentSection({
   }, [initialComments, storyAuthorNickname]);
 
   // 댓글 추가
-  const handleAddComment = (content: string) => {
+  const handleAddComment = async (content: string, imageUrls: string[]) => {
     if (!isLoggedIn) {
       openLoginModal();
-      return;
+      return false;
     }
     if (
       isTextOverLimit(
@@ -154,26 +164,23 @@ export default function CommentSection({
         `댓글은 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자 이하여야 합니다.`
       )
     ) {
-      return;
+      return false;
     }
-    createCommentMutation.mutate(
-      { content },
-      {
-        onSuccess: () => {
-          toast.success("댓글이 등록되었습니다.");
-        },
-        onError: (err: unknown) => {
-          handleCommentError(err, "댓글 등록에 실패했습니다.");
-        }
-      }
-    );
+    try {
+      await createCommentMutation.mutateAsync({ content, imageUrls });
+      toast.success("댓글이 등록되었습니다.");
+      return true;
+    } catch (err: unknown) {
+      handleCommentError(err, "댓글 등록에 실패했습니다.");
+      return false;
+    }
   };
 
   // 답글 추가
-  const handleAddReply = (parentId: number, content: string) => {
+  const handleAddReply = async (parentId: number, content: string, imageUrls: string[]) => {
     if (!isLoggedIn) {
       openLoginModal();
-      return;
+      return false;
     }
     if (
       isTextOverLimit(
@@ -182,22 +189,19 @@ export default function CommentSection({
         `댓글은 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자 이하여야 합니다.`
       )
     ) {
-      return;
+      return false;
     }
-    createCommentMutation.mutate(
-      { content, parentCommentId: parentId },
-      {
-        onSuccess: () => {
-          toast.success("답글이 등록되었습니다.");
-        },
-        onError: (err: unknown) => {
-          handleCommentError(err, "답글 등록에 실패했습니다.");
-        }
-      }
-    );
+    try {
+      await createCommentMutation.mutateAsync({ content, imageUrls, parentCommentId: parentId });
+      toast.success("답글이 등록되었습니다.");
+      return true;
+    } catch (err: unknown) {
+      handleCommentError(err, "답글 등록에 실패했습니다.");
+      return false;
+    }
   };
 
-  const handleEditComment = (id: number, content: string) => {
+  const handleEditComment = async (id: number, content: string, imageUrls: string[]) => {
     if (
       isTextOverLimit(
         content,
@@ -205,19 +209,16 @@ export default function CommentSection({
         `댓글은 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자 이하여야 합니다.`
       )
     ) {
-      return;
+      return false;
     }
-    updateCommentMutation.mutate(
-      { commentId: id, content },
-      {
-        onSuccess: () => {
-          toast.success("댓글이 수정되었습니다.");
-        },
-        onError: () => {
-          toast.error("댓글 수정에 실패했습니다.");
-        }
-      }
-    );
+    try {
+      await updateCommentMutation.mutateAsync({ commentId: id, content, imageUrls });
+      toast.success("댓글이 수정되었습니다.");
+      return true;
+    } catch {
+      toast.error("댓글 수정에 실패했습니다.");
+      return false;
+    }
   };
 
   const handleDeleteComment = (id: number) => {
@@ -290,6 +291,8 @@ export default function CommentSection({
         onDeleteComment={handleDeleteComment}
         onReportComment={handleReportComment}
         onProfileClick={(nickname) => confirmNavigation(() => router.push(getProfilePath(nickname)))}
+        imageUploadType="BOOK_STORY_COMMENT"
+        beforeSubmit={ensureLoggedIn}
       />
       <ConfirmModal
         isOpen={isConfirmOpen}

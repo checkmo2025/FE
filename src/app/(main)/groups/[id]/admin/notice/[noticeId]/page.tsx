@@ -85,11 +85,10 @@ export default function EditNoticePage() {
     enabled: Number.isFinite(clubId) && isBookshelfModalOpen,
   });
 
-  const shelves =
-    shelvesQuery.data?.pages.flatMap((p: any) => p.bookShelfInfoList) ?? [];
-
   const modalBooks: Book[] = useMemo(() => {
-    return shelves.map((s: any) => ({
+    const shelves = shelvesQuery.data?.pages.flatMap((page) => page.bookShelfInfoList) ?? [];
+
+    return shelves.map((s) => ({
       id: s.meetingInfo.meetingId,
       title: s.bookInfo.title,
       author: s.bookInfo.author,
@@ -101,7 +100,7 @@ export default function EditNoticePage() {
       description: "",
       imageUrl: s.bookInfo.imgUrl ?? null,
     }));
-  }, [shelves]);
+  }, [shelvesQuery.data]);
 
   const { mutateAsync: updateNotice, isPending } = useUpdateClubNoticeMutation();
 
@@ -200,6 +199,7 @@ export default function EditNoticePage() {
   useEffect(() => {
     if (!noticeData || initializedRef.current) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetched notice data initializes the edit form once
     setTitle(noticeData.title);
     setContent(noticeData.content);
     setIsPinned(noticeData.isPinned);
@@ -375,7 +375,7 @@ export default function EditNoticePage() {
       const uploadedImageUrls =
         localFiles.length > 0
           ? await Promise.all(
-              localFiles.map((file) => imageService.uploadClubImage(file))
+              localFiles.map((file) => imageService.uploadNoticeImage(file))
             )
           : [];
                      
@@ -399,10 +399,10 @@ export default function EditNoticePage() {
       toast.dismiss(tid);
       toast.success("공지사항 수정 성공");
       runWithoutGuard(() => router.push(`/groups/${groupId}/notice/${noticeId}`));
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.dismiss(tid);
 
-      const msg = e?.message ?? "";
+      const msg = e instanceof Error ? e.message : "";
       if (msg.includes("isPinned") || msg.includes("pinned") || msg.includes("고정")) {
         toast.error("고정 공지는 최대 5개까지 가능합니다.");
         return;

@@ -11,6 +11,7 @@ import Image from "next/image";
 import { isValidUrl } from "@/utils/url";
 import { useParams, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
+import ImageGallery from "@/components/common/ImageGallery";
 
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
@@ -176,6 +177,9 @@ export default function StoryDetailPage() {
           <p className="body_1_3 t:subhead_4 text-Gray-5 mt-4 whitespace-pre-wrap">
             {story.description}
           </p>
+          <div className="mt-6">
+            <ImageGallery imageUrls={story.imageUrls} />
+          </div>
         </div>
 
         <div className="border-t-2 border-Gray-1 w-full max-w-[1040px] mx-auto px-5 mt-10 pt-6 pb-10">

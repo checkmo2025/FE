@@ -27,7 +27,7 @@ async function putToPresignedUrl(presignedUrl: string, file: File, contentType: 
 }
 
 export const imageService = {
-  // POST /api/image/{type}/upload-url
+  // POST /api/v1/image/{type}/upload-url
   getUploadUrl: (type: ImageUploadType, body: PresignedRequest) =>
     apiClient.post<ApiResponse<PresignedResult>>(IMAGE.uploadUrl(type), body),
 
@@ -51,4 +51,14 @@ export const imageService = {
 
   // CLUB 이미지 업로드
   uploadClubImage: (file: File) => imageService.uploadImage("CLUB", file),
+
+  uploadNoticeImage: (file: File) => imageService.uploadImage("NOTICE", file),
+
+  uploadBookStoryImage: (file: File) => imageService.uploadImage("BOOK_STORY", file),
+
+  uploadBookStoryCommentImage: (file: File) =>
+    imageService.uploadImage("BOOK_STORY_COMMENT", file),
+
+  uploadNoticeCommentImage: (file: File) =>
+    imageService.uploadImage("NOTICE_COMMENT", file),
 };
