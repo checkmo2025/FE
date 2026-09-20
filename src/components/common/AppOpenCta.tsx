@@ -11,6 +11,7 @@ const DISMISS_ANIMATION_MS = 180;
 type AppOpenCtaProps = {
   appPath: string;
   className?: string;
+  onVisibilityChange?: (isVisible: boolean) => void;
 };
 
 function isIOSDevice() {
@@ -31,7 +32,11 @@ function isAppOpenCtaDismissedInSession() {
   return window.sessionStorage.getItem(APP_OPEN_CTA_SESSION_DISMISSED_KEY) === "true";
 }
 
-export default function AppOpenCta({ appPath, className = "" }: AppOpenCtaProps) {
+export default function AppOpenCta({
+  appPath,
+  className = "",
+  onVisibilityChange,
+}: AppOpenCtaProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const openAttemptCleanupRef = useRef<(() => void) | null>(null);
@@ -72,6 +77,11 @@ export default function AppOpenCta({ appPath, className = "" }: AppOpenCtaProps)
 
   useEffect(() => cleanupOpenAttempt, [cleanupOpenAttempt]);
   useEffect(() => cleanupDismissTimeout, [cleanupDismissTimeout]);
+  useEffect(() => {
+    onVisibilityChange?.(isVisible);
+
+    return () => onVisibilityChange?.(false);
+  }, [isVisible, onVisibilityChange]);
 
   const handleOpenApp = useCallback(() => {
     cleanupOpenAttempt();

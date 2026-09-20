@@ -4,6 +4,10 @@ import { usePathname } from "next/navigation";
 import AppOpenCta from "@/components/common/AppOpenCta";
 import { useAuthStore } from "@/store/useAuthStore";
 
+type GlobalAppOpenCtaProps = {
+  onVisibilityChange?: (isVisible: boolean) => void;
+};
+
 const CTA_EXCLUDED_PATHS = new Set([
   "/groups/create",
   "/stories/new",
@@ -50,11 +54,18 @@ function getAppPath(pathname: string) {
   return "/";
 }
 
-export default function GlobalAppOpenCta() {
+export default function GlobalAppOpenCta({
+  onVisibilityChange,
+}: GlobalAppOpenCtaProps) {
   const pathname = usePathname();
   const isLoginModalOpen = useAuthStore((state) => state.isLoginModalOpen);
 
   if (isLoginModalOpen || isCtaExcludedPath(pathname)) return null;
 
-  return <AppOpenCta appPath={getAppPath(pathname)} />;
+  return (
+    <AppOpenCta
+      appPath={getAppPath(pathname)}
+      onVisibilityChange={onVisibilityChange}
+    />
+  );
 }

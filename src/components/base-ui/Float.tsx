@@ -9,6 +9,7 @@ type FloatingFabProps = {
   iconSrc?: string; // 예: "/icons/pencil_white.svg"
   iconAlt?: string; // 접근성/aria용
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  buttonRef?: React.Ref<HTMLButtonElement>;
   className?: string; // 추가 커스텀
   iconClassName?: string; // 아이콘 추가 커스텀
   type?: "button" | "submit" | "reset";
@@ -18,6 +19,7 @@ export default function FloatingFab({
   iconSrc = "/add_story.svg",
   iconAlt = "플로팅 버튼",
   onClick,
+  buttonRef,
   className = "",
   iconClassName = "",
   type = "button",
@@ -28,6 +30,7 @@ export default function FloatingFab({
 
   return (
     <button
+      ref={buttonRef}
       type={type}
       onClick={onClick}
       aria-label={iconAlt}
