@@ -10,7 +10,6 @@ import { useBookInfiniteStoriesQuery } from "@/hooks/queries/useStoryQueries";
 import { useToggleStoryLikeMutation } from "@/hooks/mutations/useStoryMutations";
 import { useToggleFollowMutation } from "@/hooks/mutations/useMemberMutations";
 import { useAuthAction } from "@/hooks/useAuthAction";
-import { showCustomToast } from "@/utils/toastUtils";
 import { getProfilePath } from "@/utils/nickname";
 
 export default function BookDetailClient() {
@@ -78,13 +77,11 @@ export default function BookDetailClient() {
                         onLikeChange={authAction(() => {
                             toggleBookLike(isbn);
                         })}
-                        onCardClick={() => {
+                        onCardClick={bookData.link ? () => {
                             if (bookData.link) {
                                 window.open(bookData.link, "_blank", "noopener,noreferrer");
-                            } else {
-                                showCustomToast("구매 링크가 제공되지 않는 도서입니다.");
                             }
-                        }}
+                        } : undefined}
                         onPencilClick={authAction(() => {
                             router.push(`/stories/new?isbn=${isbn}`);
                         })}

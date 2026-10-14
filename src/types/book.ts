@@ -5,14 +5,14 @@ export interface Book {
     imgUrl: string;
     publisher: string;
     description: string;
-    link: string;
+    link: string | null;
     likedByMe?: boolean;
 }
 
 export interface BookSearchResponse {
     detailInfoList: Book[];
     hasNext: boolean;
-    currentPage: number;
+    currentPage: number | null;
     totalResults: number;
 }
 

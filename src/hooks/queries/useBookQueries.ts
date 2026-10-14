@@ -31,9 +31,9 @@ export const useInfiniteBookSearchQuery = (keyword: string) => {
         queryFn: ({ pageParam }) => bookService.searchBooks(keyword, pageParam),
         initialPageParam: 1,
         enabled: keyword.trim().length > 0,
-        getNextPageParam: (lastPage) => {
+        getNextPageParam: (lastPage, _pages, lastPageParam) => {
             if (!lastPage || !lastPage.hasNext) return undefined;
-            return lastPage.currentPage + 1;
+            return (lastPage.currentPage ?? lastPageParam) + 1;
         },
     });
 };

@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: [
+      { protocol: "https", hostname: "image.yes24.com", pathname: "/**" },
       {
         protocol: "https",
         hostname: "image.aladin.co.kr",
