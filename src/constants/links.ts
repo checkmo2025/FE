@@ -1,7 +1,7 @@
 export const EXTERNAL_LINKS = {
     SUPPORT_URL: "https://www.checkmo.co.kr/support",
     INQUIRY_FORM_URL: "https://docs.google.com/forms/d/e/1FAIpQLSfcY9nWElffO0gbjRlxFzEV4YKCOznMsv4PqfFO8MjgR1xaBg/viewform",
-    ALADIN_BESTSELLER_URL: "https://www.aladin.co.kr/shop/common/wbest.aspx?BranchType=1&srsltid=AfmBOoormYbm3TGHXQJYOcGgci2IQp6ytpjw-CJgV2wQALS9lsE5-pTo",
+    YES24_BESTSELLER_URL: "https://www.yes24.com/Product/Category/BestSeller?categoryNumber=001",
     NEWS_FROM_URL: "https://forms.gle/7ZBdXSn9BnR7MC6N6",
 } as const;
 

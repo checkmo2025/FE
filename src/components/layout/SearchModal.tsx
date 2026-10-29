@@ -205,7 +205,12 @@ export default function SearchModal({ isOpen, onClose, contentRef }: SearchModal
                   </div>
                 </div>
               ) : (
-                debouncedSearchValue && <div className="py-4 text-center text-white/60 body_1">검색 결과가 없습니다.</div>
+                debouncedSearchValue && (hasNextPage ? (
+                  <button type="button" disabled={isFetchingNextPage} onClick={() => { void fetchNextPage(); }}
+                    className="w-full py-4 text-center text-white/80 body_1">
+                    {isFetchingNextPage ? "검색 중..." : "다음 검색 결과 보기"}
+                  </button>
+                ) : <div className="py-4 text-center text-white/60 body_1">검색 결과가 없습니다.</div>)
               )}
             </div>
           </div>
@@ -246,22 +251,15 @@ export default function SearchModal({ isOpen, onClose, contentRef }: SearchModal
               </div>
               <div className="flex justify-end mt-4 w-full t:w-[683px] d:w-[1400px] t:mx-auto">
                 <Link
-                  href={EXTERNAL_LINKS.ALADIN_BESTSELLER_URL}
+                  href={EXTERNAL_LINKS.YES24_BESTSELLER_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1 text-white/80 body_1_2 t:subhead_4_1 border-white/80 transition-all duration-300 hover:text-white hover:border-white hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group relative pb-0.5"
                 >
                   <span className="relative z-10 transition-colors after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 group-hover:after:origin-bottom-left group-hover:after:scale-x-100">
-                    알라딘 랭킹 더 보러가기
+                    예스24 베스트셀러 더 보러가기
                   </span>
-                  <div className="relative w-6 h-6 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">
-                    <Image
-                      src="/to_aladin.svg"
-                      alt="알라딘"
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
+                  <span aria-hidden="true">↗</span>
                 </Link>
               </div>
             </div>

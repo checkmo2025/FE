@@ -74,7 +74,7 @@ export default function BookSelectModal({
 
   if (!isOpen) return null;
 
-  const openLinkNewTab = (url?: string) => {
+  const openLinkNewTab = (url?: string | null) => {
     if (!url) return;
     window.open(url, "_blank", "noopener,noreferrer");
   };
@@ -157,7 +157,7 @@ export default function BookSelectModal({
                       setLikedResults((prev) => ({ ...prev, [result.isbn]: liked }))
                     }
                     // ✅ 카드 클릭: link 새 탭
-                    onCardClick={() => openLinkNewTab(result.link)}
+                    onCardClick={result.link ? () => openLinkNewTab(result.link) : undefined}
                     // ✅ 연필 클릭: 기존 선택 로직
                     onPencilClick={() => {
                       onSelect(result.isbn);
