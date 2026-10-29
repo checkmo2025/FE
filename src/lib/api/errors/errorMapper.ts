@@ -17,6 +17,15 @@ export const ERROR_MESSAGES: Record<string, string> = {
     MEMBER_400: "해당 회원을 찾을 수 없습니다.",
     BLOCK_404: "차단한 사용자입니다.",
     BLOCK_405: "조회가 불가능한 프로필입니다.",
+
+    // Image Errors
+    S3_400: "JPG, PNG, WebP, GIF 이미지만 업로드할 수 있습니다.",
+    BOOK_STORY_IMAGE_400: "책 이야기 이미지는 최대 5개까지 첨부할 수 있습니다.",
+    BOOK_STORY_IMAGE_401: "본인이 업로드한 책 이야기 이미지만 첨부할 수 있습니다.",
+    COMMENT_IMAGE_400: "댓글 이미지는 최대 5개까지 첨부할 수 있습니다.",
+    COMMENT_IMAGE_401: "본인이 업로드한 댓글 이미지만 첨부할 수 있습니다.",
+    NOTICE_COMMENT_IMAGE_400: "공지 댓글 이미지는 최대 5개까지 첨부할 수 있습니다.",
+    NOTICE_COMMENT_IMAGE_401: "본인이 업로드한 공지 댓글 이미지만 첨부할 수 있습니다.",
 };
 
 export function getErrorMessage(code: string): string {

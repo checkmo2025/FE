@@ -1,18 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import CommentHeader from "./comment_header";
 import CommentMenu from "./comment_menu";
 import CommentEditForm from "./comment_edit_form";
 import { DEFAULT_PROFILE_IMAGE } from "@/constants/images";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
+import type { ImageUploadType } from "@/lib/api/endpoints/Image";
+import { useImageAttachments } from "@/hooks/useImageAttachments";
+import ImageGallery from "@/components/common/ImageGallery";
+import toast from "react-hot-toast";
 
 type CommentItemProps = {
   id: number;
   authorName: string;
   profileImgSrc?: string;
   content: string;
+  imageUrls?: string[];
   createdAt: string;
   isAuthor?: boolean; // 작성자 뱃지용
   isMine?: boolean;
@@ -23,10 +28,11 @@ type CommentItemProps = {
   canDelete?: boolean;
   canReport?: boolean;
   onReply?: (id: number) => void;
-  onEdit?: (id: number, content: string) => void | Promise<void>;
+  onEdit?: (id: number, content: string, imageUrls: string[]) => void | boolean | Promise<void | boolean>;
   onDelete?: (id: number) => void | Promise<void>;
   onReport?: (id: number) => void;
   onProfileClick?: (nickname: string) => void;
+  imageUploadType?: ImageUploadType;
 };
 
 export default function CommentItem({
@@ -34,6 +40,7 @@ export default function CommentItem({
   authorName,
   profileImgSrc = DEFAULT_PROFILE_IMAGE,
   content,
+  imageUrls = [],
   createdAt,
   isAuthor = false,
   isMine = false,
@@ -48,11 +55,14 @@ export default function CommentItem({
   onDelete,
   onReport,
   onProfileClick,
+  imageUploadType,
 }: CommentItemProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(content);
-  const isEditDirty = isEditing && editContent !== content;
+  const editAttachments = useImageAttachments(imageUrls);
+  const { reset: resetEditAttachments, resolveUrls: resolveEditImageUrls } = editAttachments;
+  const isEditDirty = isEditing && (editContent !== content || editAttachments.isDirty);
   const { confirmNavigation } = useUnsavedChangesGuard({
     isDirty: isEditDirty,
     variant: "edit",
@@ -60,20 +70,23 @@ export default function CommentItem({
     description: "이 화면을 나가면 수정한 댓글이 저장되지 않습니다.",
   });
 
-  useEffect(() => {
-    setEditContent(content);
-  }, [content]);
-
-  const handleSaveEdit = () => {
-    if (editContent.trim() && editContent !== content) {
-      onEdit?.(id, editContent);
+  const handleSaveEdit = async () => {
+    if (!editContent.trim()) return;
+    try {
+      const resolvedImageUrls = imageUploadType
+        ? await resolveEditImageUrls(imageUploadType)
+        : imageUrls;
+      const result = await onEdit?.(id, editContent, resolvedImageUrls);
+      if (result !== false) setIsEditing(false);
+    } catch {
+      toast.error("이미지 업로드에 실패했습니다. 다시 시도해 주세요.");
     }
-    setIsEditing(false);
   };
 
   const handleCancelEdit = () => {
     if (!isEditDirty) {
       setEditContent(content);
+      resetEditAttachments(imageUrls);
       setIsEditing(false);
       return;
     }
@@ -81,6 +94,7 @@ export default function CommentItem({
     confirmNavigation(
       () => {
         setEditContent(content);
+        resetEditAttachments(imageUrls);
         setIsEditing(false);
       },
       {
@@ -111,25 +125,32 @@ export default function CommentItem({
       />
 
       {!isEditing ? (
-        <div className="flex items-start justify-between gap-2">
-          <p className={`body_1_2 flex-1 whitespace-pre-wrap ${isBlocked ? "text-Gray-3 italic" : "text-Gray-5"}`}>
-            {content}
-          </p>
-          {hasMenuAction && (
-            <CommentMenu
-              open={menuOpen}
-              onToggle={() => setMenuOpen((v) => !v)}
-              onClose={() => setMenuOpen(false)}
-              hasReplyAction={hasReplyAction}
-              canEdit={derivedCanEdit}
-              canDelete={derivedCanDelete}
-              canReport={derivedCanReport}
-              onReply={() => onReply?.(id)}
-              onEdit={() => setIsEditing(true)}
-              onDelete={() => onDelete?.(id)}
-              onReport={() => onReport?.(id)}
-            />
-          )}
+        <div className="flex flex-col gap-3">
+          <div className="flex items-start justify-between gap-2">
+            <p className={`body_1_2 flex-1 whitespace-pre-wrap ${isBlocked ? "text-Gray-3 italic" : "text-Gray-5"}`}>
+              {content}
+            </p>
+            {hasMenuAction && (
+              <CommentMenu
+                open={menuOpen}
+                onToggle={() => setMenuOpen((v) => !v)}
+                onClose={() => setMenuOpen(false)}
+                hasReplyAction={hasReplyAction}
+                canEdit={derivedCanEdit}
+                canDelete={derivedCanDelete}
+                canReport={derivedCanReport}
+                onReply={() => onReply?.(id)}
+                onEdit={() => {
+                  setEditContent(content);
+                  resetEditAttachments(imageUrls);
+                  setIsEditing(true);
+                }}
+                onDelete={() => onDelete?.(id)}
+                onReport={() => onReport?.(id)}
+              />
+            )}
+          </div>
+          {!isBlocked && <ImageGallery imageUrls={imageUrls} compact />}
         </div>
       ) : (
         <CommentEditForm
@@ -137,6 +158,7 @@ export default function CommentItem({
           onChange={setEditContent}
           onSave={handleSaveEdit}
           onCancel={handleCancelEdit}
+          attachmentController={imageUploadType ? editAttachments : undefined}
         />
       )}
     </div>

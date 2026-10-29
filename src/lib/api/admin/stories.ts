@@ -103,6 +103,7 @@ export type AdminBookStoryDetail = {
   };
   bookStoryTitle: string;
   description: string;
+  imageUrls: string[];
   likes: number;
   likedByMe: boolean;
   createdAt: string;
