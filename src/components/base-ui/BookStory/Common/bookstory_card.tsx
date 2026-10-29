@@ -29,6 +29,7 @@ type Props = {
   status?: "PUBLISHED" | "DRAFT";
   canContinue?: boolean;
   onContinueClick?: (e: React.MouseEvent) => void;
+  imageUrls?: string[];
 };
 
 export default function BookStoryCard({
@@ -54,6 +55,7 @@ export default function BookStoryCard({
   status = "PUBLISHED",
   canContinue = false,
   onContinueClick,
+  imageUrls = [],
 }: Props) {
   const heartIcon = likedByMe ? "/red_heart.svg" : "/gray_heart.svg";
 
@@ -130,6 +132,20 @@ export default function BookStoryCard({
             {isDraft && (
               <div className="absolute top-2 left-2 z-20 flex px-2 py-1 items-center rounded-md bg-Secondary-1 text-White text-[10px] md:text-[12px] font-bold">
                 임시저장
+              </div>
+            )}
+            {imageUrls.length > 0 && (
+              <div className="absolute bottom-2 right-2 z-20 flex items-center gap-1 rounded-md bg-black/60 p-1 text-[10px] text-White md:text-[12px]">
+                <div className="relative h-8 w-8 overflow-hidden rounded">
+                  <Image
+                    src={imageUrls[0]}
+                    alt="책 이야기 첨부 이미지"
+                    fill
+                    className="object-cover"
+                    sizes="32px"
+                  />
+                </div>
+                <span className="px-1">{imageUrls.length}장</span>
               </div>
             )}
           </>

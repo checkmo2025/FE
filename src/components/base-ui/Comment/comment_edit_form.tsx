@@ -1,13 +1,16 @@
 import { INPUT_LIMITS } from "@/constants/inputLimits";
 import { clampTextToLimit, isTextOverLimit } from "@/utils/inputLimit";
+import ImageAttachmentPicker from "@/components/common/ImageAttachmentPicker";
+import type { ImageAttachmentsController } from "@/hooks/useImageAttachments";
 
 type CommentEditFormProps = {
   value: string;
   onChange: (v: string) => void;
-  onSave: () => void;
+  onSave: () => void | Promise<void>;
   onCancel: () => void;
   maxLength?: number;
   overLimitMessage?: string;
+  attachmentController?: ImageAttachmentsController;
 };
 
 export default function CommentEditForm({
@@ -17,6 +20,7 @@ export default function CommentEditForm({
   onCancel,
   maxLength = INPUT_LIMITS.BOOK_STORY_COMMENT,
   overLimitMessage = `댓글은 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자 이하여야 합니다.`,
+  attachmentController,
 }: CommentEditFormProps) {
   const handleSave = () => {
     if (isTextOverLimit(value, maxLength, overLimitMessage)) return;
@@ -31,6 +35,9 @@ export default function CommentEditForm({
         className="w-full min-h-[80px] px-4 py-3 rounded-lg border border-Subbrown-4 bg-White body_1_2 text-Gray-7 outline-none focus:border-primary-3 resize-none whitespace-pre-wrap"
         autoFocus
       />
+      {attachmentController && (
+        <ImageAttachmentPicker controller={attachmentController} compact />
+      )}
       <div className="flex justify-end gap-2">
         <button
           type="button"

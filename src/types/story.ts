@@ -13,6 +13,7 @@ export interface BookStory {
     };
     bookStoryTitle: string;
     description: string;
+    imageUrls: string[];
     likes: number;
     commentCount: number;
     viewCount: number;
@@ -47,6 +48,7 @@ export interface AuthorInfo {
 export interface CommentInfo {
     commentId: number;
     content: string;
+    imageUrls: string[];
     authorInfo: AuthorInfo | null;
     createdAt: string;
     writtenByMe: boolean;
@@ -62,6 +64,7 @@ export interface BookStoryDetail {
     authorInfo: AuthorInfo;
     bookStoryTitle: string;
     description: string;
+    imageUrls: string[];
     likes: number;
     likedByMe: boolean;
     createdAt: string;
@@ -78,16 +81,24 @@ export interface CreateBookStoryRequest {
     isbn: string;
     title: string;
     description?: string;
+    imageUrls?: string[];
     status?: "PUBLISHED" | "DRAFT";
 }
 
 export interface CreateCommentRequest {
     content: string;
+    imageUrls?: string[];
+}
+
+export interface UpdateCommentRequest {
+    content: string;
+    imageUrls?: string[];
 }
 
 export interface UpdateBookStoryRequest {
     isbn?: string;
     title?: string;
     description?: string;
+    imageUrls?: string[];
     status?: "PUBLISHED" | "DRAFT";
 }

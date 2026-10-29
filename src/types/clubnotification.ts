@@ -167,6 +167,7 @@ export interface ClubNoticeCommentItem {
   commentId: number;
   authorInfo: ClubNoticeCommentAuthorInfo;
   content: string;
+  imageUrls: string[];
   createdAt: string; // ISO
   updatedAt: string; // ISO
 }
@@ -183,6 +184,7 @@ export type GetClubNoticeCommentsResponseResult =
 
 export interface CreateClubNoticeCommentRequest {
   content: string;
+  imageUrls?: string[];
 }
 
 export type CreateClubNoticeCommentResponse = ApiResponse<string>;
@@ -191,6 +193,7 @@ export type CreateClubNoticeCommentResponseResult =
 
 export interface UpdateClubNoticeCommentRequest {
   content: string;
+  imageUrls?: string[];
 }
 
 export type UpdateClubNoticeCommentResponse = ApiResponse<string>;

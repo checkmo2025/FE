@@ -129,8 +129,12 @@ export const useDeleteBookStoryMutation = () => {
 export const useCreateCommentMutation = (bookStoryId: number) => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (args: { content: string; parentCommentId?: number }) =>
-            storyService.createComment(bookStoryId, { content: args.content }, args.parentCommentId),
+        mutationFn: (args: { content: string; imageUrls?: string[]; parentCommentId?: number }) =>
+            storyService.createComment(
+                bookStoryId,
+                { content: args.content, imageUrls: args.imageUrls },
+                args.parentCommentId
+            ),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: storyKeys.detail(bookStoryId) });
             queryClient.setQueryData<InfiniteData<BookStoryListResponse>>(storyKeys.infiniteList(), (old) =>
@@ -152,8 +156,12 @@ export const useCreateCommentMutation = (bookStoryId: number) => {
 export const useUpdateCommentMutation = (bookStoryId: number) => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (args: { commentId: number; content: string }) =>
-            storyService.updateComment(bookStoryId, args.commentId, { content: args.content }),
+        mutationFn: (args: { commentId: number; content: string; imageUrls?: string[] }) =>
+            storyService.updateComment(
+                bookStoryId,
+                args.commentId,
+                { content: args.content, imageUrls: args.imageUrls }
+            ),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: storyKeys.detail(bookStoryId) });
         },

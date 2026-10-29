@@ -357,7 +357,7 @@ export default function NewNoticePage() {
     try {
       const uploadedImageUrls =
         isImageEnabled && imageFiles.length > 0
-          ? await Promise.all(imageFiles.map((f) => imageService.uploadClubImage(f)))
+          ? await Promise.all(imageFiles.map((f) => imageService.uploadNoticeImage(f)))
           : [];
 
       const vote: CreateClubNoticeVote | undefined = isVoteEnabled

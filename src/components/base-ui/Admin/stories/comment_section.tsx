@@ -34,6 +34,11 @@ export default function CommentSection({
   const updateCommentMutation = useUpdateCommentMutation(storyId);
   const { mutate: reportMember } = useReportMemberMutation();
   const { isLoggedIn, openLoginModal } = useAuthStore();
+  const ensureLoggedIn = () => {
+    if (isLoggedIn) return true;
+    openLoginModal();
+    return false;
+  };
 
   const mapApiToUiComments = (apiComments: CommentInfo[]): Comment[] => {
     const mapNode = (
@@ -50,6 +55,7 @@ export default function CommentSection({
           ? c.authorInfo?.profileImageUrl
           : DEFAULT_PROFILE_IMAGE,
         content: c.deleted ? "삭제된 댓글입니다." : c.content,
+        imageUrls: c.deleted ? [] : (c.imageUrls ?? []),
         createdAt: c.createdAt,
         isAuthor: !c.deleted && c.authorInfo?.nickname === storyAuthorNickname,
         isMine: !c.deleted && c.writtenByMe,
@@ -135,10 +141,10 @@ export default function CommentSection({
       }));
   };
 
-  const handleAddComment = (content: string) => {
+  const handleAddComment = async (content: string, imageUrls: string[]) => {
     if (!isLoggedIn) {
       openLoginModal();
-      return;
+      return false;
     }
     if (
       isTextOverLimit(
@@ -147,26 +153,22 @@ export default function CommentSection({
         `댓글은 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자 이하여야 합니다.`
       )
     ) {
-      return;
+      return false;
     }
-
-    createCommentMutation.mutate(
-      { content },
-      {
-        onSuccess: () => {
-          toast.success("댓글이 등록되었습니다.");
-        },
-        onError: () => {
-          toast.error("댓글 등록에 실패했습니다.");
-        },
-      }
-    );
+    try {
+      await createCommentMutation.mutateAsync({ content, imageUrls });
+      toast.success("댓글이 등록되었습니다.");
+      return true;
+    } catch {
+      toast.error("댓글 등록에 실패했습니다.");
+      return false;
+    }
   };
 
-  const handleAddReply = (parentId: number, content: string) => {
+  const handleAddReply = async (parentId: number, content: string, imageUrls: string[]) => {
     if (!isLoggedIn) {
       openLoginModal();
-      return;
+      return false;
     }
     if (
       isTextOverLimit(
@@ -175,23 +177,19 @@ export default function CommentSection({
         `댓글은 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자 이하여야 합니다.`
       )
     ) {
-      return;
+      return false;
     }
-
-    createCommentMutation.mutate(
-      { content, parentCommentId: parentId },
-      {
-        onSuccess: () => {
-          toast.success("답글이 등록되었습니다.");
-        },
-        onError: () => {
-          toast.error("답글 등록에 실패했습니다.");
-        },
-      }
-    );
+    try {
+      await createCommentMutation.mutateAsync({ content, imageUrls, parentCommentId: parentId });
+      toast.success("답글이 등록되었습니다.");
+      return true;
+    } catch {
+      toast.error("답글 등록에 실패했습니다.");
+      return false;
+    }
   };
 
-  const handleEditComment = (id: number, content: string) => {
+  const handleEditComment = async (id: number, content: string, imageUrls: string[]) => {
     if (
       isTextOverLimit(
         content,
@@ -199,19 +197,16 @@ export default function CommentSection({
         `댓글은 ${INPUT_LIMITS.BOOK_STORY_COMMENT}자 이하여야 합니다.`
       )
     ) {
-      return;
+      return false;
     }
-    updateCommentMutation.mutate(
-      { commentId: id, content },
-      {
-        onSuccess: () => {
-          toast.success("댓글이 수정되었습니다.");
-        },
-        onError: () => {
-          toast.error("댓글 수정에 실패했습니다.");
-        },
-      }
-    );
+    try {
+      await updateCommentMutation.mutateAsync({ commentId: id, content, imageUrls });
+      toast.success("댓글이 수정되었습니다.");
+      return true;
+    } catch {
+      toast.error("댓글 수정에 실패했습니다.");
+      return false;
+    }
   };
 
   const handleDeleteComment = (id: number) => {
@@ -282,6 +277,8 @@ export default function CommentSection({
         onEditComment={handleEditComment}
         onDeleteComment={handleDeleteComment}
         onReportComment={handleReportComment}
+        imageUploadType="BOOK_STORY_COMMENT"
+        beforeSubmit={ensureLoggedIn}
       />
       <ConfirmModal
         isOpen={isConfirmOpen}
